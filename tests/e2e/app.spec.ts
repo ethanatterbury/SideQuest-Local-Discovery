@@ -246,3 +246,41 @@ test("vector map connects selection and mobile sheet with a local style fixture"
   await page.getByRole("button", { name: "Collapse results" }).click();
   await expect(page.locator(".map-sidebar")).not.toHaveClass(/expanded/);
 });
+
+test("map labels use the provider font instead of missing default glyphs", async ({
+  page,
+}) => {
+  await simulate(page, { failures: ["weather"] });
+  const fonts: string[] = [];
+  await page.route("https://tiles.openfreemap.org/styles/positron", (route) =>
+    route.fulfill({
+      json: {
+        version: 8,
+        glyphs: "http://localhost:3000/provider-fonts/{fontstack}/{range}.pbf",
+        sources: {},
+        layers: [
+          {
+            id: "background",
+            type: "background",
+            paint: { "background-color": "#e5eadb" },
+          },
+        ],
+      },
+    }),
+  );
+  await page.route("**/provider-fonts/**", (route) => {
+    fonts.push(decodeURIComponent(route.request().url()));
+    return route.fulfill({
+      status: route.request().url().includes("Noto") ? 200 : 404,
+      contentType: "application/x-protobuf",
+      body: Buffer.alloc(0),
+    });
+  });
+  await page.goto("/map");
+  await expect.poll(() => fonts.length).toBeGreaterThan(0);
+  expect(fonts.every((url) => url.includes("Noto Sans Regular"))).toBe(true);
+  await expect(
+    page.getByText("Your next detour", { exact: true }),
+  ).toBeVisible();
+  await expect(page.locator(".geographic-fallback")).toHaveCount(0);
+});

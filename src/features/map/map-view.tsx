@@ -119,6 +119,7 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
           filter: ["has", "point_count"],
           layout: {
             "text-field": ["get", "point_count_abbreviated"],
+            "text-font": ["Noto Sans Regular"],
             "text-size": 12,
           },
           paint: { "text-color": "#ffffff" },
@@ -147,6 +148,7 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
           filter: ["!", ["has", "point_count"]],
           layout: {
             "text-field": ["get", "name"],
+            "text-font": ["Noto Sans Regular"],
             "text-size": 11,
             "text-offset": [0, 1.7],
             "text-anchor": "top",
