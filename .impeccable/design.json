@@ -1,0 +1,459 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-07T18:38:16.927555+00:00",
+  "title": "Design System: SideQuest",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Warm Paper",
+        "canonical": "#f6f6ef",
+        "tonalRamp": [
+          "oklch(15% 0.00924 106.57)",
+          "oklch(26.43% 0.00924 106.57)",
+          "oklch(37.86% 0.00924 106.57)",
+          "oklch(49.29% 0.00924 106.57)",
+          "oklch(60.71% 0.00924 106.57)",
+          "oklch(72.14% 0.00924 106.57)",
+          "oklch(83.57% 0.00924 106.57)",
+          "oklch(95% 0.00924 106.57)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "White Surface",
+        "canonical": "#fff",
+        "tonalRamp": [
+          "oklch(15% 0.00000 89.88)",
+          "oklch(26.43% 0.00000 89.88)",
+          "oklch(37.86% 0.00000 89.88)",
+          "oklch(49.29% 0.00000 89.88)",
+          "oklch(60.71% 0.00000 89.88)",
+          "oklch(72.14% 0.00000 89.88)",
+          "oklch(83.57% 0.00000 89.88)",
+          "oklch(95% 0.00000 89.88)"
+        ]
+      },
+      "ink": {
+        "role": "primary",
+        "displayName": "Forest Ink",
+        "canonical": "#243b30",
+        "tonalRamp": [
+          "oklch(15% 0.03508 162.98)",
+          "oklch(26.43% 0.03508 162.98)",
+          "oklch(37.86% 0.03508 162.98)",
+          "oklch(49.29% 0.03508 162.98)",
+          "oklch(60.71% 0.03508 162.98)",
+          "oklch(72.14% 0.03508 162.98)",
+          "oklch(83.57% 0.03508 162.98)",
+          "oklch(95% 0.03508 162.98)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Quiet Moss",
+        "canonical": "#647064",
+        "tonalRamp": [
+          "oklch(15% 0.02348 145.24)",
+          "oklch(26.43% 0.02348 145.24)",
+          "oklch(37.86% 0.02348 145.24)",
+          "oklch(49.29% 0.02348 145.24)",
+          "oklch(60.71% 0.02348 145.24)",
+          "oklch(72.14% 0.02348 145.24)",
+          "oklch(83.57% 0.02348 145.24)",
+          "oklch(95% 0.02348 145.24)"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Fresh Detour",
+        "canonical": "#d9eb84",
+        "tonalRamp": [
+          "oklch(15% 0.12957 117.20)",
+          "oklch(26.43% 0.12957 117.20)",
+          "oklch(37.86% 0.12957 117.20)",
+          "oklch(49.29% 0.12957 117.20)",
+          "oklch(60.71% 0.12957 117.20)",
+          "oklch(72.14% 0.12957 117.20)",
+          "oklch(83.57% 0.12957 117.20)",
+          "oklch(95% 0.12957 117.20)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Paper Edge",
+        "canonical": "#dce0d5",
+        "tonalRamp": [
+          "oklch(15% 0.01538 123.06)",
+          "oklch(26.43% 0.01538 123.06)",
+          "oklch(37.86% 0.01538 123.06)",
+          "oklch(49.29% 0.01538 123.06)",
+          "oklch(60.71% 0.01538 123.06)",
+          "oklch(72.14% 0.01538 123.06)",
+          "oklch(83.57% 0.01538 123.06)",
+          "oklch(95% 0.01538 123.06)"
+        ]
+      },
+      "ink-hover": {
+        "role": "primary",
+        "displayName": "Deep Forest Hover",
+        "canonical": "#36543f",
+        "tonalRamp": [
+          "oklch(15% 0.05014 153.29)",
+          "oklch(26.43% 0.05014 153.29)",
+          "oklch(37.86% 0.05014 153.29)",
+          "oklch(49.29% 0.05014 153.29)",
+          "oklch(60.71% 0.05014 153.29)",
+          "oklch(72.14% 0.05014 153.29)",
+          "oklch(83.57% 0.05014 153.29)",
+          "oklch(95% 0.05014 153.29)"
+        ]
+      },
+      "accent-hover": {
+        "role": "primary",
+        "displayName": "Detour Hover",
+        "canonical": "#cadd71",
+        "tonalRamp": [
+          "oklch(15% 0.13531 117.57)",
+          "oklch(26.43% 0.13531 117.57)",
+          "oklch(37.86% 0.13531 117.57)",
+          "oklch(49.29% 0.13531 117.57)",
+          "oklch(60.71% 0.13531 117.57)",
+          "oklch(72.14% 0.13531 117.57)",
+          "oklch(83.57% 0.13531 117.57)",
+          "oklch(95% 0.13531 117.57)"
+        ]
+      },
+      "secondary-line": {
+        "role": "neutral",
+        "displayName": "Secondary Edge",
+        "canonical": "#b9c2ae",
+        "tonalRamp": [
+          "oklch(15% 0.02930 126.90)",
+          "oklch(26.43% 0.02930 126.90)",
+          "oklch(37.86% 0.02930 126.90)",
+          "oklch(49.29% 0.02930 126.90)",
+          "oklch(60.71% 0.02930 126.90)",
+          "oklch(72.14% 0.02930 126.90)",
+          "oklch(83.57% 0.02930 126.90)",
+          "oklch(95% 0.02930 126.90)"
+        ]
+      },
+      "secondary-hover": {
+        "role": "neutral",
+        "displayName": "Secondary Wash",
+        "canonical": "#e9eddf",
+        "tonalRamp": [
+          "oklch(15% 0.01906 119.76)",
+          "oklch(26.43% 0.01906 119.76)",
+          "oklch(37.86% 0.01906 119.76)",
+          "oklch(49.29% 0.01906 119.76)",
+          "oklch(60.71% 0.01906 119.76)",
+          "oklch(72.14% 0.01906 119.76)",
+          "oklch(83.57% 0.01906 119.76)",
+          "oklch(95% 0.01906 119.76)"
+        ]
+      },
+      "focus": {
+        "role": "neutral",
+        "displayName": "Focus Leaf",
+        "canonical": "#537a3c",
+        "tonalRamp": [
+          "oklch(15% 0.10035 135.01)",
+          "oklch(26.43% 0.10035 135.01)",
+          "oklch(37.86% 0.10035 135.01)",
+          "oklch(49.29% 0.10035 135.01)",
+          "oklch(60.71% 0.10035 135.01)",
+          "oklch(72.14% 0.10035 135.01)",
+          "oklch(83.57% 0.10035 135.01)",
+          "oklch(95% 0.10035 135.01)"
+        ]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "Soft Panel",
+        "canonical": "#e7ecda",
+        "tonalRamp": [
+          "oklch(15% 0.02447 119.51)",
+          "oklch(26.43% 0.02447 119.51)",
+          "oklch(37.86% 0.02447 119.51)",
+          "oklch(49.29% 0.02447 119.51)",
+          "oklch(60.71% 0.02447 119.51)",
+          "oklch(72.14% 0.02447 119.51)",
+          "oklch(83.57% 0.02447 119.51)",
+          "oklch(95% 0.02447 119.51)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Editorial Display",
+        "purpose": "Responsive home heading; breakpoint overrides are documented in DESIGN.md."
+      },
+      "headline": {
+        "displayName": "Section Headline",
+        "purpose": "Main section headings."
+      },
+      "title": {
+        "displayName": "Place Title",
+        "purpose": "Place-card names."
+      },
+      "body": {
+        "displayName": "Interface Body",
+        "purpose": "Reading and practical descriptions."
+      },
+      "label": {
+        "displayName": "Compact Label",
+        "purpose": "Secondary interface labels; 10px card metadata is a component override."
+      },
+      "button": {
+        "displayName": "Action Label",
+        "purpose": "Default shared button text."
+      }
+    },
+    "shadows": [
+      {
+        "name": "ambient",
+        "value": "0 10px 30px #243b3010",
+        "purpose": "Root --elevation; button hover."
+      },
+      {
+        "name": "secondary-edge",
+        "value": "inset 0 0 0 1px #b9c2ae",
+        "purpose": "Secondary action boundary."
+      },
+      {
+        "name": "dialog",
+        "value": "0 18px 60px #14271f40",
+        "purpose": "Native modal separation."
+      },
+      {
+        "name": "toast",
+        "value": "0 6px 28px #16241f24",
+        "purpose": "Transient confirmation."
+      },
+      {
+        "name": "mobile-sheet",
+        "value": "0 -8px 30px #20332a15",
+        "purpose": "Mobile map sheet above canvas."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Root easing for reveals, image interactions and sheet transitions."
+      },
+      {
+        "name": "control-transition",
+        "value": "200ms",
+        "purpose": "Button surface, position and elevation; icon background."
+      },
+      {
+        "name": "dialog-entrance",
+        "value": "350ms",
+        "purpose": "Opacity 0.6 to 1 and translateY 15px to 0."
+      },
+      {
+        "name": "signature-entrance",
+        "value": "600ms",
+        "purpose": "Opacity 0.5 to 1 and translateY 9px to 0."
+      },
+      {
+        "name": "signature-reveal-state",
+        "value": "500ms",
+        "purpose": "Signature state timer; zero with reduced motion."
+      },
+      {
+        "name": "signature-facts",
+        "value": "400ms",
+        "purpose": "Facts opacity and 8px vertical offset settle; image clip is state-driven, not a timed clip transition."
+      },
+      {
+        "name": "card-image-hover",
+        "value": "500ms",
+        "purpose": "Photograph scale 1 to 1.04."
+      },
+      {
+        "name": "map-sheet",
+        "value": "300ms",
+        "purpose": "Height and maximum-height transition."
+      },
+      {
+        "name": "weather-wash",
+        "value": "1500ms",
+        "purpose": "Atmosphere color and opacity transitions."
+      },
+      {
+        "name": "rain-particles",
+        "value": "1500\u20132700ms linear infinite",
+        "purpose": "12 particles, or 24 in heavy rain; hidden tabs remove particles."
+      },
+      {
+        "name": "snow-particles",
+        "value": "5000\u20137000ms linear infinite",
+        "purpose": "12 particles; removed for reduced motion or hidden tabs."
+      },
+      {
+        "name": "mist",
+        "value": "14s ease-in-out infinite alternate",
+        "purpose": "Fog layer moves from -3% to 3%; hidden tabs pause it."
+      },
+      {
+        "name": "route-transition",
+        "value": "250ms",
+        "purpose": "Native root view transition when supported."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "animation: none !important; transition: none !important; scroll-behavior: auto !important",
+        "purpose": "OS preference and explicit .reduce-motion override; weather particles hidden."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide",
+        "value": "1550px"
+      },
+      {
+        "name": "compact-desktop",
+        "value": "1150px"
+      },
+      {
+        "name": "tablet",
+        "value": "900px"
+      },
+      {
+        "name": "mobile",
+        "value": "700px"
+      },
+      {
+        "name": "small-mobile",
+        "value": "370px"
+      },
+      {
+        "name": "preview-container",
+        "value": "700px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Forest action for committing to a choice.",
+      "html": "<button class=\"ds-button\">Let\u2019s go <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M7 17 17 7M7 7h10v10\"/></svg></button>",
+      "css": ".ds-button {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 12px;\n  min-height: 49px;\n  padding: 13px 24px;\n  border-radius: 7px;\n  background: var(--ink, #243b30);\n  color: var(--paper, #f6f6ef);\n  font-weight: 500;\n  transition:\n    background 0.2s,\n    transform 0.2s,\n    box-shadow 0.2s;\n}\n.ds-button:hover {\n  background: #36543f;\n  box-shadow: var(--elevation, 0 10px 30px #243b3010);\n}\n.ds-button{font-family:var(--body, \"DM Sans Variable\", sans-serif);font-size:15px;border:0;cursor:pointer;text-decoration:none}.ds-button:focus-visible{outline:2px solid #537a3c;outline-offset:4px;}.ds-button:active{transform:translateY(1px)}.ds-button:disabled{cursor:default;opacity:.5}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}"
+    },
+    {
+      "name": "Secondary action",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Outlined alternative action.",
+      "html": "<button class=\"ds-button ds-secondary\">Roll another</button>",
+      "css": ".ds-button {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 12px;\n  min-height: 49px;\n  padding: 13px 24px;\n  border-radius: 7px;\n  background: var(--ink, #243b30);\n  color: var(--paper, #f6f6ef);\n  font-weight: 500;\n  transition:\n    background 0.2s,\n    transform 0.2s,\n    box-shadow 0.2s;\n}\n.ds-button:hover {\n  background: #36543f;\n  box-shadow: var(--elevation, 0 10px 30px #243b3010);\n}\n.ds-button.ds-secondary {\n  background: transparent;\n  color: var(--ink, #243b30);\n  box-shadow: inset 0 0 0 1px #b9c2ae;\n}\n.ds-button.ds-secondary:hover {\n  background: #e9eddf;\n}\n.ds-button{font-family:var(--body, \"DM Sans Variable\", sans-serif);font-size:15px;border:0;cursor:pointer;text-decoration:none}.ds-button:focus-visible{outline:2px solid #537a3c;outline-offset:4px;}.ds-button:active{transform:translateY(1px)}.ds-button:disabled{cursor:default;opacity:.5}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}"
+    },
+    {
+      "name": "Escape action",
+      "kind": "button",
+      "refersTo": "button-escape",
+      "description": "Accent action for choosing one outing.",
+      "html": "<button class=\"ds-button ds-escape-button\">Give me a SideQuest <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M7 17 17 7M7 7h10v10\"/></svg></button>",
+      "css": ".ds-button {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 12px;\n  min-height: 49px;\n  padding: 13px 24px;\n  border-radius: 7px;\n  background: var(--ink, #243b30);\n  color: var(--paper, #f6f6ef);\n  font-weight: 500;\n  transition:\n    background 0.2s,\n    transform 0.2s,\n    box-shadow 0.2s;\n}\n.ds-button:hover {\n  background: #36543f;\n  box-shadow: var(--elevation, 0 10px 30px #243b3010);\n}\n.ds-escape-button {\n  margin-top: 22px;\n  background: var(--accent, #d9eb84);\n  color: var(--ink, #243b30);\n  padding: 16px 24px;\n  min-height: 55px;\n  gap: 36px;\n  font-size: 15px;\n  font-weight: 550;\n}\n.ds-escape-button:hover {\n  background: #cadd71;\n}\n.ds-button{font-family:var(--body, \"DM Sans Variable\", sans-serif);font-size:15px;border:0;cursor:pointer;text-decoration:none}.ds-button:focus-visible{outline:2px solid #537a3c;outline-offset:4px;}.ds-button:active{transform:translateY(1px)}.ds-button:disabled{cursor:default;opacity:.5}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}"
+    },
+    {
+      "name": "Icon action",
+      "kind": "button",
+      "refersTo": "button-icon",
+      "description": "Circular icon control, with a 44px default target.",
+      "html": "<button class=\"ds-icon-button\" aria-label=\"Save place\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M19 21l-7-4-7 4V3h14z\"/></svg></button>",
+      "css": ".ds-icon-button {\n  width: 44px;\n  min-width: 44px;\n  height: 44px;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  border-radius: 50%;\n  transition: background 0.2s;\n}\n.ds-icon-button:hover {\n  background: #e6eadc;\n}\n.ds-icon-button{border:0;background:none;color:var(--ink, #243b30);cursor:pointer}.ds-icon-button:focus-visible{outline:2px solid #537a3c;outline-offset:4px;}.ds-icon-button:active{transform:translateY(1px)}@media(prefers-reduced-motion:reduce){.ds-icon-button{transition:none}}"
+    },
+    {
+      "name": "Text field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "White editable surface used for names and notes.",
+      "html": "<label class=\"ds-field-label\">Collection name<input placeholder=\"My next detours\" /></label>",
+      "css": ".ds-field-label {\n  display: block;\n  font-size: 13px;\n  margin: 20px 0;\n}\n.ds-field-label input,\n.ds-field-label textarea {\n  display: block;\n  width: 100%;\n  background: #fff;\n  border: 1px solid var(--line, #dce0d5);\n  padding: 12px;\n  border-radius: 5px;\n  margin-top: 10px;\n  min-height: 48px;\n}\n.ds-field-label{font-family:var(--body, \"DM Sans Variable\", sans-serif);color:var(--ink, #243b30)}.ds-field-label input{font:inherit;max-width:100%;caret-color:#537a3c}.ds-field-label input:focus-visible{outline:2px solid #537a3c;outline-offset:4px;}"
+    },
+    {
+      "name": "Desktop navigation",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "Forest underline marks the current destination.",
+      "html": "<nav class=\"ds-desktop-nav\" aria-label=\"Main navigation\"><a class=\"ds-active\" aria-current=\"page\" href=\"#discover\">Discover</a><a href=\"#explore\">Explore</a><a href=\"#map\">Map</a><a href=\"#saved\">Saved</a></nav>",
+      "css": ".ds-desktop-nav {\n  display: flex;\n  align-items: center;\n  gap: 28px;\n  height: 100%;\n  margin-left: auto;\n}\n.ds-desktop-nav a {\n  position: relative;\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  font-size: 14px;\n  height: 100%;\n  color: var(--muted, #647064);\n}\n.ds-desktop-nav a.ds-active {\n  color: var(--ink, #243b30);\n  font-weight: 600;\n}\n.ds-desktop-nav a.ds-active:after {\n  content: \"\";\n  position: absolute;\n  bottom: 0;\n  height: 2px;\n  background: var(--ink, #243b30);\n  left: 0;\n  right: 0;\n}\n.ds-desktop-nav{height:90px;font-family:var(--body, \"DM Sans Variable\", sans-serif);border-bottom:1px solid var(--line, #dce0d5);margin-left:0}.ds-desktop-nav a{text-decoration:none}.ds-desktop-nav a:focus-visible{outline:2px solid #537a3c;outline-offset:4px;}"
+    },
+    {
+      "name": "Collection tab",
+      "kind": "chip",
+      "refersTo": "collection-tab",
+      "description": "Wrapping rectangular filter with a filled selected state.",
+      "html": "<div class=\"ds-collection-tabs\"><button class=\"ds-active\" aria-pressed=\"true\">All saved <span>4</span></button><button aria-pressed=\"false\">Weekend ideas</button></div>",
+      "css": ".ds-collection-tabs {\n  display: flex;\n  gap: 8px;\n  flex-wrap: wrap;\n  margin-top: 25px;\n}\n.ds-collection-tabs > button {\n  min-height: 44px;\n  border: 1px solid #d4dcc8;\n  display: flex;\n  align-items: center;\n  gap: 9px;\n  border-radius: 5px;\n  font-size: 12px;\n  padding: 10px 16px;\n}\n.ds-collection-tabs > button.ds-active {\n  background: var(--ink, #243b30);\n  color: var(--paper, #f6f6ef);\n  border-color: var(--ink, #243b30);\n}\n.ds-collection-tabs > button:not(.ds-active):hover {\n  background: #e5ebd9;\n}\n.ds-collection-tabs > button > span {\n  font-size: 10px;\n  opacity: 0.75;\n}\n.ds-collection-tabs{font-family:var(--body, \"DM Sans Variable\", sans-serif);color:var(--ink, #243b30)}.ds-collection-tabs>button{background:none;color:inherit;cursor:pointer}.ds-collection-tabs>button:focus-visible{outline:2px solid #537a3c;outline-offset:4px;}.ds-collection-tabs>button:active{transform:translateY(1px)}"
+    },
+    {
+      "name": "Place card with image fallback",
+      "kind": "card",
+      "refersTo": "place-card",
+      "description": "Open image-and-facts card; this specimen uses the real fallback treatment.",
+      "html": "<article class=\"ds-place-card\"><div class=\"ds-card-visual\"><a href=\"#place\" aria-label=\"View outing\"><div class=\"ds-fallback-content\"><svg width=\"48\" height=\"48\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\" aria-hidden=\"true\"><path d=\"M12 3 6 10h3l-5 7h16l-5-7h3zM12 17v5\"/></svg><span>Woodland walk</span><small>Photo unavailable</small></div></a><span class=\"ds-match-badge\">88% match</span></div><div class=\"ds-card-content\"><p class=\"ds-place-category\">Woodland walk</p><a class=\"ds-place-title\" href=\"#place\"><h3>A considered detour</h3><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M7 17 17 7M7 7h10v10\"/></svg></a><p class=\"ds-card-reason\">A quiet stretch of woodland with time to pause.</p><div class=\"ds-card-bottom\"><span>Journey estimate</span><span>Check before leaving</span></div></div></article>",
+      "css": ".ds-place-card {\n  min-width: 0;\n}\n.ds-card-visual {\n  position: relative;\n  aspect-ratio: 1.66;\n  border-radius: 10px;\n  overflow: hidden;\n  background: #d1d8bb;\n}\n.ds-card-visual > a {\n  display: block;\n  height: 100%;\n}\n.ds-fallback-content {\n  display: flex;\n  height: 100%;\n  align-items: center;\n  justify-content: center;\n  flex-direction: column;\n  gap: 14px;\n  color: #506343;\n  background: linear-gradient(130deg, #dce2c6, #b2c0a5);\n}\n.ds-fallback-content > span {\n  font-family: var(--display, \"Manrope Variable\", sans-serif);\n  font-size: 22px;\n  letter-spacing: -0.025em;\n  max-width: 80%;\n  text-align: center;\n}\n.ds-fallback-content > small {\n  font-size: 11px;\n  color: #526246;\n}\n.ds-match-badge {\n  position: absolute;\n  left: 14px;\n  top: 14px;\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  min-height: 27px;\n  font-size: 10px;\n  font-weight: 600;\n  background: var(--paper, #f6f6ef);\n  padding: 6px 9px;\n  border-radius: 4px;\n  color: var(--ink, #243b30);\n}\n.ds-card-content {\n  padding: 17px 1px 0;\n}\n.ds-place-category {\n  color: var(--muted, #647064);\n  font-size: 10px;\n  line-height: 1.5;\n}\n.ds-place-title {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  margin-top: 6px;\n  min-height: 36px;\n}\n.ds-place-title h3 {\n  font-size: 23px;\n  font-weight: 550;\n}\n.ds-place-title:hover {\n  color: #637d43;\n}\n.ds-card-reason {\n  font-size: 12px;\n  color: var(--muted, #647064);\n  line-height: 1.7;\n  margin-top: 16px;\n}\n.ds-card-bottom {\n  display: flex;\n  justify-content: space-between;\n  font-size: 10px;\n  color: var(--muted, #647064);\n  margin-top: 16px;\n  border-top: 1px solid var(--line, #dce0d5);\n  padding-top: 11px;\n  gap: 10px;\n}\n.ds-place-card{font-family:var(--body, \"DM Sans Variable\", sans-serif);color:var(--ink, #243b30)}.ds-place-card p,.ds-place-card h3{margin:0}.ds-place-card a{text-decoration:none;color:inherit}.ds-place-title h3{font-family:var(--display, \"Manrope Variable\", sans-serif)}.ds-place-card a:focus-visible{outline:2px solid #537a3c;outline-offset:4px;}"
+    },
+    {
+      "name": "Grouped refinement",
+      "kind": "custom",
+      "refersTo": "refinement",
+      "description": "Compact connected choices with internal separators.",
+      "html": "<div class=\"ds-quick-controls\"><label><select aria-label=\"Travel time\"><option>30 min away</option><option>60 min away</option></select></label><label><select aria-label=\"Available time\"><option>An hour</option><option>An afternoon</option></select></label><button aria-label=\"More preferences\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M7 17 17 7M7 7h10v10\"/></svg></button></div>",
+      "css": ".ds-quick-controls {\n  display: flex;\n  align-items: center;\n  border: 1px solid #d3d9c7;\n  border-radius: 8px;\n  width: max-content;\n  max-width: 100%;\n  padding: 0 3px;\n  background: #ffffff50;\n}\n.ds-quick-controls > label {\n  display: flex;\n  align-items: center;\n  gap: 7px;\n  padding: 0 10px;\n  position: relative;\n  min-height: 45px;\n}\n.ds-quick-controls > label + label:before {\n  content: \"\";\n  position: absolute;\n  height: 16px;\n  background: #d5ddc9;\n  width: 1px;\n  left: 0;\n}\n.ds-quick-controls select {\n  font-size: 12px;\n  padding: 0;\n  max-width: 112px;\n  font-weight: 450;\n}\n.ds-quick-controls > button {\n  min-height: 44px;\n  width: 39px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border-left: 1px solid var(--line, #dce0d5);\n}\n.ds-quick-controls > button.ds-selected {\n  background: var(--accent, #d9eb84);\n  border-radius: 0 6px 6px 0;\n}\n.ds-quick-controls{font-family:var(--body, \"DM Sans Variable\", sans-serif);color:var(--ink, #243b30)}.ds-quick-controls select,.ds-quick-controls button{border:0;background:none;color:inherit;cursor:pointer}.ds-quick-controls select:focus-visible,.ds-quick-controls button:focus-visible{outline:2px solid #537a3c;outline-offset:4px;}.ds-quick-controls button:active{transform:translateY(1px)}"
+    },
+    {
+      "name": "Place action panel",
+      "kind": "card",
+      "refersTo": "action-panel",
+      "description": "Tonal container for the next practical step.",
+      "html": "<aside class=\"ds-detail-action-panel\"><span class=\"ds-panel-label\">A little change of scene</span><h2>Make it a SideQuest.</h2><p>Check practical details before leaving.</p><button class=\"ds-button\">Get directions <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M7 17 17 7M7 7h10v10\"/></svg></button></aside>",
+      "css": ".ds-detail-action-panel {\n  align-self: start;\n  position: sticky;\n  top: 25px;\n  background: #e7ecda;\n  padding: 27px;\n  border-radius: 12px;\n}\n.ds-panel-label {\n  font-size: 11px;\n  color: #5b6c47;\n}\n.ds-detail-action-panel h2 {\n  font-size: 27px;\n  margin-top: 15px;\n}\n.ds-detail-action-panel > p:not(.ds-fine-print) {\n  font-size: 12px;\n  color: #5d6c4f;\n  margin: 18px 0;\n  display: flex;\n  gap: 7px;\n  align-items: center;\n}\n.ds-detail-action-panel .ds-button {\n  font-size: 13px;\n  margin-top: 10px;\n}\n.ds-button {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 12px;\n  min-height: 49px;\n  padding: 13px 24px;\n  border-radius: 7px;\n  background: var(--ink, #243b30);\n  color: var(--paper, #f6f6ef);\n  font-weight: 500;\n  transition:\n    background 0.2s,\n    transform 0.2s,\n    box-shadow 0.2s;\n}\n.ds-button:hover {\n  background: #36543f;\n  box-shadow: var(--elevation, 0 10px 30px #243b3010);\n}\n.ds-detail-action-panel{font-family:var(--body, \"DM Sans Variable\", sans-serif);color:var(--ink, #243b30);position:static}.ds-detail-action-panel h2{font-family:var(--display, \"Manrope Variable\", sans-serif);font-weight:600;letter-spacing:-.025em;line-height:1.25;margin-bottom:0}.ds-button{font-family:var(--body, \"DM Sans Variable\", sans-serif);font-size:15px;border:0;cursor:pointer;text-decoration:none}.ds-button:focus-visible{outline:2px solid #537a3c;outline-offset:4px;}.ds-button:active{transform:translateY(1px)}.ds-button:disabled{cursor:default;opacity:.5}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Editorial decision surface",
+    "overview": "Warm paper, forest ink and real place photography make choosing an outing feel considered and immediate. The interface is calm and practical: tightly tracked headings lead into compact facts, while the yellow-green accent brings one useful action forward. The forked-route mark gives the identity its own shape.\n\nPhotographs carry the sense of place. When a photograph is unavailable, the established category illustration and honest fallback label preserve the composition. Motion briefly reveals a decision or acknowledges an interaction; map atmosphere stays behind the controls.",
+    "keyCharacteristics": [
+      "Warm paper and forest ink with a restrained yellow-green action accent.",
+      "Manrope headings paired with DM Sans interface text.",
+      "Open image-led cards, fine dividers and compact practical facts.",
+      "A forked-route mark and one staged SideQuest reveal.",
+      "Responsive task controls with a fixed mobile navigation bar."
+    ],
+    "rules": [
+      {
+        "name": "Legible Accent",
+        "body": "Accent-filled actions use forest ink; forest-filled actions use warm paper.",
+        "section": "colors"
+      },
+      {
+        "name": "Quiet Surface",
+        "body": "Results remain open on the page; use tonal panels and fine dividers before adding container elevation.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** pair accent-filled actions with forest ink and forest-filled actions with warm paper.",
+      "**Do** keep outing imagery and practical facts together, including honest image and data fallbacks.",
+      "**Do** use the implemented radius roles and responsive overrides from this record.",
+      "**Do** preserve visible focus, reduced-motion behavior and mobile safe-area spacing.",
+      "**Do** reserve staged reveals for decisions and keep atmosphere behind map controls."
+    ],
+    "donts": [
+      "**Don't** replace the forked-route brand mark with a compass or map pin.",
+      "**Don't** turn open place cards into elevated dashboard panels.",
+      "**Don't** convert rectangular filters and fields into a universal pill shape.",
+      "**Don't** add perpetual decorative movement outside the bounded map atmosphere.",
+      "**Don't** style unknown information as a verified live fact."
+    ]
+  }
+}
