@@ -1,0 +1,43 @@
+{
+  "name": "sidequest",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 0.0.0.0",
+    "build": "next build",
+    "start": "next start --hostname 0.0.0.0",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build",
+    "format": "prettier --write src tests scripts *.ts *.mjs *.json",
+    "test:visual": "node scripts/visual-matrix.mjs",
+    "test:offline": "node scripts/offline-smoke.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/dm-sans": "^5.2.8",
+    "@fontsource-variable/manrope": "^5.2.8",
+    "lucide-react": "^0.577.0",
+    "maplibre-gl": "^5.20.0",
+    "next": "16.4.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "eslint": "^9.39.0",
+    "eslint-config-next": "16.4.0",
+    "prettier": "^3.9.9",
+    "sharp": "^0.35.5",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  }
+}
