@@ -1,4 +1,9 @@
-import type { LocalState, DiscoveryQuery } from "@/domain/models";
+import {
+  DEFAULT_QUERY,
+  type LocalState,
+  type DiscoveryQuery,
+  type Itinerary,
+} from "@/domain/models";
 export interface PreferenceStore {
   read(): LocalState;
   write(state: LocalState): boolean;
@@ -46,7 +51,33 @@ export function validatedPreferences(d: unknown): Partial<DiscoveryQuery> {
     )
       q[key] = p[key];
   }
+  if (
+    Array.isArray(p.childrenAges) &&
+    p.childrenAges.length <= 8 &&
+    p.childrenAges.every(
+      (age) =>
+        typeof age === "number" &&
+        Number.isInteger(age) &&
+        age >= 0 &&
+        age <= 17,
+    )
+  ) {
+    q.childrenAges = [...p.childrenAges];
+  }
   const enums = {
+    activity: [
+      "any",
+      "soft-play",
+      "playground",
+      "museum",
+      "cinema",
+      "animals",
+      "gardens",
+      "climbing",
+      "swimming",
+      "food",
+      "walk",
+    ],
     company: ["solo", "couple", "family", "friends"],
     intent: [
       "any",
@@ -159,6 +190,10 @@ export class LocalPersistence implements PreferenceStore {
                 ),
             )
             .slice(0, 30)
+            .map((plan: Itinerary) => ({
+              ...plan,
+              query: { ...DEFAULT_QUERY, ...validatedPreferences(plan.query) },
+            }))
         : [];
       this.memory = state;
       return state;

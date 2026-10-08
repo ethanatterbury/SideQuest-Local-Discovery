@@ -14,7 +14,6 @@ import {
   Map as MapIcon,
 } from "lucide-react";
 import { useApp } from "@/components/providers";
-import { PLACES } from "@/providers/places";
 import { rankPlaces } from "@/domain/discovery";
 import { PlaceCard } from "@/features/discover/place-card";
 import { PlaceImage } from "@/components/primitives";
@@ -23,6 +22,7 @@ import { WeatherAtmosphere } from "./weather-atmosphere";
 import { isDark } from "@/domain/time";
 import { directionsUrl } from "@/providers/routing";
 import type { Coordinates, Itinerary, Place } from "@/domain/models";
+import { RasterMap, type RasterHandle } from "./raster-map";
 function circle(center: Coordinates, km: number) {
   return Array.from({ length: 65 }, (_, i) => {
     const angle = (i / 64) * Math.PI * 2;
@@ -34,10 +34,10 @@ function circle(center: Coordinates, km: number) {
   });
 }
 export function MapView({ itinerary }: { itinerary?: Itinerary }) {
-  const { env, query, state, setLocation } = useApp();
+  const { places: catalog, env, query, state, setLocation } = useApp();
   const ranked = useMemo(
-    () => rankPlaces(PLACES, query, env, state),
-    [query, env, state],
+    () => rankPlaces(catalog, query, env, state),
+    [catalog, query, env, state],
   );
   const [selectedId, setSelectedId] = useState(""),
     [failed, setFailed] = useState(false),
@@ -45,6 +45,8 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
     [moved, setMoved] = useState(false),
     [sheetOpen, setSheetOpen] = useState(false);
   const [center, setCenter] = useState<Coordinates>(env.location);
+  const raster = useRef<RasterHandle>(null);
+  const [rasterAvailable, setRasterAvailable] = useState(true);
   const container = useRef<HTMLDivElement>(null),
     map = useRef<maplibregl.Map | null>(null),
     originMarker = useRef<maplibregl.Marker | null>(null);
@@ -53,22 +55,32 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
     ? ranked.find((r) => r.place.id === selectedId)
     : ranked[0];
   const activePlace =
-    PLACES.find((p) => p.id === selectedId) || selected?.place;
+    catalog.find((p) => p.id === selectedId) || selected?.place;
+  const urlSelectionHandled = useRef(false);
   useEffect(() => {
+    if (urlSelectionHandled.current) return;
+    if (selectedId) {
+      urlSelectionHandled.current = true;
+      return;
+    }
     const id = new URLSearchParams(window.location.search).get("place");
-    if (id && PLACES.some((p) => p.id === id)) setSelectedId(id);
-  }, []);
+    if (!id) urlSelectionHandled.current = true;
+    else if (catalog.some((p) => p.id === id)) {
+      urlSelectionHandled.current = true;
+      setSelectedId(id);
+    }
+  }, [catalog, selectedId]);
   const failure = env.failures.includes("map");
   const visible = useMemo(() => {
     const eligible = ranked.map((r) => r.place);
     return [
       ...eligible,
-      ...PLACES.filter(
+      ...catalog.filter(
         (p) =>
           state.saved.includes(p.id) || state.visits.some((v) => v.id === p.id),
       ),
     ].filter((p, i, a) => a.findIndex((x) => x.id === p.id) === i);
-  }, [ranked, state]);
+  }, [catalog, ranked, state]);
   useEffect(() => {
     if (failure) {
       setFailed(true);
@@ -322,12 +334,6 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
             ]
           : [],
     });
-    if (activePlace)
-      m.easeTo({
-        center: [activePlace.coordinates.lng, activePlace.coordinates.lat],
-        duration: env.reducedMotion ? 0 : 800,
-        zoom: 11,
-      });
   }, [
     activePlace?.id,
     env.location,
@@ -336,6 +342,16 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
     env.reducedMotion,
     activePlace,
   ]);
+  const activeLat = activePlace?.coordinates.lat;
+  const activeLng = activePlace?.coordinates.lng;
+  useEffect(() => {
+    if (activeLat !== undefined && activeLng !== undefined && loaded)
+      map.current?.easeTo({
+        center: [activeLng, activeLat],
+        duration: env.reducedMotion ? 0 : 800,
+        zoom: 11,
+      });
+  }, [activePlace?.id, activeLat, activeLng, loaded, env.reducedMotion]);
   useEffect(() => {
     originMarker.current?.setLngLat([env.location.lng, env.location.lat]);
     map.current?.easeTo({
@@ -504,7 +520,27 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
           className={`map-canvas ${failed ? "map-hidden" : ""}`}
           aria-label="Interactive map of nearby places"
         />
-        {failed && (
+        {failed && !failure && (
+          <RasterMap
+            ref={raster}
+            places={visible}
+            origin={env.location}
+            selected={activePlace}
+            saved={state.saved}
+            itinerary={itinerary}
+            radiusKm={
+              query.travel * (query.travelMode === "walk" ? 0.06 : 0.45)
+            }
+            night={night}
+            onSelect={setSelectedId}
+            onMove={(c) => {
+              setCenter(c);
+              setMoved(true);
+            }}
+            onAvailable={setRasterAvailable}
+          />
+        )}
+        {failed && (failure || !rasterAvailable) && (
           <GeographicFallback
             items={visible.map((place) => ({
               place,
@@ -519,7 +555,9 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
         <div className="map-status">
           <Layers size={15} />
           {failed
-            ? "Location overview · map unavailable"
+            ? !failure && rasterAvailable
+              ? "Street map · your next detour"
+              : "Location overview · map unavailable"
             : loaded
               ? "Your next detour"
               : "Opening the map…"}
@@ -527,21 +565,26 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
         <div className="map-controls">
           <button
             aria-label="Zoom in"
-            onClick={() => map.current?.zoomIn()}
-            disabled={failed}
+            onClick={() =>
+              failed ? raster.current?.zoomIn() : map.current?.zoomIn()
+            }
+            disabled={failure || (failed && !rasterAvailable)}
           >
             <Plus size={20} />
           </button>
           <button
             aria-label="Zoom out"
-            onClick={() => map.current?.zoomOut()}
-            disabled={failed}
+            onClick={() =>
+              failed ? raster.current?.zoomOut() : map.current?.zoomOut()
+            }
+            disabled={failure || (failed && !rasterAvailable)}
           >
             <Minus size={20} />
           </button>
           <button
             aria-label="Return to starting location"
             onClick={() => {
+              if (failed) raster.current?.home();
               map.current?.easeTo({
                 center: [env.location.lng, env.location.lat],
                 zoom: 10.5,
@@ -552,7 +595,7 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
             <LocateFixed size={19} />
           </button>
         </div>
-        {moved && !failed && (
+        {moved && (!failed || (!failure && rasterAvailable)) && (
           <button
             className="button search-area"
             onClick={() => {

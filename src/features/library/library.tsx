@@ -12,11 +12,10 @@ import {
 } from "lucide-react";
 import { useApp } from "@/components/providers";
 import { EmptyState, PlaceImage, Modal } from "@/components/primitives";
-import { PLACES } from "@/providers/places";
 import { ItineraryDialog } from "@/features/itinerary/itinerary";
 import type { Itinerary } from "@/domain/models";
 export function Library({ history = false }: { history?: boolean }) {
-  const { state, update, toast } = useApp();
+  const { places: catalog, state, update, toast } = useApp();
   const [collection, setCollection] = useState("all"),
     [creating, setCreating] = useState(false),
     [name, setName] = useState(""),
@@ -27,7 +26,7 @@ export function Library({ history = false }: { history?: boolean }) {
       ? state.saved
       : state.collections.find((c) => c.id === collection)?.places || [];
   const places = ids
-    .map((id) => PLACES.find((p) => p.id === id))
+    .map((id) => catalog.find((p) => p.id === id))
     .filter((p) => !!p);
   const visits = state.visits;
   const miles = Math.round(

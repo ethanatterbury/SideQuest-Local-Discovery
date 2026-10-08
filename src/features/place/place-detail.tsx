@@ -18,19 +18,19 @@ import {
 } from "lucide-react";
 import { PlaceImage, Modal, shareUrl } from "@/components/primitives";
 import { useApp } from "@/components/providers";
-import { PLACES } from "@/providers/places";
 import { rankPlaces, openingStatus } from "@/domain/discovery";
 import { estimatedRouting, directionsUrl } from "@/providers/routing";
 import { durationLabel, addMinutes, formatTime } from "@/domain/time";
 import { PlaceCard } from "@/features/discover/place-card";
 import { track } from "@/providers/analytics";
 import type { Place, Reaction } from "@/domain/models";
-export function PlaceDetail({ place }: { place: Place }) {
-  const { env, query, state, update, toast } = useApp();
+export function PlaceDetail({ place: initialPlace }: { place: Place }) {
+  const { places: catalog, env, query, state, update, toast } = useApp();
+  const place = catalog.find((p) => p.id === initialPlace.id) || initialPlace;
   const [visit, setVisit] = useState(false),
     [dismiss, setDismiss] = useState(false);
   const saved = state.saved.includes(place.id);
-  const ranking = rankPlaces(PLACES, query, env, state),
+  const ranking = rankPlaces(catalog, query, env, state),
     item = ranking.find((r) => r.place.id === place.id);
   const route = estimatedRouting.estimate(
     env.location,
@@ -189,7 +189,7 @@ export function PlaceDetail({ place }: { place: Place }) {
                 . Cropped for display.{" "}
                 {place.image.license.startsWith("CC BY") && (
                   <a
-                    href={`https://creativecommons.org/licenses/${place.image.license.includes("SA") ? "by-sa" : "by"}/${place.image.license.includes("3.0") ? "3.0" : "2.0"}/`}
+                    href={`https://creativecommons.org/licenses/${place.image.license.includes("SA") ? "by-sa" : "by"}/${place.image.license.includes("4.0") ? "4.0" : place.image.license.includes("3.0") ? "3.0" : "2.0"}/`}
                     target="_blank"
                     rel="noreferrer"
                   >

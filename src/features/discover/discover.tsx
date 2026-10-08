@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 import { useApp } from "@/components/providers";
 import { PlaceImage, EmptyState } from "@/components/primitives";
-import { PLACES } from "@/providers/places";
 import { TOWNS } from "@/providers/geocoding";
 import { rankPlaces, parseIntent } from "@/domain/discovery";
 import { contextualHeadline } from "@/domain/environment";
@@ -52,12 +51,25 @@ const moods: { label: string; sub: string; intent: Intent; place: string }[] = [
   },
 ];
 export function Discover({ explore = false }: { explore?: boolean }) {
-  const { env, query, setQuery, state, setLocation, ready } = useApp();
+  const {
+    places: catalog,
+    placesStatus,
+    placesMessage,
+    refreshPlaces,
+    env,
+    query,
+    setQuery,
+    state,
+    setLocation,
+    ready,
+  } = useApp();
   const [signature, setSignature] = useState<"escape" | "surprise" | null>(
       null,
     ),
     [plan, setPlan] = useState(false),
     [collection, setCollection] = useState("Good right now");
+  const [visibleCount, setVisibleCount] = useState(12);
+  useEffect(() => setVisibleCount(12), [query, collection]);
   const effective = useMemo(() => {
     let q = query;
     if (query.text) q = parseIntent(query.text, query);
@@ -69,8 +81,8 @@ export function Discover({ explore = false }: { explore?: boolean }) {
     return q;
   }, [query, collection]);
   const ranked = useMemo(
-    () => rankPlaces(PLACES, effective, env, state),
-    [effective, env, state],
+    () => rankPlaces(catalog, effective, env, state),
+    [catalog, effective, env, state],
   );
   const nameMatches = query.text
     ? ranked.filter((r) =>
@@ -93,12 +105,10 @@ export function Discover({ explore = false }: { explore?: boolean }) {
   function choose(intent: Intent) {
     setQuery({ ...query, intent });
     setCollection("Good right now");
-    document
-      .getElementById("your-options")
-      ?.scrollIntoView({
-        behavior: env.reducedMotion ? "instant" : "smooth",
-        block: "start",
-      });
+    document.getElementById("your-options")?.scrollIntoView({
+      behavior: env.reducedMotion ? "instant" : "smooth",
+      block: "start",
+    });
   }
   return (
     <div className="discovery-page">
@@ -198,7 +208,7 @@ export function Discover({ explore = false }: { explore?: boolean }) {
               </div>
               <div className="mood-grid">
                 {moods.map((m) => {
-                  const p = PLACES.find((p) => p.id === m.place)!;
+                  const p = catalog.find((p) => p.id === m.place)!;
                   return (
                     <button
                       key={m.intent}
@@ -313,7 +323,9 @@ export function Discover({ explore = false }: { explore?: boolean }) {
               </h2>
               <p>
                 {results.length
-                  ? "A short list. Because the point is to choose."
+                  ? explore
+                    ? `${results.length} ideas that fit your preferences.`
+                    : "A few strong ideas. Browse more whenever you like."
                   : "Your preferences are doing the filtering."}
               </p>
             </div>
@@ -330,9 +342,20 @@ export function Discover({ explore = false }: { explore?: boolean }) {
               Clear mood: {query.intent} ×
             </button>
           )}
+          <div className="discovery-source" role="status">
+            <span
+              className={`tiny-dot ${placesStatus === "loading" ? "loading-dot" : ""}`}
+            />
+            {placesMessage || "Curated places while we find more nearby."}
+            {placesStatus === "fallback" && (
+              <button className="text-link" onClick={refreshPlaces}>
+                Try live discovery again
+              </button>
+            )}
+          </div>
           {results.length ? (
             <div className="results-grid">
-              {results.slice(0, explore ? 5 : 3).map((r) => (
+              {results.slice(0, explore ? visibleCount : 3).map((r) => (
                 <PlaceCard key={r.place.id} item={r} />
               ))}
             </div>
@@ -366,6 +389,19 @@ export function Discover({ explore = false }: { explore?: boolean }) {
             ~ Journey times are estimates · Opening times and admission need
             checking
           </p>
+          {results.length > (explore ? visibleCount : 3) &&
+            (explore ? (
+              <button
+                className="button secondary browse-more"
+                onClick={() => setVisibleCount((n) => n + 12)}
+              >
+                Show 12 more ideas <ArrowRight size={17} />
+              </button>
+            ) : (
+              <Link className="text-link browse-more" href="/explore">
+                Browse all {results.length} ideas <ArrowRight size={17} />
+              </Link>
+            ))}
         </section>
         <section className="plan-strip">
           <div>

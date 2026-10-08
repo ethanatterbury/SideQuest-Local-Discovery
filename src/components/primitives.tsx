@@ -8,6 +8,9 @@ import {
   Mountain,
   ArrowUpRight,
 } from "lucide-react";
+import Image from "next/image";
+import { useApp } from "@/components/providers";
+import { findPlacePhoto } from "@/providers/photo-client";
 import type { Place } from "@/domain/models";
 export function Mark() {
   return (
@@ -37,7 +40,33 @@ export function PlaceImage({
   className?: string;
   priority?: boolean;
 }) {
+  const { places, rememberPhoto } = useApp();
+  const image = places.find((p) => p.id === place.id)?.image || place.image;
+  const container = useRef<HTMLDivElement>(null);
+  const [looking, setLooking] = useState(false);
   const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    if (image || !container.current) return;
+    let cancelled = false;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        observer.disconnect();
+        setLooking(true);
+        findPlacePhoto(place).then((photo) => {
+          if (cancelled) return;
+          if (photo) rememberPhoto(place.id, photo);
+          setLooking(false);
+        });
+      },
+      { rootMargin: "250px" },
+    );
+    observer.observe(container.current);
+    return () => {
+      cancelled = true;
+      observer.disconnect();
+    };
+  }, [place, image, rememberPhoto]);
   useEffect(() => setFailed(false), [place.id]);
   const Icon =
     place.category.includes("lake") || place.id === "virginia-water"
@@ -49,17 +78,20 @@ export function PlaceImage({
           : Trees;
   return (
     <div
-      className={`place-image ${className} ${!place.image || failed ? "image-fallback" : ""}`}
+      ref={container}
+      className={`place-image ${className} ${!image || failed ? "image-fallback" : ""}`}
       style={{
         backgroundColor: place.environment === "indoor" ? "#dad5c2" : "#ccd3b4",
       }}
     >
-      {place.image && !failed ? (
-        <img
-          src={place.image.url}
+      {image && !failed ? (
+        <Image
+          src={image.url}
+          unoptimized={!image.url.startsWith("https://upload.wikimedia.org/")}
+          sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 800px"
           alt={place.name}
-          width="1280"
-          height="800"
+          width={1280}
+          height={800}
           loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? "high" : "auto"}
           decoding="async"
@@ -69,7 +101,13 @@ export function PlaceImage({
         <div className="fallback-content">
           <Icon size={48} strokeWidth={1} />
           <span>{place.category}</span>
-          <small>{failed ? "Photo unavailable" : place.area}</small>
+          <small>
+            {looking
+              ? "Finding a photo…"
+              : failed
+                ? "Photo unavailable"
+                : place.area}
+          </small>
         </div>
       )}
     </div>

@@ -1,4 +1,12 @@
-# SideQuest v1 verification
+# SideQuest live discovery verification
+
+Checked 8 October 2026. ESLint, strict TypeScript, 63 unit/provider tests and the production build pass. All 19 browser flows pass, including pagination, live detail/save/reload, child ages, automatic photo caching, shared-origin catalogue loading and map selection/camera preservation during delayed photo responses. The raster-map browser test disables WebGL, serves fixture street tiles, checks zoom controls, heavy rain, midnight styling and mobile overflow. Fixture tests isolate behavior from public service availability.
+
+The production offline smoke passes for the Lab guard, manifest, saved/history and uncached navigation recovery. A fresh code review found and cleared corrections for shared live afternoons, URL selection and camera movement on photo arrival. Real hosted provider and map verification is recorded separately after deployment.
+
+The original v1 visual matrix and measurements below predate these new live features; they remain historical evidence rather than new performance measurements.
+
+# Original v1 verification
 
 Checked 7 October 2026 against the final implementation.
 

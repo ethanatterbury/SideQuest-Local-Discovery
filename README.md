@@ -2,7 +2,7 @@
 
 **Stop scrolling. Go somewhere.**
 
-A local-first discovery app that turns a little context into a few considered outings. Built in Next.js App Router, React and strict TypeScript, with original editorial UI, MapLibre, locally packaged place photography, deterministic ranking and a development Environment Lab.
+A local-first discovery app that turns a little context into a few considered outings. Built in Next.js App Router, React and strict TypeScript, with original editorial UI, MapLibre and a Leaflet street-map fallback, free live place discovery, automatic credited photography, deterministic ranking and a development Environment Lab.
 
 ## Run it
 
@@ -24,11 +24,11 @@ npm start
 
 ## What is built
 
-- Discover with optional company, time, travel, money, environment and walking/driving refinement. Three normal options, up to five editorial Explore options.
+- Discover with optional company, time, travel, money, environment and walking/driving refinement. Three focused recommendations; Explore loads twelve ideas at a time with more available. Family refinement includes optional children’s ages and outing types such as soft play, playgrounds, museums and animals.
 - Get me out of the house and context-filtered Surprise Me. Novelty changes the score rather than randomly selecting unsuitable places. Roll another cycles through eligible options without repetition.
 - Build my afternoon: door-to-door itinerary, nearby compatible stops, return travel, daylight, opening windows, budget and optional food-break allowance. Regenerate, shorten, cheapen, increase novelty, delay, save and share.
-- Map with clustered vector points, selection-linked results, saved/visited indicators, travel radius, estimated links, explicit search-this-area action, mobile sheet, card swipe and restrained weather overlays. Live providers failing leaves a coordinate overview and accessible result list.
-- Thirty real places in Surrey, Berkshire and Hampshire; ten locally packaged Wikimedia photos. Places without sourced imagery have intentional artwork rather than unrelated stock. Public detail pages include practical uncertainty, official sources, alternatives, collections, reactions, notes, directions and share URLs.
+- Map with clustered vector points, selection-linked results, saved/visited indicators, travel radius, estimated links, explicit search-this-area action, mobile sheet, card swipe and restrained weather overlays. Browsers without WebGL use Leaflet and OpenStreetMap street tiles. If both map services fail, a coordinate overview and accessible result list remain available.
+- Thirty curated places remain available offline, supplemented by up to 300 nearby OpenStreetMap venues per query and an archive of recent areas. Ten licensed local photos remain packaged; visible places without imagery automatically request a matching Wikimedia photo. Missing or uncertain matches retain honest placeholders. Public detail pages include practical uncertainty, official sources, alternatives, collections, reactions, notes, directions and share URLs.
 - Saved library, custom collections, visual visit history and estimate-based travel statistics. No account wall.
 - PWA manifest, ownable forked-route mark, maskable and iOS icons, offline shell, cached assets, saved/history access and install guidance.
 - Private Environment Lab, normalized providers, analytics event boundary, automated domain and browser tests, CI and visual matrix tooling.
@@ -83,7 +83,7 @@ Viewport matrix: 320×568, 390×844, 430×932, 360×780, 844×390, 768×1024, 10
 ## Architecture
 
 - `src/domain`: portable normalized models and pure discovery, timing, itinerary and environment functions.
-- `src/providers`: curated places, Open-Meteo weather, geocoding, estimated routing, safe persistence and optional analytics.
+- `src/providers`: curated and live OpenStreetMap places, Wikimedia photography, Open-Meteo weather, geocoding, estimated routing, safe persistence and optional analytics.
 - `src/components`: environment/local-state boundaries, semantic dialog primitives, location picker and responsive shell.
 - `src/features`: discover, place, itinerary, map, saved/history and Lab.
 - `src/app`: server layouts, metadata, route shells, static public place pages, manifest and OpenGraph image.
@@ -97,7 +97,7 @@ Hard exclusions precede scoring: travel, minimum visit plus return journey, know
 
 ### Data and factual limits
 
-The launch dataset contains real places and editorial durations/suitability. Provider expansion and actual live events are intentionally not claimed. Most venue prices and hours remain unknown, so check links before going. FAST museum's regular Saturday/Sunday 10am–4pm schedule was checked against its official site on 7 October 2026; holidays need separate checking. Other factual details are deliberately conservative and need ongoing editorial verification. Free entry excludes parking, food and optional activities.
+The launch dataset contains real places and editorial durations/suitability. Nearby venue expansion uses the free Overpass API with two mirrors, bounded category-balanced queries and caching. Public service capacity and regional coverage vary; failure retains curated and cached places. Live events are not claimed. Most venue prices and hours remain unknown, so check links before going. Children’s ages exclude explicitly tagged age limits; unverified suitability remains labelled as needing a venue check. FAST museum's regular Saturday/Sunday 10am–4pm schedule was checked against its official site on 7 October 2026; holidays need separate checking. Other factual details are deliberately conservative and need ongoing editorial verification. Free entry excludes parking, food and optional activities.
 
 Travel estimates use haversine distance, a road-distance allowance, typical speed and five-minute rounding. Map lines connect coordinates and are **not road routes**; directions open Apple or Google Maps. A food stop reserves time and an allowance rather than inventing a venue or reservation. Unknown ticket prices make the itinerary budget explicitly unverified. Budgets and food allowances are per person.
 
@@ -107,12 +107,16 @@ Weather uses Open-Meteo's current and hourly/daily forecast, validates core fiel
 
 Import `ethanatterbury/SideQuest-Local-Discovery` as a Next.js project. Root directory: repository root. Install: `npm ci`. Build: `npm run build`. Use Node 24. Set `NEXT_PUBLIC_SITE_URL` to the deployment origin for absolute metadata. No database integration is necessary. The Lab flag is optional for private preview builds. Map/weather APIs are requested by the browser and require those public services to be reachable; failures degrade safely.
 
+### Automatic photos
+
+The server looks up Wikidata, Wikipedia and Wikimedia Commons using the venue name and coordinates. A photo must match the subject and location, have usable landscape dimensions and an accepted reuse licence. Responses include source, author and licence credits. Lookups have deadlines, concurrency limits and positive/negative caches; verified results persist with the browser’s place archive. The image optimizer accepts only Wikimedia Commons uploads. No Google Places key, paid image search or manually maintained per-venue photo mapping is required. Free Wikimedia coverage cannot supply a verified photo for every commercial venue.
+
 ### Production Upgrade Options
 
 - Review the hosted Open-Meteo API's commercial-use terms and throughput for a public commercial deployment; use an appropriate plan or compliant replacement. Its normalized adapter is isolated.
 - OpenFreeMap is the no-key development vector default. For predictable production capacity use a contracted vector provider or self-host a licensed style/tiles, supplying `NEXT_PUBLIC_MAP_STYLE`. Retain attribution and compatible glyph/sprite sources.
 - Add a verified routing adapter for actual road/time/traffic data. Estimated links remain visibly distinct until configured.
-- Expand curated content through a normalized places provider and an editorial source/licence review. Verify admission, opening schedules, accessibility and imagery routinely. An account-backed image store is optional, not required.
+- For further coverage, extend the existing normalized OpenStreetMap places and Wikimedia image providers with an appropriate source/licence review. Verify admission, opening schedules, accessibility and imagery routinely. An account-backed image store is optional, not required.
 - Optional analytics plugs into the no-op provider. Collect only needed events with consent appropriate to the chosen provider; no third-party analytics is installed.
 
 ### Future cloud migration

@@ -96,10 +96,29 @@ export type Place = {
   notes: string[];
   image?: { url: string; credit: string; license: string; source: string };
   season?: number[];
+  /** Only populate from verified venue age guidance. */
+  ageRange?: [number, number];
+  familyFeatures?: string[];
+  wikidata?: string;
+  wikipedia?: string;
 };
+export type Activity =
+  | "any"
+  | "soft-play"
+  | "playground"
+  | "museum"
+  | "cinema"
+  | "animals"
+  | "gardens"
+  | "climbing"
+  | "swimming"
+  | "food"
+  | "walk";
 export type DiscoveryQuery = {
+  activity?: Activity;
   intent: Intent;
   company: Company;
+  childrenAges?: number[];
   minutes: number;
   travel: number;
   budget: number;

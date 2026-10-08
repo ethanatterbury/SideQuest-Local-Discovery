@@ -474,7 +474,7 @@ const seeds: Seed[] = [
   ],
   [
     "red-kangaroo",
-    "RedKangaroo Reading",
+    "Oxygen Reading",
     "Reading, Berkshire",
     51.464,
     -1.02,
@@ -487,12 +487,12 @@ const seeds: Seed[] = [
     "Book & check tickets",
     0.6,
     false,
-    "https://redkangaroo.co.uk/",
+    "https://oxygenactiveplay.co.uk/activity-parks/reading/",
     "Trade sitting still for something considerably more energetic.",
   ],
   [
     "craggy",
-    "Craggy Island",
+    "Blue Spider Climbing",
     "Guildford, Surrey",
     51.261,
     -0.587,
@@ -505,7 +505,7 @@ const seeds: Seed[] = [
     "Check booking & induction",
     0.85,
     false,
-    "https://www.craggy-island.com/",
+    "https://spiderclimbing.com/blue-spider/",
     "A climbing session beats another evening on the sofa. Check induction requirements.",
   ],
   [

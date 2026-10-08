@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import { Modal, EmptyState, shareUrl } from "@/components/primitives";
 import { useApp } from "@/components/providers";
-import { PLACES } from "@/providers/places";
 import { buildItinerary } from "@/domain/itinerary";
 import { formatTime, addMinutes, durationLabel } from "@/domain/time";
 import { track } from "@/providers/analytics";
@@ -29,7 +28,7 @@ export function ItineraryDialog({
   onClose: () => void;
   initial?: Itinerary;
 }) {
-  const { env, query, state, update, toast } = useApp();
+  const { places: catalog, env, query, state, update, toast } = useApp();
   const initialFood = initial
     ? initial.stops.some((stop) => stop.type === "break")
     : true;
@@ -48,7 +47,7 @@ export function ItineraryDialog({
       food === initialFood
         ? initial
         : buildItinerary(
-            PLACES,
+            catalog,
             settings,
             { ...env, location: initial?.origin || env.location },
             state,
@@ -58,7 +57,7 @@ export function ItineraryDialog({
               start: addMinutes(initial?.start || env.now, later),
             },
           ),
-    [env, settings, state, food, skip, later, initial, initialFood],
+    [catalog, env, settings, state, food, skip, later, initial, initialFood],
   );
   function save() {
     if (!plan) return;
@@ -209,7 +208,7 @@ export function ItineraryDialog({
                           ? "With the rest of the day still yours."
                           : stop.type === "break"
                             ? `A ${stop.minutes} min break. ${stop.cost ? `£${stop.cost} allowance, not a quoted venue price.` : "Bring your own food."}`
-                            : `${stop.minutes} min to explore · ${PLACES.find((p) => p.id === stop.placeId)?.costLabel}`}
+                            : `${stop.minutes} min to explore · ${catalog.find((p) => p.id === stop.placeId)?.costLabel}`}
                     </p>
                     {stop.placeId && (
                       <Link

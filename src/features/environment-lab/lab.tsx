@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { useApp } from "@/components/providers";
 import { TOWNS } from "@/providers/geocoding";
-import { PLACES } from "@/providers/places";
 import { rankPlaces } from "@/domain/discovery";
 import { Discover } from "@/features/discover/discover";
 import { LazyMap } from "@/features/map/lazy-map";
@@ -55,14 +54,21 @@ const failures: { id: Failure; label: string }[] = [
   { id: "offline", label: "Offline" },
 ];
 export function EnvironmentLab() {
-  const { env, overrides, setOverrides, query, state } = useApp();
+  const {
+    places: catalog,
+    env,
+    overrides,
+    setOverrides,
+    query,
+    state,
+  } = useApp();
   const [preview, setPreview] = useState<"discover" | "map">("map"),
     [locationOpen, setLocationOpen] = useState(false),
     [lat, setLat] = useState(String(env.location.lat)),
     [lng, setLng] = useState(String(env.location.lng));
   const set = (patch: Partial<EnvironmentOverrides>) =>
     setOverrides({ ...overrides, ...patch });
-  const ranked = rankPlaces(PLACES, query, env, state);
+  const ranked = rankPlaces(catalog, query, env, state);
   return (
     <div className="lab-page">
       <div className="lab-top">

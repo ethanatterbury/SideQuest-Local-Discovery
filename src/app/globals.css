@@ -3989,3 +3989,24 @@ textarea {
     margin-top: 8px;
   }
 }
+
+/* Flexible outing and family choices stay close to the primary controls. */
+.activity-filter { margin-top: 12px; }
+.activity-filter label { display:flex; align-items:center; gap:12px; font-size:12px; color:var(--muted); }
+.activity-filter select, .family-ages select { border:1px solid var(--line); border-radius:6px; padding:9px 12px; background:var(--paper); color:var(--ink); max-width:100%; min-width:0; }
+.family-ages { border:1px solid var(--line); border-radius:8px; margin:16px 0 0; padding:14px; min-width:0; }
+.family-ages legend { font-size:13px; font-weight:650; padding:0 6px; }
+.family-ages p { font-size:12px; color:var(--muted); margin:4px 0 12px; }
+.child-age-row { display:flex; align-items:flex-end; gap:12px; margin:10px 0; }
+.child-age-row label { flex:1; display:flex; flex-direction:column; gap:6px; font-size:12px; min-width:0; }
+.child-age-row .button, .family-age-actions .button { padding:10px 12px; min-height:40px; font-size:12px; }
+.family-age-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.discovery-source { font-size:12px; line-height:1.6; color:var(--muted); display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 18px; }
+.discovery-source .text-link { font-size:12px; margin-left:auto; }
+.browse-more { display:inline-flex; margin-top:24px; gap:8px; align-items:center; }
+.raster-map { position:absolute; inset:0; z-index:0; background:#e5eadb; }
+.raster-map .leaflet-control-attribution { font-size:9px; background:rgba(246,246,239,.94); }
+.raster-map.raster-night .leaflet-tile-pane { filter:brightness(.65) saturate(.6); }
+.raster-map .leaflet-tooltip { background:var(--paper); color:var(--ink); font-family:inherit; }
+.geographic-fallback { z-index:1; }
+@media(max-width:640px) { .activity-filter label { align-items:flex-start; flex-direction:column; gap:6px; } .activity-filter select { width:100%; } .child-age-row { gap:8px; } .discovery-source .text-link { margin-left:0; } }

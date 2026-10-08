@@ -13,7 +13,6 @@ import {
 import { Modal, PlaceImage, EmptyState } from "@/components/primitives";
 import { useApp } from "@/components/providers";
 import { rankPlaces } from "@/domain/discovery";
-import { PLACES } from "@/providers/places";
 import { track } from "@/providers/analytics";
 export function Signature({
   surprise,
@@ -22,11 +21,11 @@ export function Signature({
   surprise: boolean;
   onClose: () => void;
 }) {
-  const { env, query, state, update, toast } = useApp();
+  const { places: catalog, env, query, state, update, toast } = useApp();
   const [rolled, setRolled] = useState<string[]>([]),
     [revealing, setRevealing] = useState(true);
   const options = rankPlaces(
-    PLACES,
+    catalog,
     { ...query, mode: surprise ? "surprise" : "normal" },
     env,
     state,

@@ -13,6 +13,8 @@ import type { DiscoveryQuery } from "@/domain/models";
 export function Refinement({ expanded = false }: { expanded?: boolean }) {
   const { query, setQuery } = useApp();
   const [open, setOpen] = useState(expanded);
+  const [addingChild, setAddingChild] = useState(false);
+  const ages = query.childrenAges ?? [];
   const set = (patch: Partial<DiscoveryQuery>) =>
     setQuery({ ...query, ...patch });
   return (
@@ -76,6 +78,124 @@ export function Refinement({ expanded = false }: { expanded?: boolean }) {
           <SlidersHorizontal size={16} />
         </button>
       </div>
+      <div className="activity-filter">
+        <label>
+          Type of outing
+          <select
+            aria-label="Type of outing"
+            value={query.activity ?? "any"}
+            onChange={(event) =>
+              set({
+                activity: event.target.value as DiscoveryQuery["activity"],
+              })
+            }
+          >
+            {[
+              ["any", "All outings"],
+              ["soft-play", "Soft play"],
+              ["playground", "Playgrounds"],
+              ["museum", "Museums & galleries"],
+              ["cinema", "Cinema"],
+              ["animals", "Animals & aquariums"],
+              ["gardens", "Gardens & parks"],
+              ["climbing", "Climbing"],
+              ["swimming", "Swimming"],
+              ["food", "Food & coffee"],
+              ["walk", "Walks"],
+            ].map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      {query.company === "family" && (
+        <fieldset className="family-ages">
+          <legend>Children’s ages</legend>
+          <p>
+            Optional: tailor ideas to your children. Check venue age guidance
+            before booking.
+          </p>
+          {ages.map((age, index) => (
+            <div className="child-age-row" key={index}>
+              <label>
+                Child {index + 1} age
+                <select
+                  aria-label={`Child ${index + 1} age`}
+                  value={age}
+                  onChange={(event) =>
+                    set({
+                      childrenAges: ages.map((value, i) =>
+                        i === index ? Number(event.target.value) : value,
+                      ),
+                    })
+                  }
+                >
+                  {Array.from({ length: 18 }, (_, value) => (
+                    <option key={value} value={value}>
+                      {value === 0 ? "Under 1" : `${value} years`}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                className="button secondary"
+                aria-label={`Remove child ${index + 1}`}
+                onClick={() =>
+                  set({ childrenAges: ages.filter((_, i) => i !== index) })
+                }
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+          {(addingChild || ages.length === 0) && ages.length < 8 && (
+            <div className="child-age-row">
+              <label>
+                Child {ages.length + 1} age
+                <select
+                  aria-label={`Child ${ages.length + 1} age`}
+                  value=""
+                  onChange={(event) => {
+                    if (event.target.value !== "") {
+                      set({
+                        childrenAges: [...ages, Number(event.target.value)],
+                      });
+                      setAddingChild(false);
+                    }
+                  }}
+                >
+                  <option value="">Choose age (optional)</option>
+                  {Array.from({ length: 18 }, (_, value) => (
+                    <option key={value} value={value}>
+                      {value === 0 ? "Under 1" : `${value} years`}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {ages.length > 0 && (
+                <button
+                  className="button secondary"
+                  onClick={() => setAddingChild(false)}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          )}
+          <div className="family-age-actions">
+            {ages.length > 0 && ages.length < 8 && !addingChild && (
+              <button
+                className="button secondary"
+                onClick={() => setAddingChild(true)}
+              >
+                Add child
+              </button>
+            )}
+          </div>
+        </fieldset>
+      )}
       {open && (
         <div className="advanced-controls">
           <label>

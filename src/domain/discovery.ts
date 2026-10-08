@@ -29,6 +29,41 @@ export function openingStatus(place: Place, now: string): OpeningStatus {
       : "Closed at arrival",
   };
 }
+export function matchesActivity(
+  place: Place,
+  activity: DiscoveryQuery["activity"],
+): boolean {
+  const category = place.category.toLowerCase().replace(/[-_]/g, " ");
+  const features = (place.familyFeatures ?? []).map((feature) =>
+    feature.toLowerCase().replace(/[-_]/g, " "),
+  );
+  const has = (pattern: RegExp) =>
+    pattern.test(category) || features.some((feature) => pattern.test(feature));
+  switch (activity) {
+    case "soft-play":
+      return has(/\bsoft\s*play\b/);
+    case "playground":
+      return has(/\bplayground\b/);
+    case "museum":
+      return has(/\bmuseum\b|\bgallery\b/);
+    case "cinema":
+      return has(/\bcinema\b/);
+    case "animals":
+      return has(/\bzoo\b|\baquarium\b|\banimal/);
+    case "gardens":
+      return has(/\bgardens?\b|\bpark\b/);
+    case "climbing":
+      return has(/\bclimb|\bbouldering\b/);
+    case "swimming":
+      return has(/\bswim|\bpool\b/);
+    case "food":
+      return place.intents.includes("food");
+    case "walk":
+      return place.intents.includes("walk");
+    default:
+      return true;
+  }
+}
 export function rankPlaces(
   places: Place[],
   query: DiscoveryQuery,
@@ -51,6 +86,39 @@ export function rankPlaces(
     .map((v) => places.find((p) => p.id === v.id)?.category);
   return places
     .flatMap((place) => {
+      if (!matchesActivity(place, query.activity)) return [];
+      const family = query.company === "family" || query.intent === "kids";
+      const ages = query.childrenAges ?? [];
+      if (
+        family &&
+        ages.length &&
+        place.ageRange &&
+        ages.some((age) => age < place.ageRange![0] || age > place.ageRange![1])
+      )
+        return [];
+      const features = place.familyFeatures ?? [];
+      const familyText = `${place.category} ${place.name}`.toLowerCase();
+      const softPlay =
+        features.includes("soft-play") || /soft[ -]?play/.test(familyText);
+      const playground =
+        features.includes("playground") || /playground/.test(familyText);
+      const museum = features.includes("museum") || /museum/.test(familyText);
+      const familyPoints = family
+        ? (softPlay || playground || museum || place.intents.includes("kids")
+            ? 6
+            : 0) +
+          (ages.some((age) => age <= 5) &&
+          (softPlay || features.includes("toddler-friendly"))
+            ? 8
+            : 0) +
+          (ages.some((age) => age >= 6) &&
+          (playground ||
+            museum ||
+            features.includes("hands-on") ||
+            features.includes("sports"))
+            ? 5
+            : 0)
+        : 0;
       const route = estimatedRouting.estimate(
         env.location,
         place.coordinates,
@@ -127,6 +195,7 @@ export function rankPlaces(
               : 14;
       const components = {
         weather: weatherPoints,
+        family: familyPoints,
         distance: Math.round(18 * (1 - route.minutes / (query.travel * 1.5))),
         time: 15,
         opening: opening.status === "unknown" ? 5 : 12,
@@ -185,6 +254,16 @@ export function rankPlaces(
         `${place.duration[0]}–${place.duration[1]} min visit`,
         opening.label,
       ];
+      if (family)
+        reasons.push(
+          ages.length && place.ageRange
+            ? place.ageRange[1] === 99
+              ? `Venue reports minimum age ${place.ageRange[0]}; confirm other limits`
+              : place.ageRange[0] === 0
+                ? `Venue reports an upper age limit ${place.ageRange[1]}; check minimum age`
+                : `Venue age guidance: ${place.ageRange[0]}–${place.ageRange[1]} years; includes all entered ages`
+            : "Check age suitability with the venue",
+        );
       const explanation = `${weatherReason} ${route.minutes <= 15 ? "Close enough to make a quick escape." : `About ${route.minutes} minutes away.`} ${query.mode === "surprise" ? "A little less obvious, and still a sensible fit." : recentVisit ? "You have been here recently." : place.tagline}`;
       return [
         {
@@ -212,9 +291,9 @@ export function parseIntent(
 ): DiscoveryQuery {
   const s = text.toLowerCase();
   const q = { ...base, text };
-  if (/indoors?|rain|museum/.test(s)) q.environment = "indoor";
+  if (/indoors?|rain|museum|soft[ -]?play/.test(s)) q.environment = "indoor";
   if (/outdoors?/.test(s)) q.environment = "outdoor";
-  if (/kids|children|family/.test(s)) {
+  if (/kids|children|family|toddlers?|soft[ -]?play/.test(s)) {
     q.company = "family";
     q.intent = "kids";
   }
@@ -228,6 +307,42 @@ export function parseIntent(
   if (/art|gallery|museum|culture/.test(s)) q.intent = "culture";
   if (/coffee|food|eat/.test(s)) q.intent = "food";
   if (/climb|active|move/.test(s)) q.intent = "active";
+  if (/kids|children|family|toddlers?|soft[ -]?play/.test(s)) {
+    q.company = "family";
+    q.intent = "kids";
+  }
+  const activities: [NonNullable<DiscoveryQuery["activity"]>, RegExp][] = [
+    ["soft-play", /\bsoft[ -]?play\b/],
+    ["playground", /\bplaygrounds?\b/],
+    ["museum", /\bmuseums?\b|\bgallery\b/],
+    ["cinema", /\bcinema\b/],
+    ["animals", /\bzoo\b|\baquarium\b|\banimals?\b/],
+    ["gardens", /\bgardens?\b/],
+    ["climbing", /\bclimbing\b|\bbouldering\b/],
+    ["swimming", /\bswimming\b|\bpool\b/],
+    ["food", /\bfood\b|\bcoffee\b/],
+    ["walk", /\bwalk(?:s|ing)?\b|\bwoodland\b/],
+  ];
+  const activity = activities.find(([, pattern]) => pattern.test(s));
+  if (activity) q.activity = activity[0];
+  const agePhrase = s.match(
+    /(?:ages?|aged)\s+(\d{1,2}(?:\s*(?:,|and|&)\s*\d{1,2})*)\b/,
+  );
+  const yearOld = [
+    ...s.matchAll(/\b(\d{1,2})[ -](?:year[ -]olds?|years? old)\b/g),
+  ];
+  const specifiedAges = agePhrase
+    ? agePhrase[1].match(/\d+/g)?.map(Number)
+    : yearOld.map((match) => Number(match[1]));
+  if (
+    specifiedAges?.length &&
+    specifiedAges.length <= 8 &&
+    specifiedAges.every((age) => age <= 17)
+  ) {
+    q.childrenAges = specifiedAges;
+    q.company = "family";
+    q.intent = "kids";
+  }
   if (/free/.test(s)) q.budget = 0;
   else if (/cheap/.test(s)) q.budget = 15;
   const budget = s.match(/£(\d+)/);

@@ -21,11 +21,12 @@ import { emptyState, LocalPersistence } from "@/providers/persistence";
 import { TOWNS } from "@/providers/geocoding";
 import { openMeteo } from "@/providers/weather";
 import { applyOverrides, unavailableWeather } from "@/domain/environment";
+import { usePlaceCatalog } from "@/providers/place-catalog";
 const labEnabled =
   process.env.NODE_ENV !== "production" ||
   process.env.NEXT_PUBLIC_ENABLE_ENVIRONMENT_LAB === "true";
 export const LAB_ENABLED = labEnabled;
-type AppContext = {
+type AppContext = ReturnType<typeof usePlaceCatalog> & {
   state: LocalState;
   update: (fn: (s: LocalState) => LocalState) => void;
   env: Environment;
@@ -188,9 +189,11 @@ export function AppProviders({ children }: { children: ReactNode }) {
     failures: offline ? ["offline"] : [],
   };
   const env = applyOverrides(base, overrides);
+  const catalog = usePlaceCatalog(env, query, ready, state);
   return (
     <Context.Provider
       value={{
+        ...catalog,
         state,
         update,
         env,
