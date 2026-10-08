@@ -189,7 +189,13 @@ export function PlaceDetail({ place: initialPlace }: { place: Place }) {
                 . Cropped for display.{" "}
                 {place.image.license.startsWith("CC BY") && (
                   <a
-                    href={`https://creativecommons.org/licenses/${place.image.license.includes("SA") ? "by-sa" : "by"}/${place.image.license.includes("4.0") ? "4.0" : place.image.license.includes("3.0") ? "3.0" : "2.0"}/`}
+                    href={
+                      /\b(?:1\.0|2\.0|2\.5|3\.0|4\.0)\b/.test(
+                        place.image.license,
+                      )
+                        ? `https://creativecommons.org/licenses/${place.image.license.includes("SA") ? "by-sa" : "by"}/${place.image.license.match(/\b(?:1\.0|2\.0|2\.5|3\.0|4\.0)\b/)![0]}/`
+                        : place.image.source
+                    }
                     target="_blank"
                     rel="noreferrer"
                   >
