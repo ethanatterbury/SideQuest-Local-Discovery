@@ -9,6 +9,13 @@ const config: NextConfig = {
         pathname: "/wikipedia/commons/**",
         search: "",
       },
+      {
+        protocol: "https",
+        hostname: "archive.org",
+        port: "",
+        pathname: "/download/**",
+        search: "",
+      },
     ],
   },
   async headers() {

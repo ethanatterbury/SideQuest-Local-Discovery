@@ -269,10 +269,9 @@ it("searches a canonical name and accepts a named garden subject within 600m", a
 });
 
 function mockPipeline(handler: (url: URL) => object) {
-  vi.stubGlobal(
-    "fetch",
-    vi.fn(async (url: URL) => Response.json(handler(url))),
-  );
+  const fetcher = vi.fn(async (url: URL) => Response.json(handler(url)));
+  vi.stubGlobal("fetch", fetcher);
+  return fetcher;
 }
 function photoPage(title: string, changes: Record<string, unknown> = {}) {
   return { pageid: 123, title: `File:${title}`, imageinfo: [info], ...changes };
@@ -296,6 +295,196 @@ it("accepts explicitly declared Commons media without GPS and reports evidence",
     },
     diagnostics: { strategy: "osm-image", candidateCount: 1 },
   });
+});
+it("resolves an explicit Geograph ID through its exact licensed Commons copy", async () => {
+  mockPipeline((url) => ({
+    query: {
+      pages: url.searchParams.get("gsrsearch")?.includes("7883745")
+        ? [
+            photoPage(
+              "Eton College Swimming Pool - geograph.org.uk - 7883745.jpg",
+              {
+                coordinates: [{ lat: 51.49586985, lon: -0.61172469 }],
+              },
+            ),
+          ]
+        : [],
+    },
+  }));
+  const result = await lookupPlacePhoto(
+    {
+      name: "Athens",
+      lat: 51.4959013,
+      lng: -0.6115017,
+      osmImage: "https://www.geograph.org.uk/photo/7883745",
+    },
+    { refresh: true, debug: true },
+  );
+  expect(result.image).toMatchObject({
+    strategy: "osm-image-geograph",
+    confidence: 0.99,
+    matched: expect.arrayContaining([
+      "declared-osm-image",
+      "exact-geograph-id",
+      "declared-file",
+    ]),
+  });
+});
+it("returns an explicit licensed Archive photo through the shared resolver with bounded diagnostics", async () => {
+  const fetcher = vi.fn(async (url: URL | string) => {
+    expect(new URL(url).hostname).toBe("archive.org");
+    if (String(url).includes("/metadata/"))
+      return Response.json({
+        metadata: {
+          identifier: "venue-album",
+          mediatype: "image",
+          creator: "Venue Photographer",
+          licenseurl: "https://creativecommons.org/licenses/by-sa/4.0/",
+        },
+        files: [
+          {
+            name: "Venue/DSCN0001.JPG",
+            source: "original",
+            format: "JPEG",
+            size: "4244863",
+          },
+        ],
+      });
+    return new Response(
+      new Uint8Array([
+        0xff, 0xd8, 0xff, 0xc0, 0, 17, 8, 13, 128, 18, 0, 3, 1, 0x11, 0, 2,
+        0x11, 0, 3, 0x11, 0, 0xff, 0xda,
+      ]),
+      { headers: { "content-type": "image/jpeg" } },
+    );
+  });
+  vi.stubGlobal("fetch", fetcher);
+  const result = await lookupPlacePhoto(
+    {
+      ...query,
+      osmImage: "https://archive.org/details/venue-album/Venue/DSCN0001.JPG",
+    },
+    { refresh: true, debug: true },
+  );
+  expect(result).toMatchObject({
+    image: {
+      strategy: "osm-archive",
+      credit: "Venue Photographer",
+      license: "CC BY-SA 4.0",
+      width: 4608,
+      height: 3456,
+    },
+    diagnostics: {
+      strategy: "osm-archive",
+      requestCount: 2,
+      candidateCount: 1,
+    },
+  });
+  expect(fetcher).toHaveBeenCalledTimes(2);
+  expect(safePhotoUrl(result.image?.url)).toBe(true);
+  expect(safePhotoUrl(result.image?.source, true)).toBe(true);
+});
+it("does not treat another Geograph number or a conflicting coordinate as the declared file", async () => {
+  mockPipeline(() => ({
+    query: {
+      pages: [
+        photoPage("Unknown - geograph.org.uk - 17883745.jpg"),
+        photoPage("Unknown - geograph.org.uk - 7883745.jpg", {
+          coordinates: [{ lat: 55, lon: -4 }],
+        }),
+      ],
+    },
+  }));
+  const result = await lookupPlacePhoto(
+    {
+      name: "Athens",
+      lat: 51.4959013,
+      lng: -0.6115017,
+      osmImage: "https://www.geograph.org.uk/photo/7883745",
+    },
+    { refresh: true, debug: true },
+  );
+  expect(result.image).toBeNull();
+  expect(result.diagnostics?.rejected["coordinate-conflict"]).toBeGreaterThan(
+    0,
+  );
+});
+it("never manufactures a venue name across description and category boundaries", async () => {
+  const park = {
+    name: "Camberley Park",
+    lat: 51.3392853,
+    lng: -0.7413306,
+    area: "Camberley",
+    category: "Park",
+  };
+  mockPipeline(() => ({
+    query: {
+      pages: [
+        photoPage("The Carpenters Arms, Camberley 01.jpg", {
+          coordinates: [{ lat: park.lat, lon: park.lng }],
+          imageinfo: [
+            {
+              ...info,
+              extmetadata: {
+                ...info.extmetadata,
+                ImageDescription: { value: "The Carpenters Arms, Camberley" },
+                Categories: { value: "Park Street, Camberley|Pubs in Surrey" },
+              },
+            },
+          ],
+        }),
+      ],
+    },
+  }));
+  const result = await lookupPlacePhoto(park, { refresh: true, debug: true });
+  expect(result.image).toBeNull();
+  expect(
+    result.diagnostics?.rejected["insufficient-subject-evidence"],
+  ).toBeGreaterThan(0);
+});
+it("does not treat a venue-named road address as evidence of the photo subject", async () => {
+  const park = {
+    name: "Camberley Park",
+    lat: 51.3392853,
+    lng: -0.7413306,
+    area: "Camberley",
+    category: "Park",
+  };
+  mockPipeline(() => ({
+    query: {
+      pages: [
+        photoPage("The Carpenters Arms.jpg", {
+          coordinates: [{ lat: park.lat, lon: park.lng }],
+          imageinfo: [
+            {
+              ...info,
+              extmetadata: {
+                ...info.extmetadata,
+                ImageDescription: {
+                  value: "A public house at Camberley Park Road, Camberley.",
+                },
+              },
+            },
+          ],
+        }),
+      ],
+    },
+  }));
+  expect((await lookupPlacePhoto(park, { refresh: true })).image).toBeNull();
+});
+it("never follows a deceptive Geograph host or URL parameter", async () => {
+  const fetcher = mockPipeline(() => ({ query: { pages: [] } }));
+  for (const osmImage of [
+    "https://www.geograph.org.uk.evil.test/photo/403630",
+    "https://www.geograph.org.uk/photo/403630?url=http://localhost",
+  ])
+    await lookupPlacePhoto(
+      { ...query, osmImage },
+      { refresh: true, debug: true },
+    );
+  expect(
+    fetcher.mock.calls.every(([url]) => !String(url).includes("403630")),
+  ).toBe(true);
 });
 it("never fetches an arbitrary OSM image host or assumes its license", async () => {
   const fetcher = vi.fn(async (url: URL) => {
@@ -1414,34 +1603,40 @@ it("honors HTTP429 Retry-After without caching upstream errors or exposing respo
     vi.useRealTimers();
   }
 });
-it("classifies maxlag API errors separately and never caches failed metadata", async () => {
-  vi.useFakeTimers();
-  try {
-    let lagged = true;
-    const fetcher = vi.fn(async () =>
-      Response.json(
-        lagged
-          ? { error: { code: "maxlag", info: "private database details" } }
-          : { query: { pages: [photoPage("Maxlag.jpg")] } },
-      ),
-    );
-    vi.stubGlobal("fetch", fetcher);
-    const place = { ...query, commons: "File:Maxlag.jpg" };
-    expect(
-      await lookupPlacePhoto(place, { refresh: true, debug: true }),
-    ).toMatchObject({
-      retryable: true,
-      diagnostics: { upstreamErrors: { "api-maxlag": 1 } },
-    });
-    lagged = false;
-    await vi.advanceTimersByTimeAsync(5000);
-    expect(
-      (await lookupPlacePhoto(place, { refresh: true })).image,
-    ).not.toBeNull();
-  } finally {
-    vi.useRealTimers();
-  }
-});
+it.each(["maxlag", "cirrussearch-too-busy-error"])(
+  "classifies %s API errors and retries after cooldown without caching failure",
+  async (code) => {
+    vi.useFakeTimers();
+    try {
+      let lagged = true;
+      const fetcher = vi.fn(async () =>
+        Response.json(
+          lagged
+            ? { error: { code, info: "private database details" } }
+            : { query: { pages: [photoPage("Maxlag.jpg")] } },
+        ),
+      );
+      vi.stubGlobal("fetch", fetcher);
+      const place = { ...query, commons: "File:Maxlag.jpg" };
+      expect(
+        await lookupPlacePhoto(place, { refresh: true, debug: true }),
+      ).toMatchObject({
+        retryable: true,
+        diagnostics: {
+          upstreamErrors: { [`api-${code}`]: 1 },
+          retryAfterMs: 5000,
+        },
+      });
+      lagged = false;
+      await vi.advanceTimersByTimeAsync(5000);
+      expect(
+        (await lookupPlacePhoto(place, { refresh: true })).image,
+      ).not.toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  },
+);
 it("bounds Wikimedia response bytes even when multibyte JSON is below the character limit", async () => {
   const fetcher = vi.fn(async () =>
     Response.json({

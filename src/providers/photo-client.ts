@@ -1,6 +1,7 @@
 "use client";
 import type { Place } from "@/domain/models";
 import { indexedPhoto, placePhotoQuery, photoIdentity } from "./photo-index";
+import { parseArchivePhotoUrl, safeArchivePhotoUrl } from "./archive-photo";
 type Image = NonNullable<Place["image"]>;
 const cache = new Map<
   string,
@@ -62,11 +63,25 @@ export function findPlacePhoto(place: Place): Promise<Image | null> {
           ) {
             const url = new URL(value.url),
               source = new URL(value.source);
+            const archive = parseArchivePhotoUrl(value.url);
+            const trustedArchive =
+              safeArchivePhotoUrl(value.url) &&
+              safeArchivePhotoUrl(value.source, true) &&
+              archive?.source === value.source;
             if (
-              url.protocol === "https:" &&
-              url.hostname === "upload.wikimedia.org" &&
-              source.protocol === "https:" &&
-              source.hostname === "commons.wikimedia.org"
+              trustedArchive ||
+              (url.protocol === "https:" &&
+                !url.username &&
+                !url.password &&
+                !url.port &&
+                url.hostname === "upload.wikimedia.org" &&
+                url.pathname.startsWith("/wikipedia/commons/") &&
+                source.protocol === "https:" &&
+                !source.username &&
+                !source.password &&
+                !source.port &&
+                source.hostname === "commons.wikimedia.org" &&
+                source.pathname.startsWith("/wiki/File:"))
             )
               image = value;
           }

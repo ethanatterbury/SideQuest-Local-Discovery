@@ -1,5 +1,10 @@
 import { TOWNS } from "./geocoding";
-/** Keyless, conservative Wikimedia photo resolution. Never substitutes nearby stock imagery. */
+import {
+  parseArchivePhotoUrl,
+  resolveArchivePhoto,
+  safeArchivePhotoUrl,
+} from "./archive-photo";
+/** Keyless, conservative venue photo resolution. Never substitutes nearby stock imagery. */
 export interface PhotoQuery {
   name: string;
   lat: number;
@@ -191,6 +196,7 @@ export function safePhotoUrl(
   description = false,
 ): boolean {
   if (!value) return false;
+  if (safeArchivePhotoUrl(value, description)) return true;
   try {
     const u = new URL(value);
     return (
@@ -215,6 +221,24 @@ function normalize(s: string) {
     .toLowerCase()
     .replace(/[^\p{L}\p{N}]+/gu, " ")
     .trim();
+}
+function geographImageId(value: string): string | null {
+  try {
+    const url = new URL(value);
+    if (
+      url.protocol !== "https:" ||
+      url.username ||
+      url.password ||
+      url.port ||
+      url.search ||
+      url.hash ||
+      !["www.geograph.org.uk", "geograph.org.uk"].includes(url.hostname)
+    )
+      return null;
+    return /^\/photo\/([1-9]\d{0,11})\/?$/.exec(url.pathname)?.[1] || null;
+  } catch {
+    return null;
+  }
 }
 const genericNameWords = new Set([
   "park",
@@ -525,13 +549,14 @@ async function api(
         "missingparam",
         "nosuchentity",
         "internal_api_error",
+        "cirrussearch-too-busy-error",
       ]);
       const reason = `api-${safeCodes.has(code) ? code : "other"}`;
       const delay = retryAfter(
         response,
         code === "ratelimited"
           ? 60_000
-          : ["maxlag", "readonly"].includes(code)
+          : ["maxlag", "readonly", "cirrussearch-too-busy-error"].includes(code)
             ? 5000
             : 0,
       );
@@ -582,7 +607,7 @@ function claimValues(entity: Entity | undefined, property: string): unknown[] {
     )
     .map((claim) => claim.mainsnak?.datavalue?.value);
 }
-/** Only Commons file/category references are dereferenced; external OSM image URLs have no verified license. */
+/** Commons references are resolved separately from other verified source adapters. */
 function commonsReference(value: string | undefined): string | null {
   if (!value || value.length > 2048) return null;
   let reference = value.trim();
@@ -599,7 +624,10 @@ function commonsReference(value: string | undefined): string | null {
           /^Special:FilePath\//i,
           "File:",
         );
-      } else if (safePhotoUrl(reference)) {
+      } else if (
+        url.hostname === "upload.wikimedia.org" &&
+        safePhotoUrl(reference)
+      ) {
         reference =
           "File:" +
           decodeURIComponent(url.pathname.split("/").at(-1) || "").replace(
@@ -630,7 +658,7 @@ function subjectText(page: Page): string {
   ]
     .filter(Boolean)
     .map((value) => plainCredit(value!))
-    .join(" ");
+    .join(" | ");
 }
 function nonPhotographic(page: Page): boolean {
   const text = normalize(
@@ -678,8 +706,25 @@ function areaMatch(area: string | undefined, text: string): boolean {
   });
 }
 function nameEvidence(query: PhotoQuery, text: string): string | undefined {
-  if (matchesPlaceName(query.name, text)) return "subject-name";
-  return query.aliases?.some((name) => matchesPlaceName(name, text))
+  // Names must occur within one evidence field/category, never across boundaries.
+  const fields = text.split(/\s*\|\s*|[\r\n]+/).filter(Boolean);
+  const subjectMatch = (name: string, field: string) => {
+    const phrase = canonicalPlaceName(name);
+    // A road named after a venue establishes an address, not the photographed subject.
+    const withoutAddress = normalize(field).replace(
+      new RegExp(
+        `(^| )${phrase} (?:road|street|lane|avenue|drive|crescent|close|way|terrace|boulevard)(?= |$)`,
+        "g",
+      ),
+      " ",
+    );
+    return matchesPlaceName(name, withoutAddress);
+  };
+  if (fields.some((field) => subjectMatch(query.name, field)))
+    return "subject-name";
+  return query.aliases?.some((name) =>
+    fields.some((field) => subjectMatch(name, field)),
+  )
     ? "alias"
     : undefined;
 }
@@ -993,6 +1038,59 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
       [query.commons, "osm-commons-file", "osm-commons-category"],
     ]) {
       if (!value) continue;
+      if (fileStrategy === "osm-image" && parseArchivePhotoUrl(value)) {
+        attempted("osm-archive");
+        const result = await resolveArchivePhoto(value, { signal });
+        diagnostics.requestCount += result.requestCount;
+        diagnostics.networkRequests =
+          (diagnostics.networkRequests || 0) + result.requestCount;
+        if (result.reason) rejected(`archive-${result.reason}`);
+        if (result.retryable) {
+          hadError = true;
+          diagnostics.upstreamErrors ||= {};
+          const reason = `archive-${result.reason || "upstream-error"}`;
+          diagnostics.upstreamErrors[reason] =
+            (diagnostics.upstreamErrors[reason] || 0) + 1;
+        }
+        if (result.image) diagnostics.candidateCount++;
+        const ready = consider(result.image);
+        if (ready) return finish(ready);
+        continue;
+      }
+      const geographId =
+        fileStrategy === "osm-image" ? geographImageId(value) : null;
+      if (geographId) {
+        const strategy = "osm-image-geograph";
+        const data = await request(
+          "commons.wikimedia.org",
+          {
+            action: "query",
+            generator: "search",
+            gsrnamespace: "6",
+            gsrsearch: `"geograph.org.uk" "${geographId}"`,
+            gsrlimit: "8",
+            ...mediaParams,
+          },
+          strategy,
+        );
+        const exactFile = new RegExp(
+          `geograph\\.org\\.uk\\s*-\\s*${geographId}\\.(?:jpe?g|png)$`,
+          "i",
+        );
+        const image = evaluate(
+          ((data?.query?.pages || []) as Page[])
+            .filter((page) => exactFile.test(page.title || ""))
+            .map((page) => ({
+              page,
+              strategy,
+              declared: true,
+              evidence: ["declared-osm-image", "exact-geograph-id"],
+            })),
+        );
+        const ready = consider(image);
+        if (ready) return finish(ready);
+        continue;
+      }
       const ref = commonsReference(value);
       if (!ref) {
         rejected("unlicensed-external-image");

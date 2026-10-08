@@ -54,3 +54,47 @@ it("retries transient HTTP errors from the photo endpoint", async () => {
   expect(await findPlacePhoto(place)).toBeNull();
   expect(photoRetryDelay(place)).toBe(31000);
 });
+it("accepts a canonical Archive photo only with its matching exact-file source", async () => {
+  const image = {
+    url: "https://archive.org/download/venue-album/Folder/DSCN1.JPG",
+    source: "https://archive.org/details/venue-album/Folder/DSCN1.JPG",
+    credit: "Venue Photographer",
+    license: "CC BY-SA 4.0",
+    width: 4608,
+    height: 3456,
+  };
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => Response.json({ image })),
+  );
+  expect(
+    await findPlacePhoto({
+      ...PLACES[0],
+      id: "archive-client-valid",
+      image: undefined,
+    }),
+  ).toEqual(image);
+  for (const [index, bad] of [
+    {
+      ...image,
+      source: "https://archive.org/details/other-album/Folder/DSCN1.JPG",
+    },
+    {
+      ...image,
+      url: "https://archive.org.evil.test/download/venue-album/Folder/DSCN1.JPG",
+    },
+    { ...image, url: image.url + "?redirect=https://evil.test" },
+  ].entries()) {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => Response.json({ image: bad })),
+    );
+    expect(
+      await findPlacePhoto({
+        ...PLACES[0],
+        id: `archive-client-invalid-${index}`,
+        image: undefined,
+      }),
+    ).toBeNull();
+  }
+});
