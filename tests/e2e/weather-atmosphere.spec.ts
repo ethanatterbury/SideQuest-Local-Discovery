@@ -101,7 +101,7 @@ async function visibleWeatherPixels(page: Page, layer: string) {
         (element) => ((element as HTMLElement).style.visibility = ""),
       ),
     );
-  await freeze.evaluate((element) => element.remove());
+  await freeze.evaluate((element) => element.parentNode?.removeChild(element));
   const a = await sharp(withWeather).removeAlpha().raw().toBuffer();
   const b = await sharp(withoutWeather).removeAlpha().raw().toBuffer();
   let changed = 0;
