@@ -1096,3 +1096,233 @@ it("looks through named category subgalleries when direct members are only portr
     },
   });
 });
+
+it("queues ten concurrent lookups and deduplicates queued venues without false missing photos", async () => {
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  let inFlight = 0;
+  let peakInFlight = 0;
+  const fetcher = vi.fn(async () => {
+    inFlight++;
+    peakInFlight = Math.max(peakInFlight, inFlight);
+    try {
+      await gate;
+      return Response.json({ query: { pages: [photoPage("Queued.jpg")] } });
+    } finally {
+      inFlight--;
+    }
+  });
+  vi.stubGlobal("fetch", fetcher);
+  const places = Array.from({ length: 10 }, (_, index) => ({
+    ...query,
+    id: `queued-venue-${index}`,
+    commons: "File:Queued.jpg",
+  }));
+  const requests = places.map((place) =>
+    lookupPlacePhoto(place, { refresh: true, debug: true }),
+  );
+  const duplicate = lookupPlacePhoto(places[8], { refresh: true, debug: true });
+  await Promise.resolve();
+  const admittedBeforeRelease = fetcher.mock.calls.length;
+  release();
+  const results = await Promise.all([...requests, duplicate]);
+  expect(admittedBeforeRelease).toBe(6);
+  expect(peakInFlight).toBe(6);
+  expect(results.every((result) => !!result.image)).toBe(true);
+  expect(fetcher).toHaveBeenCalledTimes(10);
+});
+it("bounds queue overload and permits retry after saturated work completes", async () => {
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => {
+      await gate;
+      return Response.json({ query: { pages: [photoPage("Overload.jpg")] } });
+    }),
+  );
+  const places = Array.from({ length: 25 }, (_, index) => ({
+    ...query,
+    id: `overload-venue-${index}`,
+    commons: "File:Overload.jpg",
+  }));
+  const requests = places.map((place) =>
+    lookupPlacePhoto(place, { refresh: true, debug: true }),
+  );
+  const overflow = await requests[24];
+  release();
+  const results = await Promise.all(requests);
+  expect(overflow).toMatchObject({
+    image: null,
+    retryable: true,
+    diagnostics: { rejected: { "concurrency-limit": 1 } },
+  });
+  expect(results.filter((result) => !!result.image)).toHaveLength(24);
+  expect(await lookupPlacePhoto(places[24], { debug: true })).toMatchObject({
+    source: "live",
+    image: { strategy: "osm-commons-file" },
+  });
+});
+it("expires bounded queue waits without caching misses or leaking admission slots", async () => {
+  vi.useFakeTimers();
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  try {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        await gate;
+        return Response.json({ query: { pages: [photoPage("Timeout.jpg")] } });
+      }),
+    );
+    const activeRequests = Array.from({ length: 6 }, (_, index) =>
+      lookupPlacePhoto(
+        {
+          ...query,
+          id: `timeout-active-${index}`,
+          commons: "File:Timeout.jpg",
+        },
+        { refresh: true },
+      ),
+    );
+    const waitingPlace = {
+      ...query,
+      id: "timeout-queued",
+      commons: "File:Timeout.jpg",
+    };
+    const waiting = lookupPlacePhoto(waitingPlace, {
+      refresh: true,
+      debug: true,
+    });
+    await vi.advanceTimersByTimeAsync(8000);
+    const expired = await waiting;
+    release();
+    await Promise.all(activeRequests);
+    expect(expired).toMatchObject({
+      image: null,
+      retryable: true,
+      diagnostics: { rejected: { "queue-timeout": 1 }, elapsedMs: 8000 },
+    });
+    expect(await lookupPlacePhoto(waitingPlace)).toMatchObject({
+      source: "live",
+      image: { strategy: "osm-commons-file" },
+    });
+  } finally {
+    release();
+    vi.useRealTimers();
+  }
+});
+
+it("releases six hung upstream leases at ten seconds and admits a later queued lookup", async () => {
+  vi.useFakeTimers();
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  try {
+    let calls = 0;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        const call = ++calls;
+        if (call <= 6) await gate;
+        return Response.json({ query: { pages: [photoPage("Lease.jpg")] } });
+      }),
+    );
+    const completed: Awaited<ReturnType<typeof lookupPlacePhoto>>[] = [];
+    const held = Array.from({ length: 6 }, (_, index) =>
+      lookupPlacePhoto(
+        { ...query, id: `lease-held-${index}`, commons: "File:Lease.jpg" },
+        { refresh: true, debug: true },
+      ).then((result) => {
+        completed.push(result);
+        return result;
+      }),
+    );
+    await vi.advanceTimersByTimeAsync(3000);
+    let queuedResult: Awaited<ReturnType<typeof lookupPlacePhoto>> | undefined;
+    const queued = lookupPlacePhoto(
+      { ...query, id: "lease-later", commons: "File:Lease.jpg" },
+      { refresh: true, debug: true },
+    ).then((result) => {
+      queuedResult = result;
+      return result;
+    });
+    await vi.advanceTimersByTimeAsync(7000);
+    const expiredBeforeFetchReleased = [...completed];
+    const queuedBeforeFetchReleased = queuedResult;
+    release();
+    await Promise.all([...held, queued]);
+    expect(expiredBeforeFetchReleased).toHaveLength(6);
+    expect(
+      expiredBeforeFetchReleased.every(
+        (result) => result.retryable && !result.image,
+      ),
+    ).toBe(true);
+    expect(queuedBeforeFetchReleased).toMatchObject({
+      image: { strategy: "osm-commons-file" },
+      diagnostics: { queuedMs: 7000 },
+    });
+    expect(calls).toBe(7);
+  } finally {
+    release();
+    vi.useRealTimers();
+  }
+});
+it("preserves a verified small fallback when a later provider ignores its abort signal", async () => {
+  vi.useFakeTimers();
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  try {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: URL) => {
+        if (url.hostname === "www.wikidata.org")
+          return Response.json({
+            entities: {
+              Q783: qualityEntity("Fallback.jpg", "Riverside Museum"),
+            },
+          });
+        if (url.searchParams.get("titles") === "File:Fallback.jpg")
+          return Response.json({
+            query: {
+              pages: [
+                photoPage("Fallback.jpg", {
+                  imageinfo: [{ ...info, width: 640, height: 480 }],
+                }),
+              ],
+            },
+          });
+        await gate;
+        return Response.json({ query: { pages: [] } });
+      }),
+    );
+    let resolved: Awaited<ReturnType<typeof lookupPlacePhoto>> | undefined;
+    const lookup = lookupPlacePhoto(
+      { ...query, wikidata: "Q783" },
+      { refresh: true, debug: true },
+    ).then((result) => {
+      resolved = result;
+      return result;
+    });
+    await vi.advanceTimersByTimeAsync(10000);
+    const resultBeforeProviderReleased = resolved;
+    release();
+    await lookup;
+    expect(resultBeforeProviderReleased).toMatchObject({
+      image: { width: 640, strategy: "wikidata-p18" },
+      diagnostics: { elapsedMs: 10000 },
+    });
+  } finally {
+    release();
+    vi.useRealTimers();
+  }
+});

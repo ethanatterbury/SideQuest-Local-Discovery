@@ -32,6 +32,7 @@ export interface PhotoDiagnostics {
   requestCount: number;
   elapsedMs: number;
   cacheHit?: boolean;
+  queuedMs?: number;
 }
 export interface PhotoResult {
   image: PlacePhoto | null;
@@ -62,6 +63,35 @@ type ImageInfo = {
 const cache = new Map<string, { expires: number; result: PhotoResult }>();
 const pending = new Map<string, Promise<PhotoResult>>();
 let active = 0;
+const waiting: { grant: () => void }[] = [];
+type Admission = "acquired" | "concurrency-limit" | "queue-timeout";
+function acquirePhotoSlot(): Promise<Admission> {
+  if (active < 6) {
+    active++;
+    return Promise.resolve("acquired");
+  }
+  if (waiting.length >= 18) return Promise.resolve("concurrency-limit");
+  return new Promise((resolve) => {
+    const waiter = {
+      grant: () => {
+        clearTimeout(timer);
+        resolve("acquired");
+      },
+    };
+    const timer = setTimeout(() => {
+      const index = waiting.indexOf(waiter);
+      if (index >= 0) waiting.splice(index, 1);
+      resolve("queue-timeout");
+    }, 8000);
+    waiting.push(waiter);
+  });
+}
+function releasePhotoSlot(): void {
+  const waiter = waiting.shift();
+  // Transfer the occupied slot directly to the next lookup; never exceed six.
+  if (waiter) waiter.grant();
+  else active--;
+}
 export function parsePhotoQuery(params: URLSearchParams): PhotoQuery | null {
   const name = params.get("name")?.trim();
   const rawLat = params.get("lat");
@@ -460,480 +490,500 @@ function betterPhoto(
 
 async function resolve(query: PhotoQuery): Promise<PhotoResult> {
   const started = Date.now();
-  const signal = AbortSignal.timeout(10_000);
-  const diagnostics: PhotoDiagnostics = {
-    strategy: null,
-    sourcesAttempted: [],
-    candidateCount: 0,
-    rejected: {},
-    requestCount: 0,
-    elapsedMs: 0,
-  };
-  let hadError = false;
-  const rejected = (reason: string) => {
-    diagnostics.rejected[reason] = (diagnostics.rejected[reason] || 0) + 1;
-  };
-  const attempted = (strategy: string) => {
-    if (!diagnostics.sourcesAttempted.includes(strategy))
-      diagnostics.sourcesAttempted.push(strategy);
-  };
-  const request = async (
-    host: string,
-    params: Record<string, string>,
-    strategy: string,
-  ) => {
-    attempted(strategy);
-    if (signal.aborted || diagnostics.requestCount >= 14) {
-      hadError = true;
-      return null;
-    }
-    diagnostics.requestCount++;
-    try {
-      return await api(host, params, signal);
-    } catch {
-      hadError = true;
-      rejected("upstream-error");
-      return null;
-    }
-  };
-  const visited = new Set<string>();
-  const evaluate = (candidates: Candidate[]): PlacePhoto | null => {
-    const photos: { photo: PlacePhoto; score: number }[] = [];
-    for (const candidate of candidates) {
-      const { page } = candidate;
-      const key = `${page.title || page.pageid}|${candidate.strategy}`;
-      if (visited.has(key)) continue;
-      visited.add(key);
-      diagnostics.candidateCount++;
-      if (nonPhotographic(page)) {
-        rejected("non-photographic");
-        continue;
-      }
-      if (incidentalPlaceReference(query, page)) {
-        rejected("incidental-place-reference");
-        continue;
-      }
-      const photo = licensedPhoto(page.imageinfo?.[0] || {});
-      if (!photo) {
-        rejected("license-or-quality");
-        continue;
-      }
-      const points = page.coordinates || [];
-      const near = points.some((point) =>
-        isNearPlace(query, point.lat, point.lon, matchingRadius(query)),
-      );
-      // A declared file does not need GPS, but a conflicting known location is still evidence against it.
-      if (points.length && !near) {
-        rejected("coordinate-conflict");
-        continue;
-      }
-      const text = subjectText(page);
-      const name = nameEvidence(query, text);
-      const area = areaMatch(query.area, text);
-      const depicts = query.wikidata && page.depicts?.includes(query.wikidata);
-      const matched = [...(candidate.evidence || [])];
-      let confidence = 0;
-      if (candidate.declared) {
-        confidence = 0.99;
-        matched.push("declared-file");
-      } else if (candidate.entityCategory) {
-        confidence = 0.93;
-        matched.push("entity-category", "category-membership");
-      } else if (candidate.verifiedCategory) {
-        confidence = 0.9;
-        matched.push("verified-category", "category-membership");
-      } else if (depicts) {
-        confidence = 0.97;
-        matched.push("depicts-entity");
-      } else if (name && near) confidence = area ? 0.94 : 0.9;
-      else if (name && area) {
-        const matchedName =
-          name === "alias"
-            ? query.aliases?.find((alias) => matchesPlaceName(alias, text))
-            : query.name;
-        const distinctive = canonicalPlaceName(matchedName || "")
-          .split(" ")
-          .some((word) => !genericNameWords.has(word));
-        confidence = distinctive ? 0.84 : 0;
-      }
-      if (name) matched.push(name);
-      if (near) matched.push("coordinate");
-      if (area) matched.push("area");
-      if (confidence < 0.8) {
-        rejected("insufficient-subject-evidence");
-        continue;
-      }
-      photo.confidence = confidence;
-      photo.strategy = candidate.strategy;
-      photo.matched = [...new Set(matched)];
-      photos.push({ photo, score: photoScore(photo) });
-    }
-    photos.sort(
-      (a, b) =>
-        b.score - a.score || (b.photo.width || 0) - (a.photo.width || 0),
-    );
-    return photos[0]?.photo || null;
-  };
-  let fallback: PlacePhoto | null = null;
-  const consider = (photo: PlacePhoto | null): PlacePhoto | null => {
-    fallback = betterPhoto(fallback, photo);
-    return fallback && preferredLandscape(fallback) ? fallback : null;
-  };
-  const finish = (selected: PlacePhoto | null): PhotoResult => {
-    const image = selected || fallback;
-    diagnostics.strategy = image?.strategy || null;
-    diagnostics.elapsedMs = Date.now() - started;
-    return {
-      image,
-      source: image ? "live" : "unavailable",
-      diagnostics,
-      ...(hadError && !image ? { retryable: true } : {}),
+  const controller = new AbortController();
+  const signal = controller.signal;
+  const deadline = setTimeout(() => controller.abort(), 10_000);
+  try {
+    const diagnostics: PhotoDiagnostics = {
+      strategy: null,
+      sourcesAttempted: [],
+      candidateCount: 0,
+      rejected: {},
+      requestCount: 0,
+      elapsedMs: 0,
     };
-  };
-  const files = async (
-    titles: string[],
-    strategy: string,
-    evidence: string[] = [],
-  ) => {
-    const data = await request(
-      "commons.wikimedia.org",
-      {
-        action: "query",
-        titles: titles.slice(0, 4).join("|"),
-        redirects: "1",
-        ...mediaParams,
-      },
-      strategy,
-    );
-    return evaluate(
-      ((data?.query?.pages || []) as Page[]).map((page) => ({
-        page,
-        strategy,
-        declared: true,
-        evidence,
-      })),
-    );
-  };
-  const category = async (
-    title: string,
-    strategy: string,
-    trusted: boolean | "verified",
-    evidence: string[] = [],
-  ) => {
-    const members = async (categoryTitle: string) => {
+    let hadError = false;
+    const rejected = (reason: string) => {
+      diagnostics.rejected[reason] = (diagnostics.rejected[reason] || 0) + 1;
+    };
+    const attempted = (strategy: string) => {
+      if (!diagnostics.sourcesAttempted.includes(strategy))
+        diagnostics.sourcesAttempted.push(strategy);
+    };
+    const request = async (
+      host: string,
+      params: Record<string, string>,
+      strategy: string,
+    ) => {
+      attempted(strategy);
+      if (signal.aborted || diagnostics.requestCount >= 14) {
+        hadError = true;
+        return null;
+      }
+      diagnostics.requestCount++;
+      let abortRequest = () => {};
+      const aborted = new Promise<never>((_, reject) => {
+        abortRequest = () =>
+          reject(new Error("Wikimedia resolution deadline exceeded"));
+        signal.addEventListener("abort", abortRequest, { once: true });
+      });
+      try {
+        // Race the complete fetch/body operation: an upstream implementation that
+        // ignores AbortSignal must not hold one of the six admission slots forever.
+        return await Promise.race([api(host, params, signal), aborted]);
+      } catch {
+        hadError = true;
+        rejected(signal.aborted ? "deadline-exceeded" : "upstream-error");
+        return null;
+      } finally {
+        signal.removeEventListener("abort", abortRequest);
+      }
+    };
+    const visited = new Set<string>();
+    const evaluate = (candidates: Candidate[]): PlacePhoto | null => {
+      const photos: { photo: PlacePhoto; score: number }[] = [];
+      for (const candidate of candidates) {
+        const { page } = candidate;
+        const key = `${page.title || page.pageid}|${candidate.strategy}`;
+        if (visited.has(key)) continue;
+        visited.add(key);
+        diagnostics.candidateCount++;
+        if (nonPhotographic(page)) {
+          rejected("non-photographic");
+          continue;
+        }
+        if (incidentalPlaceReference(query, page)) {
+          rejected("incidental-place-reference");
+          continue;
+        }
+        const photo = licensedPhoto(page.imageinfo?.[0] || {});
+        if (!photo) {
+          rejected("license-or-quality");
+          continue;
+        }
+        const points = page.coordinates || [];
+        const near = points.some((point) =>
+          isNearPlace(query, point.lat, point.lon, matchingRadius(query)),
+        );
+        // A declared file does not need GPS, but a conflicting known location is still evidence against it.
+        if (points.length && !near) {
+          rejected("coordinate-conflict");
+          continue;
+        }
+        const text = subjectText(page);
+        const name = nameEvidence(query, text);
+        const area = areaMatch(query.area, text);
+        const depicts =
+          query.wikidata && page.depicts?.includes(query.wikidata);
+        const matched = [...(candidate.evidence || [])];
+        let confidence = 0;
+        if (candidate.declared) {
+          confidence = 0.99;
+          matched.push("declared-file");
+        } else if (candidate.entityCategory) {
+          confidence = 0.93;
+          matched.push("entity-category", "category-membership");
+        } else if (candidate.verifiedCategory) {
+          confidence = 0.9;
+          matched.push("verified-category", "category-membership");
+        } else if (depicts) {
+          confidence = 0.97;
+          matched.push("depicts-entity");
+        } else if (name && near) confidence = area ? 0.94 : 0.9;
+        else if (name && area) {
+          const matchedName =
+            name === "alias"
+              ? query.aliases?.find((alias) => matchesPlaceName(alias, text))
+              : query.name;
+          const distinctive = canonicalPlaceName(matchedName || "")
+            .split(" ")
+            .some((word) => !genericNameWords.has(word));
+          confidence = distinctive ? 0.84 : 0;
+        }
+        if (name) matched.push(name);
+        if (near) matched.push("coordinate");
+        if (area) matched.push("area");
+        if (confidence < 0.8) {
+          rejected("insufficient-subject-evidence");
+          continue;
+        }
+        photo.confidence = confidence;
+        photo.strategy = candidate.strategy;
+        photo.matched = [...new Set(matched)];
+        photos.push({ photo, score: photoScore(photo) });
+      }
+      photos.sort(
+        (a, b) =>
+          b.score - a.score || (b.photo.width || 0) - (a.photo.width || 0),
+      );
+      return photos[0]?.photo || null;
+    };
+    let fallback: PlacePhoto | null = null;
+    const consider = (photo: PlacePhoto | null): PlacePhoto | null => {
+      fallback = betterPhoto(fallback, photo);
+      return fallback && preferredLandscape(fallback) ? fallback : null;
+    };
+    const finish = (selected: PlacePhoto | null): PhotoResult => {
+      const image = selected || fallback;
+      diagnostics.strategy = image?.strategy || null;
+      diagnostics.elapsedMs = Date.now() - started;
+      return {
+        image,
+        source: image ? "live" : "unavailable",
+        diagnostics,
+        ...(hadError && !image ? { retryable: true } : {}),
+      };
+    };
+    const files = async (
+      titles: string[],
+      strategy: string,
+      evidence: string[] = [],
+    ) => {
       const data = await request(
         "commons.wikimedia.org",
         {
           action: "query",
-          generator: "categorymembers",
-          gcmtitle: categoryTitle,
-          gcmtype: "file",
-          gcmnamespace: "6",
-          gcmlimit: "30",
+          titles: titles.slice(0, 4).join("|"),
+          redirects: "1",
           ...mediaParams,
         },
         strategy,
       );
-      return ((data?.query?.pages || []) as Page[]).map((page) => ({
-        page,
-        strategy,
-        entityCategory: trusted === true,
-        verifiedCategory: trusted === "verified",
-        evidence,
-      }));
+      return evaluate(
+        ((data?.query?.pages || []) as Page[]).map((page) => ({
+          page,
+          strategy,
+          declared: true,
+          evidence,
+        })),
+      );
     };
-    const candidates = await members(title);
-    const direct = evaluate(candidates);
-    if (direct && preferredLandscape(direct)) return direct;
-    // One bounded subcategory level recovers exterior/interior galleries without crawling Commons.
-    const subcategories = await request(
-      "commons.wikimedia.org",
-      {
-        action: "query",
-        generator: "categorymembers",
-        gcmtitle: title,
-        gcmtype: "subcat",
-        gcmnamespace: "14",
-        gcmlimit: "8",
-      },
-      strategy,
-    );
-    const subcategoryCandidates: Candidate[] = [];
-    for (const page of ((subcategories?.query?.pages || []) as Page[]).slice(
-      0,
-      2,
-    )) {
-      if (
-        page.title &&
-        nameEvidence(query, page.title) &&
-        !/\b(?:people|staff|visitors|events|maps|logos|portraits)\b/.test(
-          normalize(page.title),
-        )
-      )
-        subcategoryCandidates.push(...(await members(page.title)));
-    }
-    return betterPhoto(direct, evaluate(subcategoryCandidates));
-  };
-  for (const [value, fileStrategy, categoryStrategy] of [
-    [query.osmImage, "osm-image", "osm-image-category"],
-    [query.commons, "osm-commons-file", "osm-commons-category"],
-  ]) {
-    if (!value) continue;
-    const ref = commonsReference(value);
-    if (!ref) {
-      rejected("unlicensed-external-image");
-      continue;
-    }
-    const image = /^Category:/i.test(ref)
-      ? await category(ref, categoryStrategy!, true)
-      : await files([ref], fileStrategy!);
-    const ready = consider(image);
-    if (ready) return finish(ready);
-  }
-  let wikipedia = query.wikipedia;
-  if (query.wikidata && /^Q[1-9]\d{0,11}$/.test(query.wikidata)) {
-    const data = await request(
-      "www.wikidata.org",
-      {
-        action: "wbgetentities",
-        ids: query.wikidata,
-        props: "labels|aliases|claims|sitelinks",
-        languages: "en",
-      },
-      "wikidata-entity",
-    );
-    const entity: Entity | undefined = data?.entities?.[query.wikidata];
-    const names = [
-      ...Object.values(entity?.labels || {}).map((label) => label.value),
-      ...Object.values(entity?.aliases || {})
-        .flat()
-        .map((alias) => alias.value),
-    ];
-    const coordinates = claimValues(entity, "P625").filter(
-      (
-        value,
-      ): value is { latitude: number; longitude: number; globe: string } =>
-        !!value &&
-        typeof value === "object" &&
-        "latitude" in value &&
-        "longitude" in value &&
-        "globe" in value &&
-        value.globe === "http://www.wikidata.org/entity/Q2",
-    );
-    const near = coordinates.some((point) =>
-      isNearPlace(
-        query,
-        point.latitude,
-        point.longitude,
-        matchingRadius(query),
-      ),
-    );
-    const validName = names.some((name) => !!nameEvidence(query, name));
-    if ((!coordinates.length || near) && validName) {
-      query = {
-        ...query,
-        aliases: [...new Set([...(query.aliases || []), ...names])].slice(
-          0,
-          16,
-        ),
+    const category = async (
+      title: string,
+      strategy: string,
+      trusted: boolean | "verified",
+      evidence: string[] = [],
+    ) => {
+      const members = async (categoryTitle: string) => {
+        const data = await request(
+          "commons.wikimedia.org",
+          {
+            action: "query",
+            generator: "categorymembers",
+            gcmtitle: categoryTitle,
+            gcmtype: "file",
+            gcmnamespace: "6",
+            gcmlimit: "30",
+            ...mediaParams,
+          },
+          strategy,
+        );
+        return ((data?.query?.pages || []) as Page[]).map((page) => ({
+          page,
+          strategy,
+          entityCategory: trusted === true,
+          verifiedCategory: trusted === "verified",
+          evidence,
+        }));
       };
-      const evidence = [
-        "declared-entity",
-        ...(near ? ["entity-coordinate"] : []),
-      ];
-      const p18 = claimValues(entity, "P18").filter(
-        (file): file is string => typeof file === "string",
+      const candidates = await members(title);
+      const direct = evaluate(candidates);
+      if (direct && preferredLandscape(direct)) return direct;
+      // One bounded subcategory level recovers exterior/interior galleries without crawling Commons.
+      const subcategories = await request(
+        "commons.wikimedia.org",
+        {
+          action: "query",
+          generator: "categorymembers",
+          gcmtitle: title,
+          gcmtype: "subcat",
+          gcmnamespace: "14",
+          gcmlimit: "8",
+        },
+        strategy,
       );
-      if (p18.length) {
-        const image = await files(
-          p18.map((file) => `File:${file}`),
-          "wikidata-p18",
-          evidence,
-        );
-        const ready = consider(image);
-        if (ready) return finish(ready);
+      const subcategoryCandidates: Candidate[] = [];
+      for (const page of ((subcategories?.query?.pages || []) as Page[]).slice(
+        0,
+        2,
+      )) {
+        if (
+          page.title &&
+          nameEvidence(query, page.title) &&
+          !/\b(?:people|staff|visitors|events|maps|logos|portraits)\b/.test(
+            normalize(page.title),
+          )
+        )
+          subcategoryCandidates.push(...(await members(page.title)));
       }
-      const categories = claimValues(entity, "P373").filter(
-        (title): title is string => typeof title === "string",
-      );
-      for (const title of categories.slice(0, 2)) {
-        const image = await category(
-          `Category:${title.replace(/^Category:/, "")}`,
-          "wikidata-p373",
-          true,
-          evidence,
-        );
-        const ready = consider(image);
-        if (ready) return finish(ready);
+      return betterPhoto(direct, evaluate(subcategoryCandidates));
+    };
+    for (const [value, fileStrategy, categoryStrategy] of [
+      [query.osmImage, "osm-image", "osm-image-category"],
+      [query.commons, "osm-commons-file", "osm-commons-category"],
+    ]) {
+      if (!value) continue;
+      const ref = commonsReference(value);
+      if (!ref) {
+        rejected("unlicensed-external-image");
+        continue;
       }
-      wikipedia ||= entity?.sitelinks?.enwiki?.title
-        ? `en:${entity.sitelinks.enwiki.title}`
-        : undefined;
-    } else if (entity)
-      rejected(
-        coordinates.length && !near
-          ? "entity-coordinate-conflict"
-          : "entity-name-conflict",
-      );
-  }
-  if (
-    wikipedia &&
-    /^[a-z]{2,12}:[^\x00-\x1f]{1,180}$/.test(wikipedia) &&
-    !/^[a-z]+:\/\//i.test(wikipedia)
-  ) {
-    const [language, ...title] = wikipedia.split(":");
-    const data = await request(
-      `${language}.wikipedia.org`,
-      {
-        action: "query",
-        titles: title.join(":"),
-        prop: "coordinates|pageimages|pageprops",
-        piprop: "name",
-        redirects: "1",
-      },
-      "wikipedia-article",
-    );
-    const page: Page | undefined = data?.query?.pages?.[0];
-    const points = page?.coordinates || [];
-    const matched = !!page?.title && !!nameEvidence(query, page.title);
-    const near = points.some((point) =>
-      isNearPlace(query, point.lat, point.lon, matchingRadius(query)),
-    );
-    if (page?.pageimage && matched && (!points.length || near)) {
-      const image = await files([`File:${page.pageimage}`], "wikipedia-image", [
-        "declared-article",
-        ...(near ? ["article-coordinate"] : []),
-      ]);
+      const image = /^Category:/i.test(ref)
+        ? await category(ref, categoryStrategy!, true)
+        : await files([ref], fileStrategy!);
       const ready = consider(image);
       if (ready) return finish(ready);
-    } else if (page?.pageimage)
-      rejected(
-        points.length && !near
-          ? "article-coordinate-conflict"
-          : "article-name-conflict",
+    }
+    let wikipedia = query.wikipedia;
+    if (query.wikidata && /^Q[1-9]\d{0,11}$/.test(query.wikidata)) {
+      const data = await request(
+        "www.wikidata.org",
+        {
+          action: "wbgetentities",
+          ids: query.wikidata,
+          props: "labels|aliases|claims|sitelinks",
+          languages: "en",
+        },
+        "wikidata-entity",
       );
-  }
-  const discoveredCategories = new Map<string, string[]>();
-  const names = [
-    ...new Set([query.name, ...(query.aliases || [])].map(canonicalPlaceName)),
-  ].slice(0, 4);
-  const safeTerm = (term: string) =>
-    term.replace(/["\\|<>]/g, " ").slice(0, 160);
-  // Name + town/county queries remain contextual; no general tourism/stock query is ever used.
-  const searches = [
-    names
-      .slice(0, 2)
-      .map((name) => `"${safeTerm(name)}"`)
-      .join(" OR ") +
-      (query.area ? ` ${safeTerm(query.area.split(",")[0])}` : ""),
-  ];
-  if (query.area || names.length > 2)
-    searches.push(names.map((name) => `"${safeTerm(name)}"`).join(" OR "));
-  for (const search of searches) {
-    const data = await request(
+      const entity: Entity | undefined = data?.entities?.[query.wikidata];
+      const names = [
+        ...Object.values(entity?.labels || {}).map((label) => label.value),
+        ...Object.values(entity?.aliases || {})
+          .flat()
+          .map((alias) => alias.value),
+      ];
+      const coordinates = claimValues(entity, "P625").filter(
+        (
+          value,
+        ): value is { latitude: number; longitude: number; globe: string } =>
+          !!value &&
+          typeof value === "object" &&
+          "latitude" in value &&
+          "longitude" in value &&
+          "globe" in value &&
+          value.globe === "http://www.wikidata.org/entity/Q2",
+      );
+      const near = coordinates.some((point) =>
+        isNearPlace(
+          query,
+          point.latitude,
+          point.longitude,
+          matchingRadius(query),
+        ),
+      );
+      const validName = names.some((name) => !!nameEvidence(query, name));
+      if ((!coordinates.length || near) && validName) {
+        query = {
+          ...query,
+          aliases: [...new Set([...(query.aliases || []), ...names])].slice(
+            0,
+            16,
+          ),
+        };
+        const evidence = [
+          "declared-entity",
+          ...(near ? ["entity-coordinate"] : []),
+        ];
+        const p18 = claimValues(entity, "P18").filter(
+          (file): file is string => typeof file === "string",
+        );
+        if (p18.length) {
+          const image = await files(
+            p18.map((file) => `File:${file}`),
+            "wikidata-p18",
+            evidence,
+          );
+          const ready = consider(image);
+          if (ready) return finish(ready);
+        }
+        const categories = claimValues(entity, "P373").filter(
+          (title): title is string => typeof title === "string",
+        );
+        for (const title of categories.slice(0, 2)) {
+          const image = await category(
+            `Category:${title.replace(/^Category:/, "")}`,
+            "wikidata-p373",
+            true,
+            evidence,
+          );
+          const ready = consider(image);
+          if (ready) return finish(ready);
+        }
+        wikipedia ||= entity?.sitelinks?.enwiki?.title
+          ? `en:${entity.sitelinks.enwiki.title}`
+          : undefined;
+      } else if (entity)
+        rejected(
+          coordinates.length && !near
+            ? "entity-coordinate-conflict"
+            : "entity-name-conflict",
+        );
+    }
+    if (
+      wikipedia &&
+      /^[a-z]{2,12}:[^\x00-\x1f]{1,180}$/.test(wikipedia) &&
+      !/^[a-z]+:\/\//i.test(wikipedia)
+    ) {
+      const [language, ...title] = wikipedia.split(":");
+      const data = await request(
+        `${language}.wikipedia.org`,
+        {
+          action: "query",
+          titles: title.join(":"),
+          prop: "coordinates|pageimages|pageprops",
+          piprop: "name",
+          redirects: "1",
+        },
+        "wikipedia-article",
+      );
+      const page: Page | undefined = data?.query?.pages?.[0];
+      const points = page?.coordinates || [];
+      const matched = !!page?.title && !!nameEvidence(query, page.title);
+      const near = points.some((point) =>
+        isNearPlace(query, point.lat, point.lon, matchingRadius(query)),
+      );
+      if (page?.pageimage && matched && (!points.length || near)) {
+        const image = await files(
+          [`File:${page.pageimage}`],
+          "wikipedia-image",
+          ["declared-article", ...(near ? ["article-coordinate"] : [])],
+        );
+        const ready = consider(image);
+        if (ready) return finish(ready);
+      } else if (page?.pageimage)
+        rejected(
+          points.length && !near
+            ? "article-coordinate-conflict"
+            : "article-name-conflict",
+        );
+    }
+    const discoveredCategories = new Map<string, string[]>();
+    const names = [
+      ...new Set(
+        [query.name, ...(query.aliases || [])].map(canonicalPlaceName),
+      ),
+    ].slice(0, 4);
+    const safeTerm = (term: string) =>
+      term.replace(/["\\|<>]/g, " ").slice(0, 160);
+    // Name + town/county queries remain contextual; no general tourism/stock query is ever used.
+    const searches = [
+      names
+        .slice(0, 2)
+        .map((name) => `"${safeTerm(name)}"`)
+        .join(" OR ") +
+        (query.area ? ` ${safeTerm(query.area.split(",")[0])}` : ""),
+    ];
+    if (query.area || names.length > 2)
+      searches.push(names.map((name) => `"${safeTerm(name)}"`).join(" OR "));
+    for (const search of searches) {
+      const data = await request(
+        "commons.wikimedia.org",
+        {
+          action: "query",
+          generator: "search",
+          gsrsearch: search,
+          gsrnamespace: "6",
+          gsrlimit: "24",
+          ...mediaParams,
+        },
+        "commons-search",
+      );
+      const pages: Page[] = data?.query?.pages || [];
+      for (const page of pages)
+        for (const item of page.categories || []) {
+          if (nameEvidence(query, item.title)) {
+            const near = page.coordinates?.some((point) =>
+              isNearPlace(query, point.lat, point.lon, matchingRadius(query)),
+            );
+            if (near || areaMatch(query.area, item.title))
+              discoveredCategories.set(
+                item.title,
+                near ? ["category-coordinate"] : ["category-area"],
+              );
+          }
+        }
+      const image = evaluate(
+        pages.map((page) => ({ page, strategy: "commons-search" })),
+      );
+      const ready = consider(image);
+      if (ready) return finish(ready);
+    }
+    const geo = await request(
       "commons.wikimedia.org",
       {
         action: "query",
-        generator: "search",
-        gsrsearch: search,
-        gsrnamespace: "6",
-        gsrlimit: "24",
+        generator: "geosearch",
+        ggscoord: `${query.lat}|${query.lng}`,
+        ggsradius: "1000",
+        ggsnamespace: "6",
+        ggslimit: "30",
         ...mediaParams,
       },
-      "commons-search",
+      "commons-geo",
     );
-    const pages: Page[] = data?.query?.pages || [];
-    for (const page of pages)
-      for (const item of page.categories || []) {
-        if (nameEvidence(query, item.title)) {
-          const near = page.coordinates?.some((point) =>
-            isNearPlace(query, point.lat, point.lon, matchingRadius(query)),
-          );
-          if (near || areaMatch(query.area, item.title))
-            discoveredCategories.set(
-              item.title,
-              near ? ["category-coordinate"] : ["category-area"],
-            );
-        }
+    const geoPages: Page[] = geo?.query?.pages || [];
+    // MediaInfo supplies captions and structured depicts claims for otherwise opaque camera filenames.
+    const ids = geoPages
+      .filter((page) => page.pageid && !nameEvidence(query, subjectText(page)))
+      .slice(0, 20)
+      .map((page) => `M${page.pageid}`);
+    if (ids.length) {
+      const media = await request(
+        "commons.wikimedia.org",
+        {
+          action: "wbgetentities",
+          ids: ids.join("|"),
+          props: "labels|claims",
+          languages: "en",
+        },
+        "commons-mediainfo",
+      );
+      for (const page of geoPages) {
+        const entity: Entity | undefined = media?.entities?.[`M${page.pageid}`];
+        page.caption = Object.values(entity?.labels || {})
+          .map((label) => label.value)
+          .join(" ");
+        page.depicts = claimValues(entity, "P180")
+          .filter(
+            (value): value is { id: string } =>
+              !!value &&
+              typeof value === "object" &&
+              "id" in value &&
+              typeof value.id === "string",
+          )
+          .map((value) => value.id);
       }
-    const image = evaluate(
-      pages.map((page) => ({ page, strategy: "commons-search" })),
-    );
-    const ready = consider(image);
-    if (ready) return finish(ready);
-  }
-  const geo = await request(
-    "commons.wikimedia.org",
-    {
-      action: "query",
-      generator: "geosearch",
-      ggscoord: `${query.lat}|${query.lng}`,
-      ggsradius: "1000",
-      ggsnamespace: "6",
-      ggslimit: "30",
-      ...mediaParams,
-    },
-    "commons-geo",
-  );
-  const geoPages: Page[] = geo?.query?.pages || [];
-  // MediaInfo supplies captions and structured depicts claims for otherwise opaque camera filenames.
-  const ids = geoPages
-    .filter((page) => page.pageid && !nameEvidence(query, subjectText(page)))
-    .slice(0, 20)
-    .map((page) => `M${page.pageid}`);
-  if (ids.length) {
-    const media = await request(
-      "commons.wikimedia.org",
-      {
-        action: "wbgetentities",
-        ids: ids.join("|"),
-        props: "labels|claims",
-        languages: "en",
-      },
-      "commons-mediainfo",
-    );
-    for (const page of geoPages) {
-      const entity: Entity | undefined = media?.entities?.[`M${page.pageid}`];
-      page.caption = Object.values(entity?.labels || {})
-        .map((label) => label.value)
-        .join(" ");
-      page.depicts = claimValues(entity, "P180")
-        .filter(
-          (value): value is { id: string } =>
-            !!value &&
-            typeof value === "object" &&
-            "id" in value &&
-            typeof value.id === "string",
-        )
-        .map((value) => value.id);
     }
-  }
-  const geoImage = evaluate(
-    geoPages.map((page) => ({ page, strategy: "commons-geo" })),
-  );
-  const geoReady = consider(geoImage);
-  if (geoReady) return finish(geoReady);
-  for (const page of geoPages)
-    for (const item of page.categories || [])
-      if (
-        nameEvidence(query, item.title) &&
-        page.coordinates?.some((point) =>
-          isNearPlace(query, point.lat, point.lon, matchingRadius(query)),
-        )
-      )
-        discoveredCategories.set(item.title, ["category-coordinate"]);
-  // Exact named categories are promoted only after town or coordinate corroboration.
-  for (const [title, evidence] of [...discoveredCategories].slice(0, 2)) {
-    const image = await category(
-      title,
-      "commons-category",
-      "verified",
-      evidence,
+    const geoImage = evaluate(
+      geoPages.map((page) => ({ page, strategy: "commons-geo" })),
     );
-    const ready = consider(image);
-    if (ready) return finish(ready);
+    const geoReady = consider(geoImage);
+    if (geoReady) return finish(geoReady);
+    for (const page of geoPages)
+      for (const item of page.categories || [])
+        if (
+          nameEvidence(query, item.title) &&
+          page.coordinates?.some((point) =>
+            isNearPlace(query, point.lat, point.lon, matchingRadius(query)),
+          )
+        )
+          discoveredCategories.set(item.title, ["category-coordinate"]);
+    // Exact named categories are promoted only after town or coordinate corroboration.
+    for (const [title, evidence] of [...discoveredCategories].slice(0, 2)) {
+      const image = await category(
+        title,
+        "commons-category",
+        "verified",
+        evidence,
+      );
+      const ready = consider(image);
+      if (ready) return finish(ready);
+    }
+    return finish(null);
+  } finally {
+    clearTimeout(deadline);
   }
-  return finish(null);
 }
 
 export async function lookupPlacePhoto(
@@ -973,27 +1023,33 @@ export async function lookupPlacePhoto(
     });
   const existing = pending.get(key);
   if (existing) return present(await existing);
-  if (active >= 6)
-    return {
-      image: null,
-      source: "unavailable",
-      retryable: true,
-      ...(options.debug
-        ? {
-            diagnostics: {
-              strategy: null,
-              sourcesAttempted: [],
-              candidateCount: 0,
-              rejected: { "concurrency-limit": 1 },
-              requestCount: 0,
-              elapsedMs: 0,
-            },
-          }
-        : {}),
-    };
-  active++;
-  const promise = resolve(query)
-    .then((result) => {
+  const started = Date.now();
+  const promise = (async (): Promise<PhotoResult> => {
+    const admission = await acquirePhotoSlot();
+    const queuedMs = Date.now() - started;
+    if (admission !== "acquired") {
+      // Admission failures are transient and never become negative cache entries.
+      return {
+        image: null,
+        source: "unavailable",
+        retryable: true,
+        diagnostics: {
+          strategy: null,
+          sourcesAttempted: [],
+          candidateCount: 0,
+          rejected: { [admission]: 1 },
+          requestCount: 0,
+          elapsedMs: queuedMs,
+          queuedMs,
+        },
+      };
+    }
+    try {
+      const result = await resolve(query);
+      if (result.diagnostics) {
+        result.diagnostics.queuedMs = queuedMs;
+        result.diagnostics.elapsedMs += queuedMs;
+      }
       if (cache.size >= 1000) cache.delete(cache.keys().next().value!);
       cache.set(key, {
         result,
@@ -1006,11 +1062,13 @@ export async function lookupPlacePhoto(
               : 5 * 60_000),
       });
       return result;
-    })
-    .finally(() => {
-      active--;
-      pending.delete(key);
-    });
+    } finally {
+      releasePhotoSlot();
+    }
+  })().finally(() => {
+    pending.delete(key);
+  });
+  // Include queued lookups so duplicate viewport requests share their queue slot.
   pending.set(key, promise);
   return present(await promise);
 }

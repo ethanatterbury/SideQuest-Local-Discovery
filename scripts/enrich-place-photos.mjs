@@ -54,6 +54,7 @@ const todo = queries
   })
   .slice(0, Number(args.batch || 200));
 let cursor = 0;
+let checkpoints = Promise.resolve();
 async function checkpoint() {
   index.entries = [...existing.values()];
   index.generatedAt = new Date().toISOString();
@@ -84,7 +85,7 @@ async function worker() {
       url.searchParams.set("share", process.env.SIDEQUEST_PREVIEW_SHARE);
     let result;
     try {
-      const response = await fetch(url, { signal: AbortSignal.timeout(22000) });
+      const response = await fetch(url, { signal: AbortSignal.timeout(30000) });
       if (!response.ok) throw Error(`HTTP ${response.status}`);
       result = await response.json();
     } catch (e) {
@@ -108,6 +109,8 @@ async function worker() {
       retryable: result.retryable,
       diagnostics: result.diagnostics,
     });
+    checkpoints = checkpoints.then(checkpoint);
+    await checkpoints;
     console.log(
       `${query.id}\t${query.name}\t${result.image ? "matched" : result.retryable ? "retryable" : "unresolved"}`,
     );

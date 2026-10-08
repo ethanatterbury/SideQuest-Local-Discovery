@@ -37,7 +37,7 @@ export function PhotoDebug({ places }: { places: Place[] }) {
     }
     try {
       const response = await fetch(`/api/photo?${params}`, {
-        signal: AbortSignal.timeout(20000),
+        signal: AbortSignal.timeout(30000),
       });
       if (!response.ok)
         throw new Error(`Photo service returned ${response.status}`);

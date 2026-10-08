@@ -2,7 +2,10 @@
 import type { Place } from "@/domain/models";
 import { indexedPhoto, placePhotoQuery, photoIdentity } from "./photo-index";
 type Image = NonNullable<Place["image"]>;
-const cache = new Map<string, { image: Image | null; until: number }>();
+const cache = new Map<
+  string,
+  { image: Image | null; until: number; retryable: boolean }
+>();
 const pending = new Map<string, Promise<Image | null>>();
 const queue: (() => void)[] = [];
 let active = 0;
@@ -24,6 +27,7 @@ export function findPlacePhoto(place: Place): Promise<Image | null> {
   const promise = new Promise<Image | null>((resolve) => {
     queue.push(async () => {
       let image: Image | null = null;
+      let retryable = false;
       try {
         const params = new URLSearchParams({
           name: place.name,
@@ -38,10 +42,12 @@ export function findPlacePhoto(place: Place): Promise<Image | null> {
             );
         }
         const response = await fetch(`/api/photo?${params}`, {
-          signal: AbortSignal.timeout(20000),
+          signal: AbortSignal.timeout(30000),
         });
         if (response.ok) {
-          const value = (await response.json()).image;
+          const data = await response.json();
+          retryable = data.retryable === true;
+          const value = data.image;
           if (
             value &&
             typeof value.url === "string" &&
@@ -61,9 +67,14 @@ export function findPlacePhoto(place: Place): Promise<Image | null> {
           }
         }
       } catch {
+        retryable = true;
         /* Missing photos never prevent discovery. */
       }
-      cache.set(key, { image, until: Date.now() + (image ? 86400000 : 60000) });
+      cache.set(key, {
+        image,
+        retryable,
+        until: Date.now() + (image ? 86400000 : retryable ? 30000 : 60000),
+      });
       if (cache.size > 1000) cache.delete(cache.keys().next().value!);
       pending.delete(key);
       active--;
@@ -74,4 +85,9 @@ export function findPlacePhoto(place: Place): Promise<Image | null> {
   });
   pending.set(key, promise);
   return promise;
+}
+
+export function photoRetryDelay(place: Place): number | null {
+  const entry = cache.get(photoIdentity(placePhotoQuery(place)));
+  return entry?.retryable ? Math.max(0, entry.until - Date.now()) + 1000 : null;
 }

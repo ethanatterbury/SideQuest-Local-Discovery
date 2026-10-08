@@ -17,8 +17,9 @@ export async function GET(request: Request) {
   const labEnabled =
     process.env.NODE_ENV === "development" ||
     process.env.NEXT_PUBLIC_ENABLE_ENVIRONMENT_LAB === "true";
-  const debug = labEnabled && params.get("debug") === "1";
-  const refresh = debug && params.get("refresh") === "1";
+  // Diagnostics describe public venue/media evidence; cache-bypassing refresh remains private.
+  const debug = params.get("debug") === "1";
+  const refresh = labEnabled && debug && params.get("refresh") === "1";
   const entry = !refresh && indexedPhoto(query);
   const result: PhotoResult = entry
     ? {

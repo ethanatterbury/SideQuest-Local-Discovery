@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useApp } from "@/components/providers";
-import { findPlacePhoto } from "@/providers/photo-client";
+import { findPlacePhoto, photoRetryDelay } from "@/providers/photo-client";
 import type { Place } from "@/domain/models";
 export function Mark() {
   return (
@@ -51,22 +51,30 @@ export function PlaceImage({
   useEffect(() => {
     if (image || !container.current) return;
     let cancelled = false;
+    let retry: ReturnType<typeof setTimeout> | undefined;
+    let attempts = 0;
+    async function resolvePhoto() {
+      setLooking(true);
+      const photo = await findPlacePhoto(place);
+      if (cancelled) return;
+      if (photo) rememberPhoto(place.id, photo);
+      setLooking(false);
+      const delay = photoRetryDelay(place);
+      if (!photo && delay !== null && attempts++ < 2)
+        retry = setTimeout(resolvePhoto, delay);
+    }
     const observer = new IntersectionObserver(
       (entries) => {
         if (!entries.some((e) => e.isIntersecting)) return;
         observer.disconnect();
-        setLooking(true);
-        findPlacePhoto(place).then((photo) => {
-          if (cancelled) return;
-          if (photo) rememberPhoto(place.id, photo);
-          setLooking(false);
-        });
+        void resolvePhoto();
       },
       { rootMargin: "250px" },
     );
     observer.observe(container.current);
     return () => {
       cancelled = true;
+      clearTimeout(retry);
       observer.disconnect();
     };
   }, [place, image, rememberPhoto]);
