@@ -263,7 +263,7 @@ it("searches a canonical name and accepts a named garden subject within 600m", a
     }),
   ).toMatchObject({ source: "live", image: { credit: "Jane Doe" } });
   const url = fetcher.mock.calls[0]?.[0] as unknown as URL;
-  expect(url.searchParams.get("gsrsearch")).toBe('"savill garden"');
+  expect(url.searchParams.get("gsrsearch")).toBe('"savill garden" Ascot');
   expect(url.searchParams.get("coprimary")).toBe("all");
   expect(url.searchParams.get("colimit")).toBe("max");
 });
@@ -1118,7 +1118,7 @@ it("queues ten concurrent lookups and deduplicates queued venues without false m
   const places = Array.from({ length: 10 }, (_, index) => ({
     ...query,
     id: `queued-venue-${index}`,
-    commons: "File:Queued.jpg",
+    commons: `File:Queued-${index}.jpg`,
   }));
   const requests = places.map((place) =>
     lookupPlacePhoto(place, { refresh: true, debug: true }),
@@ -1238,7 +1238,11 @@ it("releases six hung upstream leases at ten seconds and admits a later queued l
     const completed: Awaited<ReturnType<typeof lookupPlacePhoto>>[] = [];
     const held = Array.from({ length: 6 }, (_, index) =>
       lookupPlacePhoto(
-        { ...query, id: `lease-held-${index}`, commons: "File:Lease.jpg" },
+        {
+          ...query,
+          id: `lease-held-${index}`,
+          commons: `File:Lease-${index}.jpg`,
+        },
         { refresh: true, debug: true },
       ).then((result) => {
         completed.push(result);
@@ -1248,7 +1252,7 @@ it("releases six hung upstream leases at ten seconds and admits a later queued l
     await vi.advanceTimersByTimeAsync(3000);
     let queuedResult: Awaited<ReturnType<typeof lookupPlacePhoto>> | undefined;
     const queued = lookupPlacePhoto(
-      { ...query, id: "lease-later", commons: "File:Lease.jpg" },
+      { ...query, id: "lease-later", commons: "File:Lease-later.jpg" },
       { refresh: true, debug: true },
     ).then((result) => {
       queuedResult = result;
@@ -1325,4 +1329,332 @@ it("preserves a verified small fallback when a later provider ignores its abort 
     release();
     vi.useRealTimers();
   }
+});
+
+it("reuses successful identical Wikimedia metadata across different OSM identities", async () => {
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const fetcher = vi.fn(async () => {
+    await gate;
+    return Response.json({
+      query: { pages: [photoPage("Shared transport.jpg")] },
+    });
+  });
+  vi.stubGlobal("fetch", fetcher);
+  const first = lookupPlacePhoto(
+    { ...query, id: "transport-osm-1", commons: "File:Shared transport.jpg" },
+    { refresh: true, debug: true },
+  );
+  const second = lookupPlacePhoto(
+    { ...query, id: "transport-osm-2", commons: "File:Shared transport.jpg" },
+    { refresh: true, debug: true },
+  );
+  await Promise.resolve();
+  release();
+  const results = await Promise.all([first, second]);
+  const cachedMetadata = await lookupPlacePhoto(
+    { ...query, id: "transport-osm-3", commons: "File:Shared transport.jpg" },
+    { refresh: true, debug: true },
+  );
+  expect(results.every((result) => !!result.image)).toBe(true);
+  expect(fetcher).toHaveBeenCalledTimes(1);
+  expect(results[1].diagnostics).toMatchObject({ transportShared: 1 });
+  expect(cachedMetadata).toMatchObject({
+    image: { strategy: "osm-commons-file" },
+    diagnostics: { transportCacheHits: 1 },
+  });
+});
+it("honors HTTP429 Retry-After without caching upstream errors or exposing response messages", async () => {
+  vi.useFakeTimers();
+  try {
+    let throttled = true;
+    const fetcher = vi.fn(async () =>
+      throttled
+        ? new Response("private upstream message", {
+            status: 429,
+            headers: { "Retry-After": "2" },
+          })
+        : Response.json({ query: { pages: [photoPage("Throttle.jpg")] } }),
+    );
+    vi.stubGlobal("fetch", fetcher);
+    const place = { ...query, commons: "File:Throttle.jpg" };
+    const throttledResult = await lookupPlacePhoto(place, {
+      refresh: true,
+      debug: true,
+    });
+    expect(throttledResult).toMatchObject({
+      image: null,
+      retryable: true,
+      diagnostics: { upstreamErrors: { "http-429": 1 }, retryAfterMs: 2000 },
+    });
+    expect(JSON.stringify(throttledResult)).not.toContain(
+      "private upstream message",
+    );
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    throttled = false;
+    const cooling = await lookupPlacePhoto(
+      { ...place, id: "cooling-other-osm" },
+      { refresh: true, debug: true },
+    );
+    expect(cooling).toMatchObject({
+      retryable: true,
+      diagnostics: {
+        upstreamErrors: { "cooldown-http-429": expect.any(Number) },
+      },
+    });
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(await lookupPlacePhoto(place, { refresh: true })).toMatchObject({
+      image: { strategy: "osm-commons-file" },
+    });
+    expect(fetcher).toHaveBeenCalledTimes(2);
+  } finally {
+    vi.useRealTimers();
+  }
+});
+it("classifies maxlag API errors separately and never caches failed metadata", async () => {
+  vi.useFakeTimers();
+  try {
+    let lagged = true;
+    const fetcher = vi.fn(async () =>
+      Response.json(
+        lagged
+          ? { error: { code: "maxlag", info: "private database details" } }
+          : { query: { pages: [photoPage("Maxlag.jpg")] } },
+      ),
+    );
+    vi.stubGlobal("fetch", fetcher);
+    const place = { ...query, commons: "File:Maxlag.jpg" };
+    expect(
+      await lookupPlacePhoto(place, { refresh: true, debug: true }),
+    ).toMatchObject({
+      retryable: true,
+      diagnostics: { upstreamErrors: { "api-maxlag": 1 } },
+    });
+    lagged = false;
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(
+      (await lookupPlacePhoto(place, { refresh: true })).image,
+    ).not.toBeNull();
+  } finally {
+    vi.useRealTimers();
+  }
+});
+it("bounds Wikimedia response bytes even when multibyte JSON is below the character limit", async () => {
+  const fetcher = vi.fn(async () =>
+    Response.json({
+      query: {
+        pages: [
+          photoPage("Oversized.jpg", {
+            imageinfo: [
+              {
+                ...info,
+                extmetadata: {
+                  ...info.extmetadata,
+                  ImageDescription: { value: "é".repeat(800_000) },
+                },
+              },
+            ],
+          }),
+        ],
+      },
+    }),
+  );
+  vi.stubGlobal("fetch", fetcher);
+  expect(
+    await lookupPlacePhoto(
+      { ...query, commons: "File:Oversized.jpg" },
+      { refresh: true, debug: true },
+    ),
+  ).toMatchObject({
+    image: null,
+    retryable: true,
+    diagnostics: { upstreamErrors: { "body-size": expect.any(Number) } },
+  });
+});
+it("classifies network errors without leaking exception text", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => {
+      throw new Error("SECRET socket credentials");
+    }),
+  );
+  const result = await lookupPlacePhoto(
+    { ...query, id: "network-classified", commons: "File:Network.jpg" },
+    { refresh: true, debug: true },
+  );
+  expect(result).toMatchObject({
+    retryable: true,
+    diagnostics: { upstreamErrors: { network: expect.any(Number) } },
+  });
+  expect(JSON.stringify(result)).not.toContain("SECRET");
+});
+it("infers nearby town context and expands generic Rec abbreviations for a genuine low-resolution fallback", async () => {
+  const fetcher = vi.fn(async (url: URL) => {
+    expect(url.hostname).toBe("commons.wikimedia.org");
+    return Response.json({
+      query: {
+        pages: [
+          photoPage("Morgan Recreation Ground Crowthorne.jpg", {
+            imageinfo: [{ ...info, width: 448, height: 336 }],
+          }),
+        ],
+      },
+    });
+  });
+  vi.stubGlobal("fetch", fetcher);
+  const result = await lookupPlacePhoto(
+    { name: "Morgan Rec", area: "Nearby", lat: 51.372, lng: -0.793 },
+    { refresh: true, debug: true },
+  );
+  expect(result).toMatchObject({
+    image: {
+      width: 448,
+      height: 336,
+      matched: expect.arrayContaining(["alias", "area", "low-resolution"]),
+    },
+  });
+  expect(
+    (fetcher.mock.calls[0][0] as URL).searchParams.get("gsrsearch"),
+  ).toContain("Crowthorne");
+});
+it("rejects low-resolution generic nearby imagery and avoids distant town inference", async () => {
+  mockPipeline(() => ({
+    query: {
+      pages: [
+        photoPage("Nearby Cafe.jpg", {
+          coordinates: [{ lat: 51.372, lon: -0.793 }],
+          imageinfo: [{ ...info, width: 448, height: 336 }],
+        }),
+      ],
+    },
+  }));
+  expect(
+    (
+      await lookupPlacePhoto(
+        { name: "Morgan Rec", lat: 51.372, lng: -0.793 },
+        { refresh: true },
+      )
+    ).image,
+  ).toBeNull();
+  const fetcher = vi.fn(async () =>
+    Response.json({
+      query: {
+        pages: [
+          photoPage("Morgan Recreation Ground Crowthorne.jpg", {
+            imageinfo: [{ ...info, width: 448, height: 336 }],
+          }),
+        ],
+      },
+    }),
+  );
+  vi.stubGlobal("fetch", fetcher);
+  expect(
+    (
+      await lookupPlacePhoto(
+        { name: "Morgan Rec", lat: 55.865, lng: -4.306 },
+        { refresh: true },
+      )
+    ).image,
+  ).toBeNull();
+});
+
+it("honors a long Retry-After and classifies service unavailable separately", async () => {
+  vi.useFakeTimers();
+  try {
+    const fetcher = vi.fn(
+      async () =>
+        new Response("backend internals", {
+          status: 503,
+          headers: { "Retry-After": "3600" },
+        }),
+    );
+    vi.stubGlobal("fetch", fetcher);
+    const result = await lookupPlacePhoto(
+      { ...query, commons: "File:Service-unavailable.jpg" },
+      { refresh: true, debug: true },
+    );
+    expect(result).toMatchObject({
+      retryable: true,
+      diagnostics: {
+        upstreamErrors: { "http-503": 1 },
+        retryAfterMs: 3_600_000,
+      },
+    });
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(result)).not.toContain("backend internals");
+  } finally {
+    vi.useRealTimers();
+  }
+});
+it("bounds successful transport metadata by total bytes and refetches evicted entries", async () => {
+  const fetcher = vi.fn(async () =>
+    Response.json({
+      query: {
+        pages: [
+          photoPage("Cache body.jpg", {
+            imageinfo: [
+              {
+                ...info,
+                extmetadata: {
+                  ...info.extmetadata,
+                  ImageDescription: { value: "a".repeat(1_100_000) },
+                },
+              },
+            ],
+          }),
+        ],
+      },
+    }),
+  );
+  vi.stubGlobal("fetch", fetcher);
+  for (let index = 0; index < 8; index++) {
+    expect(
+      (
+        await lookupPlacePhoto(
+          {
+            ...query,
+            id: `byte-cache-${index}`,
+            commons: `File:Byte-cache-${index}.jpg`,
+          },
+          { refresh: true },
+        )
+      ).image,
+    ).not.toBeNull();
+  }
+  expect(
+    (
+      await lookupPlacePhoto(
+        { ...query, id: "byte-cache-0", commons: "File:Byte-cache-0.jpg" },
+        { refresh: true, debug: true },
+      )
+    ).image,
+  ).not.toBeNull();
+  expect(fetcher).toHaveBeenCalledTimes(9);
+});
+it("identifies the app and an actionable contact in Wikimedia requests", async () => {
+  let userAgent = "";
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: URL, options?: RequestInit) => {
+      expect(url.hostname).toBe("commons.wikimedia.org");
+      userAgent = new Headers(options?.headers).get("user-agent") || "";
+      return Response.json({ query: { pages: [photoPage("User agent.jpg")] } });
+    }),
+  );
+  expect(
+    (
+      await lookupPlacePhoto(
+        { ...query, commons: "File:User agent.jpg" },
+        { refresh: true },
+      )
+    ).image,
+  ).not.toBeNull();
+  expect(userAgent).toContain("SideQuest/");
+  expect(userAgent).toContain("https://sidequest-local-discovery.vercel.app");
+  expect(userAgent).toContain(
+    "https://github.com/ethanatterbury/SideQuest-Local-Discovery/issues",
+  );
 });

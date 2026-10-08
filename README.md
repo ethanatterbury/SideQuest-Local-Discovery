@@ -37,7 +37,7 @@ npm start
 
 Run development and visit **`/dev/environment`**. A discreet flask link is in the footer. All changes override a single environment context and persist in this tab's session; reset returns to live settings. Use Open SideQuest to test the full application under the same conditions.
 
-Weather: live, clear, sunny, partly cloudy, overcast, light/heavy rain, thunderstorm, fog, snow, heat, high wind. Time: live, sunrise, morning, midday, golden hour, sunset, evening, midnight. Temperature, precipitation, wind and visibility sliders affect both presentation and ranking. Preset towns and custom coordinates, device previews, reduced motion, scoring details and failure toggles are included. Use Test location request for denied/timeout states.
+Weather: live, clear, sunny, partly cloudy, overcast, light/heavy rain, thunderstorm, fog, snow, heat, high wind. Time: live, sunrise, morning, midday, golden hour, sunset, evening, midnight. Temperature, precipitation, wind and visibility sliders affect both presentation and ranking. Selecting a weather preset clears conflicting weather/offline failure simulations; those failures can then be deliberately re-enabled. Preset towns and custom coordinates, device previews, reduced motion, scoring details and failure toggles are included. Use Test location request for denied/timeout states.
 
 Failures: weather, geolocation denial, geolocation timeout, map, places, no recommendations and offline. The offline switch simulates the environment; test actual service-worker caching by disconnecting the browser separately.
 
@@ -58,25 +58,25 @@ For the real offline check, run `npm run build` and `npm start -- --port 3001` i
 
 `npm run check` combines lint, types, unit tests and production build. Browser tests start development automatically unless a server is running. On a fresh computer, first run `npx playwright install chromium`; an installed `/usr/bin/chromium` or `CHROMIUM_PATH` is also supported. `TEST_BASE_URL` targets an already-running server. Visual captures need the development server running and save under `work/visual-matrix`.
 
-Domain tests cover severe weather and night exclusions, closing after arrival, DST, budgets, round-trip time, geographic constraints, scoring, negative feedback, language parsing, external weather validation, storage failures and data recovery. Browser flows cover reveal, save/reload, collections, reactions, itinerary save, denial fallback, Lab, bad URLs, narrow-phone focus and map selection. The vector-map smoke test uses a local style fixture to isolate map behavior from the external tile service; it does not validate that service's availability.
+Domain tests cover severe weather and night exclusions, closing after arrival, DST, budgets, round-trip time, geographic constraints, scoring, negative feedback, language parsing, external weather validation, storage failures and data recovery. Browser flows cover reveal, save/reload, collections, reactions, itinerary save, denial fallback, Lab, bad URLs, narrow-phone focus and map selection. The primary Leaflet geography tests use decoded local street-tile fixtures to isolate rendering, camera and interaction behavior from external service availability. Weather tests also measure visible pixel contribution and moving transforms; these fixtures do not establish hosted tile availability.
 
 ### Visual test matrix
 
-| Conditions | Review |
-| --- | --- |
-| Clear / midday | Outdoors rise; readable warm atmosphere |
-| Clear / golden hour | Warm map; sufficient daylight required |
-| Clear / night | Dark map paint; daylight-only places excluded |
-| Overcast / midday | Cooler light; controls retain contrast |
-| Light rain / daytime | Shelter rises; sparse particles on map |
-| Heavy rain / night | Indoor ideas; dark, restrained atmosphere |
-| Fog / morning | Exposed viewpoints excluded; sharp labels |
-| Snow / evening | Sparse particles; daylight limits |
-| Reduced motion / rain | No particles or animated transitions |
-| Map unavailable | Coordinate overview, selection and results |
-| Weather unavailable | Explicit uncertainty; discovery continues |
-| Location denied / timeout | Town picker remains usable |
-| Offline | Cached shell and local library |
+| Conditions                | Review                                                            |
+| ------------------------- | ----------------------------------------------------------------- |
+| Clear / midday            | Outdoors rise; readable warm atmosphere                           |
+| Clear / golden hour       | Warm map; sufficient daylight required                            |
+| Clear / night             | Dark map paint; daylight-only places excluded                     |
+| Overcast / midday         | Slowly drifting soft cloud shadows; readable labels and controls  |
+| Light rain / daytime      | Shelter rises; fine moving rain and sparse ripples over geography |
+| Heavy rain / night        | Indoor ideas; dark, restrained atmosphere                         |
+| Fog / morning             | Exposed viewpoints excluded; sharp labels                         |
+| Snow / evening            | Sparse particles; daylight limits                                 |
+| Reduced motion / rain     | No particles or animated transitions                              |
+| Map unavailable           | Coordinate overview, selection and results                        |
+| Weather unavailable       | Explicit uncertainty; discovery continues                         |
+| Location denied / timeout | Town picker remains usable                                        |
+| Offline                   | Cached shell and local library                                    |
 
 Viewport matrix: 320×568, 390×844, 430×932, 360×780, 844×390, 768×1024, 1024×768, 1366×768, 1440×900, 2560×1440 and 820×900. Check scroll overflow, reachable buttons, modal focus/escape, image loading, sheet containment and navigation. Environment screenshots intentionally simulate map failure where the external provider cannot be reached.
 
@@ -89,7 +89,7 @@ Viewport matrix: 320×568, 390×844, 430×932, 360×780, 844×390, 768×1024, 10
 - `src/app`: server layouts, metadata, route shells, static public place pages, manifest and OpenGraph image.
 - `public`: locally packaged imagery, credited in `docs/image-credits.md`, icons and service worker.
 
-The UI consumes internal models, not provider API payloads. `PlacesProvider`, `WeatherProvider`, `RoutingProvider`, `GeocodingProvider`, `PreferenceStore`, `SavedPlacesStore`, `HistoryStore`, `CollectionStore` and `AnalyticsProvider` are replacement boundaries. Image references are normalized on `Place.image`. MapLibre stays behind the lazy map feature boundary. The client feature components are interactive; route pages, metadata and the outer document are server components. No map runtime is loaded on the discovery route.
+The UI consumes internal models, not provider API payloads. `PlacesProvider`, `WeatherProvider`, `RoutingProvider`, `GeocodingProvider`, `PreferenceStore`, `SavedPlacesStore`, `HistoryStore`, `CollectionStore` and `AnalyticsProvider` are replacement boundaries. Image references are normalized on `Place.image`. Leaflet stays behind the lazy map feature boundary. Map’s Food & coffee checkbox is off by default; opting in adds food venues alongside the selected outing type. Museums and parks with incidental cafés remain outings. The client feature components are interactive; route pages, metadata and the outer document are server components. No map runtime is loaded on the discovery route.
 
 ### Recommendation score
 

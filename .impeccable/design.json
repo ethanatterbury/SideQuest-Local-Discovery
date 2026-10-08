@@ -282,16 +282,16 @@
       {
         "name": "weather-wash",
         "value": "1500ms",
-        "purpose": "Atmosphere color and opacity transitions."
+        "purpose": "Atmosphere opacity transition; cloud shading remains beneath map controls."
       },
       {
         "name": "rain-particles",
-        "value": "1500\u20132700ms linear infinite",
-        "purpose": "12 particles, or 24 in heavy rain; hidden tabs remove particles."
+        "value": "1150–1840ms linear infinite",
+        "purpose": "12 fine diagonal drops, or24 in heavy rain; removed for effective reduced motion or hidden tabs."
       },
       {
         "name": "snow-particles",
-        "value": "5000\u20137000ms linear infinite",
+        "value": "5000–7000ms linear infinite",
         "purpose": "12 particles; removed for reduced motion or hidden tabs."
       },
       {
@@ -343,7 +343,7 @@
       "kind": "button",
       "refersTo": "button-primary",
       "description": "Forest action for committing to a choice.",
-      "html": "<button class=\"ds-button\">Let\u2019s go <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M7 17 17 7M7 7h10v10\"/></svg></button>",
+      "html": "<button class=\"ds-button\">Let’s go <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M7 17 17 7M7 7h10v10\"/></svg></button>",
       "css": ".ds-button {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 12px;\n  min-height: 49px;\n  padding: 13px 24px;\n  border-radius: 7px;\n  background: var(--ink, #243b30);\n  color: var(--paper, #f6f6ef);\n  font-weight: 500;\n  transition:\n    background 0.2s,\n    transform 0.2s,\n    box-shadow 0.2s;\n}\n.ds-button:hover {\n  background: #36543f;\n  box-shadow: var(--elevation, 0 10px 30px #243b3010);\n}\n.ds-button{font-family:var(--body, \"DM Sans Variable\", sans-serif);font-size:15px;border:0;cursor:pointer;text-decoration:none}.ds-button:focus-visible{outline:2px solid #537a3c;outline-offset:4px;}.ds-button:active{transform:translateY(1px)}.ds-button:disabled{cursor:default;opacity:.5}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}"
     },
     {

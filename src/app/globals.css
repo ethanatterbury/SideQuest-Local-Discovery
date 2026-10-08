@@ -2016,6 +2016,8 @@ textarea {
 .sheet-handle {
   display: none;
 }
+/* Weather lives above geography and below the map interface. Large, soft
+   shadows and fine drops keep labels readable; only transform/opacity move. */
 .weather-atmosphere {
   position: absolute;
   inset: 0;
@@ -2028,19 +2030,17 @@ textarea {
   inset: 0;
   opacity: 0.12;
   background: radial-gradient(ellipse at top right, #fcce7980, transparent 70%);
-  transition:
-    background 1.5s,
-    opacity 1.5s;
+  transition: opacity 1.5s;
 }
 .weather-atmosphere.overcast .atmosphere-wash,
 .weather-atmosphere.partly-cloudy .atmosphere-wash {
-  background: linear-gradient(160deg, #799299, transparent 65%);
-  opacity: 0.15;
+  background: linear-gradient(160deg, #799299, transparent 75%);
+  opacity: 0.1;
 }
 .weather-atmosphere.light-rain .atmosphere-wash,
 .weather-atmosphere.heavy-rain .atmosphere-wash {
   background: linear-gradient(130deg, #416472, #78938b00);
-  opacity: 0.2;
+  opacity: 0.13;
 }
 .weather-atmosphere.night .atmosphere-wash {
   background: linear-gradient(150deg, #142737b0, #28473930);
@@ -2050,28 +2050,81 @@ textarea {
   background: linear-gradient(160deg, #edb6697a, transparent 70%);
   opacity: 0.3;
 }
-.weather-particles {
+.cloud-shadows,
+.weather-particles,
+.rain-ripples {
   position: absolute;
   inset: 0;
 }
+.cloud-shadow {
+  position: absolute;
+  inset: -25%;
+  background:
+    radial-gradient(
+      ellipse 32% 24% at 28% 35%,
+      #334e5be0,
+      #334e5b70 44%,
+      transparent 75%
+    ),
+    radial-gradient(
+      ellipse 26% 32% at 74% 68%,
+      #334e5bc0,
+      #334e5b50 45%,
+      transparent 76%
+    );
+  opacity: 0.16;
+  animation: cloud-drift-near 38s ease-in-out infinite alternate;
+  will-change: transform;
+}
+.cloud-shadow-far {
+  background:
+    radial-gradient(
+      ellipse 38% 23% at 66% 24%,
+      #607883c0,
+      #60788350 45%,
+      transparent 78%
+    ),
+    radial-gradient(ellipse 27% 28% at 22% 78%, #607883b0, transparent 77%);
+  opacity: 0.13;
+  animation: cloud-drift-far 53s ease-in-out -19s infinite alternate;
+}
+.partly-cloudy .cloud-shadow {
+  opacity: 0.09;
+}
+.heavy-rain .cloud-shadow-near {
+  opacity: 0.2;
+}
 .weather-particles i {
   position: absolute;
-  height: 7px;
   width: 1px;
-  background: #33555c;
-  animation: rainfall 2s linear infinite;
+  background: linear-gradient(to bottom, #294f6500, #294f65 45%, #294f65);
+  box-shadow: 1px 0 0 #ffffff45;
+  animation: rainfall 1.6s linear infinite;
   border-radius: 1px;
+}
+.night .weather-particles i {
+  background: linear-gradient(to bottom, #d2e4ef00, #d2e4ef);
 }
 .snow .weather-particles i {
   height: 3px;
   width: 3px;
   background: white;
+  box-shadow: 0 0 3px #58717c40;
   border-radius: 50%;
   animation-name: snowfall;
 }
+.rain-ripples i {
+  position: absolute;
+  width: 15px;
+  height: 6px;
+  border: 1px solid #365e6c;
+  border-radius: 50%;
+  opacity: 0;
+  animation: rain-ripple 4s ease-out infinite;
+}
 .mist-layer {
   position: absolute;
-  inset: 0;
+  inset: -8%;
   background:
     radial-gradient(ellipse at left center, #f2f4eacc, transparent 40%),
     radial-gradient(ellipse at right top, #f2f4eacc, transparent 50%);
@@ -2436,12 +2489,43 @@ textarea {
     opacity: 1;
   }
 }
-@keyframes rainfall {
+@keyframes cloud-drift-near {
   from {
-    transform: translateY(-60px);
+    transform: translate3d(-6%, -3%, 0) rotate(-4deg);
   }
   to {
-    transform: translateY(100px);
+    transform: translate3d(8%, 5%, 0) rotate(3deg);
+  }
+}
+@keyframes cloud-drift-far {
+  from {
+    transform: translate3d(7%, -6%, 0) rotate(2deg);
+  }
+  to {
+    transform: translate3d(-7%, 6%, 0) rotate(-3deg);
+  }
+}
+@keyframes rainfall {
+  from {
+    transform: translate3d(28px, -100px, 0) rotate(14deg);
+  }
+  to {
+    transform: translate3d(-28px, 130px, 0) rotate(14deg);
+  }
+}
+@keyframes rain-ripple {
+  0%,
+  65%,
+  100% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  72% {
+    opacity: 0.18;
+  }
+  94% {
+    transform: scale(2.1);
+    opacity: 0;
   }
 }
 @keyframes snowfall {
@@ -2467,7 +2551,8 @@ textarea {
   transition: none !important;
   scroll-behavior: auto !important;
 }
-.reduce-motion .weather-particles {
+.reduce-motion .weather-particles,
+.reduce-motion .rain-ripples {
   display: none;
 }
 @media (min-width: 1550px) {
@@ -3903,18 +3988,21 @@ textarea {
     font-size: 10px;
   }
 }
+/* The provider resolves system/preview motion into .reduce-motion. The
+   system fallback applies only while no effective Normal root is present. */
 @media (prefers-reduced-motion: reduce) {
-  html {
+  html:not(:has(.app-root.normal-motion)) {
     scroll-behavior: auto;
   }
-  *,
-  *:before,
-  *:after {
+  html:not(:has(.app-root.normal-motion)) *,
+  html:not(:has(.app-root.normal-motion)) *:before,
+  html:not(:has(.app-root.normal-motion)) *:after {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
   }
-  .weather-particles {
+  html:not(:has(.app-root.normal-motion)) .weather-particles,
+  html:not(:has(.app-root.normal-motion)) .rain-ripples {
     display: none;
   }
 }
@@ -3991,25 +4079,125 @@ textarea {
 }
 
 /* Flexible outing and family choices stay close to the primary controls. */
-.activity-filter { margin-top: 12px; }
-.activity-filter label { display:flex; align-items:center; gap:12px; font-size:12px; color:var(--muted); }
-.activity-filter select, .family-ages select { border:1px solid var(--line); border-radius:6px; padding:9px 12px; background:var(--paper); color:var(--ink); max-width:100%; min-width:0; }
-.family-ages { border:1px solid var(--line); border-radius:8px; margin:16px 0 0; padding:14px; min-width:0; }
-.family-ages legend { font-size:13px; font-weight:650; padding:0 6px; }
-.family-ages p { font-size:12px; color:var(--muted); margin:4px 0 12px; }
-.child-age-row { display:flex; align-items:flex-end; gap:12px; margin:10px 0; }
-.child-age-row label { flex:1; display:flex; flex-direction:column; gap:6px; font-size:12px; min-width:0; }
-.child-age-row .button, .family-age-actions .button { padding:10px 12px; min-height:40px; font-size:12px; }
-.family-age-actions { display:flex; flex-wrap:wrap; gap:8px; }
-.discovery-source { font-size:12px; line-height:1.6; color:var(--muted); display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 18px; }
-.discovery-source .text-link { font-size:12px; margin-left:auto; }
-.browse-more { display:inline-flex; margin-top:24px; gap:8px; align-items:center; }
-.raster-map { position:absolute; inset:0; z-index:0; background:#e5eadb; }
-.raster-map .leaflet-control-attribution { font-size:9px; background:rgba(246,246,239,.94); }
-.raster-map.raster-night .leaflet-tile-pane { filter:brightness(.65) saturate(.6); }
-.raster-map .leaflet-tooltip { background:var(--paper); color:var(--ink); font-family:inherit; }
-.geographic-fallback { z-index:1; }
-@media(max-width:640px) { .activity-filter label { align-items:flex-start; flex-direction:column; gap:6px; } .activity-filter select { width:100%; } .child-age-row { gap:8px; } .discovery-source .text-link { margin-left:0; } }
+.activity-filter {
+  margin-top: 12px;
+}
+.activity-filter label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.activity-filter select,
+.family-ages select {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 9px 12px;
+  background: var(--paper);
+  color: var(--ink);
+  max-width: 100%;
+  min-width: 0;
+}
+.family-ages {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin: 16px 0 0;
+  padding: 14px;
+  min-width: 0;
+}
+.family-ages legend {
+  font-size: 13px;
+  font-weight: 650;
+  padding: 0 6px;
+}
+.family-ages p {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 4px 0 12px;
+}
+.child-age-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 10px 0;
+}
+.child-age-row label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  min-width: 0;
+}
+.child-age-row .button,
+.family-age-actions .button {
+  padding: 10px 12px;
+  min-height: 40px;
+  font-size: 12px;
+}
+.family-age-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.discovery-source {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 18px;
+}
+.discovery-source .text-link {
+  font-size: 12px;
+  margin-left: auto;
+}
+.browse-more {
+  display: inline-flex;
+  margin-top: 24px;
+  gap: 8px;
+  align-items: center;
+}
+.raster-map {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: #e5eadb;
+}
+.raster-map .leaflet-control-attribution {
+  font-size: 9px;
+  background: rgba(246, 246, 239, 0.94);
+}
+.raster-map.raster-night .leaflet-tile-pane {
+  filter: brightness(0.65) saturate(0.6);
+}
+.raster-map .leaflet-tooltip {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: inherit;
+}
+.geographic-fallback {
+  z-index: 1;
+}
+@media (max-width: 640px) {
+  .activity-filter label {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .activity-filter select {
+    width: 100%;
+  }
+  .child-age-row {
+    gap: 8px;
+  }
+  .discovery-source .text-link {
+    margin-left: 0;
+  }
+}
 
 /* Street geography uses the same renderer across GPU/device capabilities. */
 .raster-map .map-place-marker {
@@ -4028,8 +4216,12 @@ textarea {
   background: #243b30;
   box-shadow: 0 1px 5px #243b3040;
 }
-.map-place-saved .map-place-dot { background: #bed653; }
-.map-place-visited .map-place-dot { border-color: #bed653; }
+.map-place-saved .map-place-dot {
+  background: #bed653;
+}
+.map-place-visited .map-place-dot {
+  border-color: #bed653;
+}
 .map-place-visited .map-place-dot::after {
   content: "✓";
   display: block;
@@ -4037,19 +4229,90 @@ textarea {
   font: bold 10px/12px sans-serif;
   text-align: center;
 }
-.map-place-saved.map-place-visited .map-place-dot::after { color: #243b30; }
-.map-place-selected .map-place-dot { width: 25px; height: 25px; box-shadow: 0 0 0 4px #243b3038; }
-.map-place-selected.map-place-visited .map-place-dot::after { line-height: 19px; font-size: 13px; }
-.raster-map .map-place-marker:focus-visible { outline: 3px solid #4766a1; outline-offset: 4px; border-radius: 50%; }
-.map-controls button:disabled { opacity: .4; cursor: default; }
-.fallback-map-heading .button { align-self: flex-start; margin-top: 14px; }
-.raster-map.raster-unavailable { visibility: hidden; pointer-events: none; }
+.map-place-saved.map-place-visited .map-place-dot::after {
+  color: #243b30;
+}
+.map-place-selected .map-place-dot {
+  width: 25px;
+  height: 25px;
+  box-shadow: 0 0 0 4px #243b3038;
+}
+.map-place-selected.map-place-visited .map-place-dot::after {
+  line-height: 19px;
+  font-size: 13px;
+}
+.raster-map .map-place-marker:focus-visible {
+  outline: 3px solid #4766a1;
+  outline-offset: 4px;
+  border-radius: 50%;
+}
+.map-controls button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.fallback-map-heading .button {
+  align-self: flex-start;
+  margin-top: 14px;
+}
+.raster-map.raster-unavailable {
+  visibility: hidden;
+  pointer-events: none;
+}
 
-.lab-photo-debug { border-top: 1px solid var(--line); padding-top: 18px; font-size: 12px; line-height: 1.6; }
-.lab-photo-debug summary { cursor: pointer; font-weight: 700; }
-.lab-photo-debug select { max-width: 100%; }
-.lab-photo-preview { height: 155px; overflow: hidden; border-radius: 10px; margin: 12px 0; }
-.lab-photo-preview .place-image { height: 100%; }
-.lab-photo-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-.lab-photo-debug ul { padding-left: 18px; }
-.image-fallback { background-image: repeating-radial-gradient(ellipse at 90% 100%, transparent 0 18px, #ffffff35 19px 20px, transparent 21px 36px); }
+.lab-photo-debug {
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.lab-photo-debug summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.lab-photo-debug select {
+  max-width: 100%;
+}
+.lab-photo-preview {
+  height: 155px;
+  overflow: hidden;
+  border-radius: 10px;
+  margin: 12px 0;
+}
+.lab-photo-preview .place-image {
+  height: 100%;
+}
+.lab-photo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.lab-photo-debug ul {
+  padding-left: 18px;
+}
+.image-fallback {
+  background-image: repeating-radial-gradient(
+    ellipse at 90% 100%,
+    transparent 0 18px,
+    #ffffff35 19px 20px,
+    transparent 21px 36px
+  );
+}
+
+.activity-filter .map-food-filter {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 4px 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+}
+.map-food-filter input {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: var(--ink);
+}

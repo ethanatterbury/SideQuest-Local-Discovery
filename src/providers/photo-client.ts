@@ -44,6 +44,11 @@ export function findPlacePhoto(place: Place): Promise<Image | null> {
         const response = await fetch(`/api/photo?${params}`, {
           signal: AbortSignal.timeout(30000),
         });
+        if (!response.ok)
+          retryable =
+            response.status === 408 ||
+            response.status === 429 ||
+            response.status >= 500;
         if (response.ok) {
           const data = await response.json();
           retryable = data.retryable === true;

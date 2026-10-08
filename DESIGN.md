@@ -236,7 +236,7 @@ The signature pairs a photograph, match badge, name, explanation, practical fact
 
 ### Map Atmosphere
 
-Atmosphere is pointer-free and hidden from assistive technology. Static washes respond to weather, night and the approach to sunset. Rain and snow particles are bounded to 12, or 24 for heavy rain; hidden tabs remove particles and pause remaining animation. Both the system reduced-motion preference and the explicit preview preference suppress animation and particles. The signature delay also becomes zero when reduced motion is enabled.
+Atmosphere is pointer-free and hidden from assistive technology. Static washes respond to weather, night and the approach to sunset. Overcast, partly cloudy and rain use two soft cloud shadows drifting on independent 38s/53s paths. Fine diagonal rain and snow stay bounded to 12 drops, or 24 for heavy rain; rain adds four sparse surface ripples. Hidden tabs remove drops/ripples and pause cloud/fog animation. Effective reduced motion leaves a static atmosphere and removes particles; the Lab’s explicit Normal preference can override a system reduced-motion preference. Map controls remain above the atmosphere, and marker colors remain readable through its light shading. The signature delay becomes zero when reduced motion is enabled.
 
 ## Do's and Don'ts
 

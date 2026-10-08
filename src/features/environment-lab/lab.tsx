@@ -101,6 +101,14 @@ export function EnvironmentLab() {
                     e.target.value === "live"
                       ? undefined
                       : (e.target.value as WeatherKind),
+                  ...(e.target.value !== "live"
+                    ? {
+                        failures: (overrides.failures ?? env.failures).filter(
+                          (failure) =>
+                            failure !== "weather" && failure !== "offline",
+                        ),
+                      }
+                    : {}),
                 })
               }
             >

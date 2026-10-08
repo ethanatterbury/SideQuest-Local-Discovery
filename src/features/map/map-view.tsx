@@ -12,20 +12,31 @@ import {
   Map as MapIcon,
 } from "lucide-react";
 import { useApp } from "@/components/providers";
-import { rankPlaces } from "@/domain/discovery";
+import { matchesActivity, rankPlaces } from "@/domain/discovery";
 import { PlaceCard } from "@/features/discover/place-card";
 import { PlaceImage } from "@/components/primitives";
 import { Refinement } from "@/features/discover/refinement";
 import { WeatherAtmosphere } from "./weather-atmosphere";
+import { isMapFoodPlace } from "./map-food";
 import { isDark } from "@/domain/time";
 import { directionsUrl } from "@/providers/routing";
 import type { Coordinates, Itinerary, Place } from "@/domain/models";
 import { RasterMap, type RasterHandle, type RasterStatus } from "./raster-map";
 export function MapView({ itinerary }: { itinerary?: Itinerary }) {
   const { places: catalog, env, query, state, setLocation } = useApp();
+  const [includeFood, setIncludeFood] = useState(false);
   const ranked = useMemo(
-    () => rankPlaces(catalog, query, env, state),
-    [catalog, query, env, state],
+    () =>
+      rankPlaces(catalog, { ...query, activity: "any" }, env, state).filter(
+        ({ place }) =>
+          isMapFoodPlace(place)
+            ? includeFood
+            : matchesActivity(
+                place,
+                query.activity === "food" ? "any" : query.activity,
+              ),
+      ),
+    [catalog, query, env, state, includeFood],
   );
   const [selectedId, setSelectedId] = useState(""),
     [rasterStatus, setRasterStatus] = useState<RasterStatus>("loading"),
@@ -33,11 +44,19 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
     [sheetOpen, setSheetOpen] = useState(false);
   const [center, setCenter] = useState<Coordinates>(env.location);
   const raster = useRef<RasterHandle>(null);
-  const selected = selectedId
-    ? ranked.find((r) => r.place.id === selectedId)
-    : ranked[0];
+  const [linkedPlaceId, setLinkedPlaceId] = useState("");
+  const selectedPlace = catalog.find((place) => place.id === selectedId);
+  const selectionAllowed =
+    !selectedPlace ||
+    !isMapFoodPlace(selectedPlace) ||
+    includeFood ||
+    linkedPlaceId === selectedId;
+  const selected =
+    selectedId && selectionAllowed
+      ? ranked.find((r) => r.place.id === selectedId)
+      : ranked[0];
   const activePlace =
-    catalog.find((p) => p.id === selectedId) || selected?.place;
+    (selectionAllowed ? selectedPlace : undefined) || selected?.place;
   const urlSelectionHandled = useRef(false);
   useEffect(() => {
     if (urlSelectionHandled.current) return;
@@ -49,6 +68,7 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
     if (!id) urlSelectionHandled.current = true;
     else if (catalog.some((p) => p.id === id)) {
       urlSelectionHandled.current = true;
+      setLinkedPlaceId(id);
       setSelectedId(id);
     }
   }, [catalog, selectedId]);
@@ -59,10 +79,18 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
       ...eligible,
       ...catalog.filter(
         (p) =>
-          state.saved.includes(p.id) || state.visits.some((v) => v.id === p.id),
+          state.saved.includes(p.id) ||
+          state.visits.some((v) => v.id === p.id) ||
+          (p.id === selectedId && p.id === linkedPlaceId),
       ),
-    ].filter((p, i, a) => a.findIndex((x) => x.id === p.id) === i);
-  }, [catalog, ranked, state]);
+    ].filter(
+      (p, i, a) =>
+        a.findIndex((x) => x.id === p.id) === i &&
+        (includeFood ||
+          !isMapFoodPlace(p) ||
+          (p.id === selectedId && p.id === linkedPlaceId)),
+    );
+  }, [catalog, ranked, state, includeFood, selectedId, linkedPlaceId]);
   const night = isDark(env.now, env.weather.sunrise, env.weather.sunset);
   const unavailable = failure || rasterStatus === "unavailable";
   const startTouch = useRef(0);
@@ -92,7 +120,9 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
             of nearby.
           </h1>
           <p>One good place beats a hundred pins.</p>
-          <Refinement />
+          <Refinement
+            mapFood={{ included: includeFood, onChange: setIncludeFood }}
+          />
         </div>
         <div className="map-results">
           {ranked.slice(0, 5).map((r) => (
@@ -134,8 +164,9 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
                 <div>
                   <h2>{activePlace.name}</h2>
                   <p>
-                    Saved for another day. This place doesn’t fit the current
-                    conditions or preferences.
+                    {!includeFood && isMapFoodPlace(activePlace)
+                      ? "Food & coffee is hidden from map results. Enable it to include this place."
+                      : "Saved for another day. This place doesn’t fit the current conditions or preferences."}
                   </p>
                 </div>
               </div>

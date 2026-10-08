@@ -39,3 +39,18 @@ it("sends imported media hints and retries a temporary failure instead of record
   expect(await findPlacePhoto(place)).toEqual(image);
   expect(photoRetryDelay(place)).toBeNull();
 });
+
+it("retries transient HTTP errors from the photo endpoint", async () => {
+  vi.useFakeTimers();
+  const place = { ...PLACES[0], id: "http-retry-test", image: undefined };
+  vi.stubGlobal(
+    "fetch",
+    vi
+      .fn()
+      .mockResolvedValue(
+        new Response("temporarily unavailable", { status: 503 }),
+      ),
+  );
+  expect(await findPlacePhoto(place)).toBeNull();
+  expect(photoRetryDelay(place)).toBe(31000);
+});

@@ -9,7 +9,13 @@ export type PhotoIndexEntry = {
 export const photoIndex = generated as {
   version: number;
   generatedAt: string | null;
-  sample: { label: string; tested: number; matched: number } | null;
+  sample: {
+    label: string;
+    tested: number;
+    matched: number;
+    retryable?: number;
+    unresolved?: number;
+  } | null;
   entries: PhotoIndexEntry[];
 };
 export function placePhotoQuery(place: Place): PhotoQuery {

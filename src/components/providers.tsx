@@ -208,7 +208,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
       }}
     >
       <div
-        className={env.reducedMotion ? "app-root reduce-motion" : "app-root"}
+        className={`app-root${env.reducedMotion ? " reduce-motion" : overrides.reducedMotion === false ? " normal-motion" : ""}`}
         data-weather={env.weather.kind}
       >
         {children}

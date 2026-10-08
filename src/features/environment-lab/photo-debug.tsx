@@ -69,6 +69,9 @@ export function PhotoDebug({ places }: { places: Place[] }) {
           matched · {photoIndex.sample.label} ·{" "}
           {photoIndex.generatedAt?.slice(0, 10)}. This is a measured sample, not
           regional completeness.
+          {photoIndex.sample.retryable
+            ? ` ${photoIndex.sample.retryable} lookups need another attempt after a provider failure.`
+            : ""}
         </p>
       )}
       <label>
@@ -159,6 +162,17 @@ export function PhotoDebug({ places }: { places: Place[] }) {
                 Sources:{" "}
                 {result.diagnostics.sourcesAttempted.join(" → ") || "index"}
               </p>
+              {result.diagnostics.upstreamErrors && (
+                <p>
+                  Provider errors:{" "}
+                  {Object.entries(result.diagnostics.upstreamErrors)
+                    .map(([reason, count]) => `${reason}: ${count}`)
+                    .join(" · ")}
+                  {result.diagnostics.retryAfterMs
+                    ? ` · retry after ${Math.ceil(result.diagnostics.retryAfterMs / 1000)}s`
+                    : ""}
+                </p>
+              )}
               <ul>
                 {Object.entries(result.diagnostics.rejected).map(
                   ([reason, count]) => (

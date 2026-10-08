@@ -47,12 +47,13 @@ const queryOf = (p) => ({
 });
 const queries = sample.map(queryOf);
 const existing = new Map(index.entries.map((e) => [identity(e.query), e]));
-const todo = queries
-  .filter((q) => {
+const todo = [
+  ...queries.filter((q) => !existing.has(identity(q))),
+  ...queries.filter((q) => {
     const e = existing.get(identity(q));
-    return !e || e.retryable || args.refresh === "true";
-  })
-  .slice(0, Number(args.batch || 200));
+    return e && (e.retryable || args.refresh === "true");
+  }),
+].slice(0, Number(args.batch || 200));
 let cursor = 0;
 let checkpoints = Promise.resolve();
 async function checkpoint() {
@@ -65,6 +66,8 @@ async function checkpoint() {
       "200 nearby catalogue places · Sandhurst · selection independent of photos",
     tested: tested.length,
     matched: tested.filter((e) => e.image).length,
+    retryable: tested.filter((e) => e.retryable).length,
+    unresolved: tested.filter((e) => !e.image && !e.retryable).length,
   };
   await mkdir(dirname(output), { recursive: true });
   await writeFile(`${output}.partial`, JSON.stringify(index));
@@ -73,6 +76,8 @@ async function checkpoint() {
 async function worker() {
   while (cursor < todo.length) {
     const query = todo[cursor++];
+    if (Number(args.delay || 0) > 0)
+      await new Promise((resolve) => setTimeout(resolve, Number(args.delay)));
     const params = new URLSearchParams({
       debug: "1",
       ...(args.refresh === "true" ? { refresh: "1" } : {}),
@@ -102,13 +107,23 @@ async function worker() {
         },
       };
     }
-    existing.set(identity(query), {
-      query,
-      checkedAt: new Date().toISOString(),
-      image: result.image || null,
-      retryable: result.retryable,
-      diagnostics: result.diagnostics,
-    });
+    const key = identity(query);
+    const prior = existing.get(key);
+    const checkedAt = new Date().toISOString();
+    if (result.retryable && prior?.image) {
+      existing.set(key, {
+        ...prior,
+        refreshFailure: { at: checkedAt, diagnostics: result.diagnostics },
+      });
+    } else {
+      existing.set(key, {
+        query,
+        checkedAt,
+        image: result.image || null,
+        retryable: result.retryable,
+        diagnostics: result.diagnostics,
+      });
+    }
     checkpoints = checkpoints.then(checkpoint);
     await checkpoints;
     console.log(

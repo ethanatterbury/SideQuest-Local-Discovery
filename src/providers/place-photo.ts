@@ -1,3 +1,4 @@
+import { TOWNS } from "./geocoding";
 /** Keyless, conservative Wikimedia photo resolution. Never substitutes nearby stock imagery. */
 export interface PhotoQuery {
   name: string;
@@ -33,6 +34,11 @@ export interface PhotoDiagnostics {
   elapsedMs: number;
   cacheHit?: boolean;
   queuedMs?: number;
+  transportCacheHits?: number;
+  transportShared?: number;
+  networkRequests?: number;
+  upstreamErrors?: Record<string, number>;
+  retryAfterMs?: number;
 }
 export interface PhotoResult {
   image: PlacePhoto | null;
@@ -266,7 +272,10 @@ export function isNearPlace(
     radius
   );
 }
-export function licensedPhoto(info: ImageInfo): PlacePhoto | null {
+export function licensedPhoto(
+  info: ImageInfo,
+  options: { allowSmall?: boolean } = {},
+): PlacePhoto | null {
   const meta = info.extmetadata || {};
   const license = plainCredit(meta.LicenseShortName?.value || "");
   const credit = plainCredit(meta.Artist?.value || "");
@@ -277,8 +286,10 @@ export function licensedPhoto(info: ImageInfo): PlacePhoto | null {
     !credit ||
     !/^(?:CC(?:0| BY(?:-SA)?)(?: [0-9.]+)?|Public domain)$/i.test(license) ||
     !["image/jpeg", "image/png", "image/webp"].includes(info.mime || "") ||
-    Math.min(info.width || 0, info.height || 0) < 400 ||
-    Math.max(info.width || 0, info.height || 0) < 600
+    Math.min(info.width || 0, info.height || 0) <
+      (options.allowSmall ? 300 : 400) ||
+    Math.max(info.width || 0, info.height || 0) <
+      (options.allowSmall ? 400 : 600)
   )
     return null;
   // Commons may append campaign parameters; image identity is entirely in its path.
@@ -294,33 +305,248 @@ export function licensedPhoto(info: ImageInfo): PlacePhoto | null {
     height: info.height,
   };
 }
+type WikimediaResponse = {
+  query?: { pages?: Page[] };
+  entities?: Record<string, Entity>;
+  error?: { code?: string };
+};
+class WikimediaError extends Error {
+  constructor(
+    readonly reason: string,
+    readonly retryAfterMs = 0,
+  ) {
+    super(reason);
+  }
+}
+const metadataCache = new Map<
+  string,
+  { expires: number; bytes: number; data: WikimediaResponse }
+>();
+const metadataPending = new Map<string, Promise<WikimediaResponse>>();
+const cooldowns = new Map<string, { until: number; reason: string }>();
+let metadataBytes = 0;
+let currentTransport: typeof fetch | undefined;
+const maxResponseBytes = 1_500_000;
+function resetChangedTransport(): void {
+  // Runtime adapters/HMR may replace fetch; do not mix metadata from different transports.
+  if (currentTransport === fetch) return;
+  currentTransport = fetch;
+  metadataCache.clear();
+  metadataPending.clear();
+  cooldowns.clear();
+  metadataBytes = 0;
+}
+function abortable<T>(promise: Promise<T>, signal: AbortSignal): Promise<T> {
+  if (signal.aborted)
+    return Promise.reject(new WikimediaError("deadline-exceeded"));
+  let onAbort = () => {};
+  const canceled = new Promise<never>((_, reject) => {
+    onAbort = () => reject(new WikimediaError("deadline-exceeded"));
+    signal.addEventListener("abort", onAbort, { once: true });
+  });
+  return Promise.race([promise, canceled]).finally(() =>
+    signal.removeEventListener("abort", onAbort),
+  );
+}
+function retryAfter(response: Response, fallback: number): number {
+  const raw = response.headers.get("retry-after");
+  if (!raw) return fallback;
+  const seconds = Number(raw);
+  const duration = Number.isFinite(seconds)
+    ? seconds * 1000
+    : Date.parse(raw) - Date.now();
+  return Number.isFinite(duration) && duration >= 0
+    ? Math.min(duration, Number.MAX_SAFE_INTEGER - Date.now())
+    : fallback;
+}
+function coolDown(host: string, reason: string, duration: number): void {
+  if (duration <= 0) return;
+  if (cooldowns.size >= 64 && !cooldowns.has(host))
+    cooldowns.delete(cooldowns.keys().next().value!);
+  const until = Date.now() + duration;
+  if ((cooldowns.get(host)?.until || 0) < until)
+    cooldowns.set(host, { until, reason });
+}
+async function readWikimedia(
+  response: Response,
+): Promise<{ text: string; bytes: number }> {
+  const declaredSize = Number(response.headers.get("content-length"));
+  if (declaredSize > maxResponseBytes) {
+    void response.body?.cancel().catch(() => {});
+    throw new WikimediaError("body-size");
+  }
+  if (!response.body) return { text: "", bytes: 0 };
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let bytes = 0;
+  try {
+    while (true) {
+      const chunk = await reader.read();
+      if (chunk.done) break;
+      bytes += chunk.value.byteLength;
+      if (bytes > maxResponseBytes) {
+        void reader.cancel().catch(() => {});
+        throw new WikimediaError("body-size");
+      }
+      chunks.push(chunk.value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  const body = new Uint8Array(bytes);
+  let offset = 0;
+  for (const chunk of chunks) {
+    body.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return { text: new TextDecoder().decode(body), bytes };
+}
+function storeMetadata(
+  key: string,
+  data: WikimediaResponse,
+  bytes: number,
+): void {
+  const previous = metadataCache.get(key);
+  if (previous) {
+    metadataBytes -= previous.bytes;
+    metadataCache.delete(key);
+  }
+  while (metadataCache.size >= 128 || metadataBytes + bytes > 8_000_000) {
+    const oldest = metadataCache.keys().next().value;
+    if (!oldest) break;
+    metadataBytes -= metadataCache.get(oldest)!.bytes;
+    metadataCache.delete(oldest);
+  }
+  metadataCache.set(key, { data, bytes, expires: Date.now() + 10 * 60_000 });
+  metadataBytes += bytes;
+}
 async function api(
   host: string,
   params: Record<string, string>,
   signal: AbortSignal,
-) {
-  // host is only supplied by internal constants or a validated language subdomain.
+  diagnostics?: PhotoDiagnostics,
+): Promise<WikimediaResponse> {
+  resetChangedTransport();
+  const adapter = fetch;
   const url = new URL(`https://${host}/w/api.php`);
-  url.search = new URLSearchParams({
+  const parameters = new URLSearchParams({
     format: "json",
     formatversion: "2",
     ...params,
-  }).toString();
-  const response = await fetch(url, {
-    signal,
-    redirect: "error",
-    headers: {
-      "User-Agent":
-        "SideQuest/1.0 (local discovery; Wikimedia photo attribution)",
-    },
-    cache: "no-store",
   });
-  if (!response.ok) throw new Error("Wikimedia unavailable");
-  const body = await response.text();
-  if (body.length > 1_500_000) throw new Error("Response too large");
-  const data = JSON.parse(body);
-  if (data.error) throw new Error("Wikimedia API error");
-  return data;
+  parameters.sort();
+  url.search = parameters.toString();
+  const key = url.href;
+  const hit = metadataCache.get(key);
+  if (hit && hit.expires > Date.now()) {
+    if (diagnostics)
+      diagnostics.transportCacheHits =
+        (diagnostics.transportCacheHits || 0) + 1;
+    return structuredClone(hit.data);
+  }
+  if (hit) {
+    metadataBytes -= hit.bytes;
+    metadataCache.delete(key);
+  }
+  const shared = metadataPending.get(key);
+  if (shared) {
+    if (diagnostics)
+      diagnostics.transportShared = (diagnostics.transportShared || 0) + 1;
+    return structuredClone(await abortable(shared, signal));
+  }
+  const cooldown = cooldowns.get(host);
+  if (cooldown && cooldown.until > Date.now())
+    throw new WikimediaError(
+      `cooldown-${cooldown.reason}`,
+      cooldown.until - Date.now(),
+    );
+  if (cooldown) cooldowns.delete(host);
+  if (diagnostics)
+    diagnostics.networkRequests = (diagnostics.networkRequests || 0) + 1;
+  const work = (async (): Promise<WikimediaResponse> => {
+    let response: Response;
+    try {
+      response = await adapter(url, {
+        signal,
+        redirect: "error",
+        cache: "no-store",
+        headers: {
+          "User-Agent":
+            "SideQuest/1.0 (https://sidequest-local-discovery.vercel.app; contact https://github.com/ethanatterbury/SideQuest-Local-Discovery/issues)",
+        },
+      });
+    } catch {
+      throw new WikimediaError(
+        signal.aborted ? "deadline-exceeded" : "network",
+      );
+    }
+    if (!response.ok) {
+      const reason = `http-${response.status}`;
+      const defaultDelay =
+        response.status === 429
+          ? 60_000
+          : [500, 502, 503, 504].includes(response.status)
+            ? 5000
+            : 0;
+      const delay = retryAfter(response, defaultDelay);
+      if (fetch === adapter) coolDown(host, reason, delay);
+      void response.body?.cancel().catch(() => {});
+      throw new WikimediaError(reason, delay);
+    }
+    let body: { text: string; bytes: number };
+    try {
+      body = await readWikimedia(response);
+    } catch (error) {
+      throw error instanceof WikimediaError
+        ? error
+        : new WikimediaError(signal.aborted ? "deadline-exceeded" : "network");
+    }
+    let data: WikimediaResponse;
+    try {
+      const parsed: unknown = JSON.parse(body.text);
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed))
+        throw new Error();
+      data = parsed as WikimediaResponse;
+    } catch {
+      throw new WikimediaError("invalid-json");
+    }
+    if (data.error) {
+      const code =
+        typeof data.error.code === "string"
+          ? data.error.code.toLowerCase()
+          : "other";
+      const safeCodes = new Set([
+        "maxlag",
+        "ratelimited",
+        "readonly",
+        "permissiondenied",
+        "badvalue",
+        "invalidtitle",
+        "missingparam",
+        "nosuchentity",
+        "internal_api_error",
+      ]);
+      const reason = `api-${safeCodes.has(code) ? code : "other"}`;
+      const delay = retryAfter(
+        response,
+        code === "ratelimited"
+          ? 60_000
+          : ["maxlag", "readonly"].includes(code)
+            ? 5000
+            : 0,
+      );
+      if (fetch === adapter) coolDown(host, reason, delay);
+      throw new WikimediaError(reason, delay);
+    }
+    if (fetch === adapter && !signal.aborted)
+      storeMetadata(key, data, body.bytes);
+    return data;
+  })();
+  const task = abortable(work, signal).finally(() => {
+    if (metadataPending.get(key) === task) metadataPending.delete(key);
+  });
+  metadataPending.set(key, task);
+  return structuredClone(await task);
 }
 
 type Claim = { rank?: string; mainsnak?: { datavalue?: { value?: unknown } } };
@@ -489,6 +715,26 @@ function betterPhoto(
 }
 
 async function resolve(query: PhotoQuery): Promise<PhotoResult> {
+  const recAliases = /\brec\.?$/i.test(query.name)
+    ? [
+        query.name.replace(/\brec\.?$/i, "Recreation Ground"),
+        query.name.replace(/\brec\.?$/i, "Recreation"),
+      ]
+    : [];
+  query = {
+    ...query,
+    aliases: [...new Set([...(query.aliases || []), ...recAliases])],
+  };
+  if (!query.area || /^(?:nearby|near me)$/i.test(query.area.trim())) {
+    const towns = TOWNS.filter((town) =>
+      isNearPlace(query, town.lat, town.lng, 6000),
+    );
+    const squaredDistance = (town: (typeof TOWNS)[number]) =>
+      (town.lat - query.lat) ** 2 +
+      ((town.lng - query.lng) * Math.cos((query.lat * Math.PI) / 180)) ** 2;
+    towns.sort((a, b) => squaredDistance(a) - squaredDistance(b));
+    if (towns[0]) query = { ...query, area: towns[0].name };
+  }
   const started = Date.now();
   const controller = new AbortController();
   const signal = controller.signal;
@@ -530,10 +776,26 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
       try {
         // Race the complete fetch/body operation: an upstream implementation that
         // ignores AbortSignal must not hold one of the six admission slots forever.
-        return await Promise.race([api(host, params, signal), aborted]);
-      } catch {
+        return await Promise.race([
+          api(host, params, signal, diagnostics),
+          aborted,
+        ]);
+      } catch (error) {
         hadError = true;
-        rejected(signal.aborted ? "deadline-exceeded" : "upstream-error");
+        const reason = signal.aborted
+          ? "deadline-exceeded"
+          : error instanceof WikimediaError
+            ? error.reason
+            : "network";
+        rejected(reason === "deadline-exceeded" ? reason : "upstream-error");
+        diagnostics.upstreamErrors ||= {};
+        diagnostics.upstreamErrors[reason] =
+          (diagnostics.upstreamErrors[reason] || 0) + 1;
+        if (error instanceof WikimediaError && error.retryAfterMs)
+          diagnostics.retryAfterMs = Math.max(
+            diagnostics.retryAfterMs || 0,
+            error.retryAfterMs,
+          );
         return null;
       } finally {
         signal.removeEventListener("abort", abortRequest);
@@ -556,11 +818,6 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
           rejected("incidental-place-reference");
           continue;
         }
-        const photo = licensedPhoto(page.imageinfo?.[0] || {});
-        if (!photo) {
-          rejected("license-or-quality");
-          continue;
-        }
         const points = page.coordinates || [];
         const near = points.some((point) =>
           isNearPlace(query, point.lat, point.lon, matchingRadius(query)),
@@ -575,7 +832,20 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
         const area = areaMatch(query.area, text);
         const depicts =
           query.wikidata && page.depicts?.includes(query.wikidata);
+        const allowSmall = !!(
+          candidate.declared ||
+          candidate.entityCategory ||
+          depicts ||
+          (name && area)
+        );
+        const photo = licensedPhoto(page.imageinfo?.[0] || {}, { allowSmall });
+        if (!photo) {
+          rejected("license-or-quality");
+          continue;
+        }
         const matched = [...(candidate.evidence || [])];
+        if ((photo.width || 0) < 600 || (photo.height || 0) < 400)
+          matched.push("low-resolution");
         let confidence = 0;
         if (candidate.declared) {
           confidence = 0.99;

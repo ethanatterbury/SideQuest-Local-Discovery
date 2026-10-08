@@ -10,7 +10,13 @@ import {
 import { useState } from "react";
 import { useApp } from "@/components/providers";
 import type { DiscoveryQuery } from "@/domain/models";
-export function Refinement({ expanded = false }: { expanded?: boolean }) {
+export function Refinement({
+  expanded = false,
+  mapFood,
+}: {
+  expanded?: boolean;
+  mapFood?: { included: boolean; onChange(value: boolean): void };
+}) {
   const { query, setQuery } = useApp();
   const [open, setOpen] = useState(expanded);
   const [addingChild, setAddingChild] = useState(false);
@@ -83,7 +89,11 @@ export function Refinement({ expanded = false }: { expanded?: boolean }) {
           Type of outing
           <select
             aria-label="Type of outing"
-            value={query.activity ?? "any"}
+            value={
+              mapFood && query.activity === "food"
+                ? "any"
+                : (query.activity ?? "any")
+            }
             onChange={(event) =>
               set({
                 activity: event.target.value as DiscoveryQuery["activity"],
@@ -102,13 +112,25 @@ export function Refinement({ expanded = false }: { expanded?: boolean }) {
               ["swimming", "Swimming"],
               ["food", "Food & coffee"],
               ["walk", "Walks"],
-            ].map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
+            ]
+              .filter(([value]) => !mapFood || value !== "food")
+              .map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
           </select>
         </label>
+        {mapFood && (
+          <label className="map-food-filter">
+            <input
+              type="checkbox"
+              checked={mapFood.included}
+              onChange={(event) => mapFood.onChange(event.target.checked)}
+            />
+            Include food &amp; coffee
+          </label>
+        )}
       </div>
       {query.company === "family" && (
         <fieldset className="family-ages">
