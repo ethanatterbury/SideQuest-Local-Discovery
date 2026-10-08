@@ -43,6 +43,47 @@ async function source(page: import("@playwright/test").Page, places: Place[]) {
     route.fulfill({ json: { image: null, source: "unavailable" } }),
   );
 }
+test("a live Archive photo reaches the optimized image and credited place detail", async ({
+  page,
+}) => {
+  const place = fixture(5, { name: "Test Archive Museum" });
+  const image = {
+    url: "https://archive.org/download/test-venue/Folder/DSCN1.JPG",
+    source: "https://archive.org/details/test-venue/Folder/DSCN1.JPG",
+    credit: "Test Photographer",
+    license: "CC BY-SA 4.0",
+    width: 4608,
+    height: 3456,
+  };
+  await source(page, [place]);
+  await page.route("**/api/photo?**", (route) =>
+    route.fulfill({ json: { image, source: "live" } }),
+  );
+  await page.route("**/_next/image?**", (route) =>
+    route.fulfill({ contentType: "image/png", body: icon }),
+  );
+  await page.goto("/explore");
+  const card = page
+    .locator(".results-grid > article")
+    .filter({ has: page.getByRole("link", { name: place.name, exact: true }) });
+  const photo = card.getByRole("img", { name: place.name, exact: true });
+  await expect(photo).toBeVisible();
+  await expect(photo).toHaveAttribute(
+    "src",
+    /\/_next\/image\?url=https%3A%2F%2Farchive\.org%2Fdownload/,
+  );
+  await expect
+    .poll(() => photo.evaluate((img) => (img as HTMLImageElement).naturalWidth))
+    .toBeGreaterThan(0);
+  await page.getByRole("link", { name: place.name, exact: true }).click();
+  await expect(page.locator(".image-credit")).toContainText(
+    "Test Photographer · CC BY-SA 4.0",
+  );
+  await expect(page.locator(".image-credit a").first()).toHaveAttribute(
+    "href",
+    image.source,
+  );
+});
 test("live discovery provides more pages of ideas and preserves saved live places", async ({
   page,
 }) => {

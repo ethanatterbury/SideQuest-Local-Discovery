@@ -330,6 +330,50 @@ it("resolves an explicit Geograph ID through its exact licensed Commons copy", a
     ]),
   });
 });
+it("keeps a declared Geograph venue photo over larger weak namesakes and artwork", async () => {
+  mockPipeline((url) => ({
+    query: {
+      pages: url.searchParams.get("gsrsearch")?.includes("7883745")
+        ? [
+            photoPage(
+              "Eton College Swimming Pool - geograph.org.uk - 7883745.jpg",
+              {
+                imageinfo: [{ ...info, width: 1024, height: 768 }],
+              },
+            ),
+          ]
+        : [
+            photoPage("School of Athens, Windsor.jpg", {
+              imageinfo: [
+                {
+                  ...info,
+                  extmetadata: {
+                    ...info.extmetadata,
+                    Categories: { value: "Drawings by Parmigianino|Windsor" },
+                  },
+                },
+              ],
+            }),
+          ],
+    },
+  }));
+  const result = await lookupPlacePhoto(
+    {
+      name: "Athens",
+      area: "Windsor",
+      lat: 51.4959013,
+      lng: -0.6115017,
+      osmImage: "https://www.geograph.org.uk/photo/7883745",
+    },
+    { refresh: true, debug: true },
+  );
+  expect(result.image).toMatchObject({
+    strategy: "osm-image-geograph",
+    width: 1024,
+    height: 768,
+  });
+  expect(result.diagnostics?.rejected["non-photographic"]).toBeGreaterThan(0);
+});
 it("returns an explicit licensed Archive photo through the shared resolver with bounded diagnostics", async () => {
   const fetcher = vi.fn(async (url: URL | string) => {
     expect(new URL(url).hostname).toBe("archive.org");
@@ -442,36 +486,89 @@ it("never manufactures a venue name across description and category boundaries",
     result.diagnostics?.rejected["insufficient-subject-evidence"],
   ).toBeGreaterThan(0);
 });
-it("does not treat a venue-named road address as evidence of the photo subject", async () => {
-  const park = {
-    name: "Camberley Park",
-    lat: 51.3392853,
-    lng: -0.7413306,
-    area: "Camberley",
-    category: "Park",
-  };
-  mockPipeline(() => ({
-    query: {
-      pages: [
-        photoPage("The Carpenters Arms.jpg", {
-          coordinates: [{ lat: park.lat, lon: park.lng }],
-          imageinfo: [
-            {
-              ...info,
-              extmetadata: {
-                ...info.extmetadata,
-                ImageDescription: {
-                  value: "A public house at Camberley Park Road, Camberley.",
+it.each([
+  {
+    name: "Tekels Park",
+    title: "M3 close to Tekels Park",
+    categories: "Motorways in Surrey",
+  },
+  {
+    name: "Birchwood Reserve",
+    title: "Path by Birchwood Reserve",
+    categories: "Paths in Surrey",
+  },
+  {
+    name: "Finchampstead Memorial Grounds",
+    title: "Finchampstead Memorial Hall",
+    categories: "Community halls in Berkshire",
+  },
+  {
+    name: "The One Oak",
+    title: "Dame Ethel Smyth, One Oak",
+    categories: "Blue plaques in Surrey",
+  },
+])(
+  "rejects nearby or detail-only subjects for $name",
+  async ({ name, title, categories }) => {
+    mockPipeline(() => ({
+      query: {
+        pages: [
+          photoPage(title + ".jpg", {
+            coordinates: [{ lat: query.lat, lon: query.lng }],
+            imageinfo: [
+              {
+                ...info,
+                extmetadata: {
+                  ...info.extmetadata,
+                  Categories: { value: categories },
                 },
               },
-            },
-          ],
-        }),
-      ],
-    },
-  }));
-  expect((await lookupPlacePhoto(park, { refresh: true })).image).toBeNull();
-});
+            ],
+          }),
+        ],
+      },
+    }));
+    expect(
+      (await lookupPlacePhoto({ ...query, name }, { refresh: true })).image,
+    ).toBeNull();
+  },
+);
+it.each([
+  "A public house at Camberley Park Road, Camberley.",
+  "The Carpenters Arms, Camberley - Park Street frontage",
+])(
+  "does not treat address wording as evidence of a park subject: %s",
+  async (description) => {
+    const park = {
+      name: "Camberley Park",
+      lat: 51.3392853,
+      lng: -0.7413306,
+      area: "Camberley",
+      category: "Park",
+    };
+    mockPipeline(() => ({
+      query: {
+        pages: [
+          photoPage("The Carpenters Arms.jpg", {
+            coordinates: [{ lat: park.lat, lon: park.lng }],
+            imageinfo: [
+              {
+                ...info,
+                extmetadata: {
+                  ...info.extmetadata,
+                  ImageDescription: {
+                    value: description,
+                  },
+                },
+              },
+            ],
+          }),
+        ],
+      },
+    }));
+    expect((await lookupPlacePhoto(park, { refresh: true })).image).toBeNull();
+  },
+);
 it("never follows a deceptive Geograph host or URL parameter", async () => {
   const fetcher = mockPipeline(() => ({ query: { pages: [] } }));
   for (const osmImage of [

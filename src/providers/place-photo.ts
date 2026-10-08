@@ -664,8 +664,21 @@ function nonPhotographic(page: Page): boolean {
   const text = normalize(
     [page.title, page.imageinfo?.[0]?.extmetadata?.ObjectName?.value].join(" "),
   );
-  return /\b(?:logo|logos|icon|icons|diagram|diagrams|map|maps|floor plan|site plan|coat of arms|flag|flags|drawing|drawings|engraving|illustration|poster)\b/.test(
-    text,
+  const categories = normalize(
+    [
+      page.imageinfo?.[0]?.extmetadata?.Categories?.value,
+      ...(page.categories || []).map((category) => category.title),
+    ]
+      .filter(Boolean)
+      .join(" "),
+  );
+  return (
+    /\b(?:logo|logos|icon|icons|diagram|diagrams|map|maps|floor plan|site plan|coat of arms|flag|flags|drawing|drawings|engraving|illustration|poster)\b/.test(
+      text,
+    ) ||
+    /\b(?:drawings|paintings|artworks|etchings|engravings|prints) (?:by|of)\b/.test(
+      categories,
+    )
   );
 }
 function incidentalPlaceReference(query: PhotoQuery, page: Page): boolean {
@@ -687,6 +700,10 @@ function incidentalPlaceReference(query: PhotoQuery, page: Page): boolean {
       "beside",
       "view from",
       "seen from",
+      "close to",
+      "adjacent to",
+      "outside",
+      "by",
     ].some(
       (relation) =>
         ` ${title} `.includes(` ${relation} ${normalized} `) ||
@@ -709,7 +726,9 @@ function nameEvidence(query: PhotoQuery, text: string): string | undefined {
   // Names must occur within one evidence field/category, never across boundaries.
   const fields = text.split(/\s*\|\s*|[\r\n]+/).filter(Boolean);
   const subjectMatch = (name: string, field: string) => {
-    const phrase = canonicalPlaceName(name);
+    // A shortened search term may retrieve a sibling landmark (grounds versus hall).
+    // Subject identity retains the complete venue name; aliases remain explicit.
+    const phrase = normalize(name).replace(/^the /, "");
     // A road named after a venue establishes an address, not the photographed subject.
     const withoutAddress = normalize(field).replace(
       new RegExp(
@@ -718,7 +737,7 @@ function nameEvidence(query: PhotoQuery, text: string): string | undefined {
       ),
       " ",
     );
-    return matchesPlaceName(name, withoutAddress);
+    return phrase.length >= 3 && ` ${withoutAddress} `.includes(` ${phrase} `);
   };
   if (fields.some((field) => subjectMatch(query.name, field)))
     return "subject-name";
@@ -755,6 +774,13 @@ function betterPhoto(
   candidate: PlacePhoto | null,
 ): PlacePhoto | null {
   if (!candidate) return current;
+  if (
+    current &&
+    Math.abs((candidate.confidence || 0) - (current.confidence || 0)) >= 0.1
+  )
+    return (candidate.confidence || 0) > (current.confidence || 0)
+      ? candidate
+      : current;
   if (!current || photoScore(candidate) > photoScore(current)) return candidate;
   return current;
 }
@@ -857,6 +883,15 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
         diagnostics.candidateCount++;
         if (nonPhotographic(page)) {
           rejected("non-photographic");
+          continue;
+        }
+        if (
+          /\b(?:blue plaques?|commemorative plaques?|memorial plaques?)\b/.test(
+            normalize(subjectText(page)),
+          ) &&
+          !/\bplaque\b/.test(normalize(`${query.name} ${query.category || ""}`))
+        ) {
+          rejected("detail-only-subject");
           continue;
         }
         if (incidentalPlaceReference(query, page)) {
