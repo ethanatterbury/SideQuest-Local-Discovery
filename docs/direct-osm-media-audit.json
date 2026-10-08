@@ -1,0 +1,826 @@
+{
+  "date": "2026-10-08",
+  "scope": "Read-only direct OSM media source audit; no manual product assignment or engine edits",
+  "archive": {
+    "item": "windsor-2018-09-15",
+    "metadataUrl": "https://archive.org/metadata/windsor-2018-09-15?output=json",
+    "sourceUrl": "https://archive.org/details/windsor-2018-09-15",
+    "metadata": {
+      "identifier": "windsor-2018-09-15",
+      "mediatype": "image",
+      "creator": "Paul Williams (Paul The Archivist)",
+      "date": "2018-09-15",
+      "description": "Set of 262 photographs taken in Windsor, Berkshire, UK. The photos cover most of the town centre including Peascod Street, High Street, Thames Street, Church Lane, Church Street and St Alban's Street.This is an unedited set of photos which were taken mainly for OpenStreetMap mapping purposes so quality varies, but are retained here as a historical record.Photos include buildings, roads, shops, and other features.",
+      "licenseurl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "scanner": "Internet Archive HTML5 Uploader 1.6.4",
+      "subject": [
+        "Windsor",
+        "Berkshire",
+        "Royal Borough of Windsor and Maidenhead",
+        "England",
+        "UK",
+        "photos"
+      ],
+      "title": "Photos (262) of Windsor, Berkshire, UK, 15 Sep 2018",
+      "publicdate": "2021-04-15 20:52:51",
+      "addeddate": "2021-04-15 20:52:51",
+      "collection": "folkscanomy_images"
+    },
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "creator": "Paul Williams (Paul The Archivist)",
+    "refs": [
+      {
+        "id": "osm-way-144044029",
+        "name": "Crooked House of Windsor",
+        "coordinates": {
+          "lat": 51.4822882,
+          "lng": -0.6070764
+        },
+        "tags": {
+          "addr:city": "Windsor",
+          "addr:postcode": "SL4 1LR",
+          "addr:street": "High Street",
+          "amenity": "cafe",
+          "name": "Crooked House of Windsor",
+          "tourism": "attraction",
+          "wikidata": "Q5187819",
+          "alt_name": "The Crooked House of Windsor",
+          "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7562.JPG"
+        },
+        "file": "Windsor 2018-09-15/DSCN7562.JPG",
+        "matchedExactly": true,
+        "fileMetadata": {
+          "name": "Windsor 2018-09-15/DSCN7562.JPG",
+          "source": "original",
+          "mtime": "1618520354",
+          "size": "4244863",
+          "md5": "0d682e92acec588d90ec50279f27718f",
+          "crc32": "83d76d6a",
+          "sha1": "a5b8a3512162743f805bebd970722fafa379c692",
+          "format": "JPEG",
+          "rotation": "0"
+        },
+        "directImageUrl": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7562.JPG"
+      },
+      {
+        "id": "osm-way-144154149",
+        "name": "Nando's",
+        "coordinates": {
+          "lat": 51.4832768,
+          "lng": -0.6087171
+        },
+        "tags": {
+          "addr:city": "Windsor",
+          "addr:postcode": "SL4 1PL",
+          "addr:street": "Thames Street",
+          "amenity": "restaurant",
+          "name": "Nando's",
+          "website": "https://www.nandos.co.uk/restaurants/windsor",
+          "wikidata": "Q26605377",
+          "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7601.JPG"
+        },
+        "file": "Windsor 2018-09-15/DSCN7601.JPG",
+        "matchedExactly": true,
+        "fileMetadata": {
+          "name": "Windsor 2018-09-15/DSCN7601.JPG",
+          "source": "original",
+          "mtime": "1618520688",
+          "size": "4256742",
+          "md5": "77eb8304fa4f79a3e36840a9ab76ab64",
+          "crc32": "7e9ee80c",
+          "sha1": "a9af8d8aad6a4954ef80ebdf0c8d39cae3748b9c",
+          "format": "JPEG",
+          "rotation": "0"
+        },
+        "directImageUrl": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7601.JPG"
+      },
+      {
+        "id": "osm-way-144154161",
+        "name": "PizzaExpress",
+        "coordinates": {
+          "lat": 51.4831835,
+          "lng": -0.6086798
+        },
+        "tags": {
+          "addr:city": "Windsor",
+          "addr:postcode": "SL4 1PL",
+          "addr:street": "Thames Street",
+          "amenity": "restaurant",
+          "name": "PizzaExpress",
+          "website": "https://www.pizzaexpress.com/windsor-thames-street",
+          "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7598.JPG"
+        },
+        "file": "Windsor 2018-09-15/DSCN7598.JPG",
+        "matchedExactly": true,
+        "fileMetadata": {
+          "name": "Windsor 2018-09-15/DSCN7598.JPG",
+          "source": "original",
+          "mtime": "1618520663",
+          "size": "4352600",
+          "md5": "2622c876762b82aeb3fae10fad41e3e4",
+          "crc32": "4766c160",
+          "sha1": "cb57f777876721bb7477f8ee72d59262ed7cf660",
+          "format": "JPEG",
+          "rotation": "0"
+        },
+        "directImageUrl": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7598.JPG"
+      },
+      {
+        "id": "osm-way-144158804",
+        "name": "Dr Chocs",
+        "coordinates": {
+          "lat": 51.4839609,
+          "lng": -0.6084476
+        },
+        "tags": {
+          "addr:city": "Windsor",
+          "addr:postcode": "SL4 1LP",
+          "addr:street": "Thames Street",
+          "amenity": "cafe",
+          "name": "Dr Chocs",
+          "wikidata": "Q26605397",
+          "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7610.JPG",
+          "old_name": "Candy Cakes;Cafe Copia"
+        },
+        "file": "Windsor 2018-09-15/DSCN7610.JPG",
+        "matchedExactly": true,
+        "fileMetadata": {
+          "name": "Windsor 2018-09-15/DSCN7610.JPG",
+          "source": "original",
+          "mtime": "1618520772",
+          "size": "4428443",
+          "md5": "33ddde7993e4985d16d1a3ec052d6b11",
+          "crc32": "130d38da",
+          "sha1": "4b97d1fff2369671bf14f0455c44a7a731c14827",
+          "format": "JPEG",
+          "rotation": "90"
+        },
+        "directImageUrl": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7610.JPG"
+      },
+      {
+        "id": "osm-way-144158805",
+        "name": "The Crown Café",
+        "coordinates": {
+          "lat": 51.4839272,
+          "lng": -0.6085934
+        },
+        "tags": {
+          "addr:city": "Windsor",
+          "addr:postcode": "SL4 1LP",
+          "addr:street": "Thames Street",
+          "amenity": "cafe",
+          "name": "The Crown Café",
+          "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7608.JPG"
+        },
+        "file": "Windsor 2018-09-15/DSCN7608.JPG",
+        "matchedExactly": true,
+        "fileMetadata": {
+          "name": "Windsor 2018-09-15/DSCN7608.JPG",
+          "source": "original",
+          "mtime": "1618520748",
+          "size": "3988070",
+          "md5": "e759e5bf412ae87d6ddec039cd5dd847",
+          "crc32": "bda106d9",
+          "sha1": "31c0de386c1c08ec6fb56b9b63aa2692c7b148f0",
+          "format": "JPEG",
+          "rotation": "90"
+        },
+        "directImageUrl": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7608.JPG"
+      },
+      {
+        "id": "osm-way-144158807",
+        "name": "Prezzo",
+        "coordinates": {
+          "lat": 51.4838803,
+          "lng": -0.6087425
+        },
+        "tags": {
+          "addr:city": "Windsor",
+          "addr:postcode": "SL4 1PL",
+          "addr:street": "Thames Street",
+          "amenity": "restaurant",
+          "name": "Prezzo",
+          "website": "https://www.prezzo.co.uk/restaurants/windsor/",
+          "wikidata": "Q26411176",
+          "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7606.JPG",
+          "old_name": "Pizza Hut"
+        },
+        "file": "Windsor 2018-09-15/DSCN7606.JPG",
+        "matchedExactly": true,
+        "fileMetadata": {
+          "name": "Windsor 2018-09-15/DSCN7606.JPG",
+          "source": "original",
+          "mtime": "1618520731",
+          "size": "3949384",
+          "md5": "b5507c2c22b29e916f38cc01775eb0a9",
+          "crc32": "bedad1b7",
+          "sha1": "d2c550bf9c4095a02452c5581579c8e51b59d01b",
+          "format": "JPEG",
+          "rotation": "0"
+        },
+        "directImageUrl": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7606.JPG"
+      },
+      {
+        "id": "osm-way-144158809",
+        "name": "Zizzi",
+        "coordinates": {
+          "lat": 51.4840035,
+          "lng": -0.6083365
+        },
+        "tags": {
+          "addr:city": "Windsor",
+          "addr:postcode": "SL4 1LP",
+          "addr:street": "Thames Street",
+          "amenity": "restaurant",
+          "name": "Zizzi",
+          "website": "https://www.zizzi.co.uk/italian/restaurants/windsor",
+          "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7611.JPG"
+        },
+        "file": "Windsor 2018-09-15/DSCN7611.JPG",
+        "matchedExactly": true,
+        "fileMetadata": {
+          "name": "Windsor 2018-09-15/DSCN7611.JPG",
+          "source": "original",
+          "mtime": "1618520784",
+          "size": "4330689",
+          "md5": "f33be56d56356bbc154d27e60e2447d0",
+          "crc32": "51b11d4c",
+          "sha1": "65ed489aad86f3bf1c486a75fe541ef24f3f2e2c",
+          "format": "JPEG",
+          "rotation": "0"
+        },
+        "directImageUrl": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7611.JPG"
+      },
+      {
+        "id": "osm-way-556866234",
+        "name": "Clarence Brasserie & Tea Room",
+        "coordinates": {
+          "lat": 51.4822159,
+          "lng": -0.6063582
+        },
+        "tags": {
+          "addr:city": "Windsor",
+          "addr:postcode": "SL4 1PE",
+          "addr:street": "Church Street",
+          "amenity": "cafe",
+          "name": "Clarence Brasserie & Tea Room",
+          "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7616.JPG"
+        },
+        "file": "Windsor 2018-09-15/DSCN7616.JPG",
+        "matchedExactly": true,
+        "fileMetadata": {
+          "name": "Windsor 2018-09-15/DSCN7616.JPG",
+          "source": "original",
+          "mtime": "1618520835",
+          "size": "4203635",
+          "md5": "08273d24eada5c41c6ad41d4d60ca25d",
+          "crc32": "59ad3e17",
+          "sha1": "a834e16cdaebc6a7ce057675ef81090579c45cc8",
+          "format": "JPEG",
+          "rotation": "0"
+        },
+        "directImageUrl": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7616.JPG"
+      },
+      {
+        "id": "osm-way-556866237",
+        "name": "1423 China Kitchen",
+        "coordinates": {
+          "lat": 51.4820221,
+          "lng": -0.6065367
+        },
+        "tags": {
+          "addr:city": "Windsor",
+          "addr:postcode": "SL4 1PA",
+          "addr:street": "Church Lane",
+          "amenity": "restaurant",
+          "name": "1423 China Kitchen",
+          "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7615.JPG"
+        },
+        "file": "Windsor 2018-09-15/DSCN7615.JPG",
+        "matchedExactly": true,
+        "fileMetadata": {
+          "name": "Windsor 2018-09-15/DSCN7615.JPG",
+          "source": "original",
+          "mtime": "1618520828",
+          "size": "4028800",
+          "md5": "59c2e09a36a9a4715a89cd0d0b749286",
+          "crc32": "18393201",
+          "sha1": "863723cd5b28fbaff1139ec76fae61bf58490386",
+          "format": "JPEG",
+          "rotation": "0"
+        },
+        "directImageUrl": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7615.JPG"
+      },
+      {
+        "id": "osm-way-556866318",
+        "name": "Funkywood",
+        "coordinates": {
+          "lat": 51.4815624,
+          "lng": -0.6068868
+        },
+        "tags": {
+          "addr:city": "Windsor",
+          "addr:postcode": "SL4 1LD",
+          "addr:street": "High Street",
+          "amenity": "restaurant",
+          "name": "Funkywood",
+          "alt_name": "Funky Wood",
+          "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7572.JPG"
+        },
+        "file": "Windsor 2018-09-15/DSCN7572.JPG",
+        "matchedExactly": true,
+        "fileMetadata": {
+          "name": "Windsor 2018-09-15/DSCN7572.JPG",
+          "source": "original",
+          "mtime": "1618520442",
+          "size": "4072227",
+          "md5": "2fd3ddd746e5c3daf101e61f52953ab5",
+          "crc32": "6e8c1b8b",
+          "sha1": "2e0295c175ca2f55777ac1ffebae00c58a65f67b",
+          "format": "JPEG",
+          "rotation": "0"
+        },
+        "directImageUrl": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7572.JPG"
+      },
+      {
+        "id": "osm-way-840731338",
+        "name": "Enzo's",
+        "coordinates": {
+          "lat": 51.4805009,
+          "lng": -0.6120758
+        },
+        "tags": {
+          "addr:city": "Windsor",
+          "addr:postcode": "SL4 1DH",
+          "addr:street": "Peascod Street",
+          "amenity": "restaurant",
+          "name": "Enzo's",
+          "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7738.JPG"
+        },
+        "file": "Windsor 2018-09-15/DSCN7738.JPG",
+        "matchedExactly": true,
+        "fileMetadata": {
+          "name": "Windsor 2018-09-15/DSCN7738.JPG",
+          "source": "original",
+          "mtime": "1618521971",
+          "size": "4030087",
+          "md5": "a05851c0ea6d9ff7d2539717c8bd7530",
+          "crc32": "f37cff9a",
+          "sha1": "a004c863567951442bec956b41a409a3584c6188",
+          "format": "JPEG",
+          "rotation": "0"
+        },
+        "directImageUrl": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7738.JPG"
+      },
+      {
+        "id": "osm-way-840731343",
+        "name": "Georgian House",
+        "coordinates": {
+          "lat": 51.4800773,
+          "lng": -0.6122112
+        },
+        "tags": {
+          "addr:city": "Windsor",
+          "addr:postcode": "SL4 1DH",
+          "addr:street": "Peascod Street",
+          "amenity": "restaurant",
+          "name": "Georgian House",
+          "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7729.JPG"
+        },
+        "file": "Windsor 2018-09-15/DSCN7729.JPG",
+        "matchedExactly": true,
+        "fileMetadata": {
+          "name": "Windsor 2018-09-15/DSCN7729.JPG",
+          "source": "original",
+          "mtime": "1618521879",
+          "size": "4216408",
+          "md5": "900b43b17eda1611a66883c97d103526",
+          "crc32": "463f67dd",
+          "sha1": "920414ae5b877f796086b7e9b3d5213177117644",
+          "format": "JPEG",
+          "rotation": "0"
+        },
+        "directImageUrl": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7729.JPG"
+      },
+      {
+        "id": "osm-way-930447951",
+        "name": "Meat at the Parish",
+        "coordinates": {
+          "lat": 51.4813566,
+          "lng": -0.6067109
+        },
+        "tags": {
+          "addr:city": "Windsor",
+          "addr:postcode": "SL4 1LD",
+          "addr:street": "High Street",
+          "amenity": "restaurant",
+          "name": "Meat at the Parish",
+          "website": "https://www.meatattheparish.com/",
+          "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7683.JPG"
+        },
+        "file": "Windsor 2018-09-15/DSCN7683.JPG",
+        "matchedExactly": true,
+        "fileMetadata": {
+          "name": "Windsor 2018-09-15/DSCN7683.JPG",
+          "source": "original",
+          "mtime": "1618521437",
+          "size": "4110268",
+          "md5": "d07a20266d5257ec4a9932fb4f8ddb49",
+          "crc32": "843521f6",
+          "sha1": "e06d342b46479edd579df98b71d72a913b136647",
+          "format": "JPEG",
+          "rotation": "90"
+        },
+        "directImageUrl": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7683.JPG"
+      },
+      {
+        "id": "osm-way-930469468",
+        "name": "Esquires Coffee",
+        "coordinates": {
+          "lat": 51.482149,
+          "lng": -0.6074801
+        },
+        "tags": {
+          "addr:city": "Windsor",
+          "addr:postcode": "SL4 1LH",
+          "addr:street": "High Street",
+          "amenity": "cafe",
+          "name": "Esquires Coffee",
+          "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7586.JPG"
+        },
+        "file": "Windsor 2018-09-15/DSCN7586.JPG",
+        "matchedExactly": true,
+        "fileMetadata": {
+          "name": "Windsor 2018-09-15/DSCN7586.JPG",
+          "source": "original",
+          "mtime": "1618520575",
+          "size": "4012150",
+          "md5": "369b722eef9a49e60c172fa58e5c2e56",
+          "crc32": "1e9e3ca0",
+          "sha1": "32cceaaa22f7e744bab6daa275f8cbd33460e8ab",
+          "format": "JPEG",
+          "rotation": "0"
+        },
+        "directImageUrl": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7586.JPG"
+      }
+    ],
+    "deliveryEvidence": [
+      {
+        "file": "DSCN7562.JPG",
+        "requestedUrl": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7562.JPG",
+        "finalUrl": "https://dn721902.ca.archive.org/0/items/windsor-2018-09-15/Windsor%202018-09-15/DSCN7562.JPG",
+        "status": 206,
+        "contentType": "image/jpeg",
+        "contentLength": "131072",
+        "contentRange": "bytes 0-131071/4244863",
+        "height": 3456,
+        "width": 4608
+      },
+      {
+        "file": "DSCN7601.JPG",
+        "requestedUrl": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7601.JPG",
+        "finalUrl": "https://dn721902.ca.archive.org/0/items/windsor-2018-09-15/Windsor%202018-09-15/DSCN7601.JPG",
+        "status": 206,
+        "contentType": "image/jpeg",
+        "contentLength": "131072",
+        "contentRange": "bytes 0-131071/4256742",
+        "height": 3456,
+        "width": 4608
+      }
+    ],
+    "allExactFilenamesPresent": true,
+    "dimensionLimit": "Archive metadata does not include original width/height; JPEG SOF range verified dimensions for two samples only. Other file dimensions require dynamic image header check.",
+    "adapterConclusion": "14 exact OSM file references plus verified reusable album licence support an automatic Archive adapter. Preserve direct OSM subject binding; generic DSCN filenames are not a reason to discard. Parse and validate item/file, verify exact inventory membership, creator/licence, JPEG mime/bytes/dimensions, allow only Archive metadata/download host/path and trusted archive mirror redirects. Credit creator + CC BY-SA4.0 link + exact source page. Prefer contained rendering or indicate crop/changes under licence. Dated 2018 photos may depict former businesses; show photo provenance/date where appropriate."
+  },
+  "geograph": {
+    "refs": [
+      {
+        "id": "osm-node-1574742829",
+        "name": "Blue Airmail Pillar Box",
+        "coordinates": {
+          "lat": 51.481109,
+          "lng": -0.6056771
+        },
+        "tags": {
+          "addr:city": "Windsor",
+          "name": "Blue Airmail Pillar Box",
+          "tourism": "attraction",
+          "image": "https://www.geograph.org.uk/photo/403630"
+        }
+      },
+      {
+        "id": "osm-way-1164375823",
+        "name": "Athens",
+        "coordinates": {
+          "lat": 51.4959013,
+          "lng": -0.6115017
+        },
+        "tags": {
+          "leisure": "sports_centre",
+          "name": "Athens",
+          "sport": "swimming",
+          "image": "https://www.geograph.org.uk/photo/7883745"
+        }
+      }
+    ],
+    "commonsApiEvidence": {
+      "batchcomplete": true,
+      "query": {
+        "pages": [
+          {
+            "pageid": 12917158,
+            "ns": 6,
+            "title": "File:Blue pillar box, Windsor - geograph.org.uk - 403630.jpg",
+            "index": 1,
+            "coordinates": [
+              {
+                "lat": 51.48101,
+                "lon": -0.6059,
+                "primary": true,
+                "globe": "earth"
+              },
+              {
+                "lat": 51.48101,
+                "lon": -0.6058,
+                "primary": false,
+                "globe": "earth"
+              }
+            ],
+            "imagerepository": "local",
+            "imageinfo": [
+              {
+                "size": 99959,
+                "width": 339,
+                "height": 640,
+                "url": "https://upload.wikimedia.org/wikipedia/commons/6/69/Blue_pillar_box%2C_Windsor_-_geograph.org.uk_-_403630.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+                "descriptionurl": "https://commons.wikimedia.org/wiki/File:Blue_pillar_box,_Windsor_-_geograph.org.uk_-_403630.jpg",
+                "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=12917158",
+                "extmetadata": {
+                  "DateTime": {
+                    "value": "2011-02-03 20:53:13",
+                    "source": "mediawiki-metadata",
+                    "hidden": ""
+                  },
+                  "ObjectName": {
+                    "value": "Blue pillar box, Windsor - geograph.org.uk - 403630",
+                    "source": "mediawiki-metadata"
+                  },
+                  "CommonsMetadataExtension": {
+                    "value": 1.2,
+                    "source": "extension",
+                    "hidden": ""
+                  },
+                  "Categories": {
+                    "value": "Images from Geograph Britain and Ireland|Information field template with formatting|February 1999 in Berkshire|King George V type A/B red pillar boxes in England|Blue post boxes in England|Images by Peter Tarleton|St Alban's Street, Windsor, Berkshire|Post boxes in Windsor, Berkshire|1999 in Windsor, Berkshire",
+                    "source": "commons-categories",
+                    "hidden": ""
+                  },
+                  "Assessments": {
+                    "value": "",
+                    "source": "commons-categories",
+                    "hidden": ""
+                  },
+                  "GPSLatitude": {
+                    "value": "51.481010",
+                    "source": "commons-desc-page"
+                  },
+                  "GPSLongitude": {
+                    "value": "-0.605900",
+                    "source": "commons-desc-page"
+                  },
+                  "GPSMapDatum": {
+                    "value": "WGS-84",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "ImageDescription": {
+                    "value": "George V pillar box at the junction of High Street and St Albans Street, Windsor, Berkshire. Believed to have been erected for the first postal air mail service, and to commemorate George V's coronation in 1911.",
+                    "source": "commons-desc-page"
+                  },
+                  "DateTimeOriginal": {
+                    "value": "1999-02-01",
+                    "source": "commons-desc-page"
+                  },
+                  "Credit": {
+                    "value": "From geograph.org.uk",
+                    "source": "commons-desc-page"
+                  },
+                  "Artist": {
+                    "value": "Peter Tarleton",
+                    "source": "commons-desc-page"
+                  },
+                  "Attribution": {
+                    "value": "Peter Tarleton",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "LicenseShortName": {
+                    "value": "CC BY-SA 2.0",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "UsageTerms": {
+                    "value": "Creative Commons Attribution-Share Alike 2.0",
+                    "source": "commons-desc-page"
+                  },
+                  "AttributionRequired": {
+                    "value": "true",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "LicenseUrl": {
+                    "value": "https://creativecommons.org/licenses/by-sa/2.0",
+                    "source": "commons-desc-page"
+                  },
+                  "Copyrighted": {
+                    "value": "True",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "Restrictions": {
+                    "value": "",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "License": {
+                    "value": "cc-by-sa-2.0",
+                    "source": "commons-templates",
+                    "hidden": ""
+                  }
+                },
+                "mime": "image/jpeg"
+              }
+            ]
+          },
+          {
+            "pageid": 169429927,
+            "ns": 6,
+            "title": "File:Eton College Swimming Pool - geograph.org.uk - 7883745.jpg",
+            "index": 2,
+            "coordinates": [
+              {
+                "lat": 51.4956103,
+                "lon": -0.61245407,
+                "primary": true,
+                "globe": "earth"
+              },
+              {
+                "lat": 51.49586985,
+                "lon": -0.61172469,
+                "primary": false,
+                "globe": "earth"
+              }
+            ],
+            "imagerepository": "local",
+            "imageinfo": [
+              {
+                "size": 156263,
+                "width": 1024,
+                "height": 768,
+                "url": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Eton_College_Swimming_Pool_-_geograph.org.uk_-_7883745.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+                "descriptionurl": "https://commons.wikimedia.org/wiki/File:Eton_College_Swimming_Pool_-_geograph.org.uk_-_7883745.jpg",
+                "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=169429927",
+                "extmetadata": {
+                  "DateTime": {
+                    "value": "2025-07-07 21:18:17",
+                    "source": "mediawiki-metadata",
+                    "hidden": ""
+                  },
+                  "ObjectName": {
+                    "value": "Eton College Swimming Pool - geograph.org.uk - 7883745",
+                    "source": "mediawiki-metadata"
+                  },
+                  "CommonsMetadataExtension": {
+                    "value": 1.2,
+                    "source": "extension",
+                    "hidden": ""
+                  },
+                  "Categories": {
+                    "value": "Eton, Berkshire|Images from Geograph Britain and Ireland",
+                    "source": "commons-categories",
+                    "hidden": ""
+                  },
+                  "Assessments": {
+                    "value": "",
+                    "source": "commons-categories",
+                    "hidden": ""
+                  },
+                  "GPSLatitude": {
+                    "value": "51.495610",
+                    "source": "commons-desc-page"
+                  },
+                  "GPSLongitude": {
+                    "value": "-0.612454",
+                    "source": "commons-desc-page"
+                  },
+                  "GPSMapDatum": {
+                    "value": "WGS-84",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "ImageDescription": {
+                    "value": "Eton College Swimming Pool ",
+                    "source": "commons-desc-page"
+                  },
+                  "DateTimeOriginal": {
+                    "value": "2024-09-21",
+                    "source": "commons-desc-page"
+                  },
+                  "Credit": {
+                    "value": "Geograph Britain and Ireland ",
+                    "source": "commons-desc-page"
+                  },
+                  "Artist": {
+                    "value": "Matthew Chadwick ",
+                    "source": "commons-desc-page"
+                  },
+                  "LicenseShortName": {
+                    "value": "CC BY-SA 2.0",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "UsageTerms": {
+                    "value": "Creative Commons Attribution-Share Alike 2.0",
+                    "source": "commons-desc-page"
+                  },
+                  "AttributionRequired": {
+                    "value": "true",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "Attribution": {
+                    "value": "Eton College Swimming Pool by Matthew Chadwick",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "LicenseUrl": {
+                    "value": "https://creativecommons.org/licenses/by-sa/2.0",
+                    "source": "commons-desc-page"
+                  },
+                  "Copyrighted": {
+                    "value": "True",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "Restrictions": {
+                    "value": "",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "License": {
+                    "value": "cc-by-sa-2.0",
+                    "source": "commons-templates",
+                    "hidden": ""
+                  }
+                },
+                "mime": "image/jpeg"
+              }
+            ]
+          }
+        ]
+      },
+      "limits": {
+        "coordinates": 500
+      }
+    },
+    "conclusion": "Both exact Geograph IDs resolve to licensed Commons files. Blue Airmail Pillar Box 403630: CC BY-SA2.0 Peter Tarleton 339×640 portrait, exact Windsor subject/geocoordinates. Athens 7883745: CC BY-SA2.0 Matthew Chadwick 1024×768 Eton College Swimming Pool, exact swimming/sports-centre OSM binding supports despite filename not Athens. Automatic Geograph-ID→Commons exact identifier resolution can contribute these 2 through existing Commons legal metadata; retain portrait support or no-photo if portrait remains disallowed. Direct Geograph page requests failed in connector, so direct geograph delivery not independently verified."
+  },
+  "github": {
+    "ref": {
+      "id": "osm-way-1204687308",
+      "name": "Clara's Cocina Cafe",
+      "coordinates": {
+        "lat": 51.421727,
+        "lng": -0.603191
+      },
+      "tags": {
+        "amenity": "cafe",
+        "name": "Clara's Cocina Cafe",
+        "opening_hours": "Mid April to Mid September Mon-Sun09:00-16:00",
+        "website": "https://www.clarascocina.com/",
+        "image": "https://raw.githubusercontent.com/lewisevans2007/OSM_Images/main/images/2023/9/3/15.34.58.jpeg"
+      }
+    },
+    "contentsApi": {
+      "url": "https://api.github.com/repos/lewisevans2007/OSM_Images/contents",
+      "status": 404
+    },
+    "license": {
+      "url": "https://raw.githubusercontent.com/lewisevans2007/OSM_Images/main/LICENSE",
+      "status": 404
+    },
+    "readme": {
+      "url": "https://raw.githubusercontent.com/lewisevans2007/OSM_Images/main/README.md",
+      "status": 404
+    },
+    "image": "Direct raw image scrape failed MCP Internal error; availability unverified",
+    "conclusion": "Do not enable arbitrary GitHub raw photo reuse. This specific repository/licence public endpoints currently404; no reusable licence verified."
+  },
+  "provenance": {
+    "researchTools": "Existing Firecrawl public API/page scrape plus one public-only VM; no credentials/authentication/commercial provider APIs",
+    "initialFailures": "Initial Archive API no-query and Geograph page requests tool internal-error; Archive ?output=json retry succeeded.",
+    "sampleBinaryMethod": "Read128KiB via HTTP Range, parse JPEG SOF; did not copy full photos or upload user data.",
+    "sessionStopped": true
+  }
+}

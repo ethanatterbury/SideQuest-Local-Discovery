@@ -1,0 +1,27 @@
+# Additional free photo source audit — 8 October 2026
+
+No new reusable venue-specific photo was accepted from this Openverse audit. These queries did not justify an Openverse adapter. The separate direct OSM media audit did identify licensed Archive files. Sources, licence/author/dimensions, query URLs, rejection evidence and a fresh Commons review of the five deployed photos are saved in `photo-free-source-audit.json`.
+
+| Required venue             | Openverse queries                                                                                                                | Actual result                                                                                                                                                                                                                                                                                      |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Jake's Playbarn, Sandhurst | 6: Jakes Playbarn; Jake's Playworld; Tri Lakes Playbarn; Tri Lakes Sandhurst; Trilakes Sandhurst; Flickr-only Trilakes           | Specific variants zero. Trilakes Sandhurst finds a 640×427 CC BY-SA2.0 Chris aerial of **Trilakes Country Park**, already Commons; it does not establish indoor Playbarn subject. Flickr broad name first20 are NY Adirondack/Saranac or personal portraits.                                       |
+| Pirates Landing, Camberley | 5: Pirates Landing Camberley; Pirates Camberley; Pirate's Landing Camberley; Pirates Landing Surrey; Flickr-only Pirates Landing | Qualified variants zero. Broad Flickr query reports capped 240 results; first20 chiefly Seattle Seafair/Alki pirate landing event, not the Camberley branch.                                                                                                                                       |
+| Grassy Hill, Sandhurst     | 5: Grassy Hill Sandhurst; Grassy Hill Crowthorne; Grassy Hill Berkshire; Grassy Hill England; Flickr-only Grassy Hill            | Exact town variants zero. Berkshire finds four wrong subjects (Gore Hill/Ridgeway or generic West Berkshire grassy hillsides). Broad Flickr/England first20 include Australia, Oregon, Gower Wales, Tulsa, Patching Hill, Whiteside Hill and generic landscapes. No exact Sandhurst park evidence. |
+
+All queries filtered to public commercial-use-permitted licences; the term is an Openverse licence filter, not a paid provider. Broader query counts do not imply local coverage. Only first 20 results were inspected for broad queries; this is a bounded audit, not exhaustive proof of absence. Results lacking precise venue/locality evidence were rejected even when open licensed.
+
+[Openverse Trilakes Sandhurst result](https://api.openverse.org/v1/images/?format=json&q=Trilakes%20Sandhurst&page_size=20&license_type=commercial) leads to [Commons aerial](https://commons.wikimedia.org/w/index.php?curid=133536364), credited Chris, CC BY-SA2.0, 640×427. This does not establish an image of Jake's indoor Playbarn and adds no new source corpus.
+
+[Example false Pirate's Landing result](https://www.flickr.com/photos/13574352@N00/185426985) is licensed CC BY but its tags include `alki`, `seafair`, `westseattle`. [Example false Grassy Hill](https://www.flickr.com/photos/40315625@N08/5698855620) is CC BY but tags identify Oregon/Marion/Willamette; another [Grassy Hill](https://www.flickr.com/photos/72843372@N00/2895645219) is CC BY-SA but tags identify Gower/Wales.
+
+Fresh Commons API independently confirmed the five deployed sources:
+
+- California: exact “The road into California Country Park”, Steve Daniels, CC BY-SA2.0, 1500×1000, object coordinates 51.37653935,-0.87080303. Correct venue entrance subject; less characteristic than a full park/lake scene.
+- Frimley: “Basingstoke Canal at Frimley Lodge Park”, Des Blenkinsopp, CC BY-SA2.0, 5472×3648, object 51.29858329,-0.72239493. Correct park-adjacent scenery; cannot stand for all amenities.
+- Ambarrow: exact nature reserve scene, Stephen McKay, CC BY-SA2.0, 4800×3200, object 51.35639702,-0.81614916.
+- Memorial Garden: “St Peter, Frimley: The Memorial Garden”, Basher Eyre, CC BY-SA2.0, 640×480, object 51.31565858,-0.73813522. Correct precise garden.
+- Morgan: caption explicitly identifies Morgan Recreation Ground Crowthorne, Davidsouthwell1, CC BY-SA3.0, 448×336, no API coordinates. Keep low-resolution indication; locality-caption match is weaker than precise geocoordinates.
+
+This was metadata/subject quality review, not visual inspection. No photos were manually assigned or copied, and no engine changes were made.
+
+Two attempts to open one public-only Firecrawl VM returned MCP Internal error without any session identifier. Three Flickr-targeted web-search requests likewise failed. Direct shell could not resolve the public API. Successful evidence came from public Openverse and Commons API JSON retrieved via connector scrape. Checkpoints were exported locally after every successful batch. No usable VM session existed to stop.

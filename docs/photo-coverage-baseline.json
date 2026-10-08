@@ -1,0 +1,362 @@
+{
+  "tested": 24,
+  "baselineMatched": 5,
+  "currentMatched": 8,
+  "rows": [
+    {
+      "id": "osm-node-974464892",
+      "name": "Fenixia Chinese Restaurant",
+      "baselineMatched": false,
+      "currentMatched": false,
+      "currentStatus": "unresolved",
+      "baselineImage": null,
+      "currentImage": null
+    },
+    {
+      "id": "osm-node-2119841204",
+      "name": "The Shenai",
+      "baselineMatched": false,
+      "currentMatched": false,
+      "currentStatus": "unresolved",
+      "baselineImage": null,
+      "currentImage": null
+    },
+    {
+      "id": "osm-way-701854498",
+      "name": "Snap Fitness",
+      "baselineMatched": false,
+      "currentMatched": false,
+      "currentStatus": "unresolved",
+      "baselineImage": null,
+      "currentImage": null
+    },
+    {
+      "id": "osm-way-239479890",
+      "name": "Sandhurst Park Cafe",
+      "baselineMatched": false,
+      "currentMatched": false,
+      "currentStatus": "unresolved",
+      "baselineImage": null,
+      "currentImage": null
+    },
+    {
+      "id": "osm-node-7644058616",
+      "name": "Sandhurst Tandoori",
+      "baselineMatched": false,
+      "currentMatched": false,
+      "currentStatus": "unresolved",
+      "baselineImage": null,
+      "currentImage": null
+    },
+    {
+      "id": "osm-way-605933538",
+      "name": "Sandhurst Town Boys & Girls FC",
+      "baselineMatched": true,
+      "currentMatched": true,
+      "currentStatus": "matched",
+      "baselineImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Sandhurst_Town_Boys_%5E_Girls_FC_-_geograph.org.uk_-_8282217.jpg",
+        "credit": "Oscar Taylor",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Sandhurst_Town_Boys_%5E_Girls_FC_-_geograph.org.uk_-_8282217.jpg"
+      },
+      "currentImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Sandhurst_Town_Boys_%5E_Girls_FC_-_geograph.org.uk_-_8282217.jpg",
+        "credit": "Oscar Taylor",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Sandhurst_Town_Boys_%5E_Girls_FC_-_geograph.org.uk_-_8282217.jpg",
+        "width": 4080,
+        "height": 3060,
+        "confidence": 0.94,
+        "strategy": "commons-search",
+        "matched": [
+          "subject-name",
+          "coordinate",
+          "area"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-399427797",
+      "name": "Bottom Meadow",
+      "baselineMatched": false,
+      "currentMatched": true,
+      "currentStatus": "matched",
+      "baselineImage": null,
+      "currentImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/7/76/Photo_of_Bracknell_Towns_Bottom_Meadow_pitch_and_club_house.jpg",
+        "credit": "John Leakey",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Photo_of_Bracknell_Towns_Bottom_Meadow_pitch_and_club_house.jpg",
+        "width": 5892,
+        "height": 3928,
+        "confidence": 0.84,
+        "strategy": "commons-search",
+        "matched": [
+          "subject-name",
+          "area"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-63015161",
+      "name": "Sandhurst Memorial Park",
+      "baselineMatched": true,
+      "currentMatched": true,
+      "currentStatus": "matched",
+      "baselineImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/4/47/Sandhurst_Memorial_Park_%28geograph_3449987%29.jpg",
+        "credit": "Len Williams",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Sandhurst_Memorial_Park_(geograph_3449987).jpg"
+      },
+      "currentImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/0/09/Sandhurst_Memorial_Pond%2C_Egyptian_Geese_-_geograph.org.uk_-_3450008.jpg",
+        "credit": "Len Williams",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Sandhurst_Memorial_Pond,_Egyptian_Geese_-_geograph.org.uk_-_3450008.jpg",
+        "width": 2848,
+        "height": 2134,
+        "confidence": 0.93,
+        "strategy": "wikidata-p373",
+        "matched": [
+          "declared-entity",
+          "entity-coordinate",
+          "entity-category",
+          "category-membership",
+          "subject-name",
+          "coordinate",
+          "area"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-486846876",
+      "name": "Snaprails Park",
+      "baselineMatched": true,
+      "currentMatched": true,
+      "currentStatus": "matched",
+      "baselineImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Stream_in_Snaprails_Park_-_geograph.org.uk_-_7444613.jpg",
+        "credit": "Oscar Taylor",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Stream_in_Snaprails_Park_-_geograph.org.uk_-_7444613.jpg"
+      },
+      "currentImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/6/68/Entrance_to_Snaprails_Park_-_geograph.org.uk_-_7180060.jpg",
+        "credit": "Des Blenkinsopp",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Entrance_to_Snaprails_Park_-_geograph.org.uk_-_7180060.jpg",
+        "width": 5152,
+        "height": 3465,
+        "confidence": 0.94,
+        "strategy": "commons-search",
+        "matched": [
+          "subject-name",
+          "coordinate",
+          "area"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-479551021",
+      "name": "Snaprails Park",
+      "baselineMatched": true,
+      "currentMatched": true,
+      "currentStatus": "matched",
+      "baselineImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Stream_in_Snaprails_Park_-_geograph.org.uk_-_7444613.jpg",
+        "credit": "Oscar Taylor",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Stream_in_Snaprails_Park_-_geograph.org.uk_-_7444613.jpg"
+      },
+      "currentImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/6/68/Entrance_to_Snaprails_Park_-_geograph.org.uk_-_7180060.jpg",
+        "credit": "Des Blenkinsopp",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Entrance_to_Snaprails_Park_-_geograph.org.uk_-_7180060.jpg",
+        "width": 5152,
+        "height": 3465,
+        "confidence": 0.94,
+        "strategy": "commons-search",
+        "matched": [
+          "subject-name",
+          "coordinate",
+          "area"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-291971667",
+      "name": "Trilakes Animal Park",
+      "baselineMatched": false,
+      "currentMatched": false,
+      "currentStatus": "unresolved",
+      "baselineImage": null,
+      "currentImage": null
+    },
+    {
+      "id": "osm-way-1052831162",
+      "name": "Jake's Playbarn",
+      "baselineMatched": false,
+      "currentMatched": false,
+      "currentStatus": "unresolved",
+      "baselineImage": null,
+      "currentImage": null
+    },
+    {
+      "id": "osm-node-776885208",
+      "name": "Beefeater",
+      "baselineMatched": false,
+      "currentMatched": true,
+      "currentStatus": "matched",
+      "baselineImage": null,
+      "currentImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Rackstraw_Farm_Beefeater_%28geograph_7444643%29.jpg",
+        "credit": "Oscar Taylor",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Rackstraw_Farm_Beefeater_(geograph_7444643).jpg",
+        "width": 4080,
+        "height": 3060,
+        "confidence": 0.94,
+        "strategy": "commons-search",
+        "matched": [
+          "subject-name",
+          "coordinate",
+          "area"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-33844008",
+      "name": "Grassy Hill",
+      "baselineMatched": false,
+      "currentMatched": false,
+      "currentStatus": "unresolved",
+      "baselineImage": null,
+      "currentImage": null
+    },
+    {
+      "id": "osm-way-33771139",
+      "name": "Ambarrow Court",
+      "baselineMatched": false,
+      "currentMatched": true,
+      "currentStatus": "matched",
+      "baselineImage": null,
+      "currentImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/8/84/Ambarrow_Court_Nature_Reserve_-_geograph.org.uk_-_8288060.jpg",
+        "credit": "Stephen McKay",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Ambarrow_Court_Nature_Reserve_-_geograph.org.uk_-_8288060.jpg",
+        "width": 4800,
+        "height": 3200,
+        "confidence": 0.94,
+        "strategy": "commons-search",
+        "matched": [
+          "subject-name",
+          "coordinate",
+          "area"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-6801450540",
+      "name": "Zee",
+      "baselineMatched": false,
+      "currentMatched": false,
+      "currentStatus": "unresolved",
+      "baselineImage": null,
+      "currentImage": null
+    },
+    {
+      "id": "osm-way-486635100",
+      "name": "Owlsmoor Park",
+      "baselineMatched": true,
+      "currentMatched": true,
+      "currentStatus": "matched",
+      "baselineImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Owlsmoor_Park_entrance_-_geograph.org.uk_-_3824047.jpg",
+        "credit": "Alan Hunt",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Owlsmoor_Park_entrance_-_geograph.org.uk_-_3824047.jpg"
+      },
+      "currentImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Owlsmoor_Park_entrance_-_geograph.org.uk_-_3824047.jpg",
+        "credit": "Alan Hunt",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Owlsmoor_Park_entrance_-_geograph.org.uk_-_3824047.jpg",
+        "width": 2034,
+        "height": 1525,
+        "confidence": 0.9,
+        "strategy": "commons-search",
+        "matched": [
+          "subject-name",
+          "coordinate"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-225043058",
+      "name": "Frogmore Leisure Centre",
+      "baselineMatched": false,
+      "currentMatched": false,
+      "currentStatus": "unresolved",
+      "baselineImage": null,
+      "currentImage": null
+    },
+    {
+      "id": "osm-node-800477817",
+      "name": "Raj Tandoori",
+      "baselineMatched": false,
+      "currentMatched": false,
+      "currentStatus": "unresolved",
+      "baselineImage": null,
+      "currentImage": null
+    },
+    {
+      "id": "osm-way-589667842",
+      "name": "Christopher Lee Theatre",
+      "baselineMatched": false,
+      "currentMatched": false,
+      "currentStatus": "unresolved",
+      "baselineImage": null,
+      "currentImage": null
+    },
+    {
+      "id": "osm-way-486648286",
+      "name": "Rookwood Avenue Playground",
+      "baselineMatched": false,
+      "currentMatched": false,
+      "currentStatus": "unresolved",
+      "baselineImage": null,
+      "currentImage": null
+    },
+    {
+      "id": "osm-way-827482695",
+      "name": "G. W. Annenberg Performing Arts Centre",
+      "baselineMatched": false,
+      "currentMatched": false,
+      "currentStatus": "unresolved",
+      "baselineImage": null,
+      "currentImage": null
+    },
+    {
+      "id": "osm-node-11278417015",
+      "name": "Ruby's Play Cafe",
+      "baselineMatched": false,
+      "currentMatched": false,
+      "currentStatus": "unresolved",
+      "baselineImage": null,
+      "currentImage": null
+    },
+    {
+      "id": "osm-node-11278417016",
+      "name": "Mi Coffee and Cake",
+      "baselineMatched": false,
+      "currentMatched": false,
+      "currentStatus": "unresolved",
+      "baselineImage": null,
+      "currentImage": null
+    }
+  ]
+}

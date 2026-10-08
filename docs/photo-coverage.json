@@ -1,0 +1,4677 @@
+{
+  "generatedAt": "2026-10-08T17:47:31.954529+00:00",
+  "sample": {
+    "label": "Fixed200 nearby catalogue places \u00b7 Sandhurst \u00b7 selection independent of photos",
+    "tested": 200,
+    "matched": 35,
+    "unresolved": 164,
+    "retryable": 1
+  },
+  "rawProviderLatestCounts": {
+    "label": "Fixed200 nearby catalogue places \u00b7 Sandhurst \u00b7 selection independent of photos",
+    "tested": 200,
+    "matched": 36,
+    "unresolved": 163,
+    "retryable": 1
+  },
+  "initialCounts": {
+    "tested": 200,
+    "matched": 40,
+    "unresolved": 147,
+    "retryable": 13
+  },
+  "attemptCount": 255,
+  "positiveFinalDeployment": {
+    "sha": "373da70bc76c5fce7be4a23c801a38c879cf18c2",
+    "resolverHash": "643fec990111c4ddf8e79d56ea199d84a28b730887d68964207a5642a7c91f02",
+    "rechecked": 40
+  },
+  "provenance": [
+    {
+      "hash": "1f2c07a9c278890f9d5475c2688d24301a5ba1de23589653b3bdefeefedea741",
+      "from": 0,
+      "through": 62
+    },
+    {
+      "hash": "bf4d77800b34b7b86333ed250b5d4b6f9025da7d1023dbe06e6de6e227a04fb8",
+      "from": 63,
+      "reason": "Safe upstream code classification/cooldown update; matching unchanged",
+      "through": 85
+    },
+    {
+      "from": 86,
+      "through": 199,
+      "origin": "public-deployed-provider",
+      "deploymentSha": null,
+      "hash": null,
+      "reason": "Canonical URL changed during initial audit; final positive recheck explicitly recorded373da70."
+    }
+  ],
+  "baseline24": {
+    "tested": 24,
+    "baselineMatched": 5,
+    "currentMatched": 8,
+    "rows": [
+      {
+        "id": "osm-node-974464892",
+        "name": "Fenixia Chinese Restaurant",
+        "baselineMatched": false,
+        "currentMatched": false,
+        "currentStatus": "unresolved",
+        "baselineImage": null,
+        "currentImage": null
+      },
+      {
+        "id": "osm-node-2119841204",
+        "name": "The Shenai",
+        "baselineMatched": false,
+        "currentMatched": false,
+        "currentStatus": "unresolved",
+        "baselineImage": null,
+        "currentImage": null
+      },
+      {
+        "id": "osm-way-701854498",
+        "name": "Snap Fitness",
+        "baselineMatched": false,
+        "currentMatched": false,
+        "currentStatus": "unresolved",
+        "baselineImage": null,
+        "currentImage": null
+      },
+      {
+        "id": "osm-way-239479890",
+        "name": "Sandhurst Park Cafe",
+        "baselineMatched": false,
+        "currentMatched": false,
+        "currentStatus": "unresolved",
+        "baselineImage": null,
+        "currentImage": null
+      },
+      {
+        "id": "osm-node-7644058616",
+        "name": "Sandhurst Tandoori",
+        "baselineMatched": false,
+        "currentMatched": false,
+        "currentStatus": "unresolved",
+        "baselineImage": null,
+        "currentImage": null
+      },
+      {
+        "id": "osm-way-605933538",
+        "name": "Sandhurst Town Boys & Girls FC",
+        "baselineMatched": true,
+        "currentMatched": true,
+        "currentStatus": "matched",
+        "baselineImage": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Sandhurst_Town_Boys_%5E_Girls_FC_-_geograph.org.uk_-_8282217.jpg",
+          "credit": "Oscar Taylor",
+          "license": "CC BY-SA 2.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Sandhurst_Town_Boys_%5E_Girls_FC_-_geograph.org.uk_-_8282217.jpg"
+        },
+        "currentImage": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Sandhurst_Town_Boys_%5E_Girls_FC_-_geograph.org.uk_-_8282217.jpg",
+          "credit": "Oscar Taylor",
+          "license": "CC BY-SA 2.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Sandhurst_Town_Boys_%5E_Girls_FC_-_geograph.org.uk_-_8282217.jpg",
+          "width": 4080,
+          "height": 3060,
+          "confidence": 0.94,
+          "strategy": "commons-search",
+          "matched": [
+            "subject-name",
+            "coordinate",
+            "area"
+          ]
+        }
+      },
+      {
+        "id": "osm-way-399427797",
+        "name": "Bottom Meadow",
+        "baselineMatched": false,
+        "currentMatched": true,
+        "currentStatus": "matched",
+        "baselineImage": null,
+        "currentImage": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/7/76/Photo_of_Bracknell_Towns_Bottom_Meadow_pitch_and_club_house.jpg",
+          "credit": "John Leakey",
+          "license": "CC BY-SA 4.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Photo_of_Bracknell_Towns_Bottom_Meadow_pitch_and_club_house.jpg",
+          "width": 5892,
+          "height": 3928,
+          "confidence": 0.84,
+          "strategy": "commons-search",
+          "matched": [
+            "subject-name",
+            "area"
+          ]
+        }
+      },
+      {
+        "id": "osm-way-63015161",
+        "name": "Sandhurst Memorial Park",
+        "baselineMatched": true,
+        "currentMatched": true,
+        "currentStatus": "matched",
+        "baselineImage": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/4/47/Sandhurst_Memorial_Park_%28geograph_3449987%29.jpg",
+          "credit": "Len Williams",
+          "license": "CC BY-SA 2.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Sandhurst_Memorial_Park_(geograph_3449987).jpg"
+        },
+        "currentImage": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/0/09/Sandhurst_Memorial_Pond%2C_Egyptian_Geese_-_geograph.org.uk_-_3450008.jpg",
+          "credit": "Len Williams",
+          "license": "CC BY-SA 2.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Sandhurst_Memorial_Pond,_Egyptian_Geese_-_geograph.org.uk_-_3450008.jpg",
+          "width": 2848,
+          "height": 2134,
+          "confidence": 0.93,
+          "strategy": "wikidata-p373",
+          "matched": [
+            "declared-entity",
+            "entity-coordinate",
+            "entity-category",
+            "category-membership",
+            "subject-name",
+            "coordinate",
+            "area"
+          ]
+        }
+      },
+      {
+        "id": "osm-way-486846876",
+        "name": "Snaprails Park",
+        "baselineMatched": true,
+        "currentMatched": true,
+        "currentStatus": "matched",
+        "baselineImage": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Stream_in_Snaprails_Park_-_geograph.org.uk_-_7444613.jpg",
+          "credit": "Oscar Taylor",
+          "license": "CC BY-SA 2.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Stream_in_Snaprails_Park_-_geograph.org.uk_-_7444613.jpg"
+        },
+        "currentImage": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/6/68/Entrance_to_Snaprails_Park_-_geograph.org.uk_-_7180060.jpg",
+          "credit": "Des Blenkinsopp",
+          "license": "CC BY-SA 2.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Entrance_to_Snaprails_Park_-_geograph.org.uk_-_7180060.jpg",
+          "width": 5152,
+          "height": 3465,
+          "confidence": 0.94,
+          "strategy": "commons-search",
+          "matched": [
+            "subject-name",
+            "coordinate",
+            "area"
+          ]
+        }
+      },
+      {
+        "id": "osm-way-479551021",
+        "name": "Snaprails Park",
+        "baselineMatched": true,
+        "currentMatched": true,
+        "currentStatus": "matched",
+        "baselineImage": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Stream_in_Snaprails_Park_-_geograph.org.uk_-_7444613.jpg",
+          "credit": "Oscar Taylor",
+          "license": "CC BY-SA 2.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Stream_in_Snaprails_Park_-_geograph.org.uk_-_7444613.jpg"
+        },
+        "currentImage": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/6/68/Entrance_to_Snaprails_Park_-_geograph.org.uk_-_7180060.jpg",
+          "credit": "Des Blenkinsopp",
+          "license": "CC BY-SA 2.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Entrance_to_Snaprails_Park_-_geograph.org.uk_-_7180060.jpg",
+          "width": 5152,
+          "height": 3465,
+          "confidence": 0.94,
+          "strategy": "commons-search",
+          "matched": [
+            "subject-name",
+            "coordinate",
+            "area"
+          ]
+        }
+      },
+      {
+        "id": "osm-node-291971667",
+        "name": "Trilakes Animal Park",
+        "baselineMatched": false,
+        "currentMatched": false,
+        "currentStatus": "unresolved",
+        "baselineImage": null,
+        "currentImage": null
+      },
+      {
+        "id": "osm-way-1052831162",
+        "name": "Jake's Playbarn",
+        "baselineMatched": false,
+        "currentMatched": false,
+        "currentStatus": "unresolved",
+        "baselineImage": null,
+        "currentImage": null
+      },
+      {
+        "id": "osm-node-776885208",
+        "name": "Beefeater",
+        "baselineMatched": false,
+        "currentMatched": true,
+        "currentStatus": "matched",
+        "baselineImage": null,
+        "currentImage": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Rackstraw_Farm_Beefeater_%28geograph_7444643%29.jpg",
+          "credit": "Oscar Taylor",
+          "license": "CC BY-SA 2.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Rackstraw_Farm_Beefeater_(geograph_7444643).jpg",
+          "width": 4080,
+          "height": 3060,
+          "confidence": 0.94,
+          "strategy": "commons-search",
+          "matched": [
+            "subject-name",
+            "coordinate",
+            "area"
+          ]
+        }
+      },
+      {
+        "id": "osm-way-33844008",
+        "name": "Grassy Hill",
+        "baselineMatched": false,
+        "currentMatched": false,
+        "currentStatus": "unresolved",
+        "baselineImage": null,
+        "currentImage": null
+      },
+      {
+        "id": "osm-way-33771139",
+        "name": "Ambarrow Court",
+        "baselineMatched": false,
+        "currentMatched": true,
+        "currentStatus": "matched",
+        "baselineImage": null,
+        "currentImage": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/8/84/Ambarrow_Court_Nature_Reserve_-_geograph.org.uk_-_8288060.jpg",
+          "credit": "Stephen McKay",
+          "license": "CC BY-SA 2.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Ambarrow_Court_Nature_Reserve_-_geograph.org.uk_-_8288060.jpg",
+          "width": 4800,
+          "height": 3200,
+          "confidence": 0.94,
+          "strategy": "commons-search",
+          "matched": [
+            "subject-name",
+            "coordinate",
+            "area"
+          ]
+        }
+      },
+      {
+        "id": "osm-node-6801450540",
+        "name": "Zee",
+        "baselineMatched": false,
+        "currentMatched": false,
+        "currentStatus": "unresolved",
+        "baselineImage": null,
+        "currentImage": null
+      },
+      {
+        "id": "osm-way-486635100",
+        "name": "Owlsmoor Park",
+        "baselineMatched": true,
+        "currentMatched": true,
+        "currentStatus": "matched",
+        "baselineImage": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Owlsmoor_Park_entrance_-_geograph.org.uk_-_3824047.jpg",
+          "credit": "Alan Hunt",
+          "license": "CC BY-SA 2.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Owlsmoor_Park_entrance_-_geograph.org.uk_-_3824047.jpg"
+        },
+        "currentImage": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Owlsmoor_Park_entrance_-_geograph.org.uk_-_3824047.jpg",
+          "credit": "Alan Hunt",
+          "license": "CC BY-SA 2.0",
+          "source": "https://commons.wikimedia.org/wiki/File:Owlsmoor_Park_entrance_-_geograph.org.uk_-_3824047.jpg",
+          "width": 2034,
+          "height": 1525,
+          "confidence": 0.9,
+          "strategy": "commons-search",
+          "matched": [
+            "subject-name",
+            "coordinate"
+          ]
+        }
+      },
+      {
+        "id": "osm-way-225043058",
+        "name": "Frogmore Leisure Centre",
+        "baselineMatched": false,
+        "currentMatched": false,
+        "currentStatus": "unresolved",
+        "baselineImage": null,
+        "currentImage": null
+      },
+      {
+        "id": "osm-node-800477817",
+        "name": "Raj Tandoori",
+        "baselineMatched": false,
+        "currentMatched": false,
+        "currentStatus": "unresolved",
+        "baselineImage": null,
+        "currentImage": null
+      },
+      {
+        "id": "osm-way-589667842",
+        "name": "Christopher Lee Theatre",
+        "baselineMatched": false,
+        "currentMatched": false,
+        "currentStatus": "unresolved",
+        "baselineImage": null,
+        "currentImage": null
+      },
+      {
+        "id": "osm-way-486648286",
+        "name": "Rookwood Avenue Playground",
+        "baselineMatched": false,
+        "currentMatched": false,
+        "currentStatus": "unresolved",
+        "baselineImage": null,
+        "currentImage": null
+      },
+      {
+        "id": "osm-way-827482695",
+        "name": "G. W. Annenberg Performing Arts Centre",
+        "baselineMatched": false,
+        "currentMatched": false,
+        "currentStatus": "unresolved",
+        "baselineImage": null,
+        "currentImage": null
+      },
+      {
+        "id": "osm-node-11278417015",
+        "name": "Ruby's Play Cafe",
+        "baselineMatched": false,
+        "currentMatched": false,
+        "currentStatus": "unresolved",
+        "baselineImage": null,
+        "currentImage": null
+      },
+      {
+        "id": "osm-node-11278417016",
+        "name": "Mi Coffee and Cake",
+        "baselineMatched": false,
+        "currentMatched": false,
+        "currentStatus": "unresolved",
+        "baselineImage": null,
+        "currentImage": null
+      }
+    ]
+  },
+  "quality": {
+    "landscapeAtLeast1200Wide": 27,
+    "below1200Wide": 8,
+    "portrait": 0,
+    "uniqueImageUrls": 33,
+    "strategyCounts": {
+      "commons-search": 28,
+      "wikidata-p373": 3,
+      "wikidata-p18": 2,
+      "commons-geo": 2
+    }
+  },
+  "reviewedExclusions": [
+    {
+      "id": "osm-way-179447511",
+      "reason": "Camberley Park: actual pub subject; description Park Street frontage is an address, not the park."
+    },
+    {
+      "id": "osm-way-729390239",
+      "reason": "Tekels Park: M3 close to Tekels Park is a motorway near the venue."
+    },
+    {
+      "id": "osm-way-163062276",
+      "reason": "Finchampstead Memorial Grounds: Memorial Hall photo does not establish the grounds as its subject."
+    },
+    {
+      "id": "osm-way-651128516",
+      "reason": "Birchwood Reserve: Path by Birchwood Reserve is an adjacent path, not verified reserve subject."
+    },
+    {
+      "id": "osm-way-1070637463",
+      "reason": "Starbucks Fleet: actual Istanbul tram; Trams with fleet number410 falsely supplied town context."
+    }
+  ],
+  "oneOakReview": "Actual full pub exterior, not plaque closeup; image visually inspected and final373 recheck matched. Retained.",
+  "latestRejectedCounts": {
+    "license-or-quality": 1120,
+    "insufficient-subject-evidence": 5507,
+    "coordinate-conflict": 862,
+    "non-photographic": 40,
+    "incidental-place-reference": 13,
+    "entity-name-conflict": 1,
+    "article-name-conflict": 2,
+    "upstream-error": 1
+  },
+  "latestUpstreamErrorCounts": {
+    "api-cirrussearch-too-busy-error": 1
+  },
+  "imageDelivery": {
+    "method": "Browser DOM Image.decode via canonical Next image optimizer; width1080 quality75;9sec per-image bound",
+    "tested": 35,
+    "decoded": 35
+  },
+  "supplemental": {
+    "label": "Separate16 direct OSM media references; selected for explicit source media; excluded from fixed200 denominator",
+    "tested": 16,
+    "matched": 14,
+    "retryable": 2,
+    "normalization": "Production normalizeOsmElement and placePhotoQuery; same id/name/coordinates/osmImage verified for all16; aliases/entities restored for cache identity",
+    "deliveryTested": 14,
+    "deliveryDecoded": 14
+  },
+  "unresolved": [
+    {
+      "query": {
+        "id": "osm-node-974464892",
+        "name": "Fenixia Chinese Restaurant",
+        "lat": 51.3457828,
+        "lng": -0.8015514,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://fenixiarestaurant.co.uk/"
+      },
+      "checkedAt": "2026-10-08T12:37:29.056Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "license-or-quality": 1,
+        "insufficient-subject-evidence": 29
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2119841204",
+        "name": "The Shenai",
+        "lat": 51.3453139,
+        "lng": -0.7974027,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://theshenaisandhurst.co.uk/"
+      },
+      "checkedAt": "2026-10-08T12:37:34.450Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "license-or-quality": 3,
+        "coordinate-conflict": 14,
+        "insufficient-subject-evidence": 37
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-701854498",
+        "name": "Snap Fitness",
+        "lat": 51.3445205,
+        "lng": -0.8011278,
+        "area": "Sandhurst",
+        "category": "fitness centre",
+        "website": "https://www.snapfitness.com/uk/gyms/sandhurst"
+      },
+      "checkedAt": "2026-10-08T12:37:39.935Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 45,
+      "rejected": {
+        "coordinate-conflict": 9,
+        "insufficient-subject-evidence": 33,
+        "non-photographic": 2,
+        "license-or-quality": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-239479890",
+        "name": "Sandhurst Park Cafe",
+        "lat": 51.3445792,
+        "lng": -0.7941471,
+        "area": "Sandhurst",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/way/239479890"
+      },
+      "checkedAt": "2026-10-08T12:37:45.354Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-7644058616",
+        "name": "Sandhurst Tandoori",
+        "lat": 51.346625,
+        "lng": -0.8081768,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/7644058616"
+      },
+      "checkedAt": "2026-10-08T12:37:50.675Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-291971667",
+        "name": "Trilakes Animal Park",
+        "lat": 51.3453331,
+        "lng": -0.8132239,
+        "area": "Nearby",
+        "category": "Zoo",
+        "website": "https://www.openstreetmap.org/node/291971667"
+      },
+      "checkedAt": "2026-10-08T12:38:46.275Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-33844008",
+        "name": "Grassy Hill",
+        "lat": 51.3556562,
+        "lng": -0.8091428,
+        "area": "Nearby",
+        "category": "Park",
+        "website": "https://www.openstreetmap.org/way/33844008"
+      },
+      "checkedAt": "2026-10-08T12:38:56.211Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 59,
+      "rejected": {
+        "license-or-quality": 11,
+        "non-photographic": 1,
+        "insufficient-subject-evidence": 37,
+        "coordinate-conflict": 10
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-6801450540",
+        "name": "Zee",
+        "lat": 51.3415904,
+        "lng": -0.8204454,
+        "area": "Yateley",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/6801450540"
+      },
+      "checkedAt": "2026-10-08T12:39:02.025Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "insufficient-subject-evidence": 48,
+        "coordinate-conflict": 3,
+        "non-photographic": 3
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-225043058",
+        "name": "Frogmore Leisure Centre",
+        "lat": 51.333975,
+        "lng": -0.8099901,
+        "area": "Yateley",
+        "category": "sports centre",
+        "website": "https://www.everyoneactive.com/centre/frogmore-leisure-centre/"
+      },
+      "checkedAt": "2026-10-08T12:40:15.064Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-800477817",
+        "name": "Raj Tandoori",
+        "lat": 51.3411515,
+        "lng": -0.7781836,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/800477817"
+      },
+      "checkedAt": "2026-10-08T17:32:53.321Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-589667842",
+        "name": "Christopher Lee Theatre",
+        "lat": 51.3624526,
+        "lng": -0.8044472,
+        "area": "Nearby",
+        "category": "Theatre",
+        "website": "https://www.openstreetmap.org/way/589667842"
+      },
+      "checkedAt": "2026-10-08T12:40:30.409Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 29,
+        "non-photographic": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-486648286",
+        "name": "Rookwood Avenue Playground",
+        "lat": 51.3564456,
+        "lng": -0.7798038,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/486648286"
+      },
+      "checkedAt": "2026-10-08T12:40:36.976Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-827482695",
+        "name": "G. W. Annenberg Performing Arts Centre",
+        "lat": 51.3626062,
+        "lng": -0.8050044,
+        "area": "Nearby",
+        "category": "Theatre",
+        "website": "https://www.openstreetmap.org/way/827482695"
+      },
+      "checkedAt": "2026-10-08T12:40:43.581Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 29,
+        "non-photographic": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-11278417015",
+        "name": "Ruby's Play Cafe",
+        "lat": 51.340175,
+        "lng": -0.7763774,
+        "area": "Sandhurst",
+        "category": "Caf\u00e9",
+        "website": "https://www.therubyplaycafe.co.uk/"
+      },
+      "checkedAt": "2026-10-08T12:40:48.695Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-11278417016",
+        "name": "Mi Coffee and Cake",
+        "lat": 51.3399888,
+        "lng": -0.7763592,
+        "area": "Sandhurst",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/11278417016"
+      },
+      "checkedAt": "2026-10-08T12:41:36.286Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-5625413296",
+        "name": "V&A Cafe",
+        "lat": 51.3642067,
+        "lng": -0.8060506,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/5625413296"
+      },
+      "checkedAt": "2026-10-08T12:41:45.947Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "insufficient-subject-evidence": 46,
+        "coordinate-conflict": 7,
+        "non-photographic": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1053157106",
+        "name": "Cafe 46",
+        "lat": 51.3418276,
+        "lng": -0.8274129,
+        "area": "Yateley",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/way/1053157106"
+      },
+      "checkedAt": "2026-10-08T12:41:52.219Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "license-or-quality": 10,
+        "insufficient-subject-evidence": 44
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1461866802",
+        "name": "Church End Green",
+        "lat": 51.3420994,
+        "lng": -0.8279904,
+        "area": "Nearby",
+        "category": "Park",
+        "website": "https://www.openstreetmap.org/way/1461866802"
+      },
+      "checkedAt": "2026-10-08T12:41:57.685Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-653641067",
+        "name": "Fort Royal",
+        "lat": 51.3424213,
+        "lng": -0.7716624,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/way/653641067"
+      },
+      "checkedAt": "2026-10-08T12:42:03.629Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "coordinate-conflict": 7,
+        "license-or-quality": 35,
+        "insufficient-subject-evidence": 35,
+        "non-photographic": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-6831417771",
+        "name": "Short & Sweet",
+        "lat": 51.3431967,
+        "lng": -0.8301493,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/6831417771"
+      },
+      "checkedAt": "2026-10-08T17:32:58.905Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "license-or-quality": 24,
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-13158316531",
+        "name": "Tesco Caf\u00e9",
+        "lat": 51.3358196,
+        "lng": -0.7748992,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/13158316531"
+      },
+      "checkedAt": "2026-10-08T12:42:17.119Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 32,
+      "rejected": {
+        "coordinate-conflict": 2,
+        "license-or-quality": 1,
+        "insufficient-subject-evidence": 29
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1189677638",
+        "name": "Chaucer Park",
+        "lat": 51.3662871,
+        "lng": -0.8012088,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/1189677638"
+      },
+      "checkedAt": "2026-10-08T12:42:59.493Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 31,
+      "rejected": {
+        "coordinate-conflict": 1,
+        "insufficient-subject-evidence": 29,
+        "non-photographic": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-6831417768",
+        "name": "Cinnamon Bay",
+        "lat": 51.3431079,
+        "lng": -0.8303827,
+        "area": "Yateley",
+        "category": "Restaurant",
+        "website": "https://www.cinnamonbayuk.com/"
+      },
+      "checkedAt": "2026-10-08T12:43:04.767Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "insufficient-subject-evidence": 35,
+        "coordinate-conflict": 6,
+        "license-or-quality": 11,
+        "non-photographic": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2281852813",
+        "name": "The Rolling Feast",
+        "lat": 51.3669354,
+        "lng": -0.7946819,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/2281852813"
+      },
+      "checkedAt": "2026-10-08T12:43:18.895Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1414000329",
+        "name": "Churchill Crescent Play Area",
+        "lat": 51.3343729,
+        "lng": -0.8254971,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/1414000329"
+      },
+      "checkedAt": "2026-10-08T12:43:24.932Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 22,
+        "coordinate-conflict": 3,
+        "license-or-quality": 5
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2281854845",
+        "name": "Artichoke Cafe",
+        "lat": 51.3671609,
+        "lng": -0.7942835,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.artichoke.cafe/"
+      },
+      "checkedAt": "2026-10-08T12:43:36.982Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-589667860",
+        "name": "Wellington College Swimming Pool",
+        "lat": 51.3658497,
+        "lng": -0.8129641,
+        "area": "Nearby",
+        "category": "sports centre",
+        "website": "https://www.openstreetmap.org/way/589667860"
+      },
+      "checkedAt": "2026-10-08T12:43:41.299Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-7551286459",
+        "name": "Tiffin Wala",
+        "lat": 51.3310709,
+        "lng": -0.7792587,
+        "area": "Camberley",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/7551286459"
+      },
+      "checkedAt": "2026-10-08T12:44:16.914Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 48,
+      "rejected": {
+        "license-or-quality": 8,
+        "insufficient-subject-evidence": 37,
+        "coordinate-conflict": 3
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-5630864220",
+        "name": "Wellington College Health and Fitness Club",
+        "lat": 51.3659644,
+        "lng": -0.812645,
+        "area": "Nearby",
+        "category": "sports centre",
+        "website": "https://www.openstreetmap.org/node/5630864220"
+      },
+      "checkedAt": "2026-10-08T12:44:26.988Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-9688594684",
+        "name": "Villa Roma",
+        "lat": 51.3672735,
+        "lng": -0.7942087,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/9688594684"
+      },
+      "checkedAt": "2026-10-08T12:44:32.321Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "coordinate-conflict": 4,
+        "insufficient-subject-evidence": 40,
+        "license-or-quality": 10
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-3204550086",
+        "name": "Fairbells Cafe Bistro",
+        "lat": 51.3305189,
+        "lng": -0.780093,
+        "area": "Camberley",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/3204550086"
+      },
+      "checkedAt": "2026-10-08T12:44:38.847Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-589667858",
+        "name": "Wellington Health and Fitness Club",
+        "lat": 51.3661745,
+        "lng": -0.8123598,
+        "area": "Nearby",
+        "category": "sports centre",
+        "website": "https://www.openstreetmap.org/way/589667858"
+      },
+      "checkedAt": "2026-10-08T12:44:43.577Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-3203707761",
+        "name": "Curves",
+        "lat": 51.3303608,
+        "lng": -0.779487,
+        "area": "Blackwater",
+        "category": "fitness centre",
+        "website": "https://www.openstreetmap.org/node/3203707761"
+      },
+      "checkedAt": "2026-10-08T12:44:48.532Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "license-or-quality": 36,
+        "insufficient-subject-evidence": 39,
+        "coordinate-conflict": 3
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-3203566765",
+        "name": "Wing Tai",
+        "lat": 51.3315045,
+        "lng": -0.7772278,
+        "area": "Camberley",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/3203566765"
+      },
+      "checkedAt": "2026-10-08T12:44:55.751Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "insufficient-subject-evidence": 34,
+        "incidental-place-reference": 4,
+        "coordinate-conflict": 14,
+        "non-photographic": 1,
+        "license-or-quality": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-5198354562",
+        "name": "Gymnasium",
+        "lat": 51.3432449,
+        "lng": -0.7662771,
+        "area": "Nearby",
+        "category": "sports centre",
+        "wikidata": "Q26669770",
+        "website": "https://www.openstreetmap.org/node/5198354562"
+      },
+      "checkedAt": "2026-10-08T12:48:02.805Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "insufficient-subject-evidence": 19,
+        "coordinate-conflict": 31,
+        "license-or-quality": 4
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "wikidata-entity",
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1034168083",
+        "name": "Costa",
+        "lat": 51.3687215,
+        "lng": -0.793488,
+        "area": "Crowthorne",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/way/1034168083"
+      },
+      "checkedAt": "2026-10-08T12:48:13.900Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 56,
+      "rejected": {
+        "license-or-quality": 7,
+        "insufficient-subject-evidence": 43,
+        "coordinate-conflict": 6
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-13240956607",
+        "name": "Costa",
+        "lat": 51.3338229,
+        "lng": -0.7709132,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/13240956607"
+      },
+      "checkedAt": "2026-10-08T12:48:20.002Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "insufficient-subject-evidence": 48,
+        "license-or-quality": 23,
+        "non-photographic": 1,
+        "coordinate-conflict": 6
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-6786186745",
+        "name": "Good Food Deli",
+        "lat": 51.367528,
+        "lng": -0.8172771,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/6786186745"
+      },
+      "checkedAt": "2026-10-08T12:48:27.862Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-11753956184",
+        "name": "U. Bakery",
+        "lat": 51.3673416,
+        "lng": -0.8179261,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.ubakery.co.uk/"
+      },
+      "checkedAt": "2026-10-08T12:48:34.376Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 39,
+      "rejected": {
+        "insufficient-subject-evidence": 31,
+        "license-or-quality": 8
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-8930438020",
+        "name": "Cumin Garden",
+        "lat": 51.3673149,
+        "lng": -0.8180335,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.cumincrowthorne.co.uk/"
+      },
+      "checkedAt": "2026-10-08T12:48:39.774Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 31,
+      "rejected": {
+        "license-or-quality": 1,
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-8930438019",
+        "name": "The Hive Craft Beer & Coffee Shop",
+        "lat": 51.3672908,
+        "lng": -0.8181587,
+        "area": "Crowthorne",
+        "category": "Caf\u00e9",
+        "website": "https://www.thehivecraft.co.uk/"
+      },
+      "checkedAt": "2026-10-08T12:49:28.938Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-14028956656",
+        "name": "Food and Board",
+        "lat": 51.3308127,
+        "lng": -0.8270711,
+        "area": "Yateley",
+        "category": "Caf\u00e9",
+        "website": "https://foodandboard.co.uk/"
+      },
+      "checkedAt": "2026-10-08T12:49:35.132Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 42,
+      "rejected": {
+        "license-or-quality": 16,
+        "insufficient-subject-evidence": 26
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2281810474",
+        "name": "Don Beni",
+        "lat": 51.3700869,
+        "lng": -0.7922841,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/2281810474"
+      },
+      "checkedAt": "2026-10-08T12:49:45.237Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "coordinate-conflict": 2,
+        "license-or-quality": 21,
+        "insufficient-subject-evidence": 31
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1392059803",
+        "name": "Forest Chase Playground",
+        "lat": 51.3465587,
+        "lng": -0.837783,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/1392059803"
+      },
+      "checkedAt": "2026-10-08T12:49:55.356Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2281844292",
+        "name": "Kabirs",
+        "lat": 51.3704051,
+        "lng": -0.7928796,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/2281844292"
+      },
+      "checkedAt": "2026-10-08T12:50:01.070Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 33,
+      "rejected": {
+        "license-or-quality": 3,
+        "insufficient-subject-evidence": 29,
+        "coordinate-conflict": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-11048004518",
+        "name": "Jump In",
+        "lat": 51.3298689,
+        "lng": -0.7728123,
+        "area": "Nearby",
+        "category": "trampoline park",
+        "website": "https://www.openstreetmap.org/node/11048004518"
+      },
+      "checkedAt": "2026-10-08T12:50:08.914Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "license-or-quality": 41,
+        "coordinate-conflict": 5,
+        "insufficient-subject-evidence": 31,
+        "non-photographic": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-545442999",
+        "name": "Hawley Play Ground",
+        "lat": 51.3268909,
+        "lng": -0.7785393,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/545442999"
+      },
+      "checkedAt": "2026-10-08T12:56:15.713Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 29,
+        "license-or-quality": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-5271645064",
+        "name": "Hawley Gym",
+        "lat": 51.3260029,
+        "lng": -0.7798125,
+        "area": "Nearby",
+        "category": "fitness centre",
+        "website": "https://www.openstreetmap.org/node/5271645064"
+      },
+      "checkedAt": "2026-10-08T12:56:26.039Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 29,
+        "license-or-quality": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-13192757707",
+        "name": "Little Dessert",
+        "lat": 51.334648,
+        "lng": -0.7660425,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/13192757707"
+      },
+      "checkedAt": "2026-10-08T12:56:33.327Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 60,
+      "rejected": {
+        "license-or-quality": 31,
+        "insufficient-subject-evidence": 29
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-545442998",
+        "name": "Hawley Sports Centre",
+        "lat": 51.3255881,
+        "lng": -0.7806673,
+        "area": "Nearby",
+        "category": "sports centre",
+        "website": "https://www.openstreetmap.org/way/545442998"
+      },
+      "checkedAt": "2026-10-08T17:33:06.948Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 29,
+        "license-or-quality": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1341887924",
+        "name": "Ray's Kitchen",
+        "lat": 51.3771597,
+        "lng": -0.7994191,
+        "area": "Crowthorne",
+        "category": "Restaurant",
+        "website": "https://rays-kitchen.co.uk/"
+      },
+      "checkedAt": "2026-10-08T12:56:51.608Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 26,
+        "coordinate-conflict": 4
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-486766983",
+        "name": "London Road Recreation Ground Playground",
+        "lat": 51.3368292,
+        "lng": -0.7533645,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/486766983"
+      },
+      "checkedAt": "2026-10-08T13:00:23.376Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1392052892",
+        "name": "Monteagle Play Area",
+        "lat": 51.3345781,
+        "lng": -0.845232,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/1392052892"
+      },
+      "checkedAt": "2026-10-08T17:33:13.413Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "coordinate-conflict": 8,
+        "insufficient-subject-evidence": 20,
+        "license-or-quality": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1390295886",
+        "name": "Lower Canes Play Area",
+        "lat": 51.3399257,
+        "lng": -0.8487273,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/1390295886"
+      },
+      "checkedAt": "2026-10-08T13:00:39.296Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 17,
+        "coordinate-conflict": 11,
+        "license-or-quality": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-996585662",
+        "name": "Places Leisure Camberley",
+        "lat": 51.3378821,
+        "lng": -0.751716,
+        "area": "Nearby",
+        "category": "sports centre",
+        "website": "https://www.placesleisure.org/centres/places-leisure-camberley/"
+      },
+      "checkedAt": "2026-10-08T13:00:49.218Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-14075059657",
+        "name": "Costa",
+        "lat": 51.3381019,
+        "lng": -0.7515712,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/14075059657"
+      },
+      "checkedAt": "2026-10-08T17:33:19.541Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "insufficient-subject-evidence": 51,
+        "license-or-quality": 20,
+        "non-photographic": 1,
+        "coordinate-conflict": 6
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1364973607",
+        "name": "Buckler\u2019s Community Garden",
+        "lat": 51.3782193,
+        "lng": -0.7866548,
+        "area": "Nearby",
+        "category": "Gardens",
+        "website": "https://www.openstreetmap.org/way/1364973607"
+      },
+      "checkedAt": "2026-10-08T13:03:13.793Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-293933081",
+        "name": "Beijing",
+        "lat": 51.3789992,
+        "lng": -0.7914734,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/way/293933081"
+      },
+      "checkedAt": "2026-10-08T13:03:21.125Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "license-or-quality": 1,
+        "coordinate-conflict": 16,
+        "insufficient-subject-evidence": 36,
+        "non-photographic": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-3523159731",
+        "name": "tenpin",
+        "lat": 51.3374426,
+        "lng": -0.7490317,
+        "area": "Camberley",
+        "category": "bowling alley",
+        "website": "https://www.tenpin.co.uk/our-locations/camberley/"
+      },
+      "checkedAt": "2026-10-08T13:03:28.479Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 58,
+      "rejected": {
+        "license-or-quality": 12,
+        "insufficient-subject-evidence": 44,
+        "non-photographic": 1,
+        "coordinate-conflict": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-180106112",
+        "name": "Watchmoor Nature Reserve",
+        "lat": 51.32307,
+        "lng": -0.7629461,
+        "area": "Nearby",
+        "category": "Nature reserve",
+        "website": "https://www.openstreetmap.org/way/180106112"
+      },
+      "checkedAt": "2026-10-08T13:03:35.331Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2642233015",
+        "name": "Slim Chickens",
+        "lat": 51.3371207,
+        "lng": -0.7490001,
+        "area": "Camberley",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/2642233015"
+      },
+      "checkedAt": "2026-10-08T13:05:36.928Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 48,
+      "rejected": {
+        "insufficient-subject-evidence": 32,
+        "license-or-quality": 3,
+        "coordinate-conflict": 13
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2642233014",
+        "name": "Wagamama",
+        "lat": 51.3371475,
+        "lng": -0.7488928,
+        "area": "Camberley",
+        "category": "Restaurant",
+        "website": "https://www.wagamama.com/restaurants/camberley/camberley"
+      },
+      "checkedAt": "2026-10-08T13:05:45.711Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "license-or-quality": 6,
+        "insufficient-subject-evidence": 37,
+        "coordinate-conflict": 9,
+        "non-photographic": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2642233019",
+        "name": "Vue",
+        "lat": 51.3370651,
+        "lng": -0.7489268,
+        "area": "Camberley",
+        "category": "Cinema",
+        "wikidata": "Q41431813",
+        "website": "https://www.myvue.com/cinema/camberley/whats-on"
+      },
+      "checkedAt": "2026-10-08T13:05:52.084Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "license-or-quality": 6,
+        "coordinate-conflict": 11,
+        "insufficient-subject-evidence": 35,
+        "non-photographic": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "wikidata-entity",
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-13935469017",
+        "name": "McChina Wok Away",
+        "lat": 51.3386971,
+        "lng": -0.7481749,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/13935469017"
+      },
+      "checkedAt": "2026-10-08T13:05:57.924Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 28,
+        "license-or-quality": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-8783754598",
+        "name": "Rotisserie Corner",
+        "lat": 51.3381545,
+        "lng": -0.7483686,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/8783754598"
+      },
+      "checkedAt": "2026-10-08T13:06:05.047Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "license-or-quality": 2,
+        "insufficient-subject-evidence": 28
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2642224995",
+        "name": "Chiquito",
+        "lat": 51.33731,
+        "lng": -0.7487542,
+        "area": "Camberley",
+        "category": "Restaurant",
+        "website": "https://www.chiquito.co.uk/restaurants/london/camberley/"
+      },
+      "checkedAt": "2026-10-08T17:33:27.154Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "license-or-quality": 27,
+        "insufficient-subject-evidence": 35,
+        "coordinate-conflict": 16
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-13958661452",
+        "name": "Mimosa",
+        "lat": 51.3373664,
+        "lng": -0.748704,
+        "area": "Camberley",
+        "category": "Restaurant",
+        "website": "https://www.mimosarestaurants.com/"
+      },
+      "checkedAt": "2026-10-08T13:10:12.702Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "license-or-quality": 23,
+        "coordinate-conflict": 13,
+        "insufficient-subject-evidence": 42
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2917982861",
+        "name": "Taco Bell",
+        "lat": 51.3371547,
+        "lng": -0.7487953,
+        "area": "Camberley",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/2917982861"
+      },
+      "checkedAt": "2026-10-08T13:10:21.062Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 55,
+      "rejected": {
+        "license-or-quality": 4,
+        "insufficient-subject-evidence": 34,
+        "coordinate-conflict": 17
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-13935487034",
+        "name": "Dynasty Fusion",
+        "lat": 51.3385973,
+        "lng": -0.7481365,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/13935487034"
+      },
+      "checkedAt": "2026-10-08T13:10:27.960Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 28,
+        "license-or-quality": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-13935498145",
+        "name": "Login",
+        "lat": 51.3380664,
+        "lng": -0.7483163,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/13935498145"
+      },
+      "checkedAt": "2026-10-08T13:10:34.514Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "license-or-quality": 43,
+        "insufficient-subject-evidence": 35
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2642233012",
+        "name": "Nando's",
+        "lat": 51.3371676,
+        "lng": -0.7486568,
+        "area": "Camberley",
+        "category": "Restaurant",
+        "website": "https://www.nandos.co.uk/restaurants/camberley"
+      },
+      "checkedAt": "2026-10-08T13:10:41.276Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 46,
+      "rejected": {
+        "license-or-quality": 18,
+        "insufficient-subject-evidence": 28
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-13301870986",
+        "name": "Stables Coffee",
+        "lat": 51.3793253,
+        "lng": -0.7856186,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://stablescoffee.co.uk/pages/bucklers-park"
+      },
+      "checkedAt": "2026-10-08T13:10:47.760Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 37,
+      "rejected": {
+        "coordinate-conflict": 7,
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2642224994",
+        "name": "La\u2019De Kitchen",
+        "lat": 51.3373385,
+        "lng": -0.748547,
+        "area": "Camberley",
+        "category": "Restaurant",
+        "website": "https://camberley.ladekitchen.com/"
+      },
+      "checkedAt": "2026-10-08T13:16:18.328Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "license-or-quality": 2,
+        "insufficient-subject-evidence": 28
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-8783754597",
+        "name": "Creams",
+        "lat": 51.3377609,
+        "lng": -0.7482214,
+        "area": "Nearby",
+        "category": "Ice cream",
+        "website": "https://www.creamscafe.com/our-stores/camberley/"
+      },
+      "checkedAt": "2026-10-08T13:16:36.784Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "license-or-quality": 29,
+        "insufficient-subject-evidence": 43,
+        "coordinate-conflict": 6
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2846211755",
+        "name": "Starbucks",
+        "lat": 51.3373489,
+        "lng": -0.7483702,
+        "area": "Camberley",
+        "category": "Caf\u00e9",
+        "website": "https://www.starbucks.com/store-locator/store/1013150/camberley-the-atrium-unit-b-1-the-atrium-camberley-eng-gu-15-3-pt-gb"
+      },
+      "checkedAt": "2026-10-08T13:16:57.351Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "insufficient-subject-evidence": 38,
+        "license-or-quality": 24,
+        "coordinate-conflict": 16
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-8783754595",
+        "name": "Golden Bull",
+        "lat": 51.3376727,
+        "lng": -0.7481885,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/8783754595"
+      },
+      "checkedAt": "2026-10-08T13:17:15.594Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 60,
+      "rejected": {
+        "license-or-quality": 17,
+        "insufficient-subject-evidence": 43
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-135742708",
+        "name": "Hawley Lake Sail Training Center",
+        "lat": 51.3132987,
+        "lng": -0.7970064,
+        "area": "Nearby",
+        "category": "sports centre",
+        "website": "https://www.hawleylake.org.uk/"
+      },
+      "checkedAt": "2026-10-08T13:17:31.948Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-8783754600",
+        "name": "Wildwood",
+        "lat": 51.3375415,
+        "lng": -0.7481277,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://wildwoodrestaurants.co.uk/restaurant/camberley/"
+      },
+      "checkedAt": "2026-10-08T13:20:35.060Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "license-or-quality": 27,
+        "insufficient-subject-evidence": 43,
+        "coordinate-conflict": 8
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2675711387",
+        "name": "Alcatraz",
+        "lat": 51.3382031,
+        "lng": -0.7477675,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/2675711387"
+      },
+      "checkedAt": "2026-10-08T13:20:41.497Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "license-or-quality": 25,
+        "coordinate-conflict": 17,
+        "insufficient-subject-evidence": 36
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-468727356",
+        "name": "Bigshotte Park",
+        "lat": 51.3808307,
+        "lng": -0.8012961,
+        "area": "Nearby",
+        "category": "Park",
+        "website": "https://www.openstreetmap.org/way/468727356"
+      },
+      "checkedAt": "2026-10-08T13:20:52.858Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "coordinate-conflict": 3,
+        "insufficient-subject-evidence": 26,
+        "license-or-quality": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2642224992",
+        "name": "PizzaExpress",
+        "lat": 51.3372162,
+        "lng": -0.7480198,
+        "area": "Camberley",
+        "category": "Restaurant",
+        "website": "https://www.pizzaexpress.com/camberley-park-street"
+      },
+      "checkedAt": "2026-10-08T13:20:58.199Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "non-photographic": 1,
+        "insufficient-subject-evidence": 36,
+        "coordinate-conflict": 15,
+        "license-or-quality": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-13427643329",
+        "name": "Starbucks",
+        "lat": 51.322691,
+        "lng": -0.7616607,
+        "area": "Camberley",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/13427643329"
+      },
+      "checkedAt": "2026-10-08T13:22:25.685Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "insufficient-subject-evidence": 40,
+        "license-or-quality": 22,
+        "coordinate-conflict": 16
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-12917703130",
+        "name": "PureGym",
+        "lat": 51.33651,
+        "lng": -0.7477681,
+        "area": "Nearby",
+        "category": "fitness centre",
+        "website": "https://puregym.com/"
+      },
+      "checkedAt": "2026-10-08T13:22:34.668Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 52,
+      "rejected": {
+        "insufficient-subject-evidence": 32,
+        "coordinate-conflict": 19,
+        "license-or-quality": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-67499945",
+        "name": "Heathlake Nature Reserve",
+        "lat": 51.3808909,
+        "lng": -0.8097874,
+        "area": "Nearby",
+        "category": "Nature reserve",
+        "website": "https://www.openstreetmap.org/way/67499945"
+      },
+      "checkedAt": "2026-10-08T13:22:41.664Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 29,
+        "license-or-quality": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-4045854444",
+        "name": "Sanjha",
+        "lat": 51.3365198,
+        "lng": -0.7474322,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/4045854444"
+      },
+      "checkedAt": "2026-10-08T13:22:47.030Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "insufficient-subject-evidence": 47,
+        "license-or-quality": 7
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-12945073280",
+        "name": "Lucky Bubble",
+        "lat": 51.3379091,
+        "lng": -0.7466183,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/12945073280"
+      },
+      "checkedAt": "2026-10-08T13:22:51.901Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 33,
+      "rejected": {
+        "license-or-quality": 5,
+        "insufficient-subject-evidence": 28
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-690893255",
+        "name": "Camberley and District Indoor Bowling Club",
+        "lat": 51.3247835,
+        "lng": -0.7576186,
+        "area": "Nearby",
+        "category": "sports centre",
+        "website": "https://www.openstreetmap.org/way/690893255"
+      },
+      "checkedAt": "2026-10-08T13:23:13.859Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 29,
+        "license-or-quality": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-12945099557",
+        "name": "Esquires",
+        "lat": 51.3380043,
+        "lng": -0.7464329,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/12945099557"
+      },
+      "checkedAt": "2026-10-08T13:23:21.600Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 77,
+      "rejected": {
+        "license-or-quality": 45,
+        "non-photographic": 2,
+        "coordinate-conflict": 1,
+        "insufficient-subject-evidence": 29
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-13935504970",
+        "name": "The Cosy Corner",
+        "lat": 51.336834,
+        "lng": -0.7468522,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/13935504970"
+      },
+      "checkedAt": "2026-10-08T13:23:28.377Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 65,
+      "rejected": {
+        "license-or-quality": 30,
+        "non-photographic": 1,
+        "coordinate-conflict": 3,
+        "insufficient-subject-evidence": 31
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-10816425818",
+        "name": "Pronto Italiano",
+        "lat": 51.3264105,
+        "lng": -0.755057,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://prontoitaliano.co.uk/"
+      },
+      "checkedAt": "2026-10-08T13:23:34.575Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 29,
+        "license-or-quality": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2954660780",
+        "name": "Love Coffee",
+        "lat": 51.3372117,
+        "lng": -0.7464676,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/2954660780"
+      },
+      "checkedAt": "2026-10-08T13:23:40.378Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "license-or-quality": 18,
+        "coordinate-conflict": 3,
+        "insufficient-subject-evidence": 33
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-12917714362",
+        "name": "Tehran Station",
+        "lat": 51.3381258,
+        "lng": -0.745915,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/12917714362"
+      },
+      "checkedAt": "2026-10-08T13:24:02.299Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "license-or-quality": 26,
+        "insufficient-subject-evidence": 28
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-8785233821",
+        "name": "Costa",
+        "lat": 51.33799,
+        "lng": -0.7458004,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/8785233821"
+      },
+      "checkedAt": "2026-10-08T13:24:09.442Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "insufficient-subject-evidence": 48,
+        "license-or-quality": 22,
+        "non-photographic": 1,
+        "coordinate-conflict": 7
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-227569337",
+        "name": "Pathfinder Cafe",
+        "lat": 51.3228141,
+        "lng": -0.8411539,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.blackbusheairport.co.uk/cafe"
+      },
+      "checkedAt": "2026-10-08T13:24:17.973Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "license-or-quality": 1,
+        "insufficient-subject-evidence": 29
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-13301884428",
+        "name": "Esquires Coffee",
+        "lat": 51.381004,
+        "lng": -0.7845445,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/13301884428"
+      },
+      "checkedAt": "2026-10-08T13:24:25.182Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 44,
+      "rejected": {
+        "non-photographic": 2,
+        "insufficient-subject-evidence": 31,
+        "coordinate-conflict": 11
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-12917696280",
+        "name": "Muffin Break",
+        "lat": 51.3383102,
+        "lng": -0.745093,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/12917696280"
+      },
+      "checkedAt": "2026-10-08T17:33:50.197Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 52,
+      "rejected": {
+        "insufficient-subject-evidence": 29,
+        "license-or-quality": 3,
+        "coordinate-conflict": 20
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-8785233833",
+        "name": "Soul Chill",
+        "lat": 51.3373993,
+        "lng": -0.7453869,
+        "area": "Camberley",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/8785233833"
+      },
+      "checkedAt": "2026-10-08T13:26:30.759Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 46,
+      "rejected": {
+        "license-or-quality": 17,
+        "insufficient-subject-evidence": 29
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1464312161",
+        "name": "History Hub",
+        "lat": 51.3224141,
+        "lng": -0.8413401,
+        "area": "Nearby",
+        "category": "Museum",
+        "website": "https://www.openstreetmap.org/way/1464312161"
+      },
+      "checkedAt": "2026-10-08T17:33:55.941Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 41,
+      "rejected": {
+        "insufficient-subject-evidence": 39,
+        "coordinate-conflict": 1,
+        "license-or-quality": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2642196204",
+        "name": "Karak Chaii",
+        "lat": 51.3383175,
+        "lng": -0.744386,
+        "area": "Camberley",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/2642196204"
+      },
+      "checkedAt": "2026-10-08T13:26:40.880Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 28,
+        "license-or-quality": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-8785233818",
+        "name": "Jenny\u2019s",
+        "lat": 51.3379743,
+        "lng": -0.7444611,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/8785233818"
+      },
+      "checkedAt": "2026-10-08T13:26:47.518Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 60,
+      "rejected": {
+        "license-or-quality": 13,
+        "non-photographic": 1,
+        "insufficient-subject-evidence": 44,
+        "coordinate-conflict": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-13495808201",
+        "name": "Cafe Bistro",
+        "lat": 51.3365776,
+        "lng": -0.7440849,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://cafe-bistro.co.uk/"
+      },
+      "checkedAt": "2026-10-08T13:27:01.225Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "insufficient-subject-evidence": 37,
+        "coordinate-conflict": 15,
+        "license-or-quality": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1211535492",
+        "name": "Camberley Kart Club",
+        "lat": 51.3282349,
+        "lng": -0.8507714,
+        "area": "Camberley",
+        "category": "sports centre",
+        "aliases": [
+          "CKC Kart Track"
+        ],
+        "website": "http://www.camberleykartclub.com/"
+      },
+      "checkedAt": "2026-10-08T13:30:31.906Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-79569478",
+        "name": "Watchmoor Nature Reserve",
+        "lat": 51.3194031,
+        "lng": -0.7601969,
+        "area": "Nearby",
+        "category": "Nature reserve",
+        "website": "https://www.openstreetmap.org/way/79569478"
+      },
+      "checkedAt": "2026-10-08T13:30:40.423Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-179447511",
+        "name": "Camberley Park",
+        "lat": 51.3392853,
+        "lng": -0.7413306,
+        "area": "Nearby",
+        "category": "Park",
+        "website": "https://www.openstreetmap.org/way/179447511"
+      },
+      "checkedAt": "2026-10-08T17:38:28.419Z",
+      "status": "unresolved",
+      "reviewReason": "Camberley Park: actual pub subject; description Park Street frontage is an address, not the park.",
+      "candidateCount": 31,
+      "rejected": {
+        "insufficient-subject-evidence": 31,
+        "audit-wrong-or-unverified-subject": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-954733592",
+        "name": "Bomb Hole Drops",
+        "lat": 51.3785178,
+        "lng": -0.7663851,
+        "area": "Nearby",
+        "category": "Local attraction",
+        "website": "https://www.openstreetmap.org/node/954733592"
+      },
+      "checkedAt": "2026-10-08T13:30:56.144Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 28,
+        "coordinate-conflict": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-545443774",
+        "name": "Irvine Drive Playground",
+        "lat": 51.3111935,
+        "lng": -0.7795267,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/545443774"
+      },
+      "checkedAt": "2026-10-08T17:17:14.401Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "license-or-quality": 1,
+        "insufficient-subject-evidence": 29
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-495903438",
+        "name": "Watchetts Park Playground",
+        "lat": 51.3244974,
+        "lng": -0.7505075,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/495903438"
+      },
+      "checkedAt": "2026-10-08T17:17:20.599Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 28,
+        "license-or-quality": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-382923260",
+        "name": "Pip's Seat",
+        "lat": 51.3761377,
+        "lng": -0.7589336,
+        "area": "Nearby",
+        "category": "Local attraction",
+        "website": "https://www.openstreetmap.org/node/382923260"
+      },
+      "checkedAt": "2026-10-08T17:17:27.250Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 27,
+        "coordinate-conflict": 3
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1046818653",
+        "name": "Curly Bridge Close play area",
+        "lat": 51.3123712,
+        "lng": -0.7692347,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/1046818653"
+      },
+      "checkedAt": "2026-10-08T17:17:59.800Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-204059539",
+        "name": "Pinewood Judo Club",
+        "lat": 51.3865709,
+        "lng": -0.7958034,
+        "area": "Nearby",
+        "category": "sports centre",
+        "website": "http://www.pinewoodjudo.com/"
+      },
+      "checkedAt": "2026-10-08T17:18:08.151Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 16,
+        "coordinate-conflict": 14
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-204059538",
+        "name": "Pinewood Gymnastics Club Ltd",
+        "lat": 51.3869515,
+        "lng": -0.7963632,
+        "area": "Wokingham",
+        "category": "sports centre",
+        "website": "https://www.pinewoodgymnastics.co.uk/"
+      },
+      "checkedAt": "2026-10-08T17:18:14.828Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "coordinate-conflict": 13,
+        "insufficient-subject-evidence": 17
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-321533699",
+        "name": "Finchampstead Memorial Park Playground",
+        "lat": 51.3623422,
+        "lng": -0.8613667,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/321533699"
+      },
+      "checkedAt": "2026-10-08T17:34:08.734Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 29,
+        "license-or-quality": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-857337578",
+        "name": "Kings swimming pool",
+        "lat": 51.3201195,
+        "lng": -0.7498224,
+        "area": "Nearby",
+        "category": "swimming pool",
+        "website": "https://www.openstreetmap.org/way/857337578"
+      },
+      "checkedAt": "2026-10-08T17:18:24.487Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 28,
+        "license-or-quality": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-857336591",
+        "name": "Kings swimming pool changing facility",
+        "lat": 51.3201775,
+        "lng": -0.7496835,
+        "area": "Nearby",
+        "category": "sports centre",
+        "website": "https://www.openstreetmap.org/way/857336591"
+      },
+      "checkedAt": "2026-10-08T17:18:43.640Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 28,
+        "license-or-quality": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-163062276",
+        "name": "Finchampstead Memorial Grounds",
+        "lat": 51.3628628,
+        "lng": -0.8614131,
+        "area": "Nearby",
+        "category": "Park",
+        "wikidata": "Q6815411",
+        "wikipedia": "en:Memorial Ground, Finchampstead",
+        "website": "https://www.openstreetmap.org/way/163062276"
+      },
+      "checkedAt": "2026-10-08T17:42:01.439Z",
+      "status": "unresolved",
+      "reviewReason": "Finchampstead Memorial Grounds: Memorial Hall photo does not establish the grounds as its subject.",
+      "candidateCount": 33,
+      "rejected": {
+        "entity-name-conflict": 1,
+        "article-name-conflict": 1,
+        "license-or-quality": 2,
+        "insufficient-subject-evidence": 31,
+        "audit-wrong-or-unverified-subject": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "wikidata-entity",
+        "wikipedia-article",
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1094281325",
+        "name": "Moor Road Recreation Ground Play Area",
+        "lat": 51.3108442,
+        "lng": -0.7641528,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/1094281325"
+      },
+      "checkedAt": "2026-10-08T17:18:58.356Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-825998859",
+        "name": "Poppadoms",
+        "lat": 51.3058393,
+        "lng": -0.779704,
+        "area": "Farnborough",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/825998859"
+      },
+      "checkedAt": "2026-10-08T17:19:09.212Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "insufficient-subject-evidence": 47,
+        "license-or-quality": 2,
+        "coordinate-conflict": 5
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-729390239",
+        "name": "Tekels Park",
+        "lat": 51.3292493,
+        "lng": -0.7349914,
+        "area": "Nearby",
+        "category": "Park",
+        "wikidata": "Q18388392",
+        "website": "https://www.openstreetmap.org/way/729390239"
+      },
+      "checkedAt": "2026-10-08T17:38:57.718Z",
+      "status": "unresolved",
+      "reviewReason": "Tekels Park: M3 close to Tekels Park is a motorway near the venue.",
+      "candidateCount": 32,
+      "rejected": {
+        "non-photographic": 1,
+        "incidental-place-reference": 2,
+        "coordinate-conflict": 6,
+        "insufficient-subject-evidence": 23,
+        "audit-wrong-or-unverified-subject": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "wikidata-entity",
+        "wikipedia-article",
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-927961791",
+        "name": "Pinetrees",
+        "lat": 51.3203943,
+        "lng": -0.7416594,
+        "area": "Camberley",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/927961791"
+      },
+      "checkedAt": "2026-10-08T17:19:45.361Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "insufficient-subject-evidence": 31,
+        "license-or-quality": 19,
+        "non-photographic": 2,
+        "coordinate-conflict": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-8935726239",
+        "name": "Riverside Cafe",
+        "lat": 51.3124619,
+        "lng": -0.7525917,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/8935726239"
+      },
+      "checkedAt": "2026-10-08T17:19:55.707Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "license-or-quality": 1,
+        "coordinate-conflict": 19,
+        "insufficient-subject-evidence": 34
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-652392605",
+        "name": "Xenuk Tandoori",
+        "lat": 51.3763435,
+        "lng": -0.856227,
+        "area": "Wokingham",
+        "category": "Restaurant",
+        "website": "https://www.xenuk.co.uk/"
+      },
+      "checkedAt": "2026-10-08T17:20:17.014Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 20,
+        "coordinate-conflict": 10
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-652392604",
+        "name": "Chef Peking",
+        "lat": 51.3764587,
+        "lng": -0.8561635,
+        "area": "Wokingham",
+        "category": "Restaurant",
+        "website": "http://www.chefpeking.co.uk/"
+      },
+      "checkedAt": "2026-10-08T17:20:23.878Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 34,
+      "rejected": {
+        "coordinate-conflict": 13,
+        "insufficient-subject-evidence": 21
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-12883981639",
+        "name": "Family Cafe",
+        "lat": 51.3484456,
+        "lng": -0.7265607,
+        "area": "Camberley",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/12883981639"
+      },
+      "checkedAt": "2026-10-08T17:20:33.491Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 41,
+      "rejected": {
+        "insufficient-subject-evidence": 33,
+        "license-or-quality": 4,
+        "coordinate-conflict": 4
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-927961790",
+        "name": "Costa",
+        "lat": 51.3191941,
+        "lng": -0.7412313,
+        "area": "Camberley",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/927961790"
+      },
+      "checkedAt": "2026-10-08T17:20:40.388Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "insufficient-subject-evidence": 49,
+        "license-or-quality": 22,
+        "non-photographic": 1,
+        "coordinate-conflict": 6
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-708755511",
+        "name": "Not The Wall",
+        "lat": 51.3662492,
+        "lng": -0.7327238,
+        "area": "Nearby",
+        "category": "Local attraction",
+        "website": "https://www.openstreetmap.org/node/708755511"
+      },
+      "checkedAt": "2026-10-08T17:21:22.484Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 57,
+      "rejected": {
+        "license-or-quality": 26,
+        "coordinate-conflict": 4,
+        "insufficient-subject-evidence": 27
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1550372219",
+        "name": "Burrell Road Playground",
+        "lat": 51.3126424,
+        "lng": -0.7477528,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/1550372219"
+      },
+      "checkedAt": "2026-10-08T17:21:38.421Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-151719794",
+        "name": "Maximus Gym & Marshall Arts Centre",
+        "lat": 51.3125818,
+        "lng": -0.7473817,
+        "area": "Frimley",
+        "category": "fitness centre",
+        "website": "https://www.openstreetmap.org/way/151719794"
+      },
+      "checkedAt": "2026-10-08T17:21:43.714Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-12063849083",
+        "name": "Sweet Blossom Cafe",
+        "lat": 51.314338,
+        "lng": -0.7439729,
+        "area": "Frimley",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/12063849083"
+      },
+      "checkedAt": "2026-10-08T17:22:05.473Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2658130370",
+        "name": "Villa Bianca",
+        "lat": 51.3136568,
+        "lng": -0.7448367,
+        "area": "Frimley",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/2658130370"
+      },
+      "checkedAt": "2026-10-08T17:42:05.604Z",
+      "status": "retryable",
+      "reviewReason": null,
+      "candidateCount": 24,
+      "rejected": {
+        "coordinate-conflict": 19,
+        "insufficient-subject-evidence": 3,
+        "license-or-quality": 2,
+        "upstream-error": 1
+      },
+      "upstreamErrors": {
+        "api-cirrussearch-too-busy-error": 1
+      },
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-12063724162",
+        "name": "Cafe Deli",
+        "lat": 51.3138498,
+        "lng": -0.7445289,
+        "area": "Frimley",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/12063724162"
+      },
+      "checkedAt": "2026-10-08T17:34:21.360Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "insufficient-subject-evidence": 36,
+        "coordinate-conflict": 18
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-12895188553",
+        "name": "Destination Momo",
+        "lat": 51.3139115,
+        "lng": -0.7444307,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/12895188553"
+      },
+      "checkedAt": "2026-10-08T17:22:29.602Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-651128516",
+        "name": "Birchwood Reserve",
+        "lat": 51.3019364,
+        "lng": -0.7733876,
+        "area": "Nearby",
+        "category": "Nature reserve",
+        "website": "https://www.openstreetmap.org/way/651128516"
+      },
+      "checkedAt": "2026-10-08T17:39:26.010Z",
+      "status": "unresolved",
+      "reviewReason": "Birchwood Reserve: Path by Birchwood Reserve is an adjacent path, not verified reserve subject.",
+      "candidateCount": 37,
+      "rejected": {
+        "coordinate-conflict": 6,
+        "incidental-place-reference": 2,
+        "insufficient-subject-evidence": 29,
+        "audit-wrong-or-unverified-subject": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-12538997740",
+        "name": "Flavour Fusion",
+        "lat": 51.3135731,
+        "lng": -0.7445584,
+        "area": "Frimley",
+        "category": "Restaurant",
+        "website": "https://www.openstreetmap.org/node/12538997740"
+      },
+      "checkedAt": "2026-10-08T17:22:51.791Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2658130375",
+        "name": "Bliss Restaurant & Bar",
+        "lat": 51.3140565,
+        "lng": -0.7435928,
+        "area": "Frimley",
+        "category": "Restaurant",
+        "aliases": [
+          "Ancient Raj"
+        ],
+        "website": "https://blissrestaurantandbar.com/"
+      },
+      "checkedAt": "2026-10-08T17:22:57.430Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 37,
+      "rejected": {
+        "license-or-quality": 5,
+        "coordinate-conflict": 2,
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-12063861154",
+        "name": "Nimontron",
+        "lat": 51.3140816,
+        "lng": -0.7435279,
+        "area": "Frimley",
+        "category": "Restaurant",
+        "website": "https://www.nimontron.co.uk/"
+      },
+      "checkedAt": "2026-10-08T17:23:04.455Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 31,
+      "rejected": {
+        "license-or-quality": 1,
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-2658130376",
+        "name": "Elaichi",
+        "lat": 51.3142992,
+        "lng": -0.743003,
+        "area": "Frimley",
+        "category": "Restaurant",
+        "website": "http://www.elaichi-frimley.com/"
+      },
+      "checkedAt": "2026-10-08T17:23:12.192Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "insufficient-subject-evidence": 38,
+        "coordinate-conflict": 16
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1306000594",
+        "name": "Snap Fitness",
+        "lat": 51.3140053,
+        "lng": -0.7433146,
+        "area": "Frimley",
+        "category": "fitness centre",
+        "website": "https://www.openstreetmap.org/way/1306000594"
+      },
+      "checkedAt": "2026-10-08T17:23:19.212Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 45,
+      "rejected": {
+        "coordinate-conflict": 9,
+        "insufficient-subject-evidence": 34,
+        "non-photographic": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-180127425",
+        "name": "Chobham Road Recreation Ground",
+        "lat": 51.3178405,
+        "lng": -0.7372302,
+        "area": "Nearby",
+        "category": "Park",
+        "website": "https://www.openstreetmap.org/way/180127425"
+      },
+      "checkedAt": "2026-10-08T17:23:39.438Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 28,
+        "license-or-quality": 2
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-60220257",
+        "name": "Car Crash Common",
+        "lat": 51.3602262,
+        "lng": -0.7240833,
+        "area": "Nearby",
+        "category": "Local attraction",
+        "website": "https://www.openstreetmap.org/node/60220257"
+      },
+      "checkedAt": "2026-10-08T17:23:47.001Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "california",
+        "name": "California Country Park",
+        "lat": 51.369,
+        "lng": -0.871,
+        "area": "Finchampstead, Berkshire",
+        "category": "Country park",
+        "website": "https://www.wokingham.gov.uk/parks-and-countryside/california-country-park"
+      },
+      "checkedAt": "2026-10-08T17:23:52.569Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 67,
+      "rejected": {
+        "coordinate-conflict": 32,
+        "license-or-quality": 8,
+        "insufficient-subject-evidence": 27
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-954733738",
+        "name": "Big Drop Not",
+        "lat": 51.3732165,
+        "lng": -0.7317644,
+        "area": "Nearby",
+        "category": "Local attraction",
+        "website": "https://www.openstreetmap.org/node/954733738"
+      },
+      "checkedAt": "2026-10-08T17:24:03.736Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "coordinate-conflict": 11,
+        "insufficient-subject-evidence": 19
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-202127747",
+        "name": "Costa Coffee",
+        "lat": 51.3083622,
+        "lng": -0.7489572,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/way/202127747"
+      },
+      "checkedAt": "2026-10-08T17:24:27.547Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "insufficient-subject-evidence": 41,
+        "coordinate-conflict": 13
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-140795345",
+        "name": "Curtis & Staub Gymnasium",
+        "lat": 51.3490602,
+        "lng": -0.7197138,
+        "area": "Nearby",
+        "category": "fitness centre",
+        "website": "https://www.openstreetmap.org/way/140795345"
+      },
+      "checkedAt": "2026-10-08T17:24:35.614Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-702594794",
+        "name": "FBC Centre",
+        "lat": 51.3792551,
+        "lng": -0.8617612,
+        "area": "Finchampstead",
+        "category": "Caf\u00e9",
+        "website": "http://finchampstead.com/"
+      },
+      "checkedAt": "2026-10-08T17:24:53.851Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-60220439",
+        "name": "The Wall",
+        "lat": 51.3638083,
+        "lng": -0.7240368,
+        "area": "Nearby",
+        "category": "Local attraction",
+        "website": "https://www.openstreetmap.org/node/60220439"
+      },
+      "checkedAt": "2026-10-08T17:34:37.095Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "insufficient-subject-evidence": 38,
+        "coordinate-conflict": 34,
+        "license-or-quality": 6
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-1254723232",
+        "name": "Wild Bean Cafe",
+        "lat": 51.3032437,
+        "lng": -0.7601343,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/1254723232"
+      },
+      "checkedAt": "2026-10-08T17:26:29.585Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 50,
+      "rejected": {
+        "coordinate-conflict": 18,
+        "insufficient-subject-evidence": 32
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-559810771",
+        "name": "Manhole",
+        "lat": 51.3706169,
+        "lng": -0.7287319,
+        "area": "Nearby",
+        "category": "Local attraction",
+        "website": "https://www.openstreetmap.org/node/559810771"
+      },
+      "checkedAt": "2026-10-08T17:26:38.207Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "license-or-quality": 22,
+        "insufficient-subject-evidence": 32,
+        "coordinate-conflict": 24
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-6466333246",
+        "name": "FBC MUGA",
+        "lat": 51.379014,
+        "lng": -0.8627719,
+        "area": "Nearby",
+        "category": "Park",
+        "website": "https://www.openstreetmap.org/node/6466333246"
+      },
+      "checkedAt": "2026-10-08T17:26:43.242Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1456852327",
+        "name": "Watkins Close Green Space",
+        "lat": 51.3800465,
+        "lng": -0.8615583,
+        "area": "Finchampstead",
+        "category": "Park",
+        "website": "https://www.openstreetmap.org/way/1456852327"
+      },
+      "checkedAt": "2026-10-08T17:26:49.075Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-224106244",
+        "name": "Gorse Ride Play Area",
+        "lat": 51.3796069,
+        "lng": -0.8623511,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/224106244"
+      },
+      "checkedAt": "2026-10-08T17:27:46.615Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-11090951818",
+        "name": "JD Gyms",
+        "lat": 51.3073536,
+        "lng": -0.748637,
+        "area": "Nearby",
+        "category": "fitness centre",
+        "website": "https://www.openstreetmap.org/node/11090951818"
+      },
+      "checkedAt": "2026-10-08T17:27:53.297Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 33,
+      "rejected": {
+        "coordinate-conflict": 3,
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1326263930",
+        "name": "Ulswater Play Area",
+        "lat": 51.3944617,
+        "lng": -0.7695365,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/1326263930"
+      },
+      "checkedAt": "2026-10-08T17:28:01.034Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 23,
+        "coordinate-conflict": 7
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-6516229640",
+        "name": "Bramshot Farm Country Park",
+        "lat": 51.2958954,
+        "lng": -0.8054125,
+        "area": "Nearby",
+        "category": "Park",
+        "website": "https://www.openstreetmap.org/node/6516229640"
+      },
+      "checkedAt": "2026-10-08T17:28:08.629Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-345672637",
+        "name": "Southwood Park",
+        "lat": 51.3313473,
+        "lng": -0.7214756,
+        "area": "Nearby",
+        "category": "Park",
+        "website": "https://www.openstreetmap.org/way/345672637"
+      },
+      "checkedAt": "2026-10-08T17:34:44.883Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "coordinate-conflict": 2,
+        "license-or-quality": 25,
+        "insufficient-subject-evidence": 27
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-733100187",
+        "name": "Caudwell Hall",
+        "lat": 51.3983644,
+        "lng": -0.8116385,
+        "area": "Nearby",
+        "category": "Theatre",
+        "website": "https://www.openstreetmap.org/way/733100187"
+      },
+      "checkedAt": "2026-10-08T17:28:44.367Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1070637463",
+        "name": "Starbucks",
+        "lat": 51.2939351,
+        "lng": -0.8042545,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.starbucks.com/store-locator/store/52384-281727/fleet-cove-road-cove-road-fleet-eng-gu-51-2-sh-gb"
+      },
+      "checkedAt": "2026-10-08T17:40:01.927Z",
+      "status": "unresolved",
+      "reviewReason": "Starbucks Fleet: actual Istanbul tram; Trams with fleet number410 falsely supplied town context.",
+      "candidateCount": 24,
+      "rejected": {
+        "coordinate-conflict": 7,
+        "license-or-quality": 13,
+        "insufficient-subject-evidence": 1,
+        "audit-wrong-or-unverified-subject": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1326256442",
+        "name": "Roycroft Park",
+        "lat": 51.3846385,
+        "lng": -0.8607843,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/1326256442"
+      },
+      "checkedAt": "2026-10-08T17:29:23.826Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 31,
+      "rejected": {
+        "non-photographic": 1,
+        "coordinate-conflict": 9,
+        "insufficient-subject-evidence": 21
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-348381152",
+        "name": "The Greenhouse",
+        "lat": 51.294952,
+        "lng": -0.8239555,
+        "area": "Fleet",
+        "category": "Restaurant",
+        "website": "https://www.thegreenhousefleet.co.uk/"
+      },
+      "checkedAt": "2026-10-08T17:29:41.650Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 78,
+      "rejected": {
+        "license-or-quality": 22,
+        "insufficient-subject-evidence": 42,
+        "coordinate-conflict": 14
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-6212868725",
+        "name": "Isetta Cafe",
+        "lat": 51.2927622,
+        "lng": -0.7999316,
+        "area": "Nearby",
+        "category": "Caf\u00e9",
+        "website": "https://www.openstreetmap.org/node/6212868725"
+      },
+      "checkedAt": "2026-10-08T17:30:01.297Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 29,
+        "license-or-quality": 1
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-132712774",
+        "name": "The Look Out Discovery Centre Play Area",
+        "lat": 51.3868037,
+        "lng": -0.7406708,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/132712774"
+      },
+      "checkedAt": "2026-10-08T17:30:08.344Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1308004175",
+        "name": "Tomlinscote Sports Centre",
+        "lat": 51.3207753,
+        "lng": -0.7236657,
+        "area": "Frimley",
+        "category": "sports centre",
+        "website": "https://www.openstreetmap.org/way/1308004175"
+      },
+      "checkedAt": "2026-10-08T17:30:16.166Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1326263832",
+        "name": "East Lodge Play Area",
+        "lat": 51.3981769,
+        "lng": -0.7678708,
+        "area": "Nearby",
+        "category": "Playground",
+        "website": "https://www.openstreetmap.org/way/1326263832"
+      },
+      "checkedAt": "2026-10-08T17:30:26.192Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-404180433",
+        "name": "Go Ape!",
+        "lat": 51.3873621,
+        "lng": -0.7394763,
+        "area": "Nearby",
+        "category": "Local attraction",
+        "website": "https://goape.co.uk/locations/bracknell"
+      },
+      "checkedAt": "2026-10-08T17:30:45.057Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 54,
+      "rejected": {
+        "license-or-quality": 2,
+        "coordinate-conflict": 10,
+        "insufficient-subject-evidence": 42
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-way-1052831162",
+        "name": "Jake's Playbarn",
+        "lat": 51.3457786,
+        "lng": -0.8138701,
+        "area": "Nearby",
+        "category": "Indoor soft play",
+        "website": "https://www.openstreetmap.org/way/1052831162"
+      },
+      "checkedAt": "2026-10-08T17:30:55.393Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 30,
+      "rejected": {
+        "insufficient-subject-evidence": 30
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    },
+    {
+      "query": {
+        "id": "osm-node-13814316392",
+        "name": "Pirates Landing",
+        "lat": 51.3368114,
+        "lng": -0.7489296,
+        "area": "Camberley",
+        "category": "Indoor soft play",
+        "website": "https://pirateslanding.co.uk/pirates-landing-camberley/"
+      },
+      "checkedAt": "2026-10-08T17:31:00.346Z",
+      "status": "unresolved",
+      "reviewReason": null,
+      "candidateCount": 40,
+      "rejected": {
+        "insufficient-subject-evidence": 29,
+        "coordinate-conflict": 6,
+        "license-or-quality": 5
+      },
+      "upstreamErrors": {},
+      "sourcesAttempted": [
+        "commons-search",
+        "commons-geo",
+        "commons-mediainfo"
+      ]
+    }
+  ],
+  "limitations": [
+    "Fixed200 includes OSM entries for the same physical park; no deduplication or photo-aware selection.",
+    "Initial public canonical API was redeployed during audit; exact snapshot tags in the old driver were corrected as uncertain.",
+    "Final373 matcher still returns the Istanbul Starbucks false match; removed from published index. Root has a subsequent general Fleet inventory-context fix.",
+    "Negative means no photo verified by bounded sources for this query, not proof that no freely licensed photo exists.",
+    "Villa Bianca remains retryable due Commons cirrussearch-too-busy-error after bounded retries.",
+    "Supplemental16 were selected for direct media;14/16 cannot be compared as an unbiased200 coverage improvement."
+  ]
+}

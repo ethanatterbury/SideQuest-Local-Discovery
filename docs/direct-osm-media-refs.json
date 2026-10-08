@@ -1,0 +1,283 @@
+[
+  {
+    "id": "osm-node-1574742829",
+    "name": "Blue Airmail Pillar Box",
+    "coordinates": {
+      "lat": 51.481109,
+      "lng": -0.6056771
+    },
+    "tags": {
+      "addr:city": "Windsor",
+      "name": "Blue Airmail Pillar Box",
+      "tourism": "attraction",
+      "image": "https://www.geograph.org.uk/photo/403630"
+    }
+  },
+  {
+    "id": "osm-way-144044029",
+    "name": "Crooked House of Windsor",
+    "coordinates": {
+      "lat": 51.4822882,
+      "lng": -0.6070764
+    },
+    "tags": {
+      "addr:city": "Windsor",
+      "addr:postcode": "SL4 1LR",
+      "addr:street": "High Street",
+      "amenity": "cafe",
+      "name": "Crooked House of Windsor",
+      "tourism": "attraction",
+      "wikidata": "Q5187819",
+      "alt_name": "The Crooked House of Windsor",
+      "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7562.JPG"
+    }
+  },
+  {
+    "id": "osm-way-144154149",
+    "name": "Nando's",
+    "coordinates": {
+      "lat": 51.4832768,
+      "lng": -0.6087171
+    },
+    "tags": {
+      "addr:city": "Windsor",
+      "addr:postcode": "SL4 1PL",
+      "addr:street": "Thames Street",
+      "amenity": "restaurant",
+      "name": "Nando's",
+      "website": "https://www.nandos.co.uk/restaurants/windsor",
+      "wikidata": "Q26605377",
+      "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7601.JPG"
+    }
+  },
+  {
+    "id": "osm-way-144154161",
+    "name": "PizzaExpress",
+    "coordinates": {
+      "lat": 51.4831835,
+      "lng": -0.6086798
+    },
+    "tags": {
+      "addr:city": "Windsor",
+      "addr:postcode": "SL4 1PL",
+      "addr:street": "Thames Street",
+      "amenity": "restaurant",
+      "name": "PizzaExpress",
+      "website": "https://www.pizzaexpress.com/windsor-thames-street",
+      "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7598.JPG"
+    }
+  },
+  {
+    "id": "osm-way-144158804",
+    "name": "Dr Chocs",
+    "coordinates": {
+      "lat": 51.4839609,
+      "lng": -0.6084476
+    },
+    "tags": {
+      "addr:city": "Windsor",
+      "addr:postcode": "SL4 1LP",
+      "addr:street": "Thames Street",
+      "amenity": "cafe",
+      "name": "Dr Chocs",
+      "wikidata": "Q26605397",
+      "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7610.JPG",
+      "old_name": "Candy Cakes;Cafe Copia"
+    }
+  },
+  {
+    "id": "osm-way-144158805",
+    "name": "The Crown Caf\u00e9",
+    "coordinates": {
+      "lat": 51.4839272,
+      "lng": -0.6085934
+    },
+    "tags": {
+      "addr:city": "Windsor",
+      "addr:postcode": "SL4 1LP",
+      "addr:street": "Thames Street",
+      "amenity": "cafe",
+      "name": "The Crown Caf\u00e9",
+      "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7608.JPG"
+    }
+  },
+  {
+    "id": "osm-way-144158807",
+    "name": "Prezzo",
+    "coordinates": {
+      "lat": 51.4838803,
+      "lng": -0.6087425
+    },
+    "tags": {
+      "addr:city": "Windsor",
+      "addr:postcode": "SL4 1PL",
+      "addr:street": "Thames Street",
+      "amenity": "restaurant",
+      "name": "Prezzo",
+      "website": "https://www.prezzo.co.uk/restaurants/windsor/",
+      "wikidata": "Q26411176",
+      "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7606.JPG",
+      "old_name": "Pizza Hut"
+    }
+  },
+  {
+    "id": "osm-way-144158809",
+    "name": "Zizzi",
+    "coordinates": {
+      "lat": 51.4840035,
+      "lng": -0.6083365
+    },
+    "tags": {
+      "addr:city": "Windsor",
+      "addr:postcode": "SL4 1LP",
+      "addr:street": "Thames Street",
+      "amenity": "restaurant",
+      "name": "Zizzi",
+      "website": "https://www.zizzi.co.uk/italian/restaurants/windsor",
+      "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7611.JPG"
+    }
+  },
+  {
+    "id": "osm-way-556866234",
+    "name": "Clarence Brasserie & Tea Room",
+    "coordinates": {
+      "lat": 51.4822159,
+      "lng": -0.6063582
+    },
+    "tags": {
+      "addr:city": "Windsor",
+      "addr:postcode": "SL4 1PE",
+      "addr:street": "Church Street",
+      "amenity": "cafe",
+      "name": "Clarence Brasserie & Tea Room",
+      "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7616.JPG"
+    }
+  },
+  {
+    "id": "osm-way-556866237",
+    "name": "1423 China Kitchen",
+    "coordinates": {
+      "lat": 51.4820221,
+      "lng": -0.6065367
+    },
+    "tags": {
+      "addr:city": "Windsor",
+      "addr:postcode": "SL4 1PA",
+      "addr:street": "Church Lane",
+      "amenity": "restaurant",
+      "name": "1423 China Kitchen",
+      "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7615.JPG"
+    }
+  },
+  {
+    "id": "osm-way-556866318",
+    "name": "Funkywood",
+    "coordinates": {
+      "lat": 51.4815624,
+      "lng": -0.6068868
+    },
+    "tags": {
+      "addr:city": "Windsor",
+      "addr:postcode": "SL4 1LD",
+      "addr:street": "High Street",
+      "amenity": "restaurant",
+      "name": "Funkywood",
+      "alt_name": "Funky Wood",
+      "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7572.JPG"
+    }
+  },
+  {
+    "id": "osm-way-840731338",
+    "name": "Enzo's",
+    "coordinates": {
+      "lat": 51.4805009,
+      "lng": -0.6120758
+    },
+    "tags": {
+      "addr:city": "Windsor",
+      "addr:postcode": "SL4 1DH",
+      "addr:street": "Peascod Street",
+      "amenity": "restaurant",
+      "name": "Enzo's",
+      "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7738.JPG"
+    }
+  },
+  {
+    "id": "osm-way-840731343",
+    "name": "Georgian House",
+    "coordinates": {
+      "lat": 51.4800773,
+      "lng": -0.6122112
+    },
+    "tags": {
+      "addr:city": "Windsor",
+      "addr:postcode": "SL4 1DH",
+      "addr:street": "Peascod Street",
+      "amenity": "restaurant",
+      "name": "Georgian House",
+      "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7729.JPG"
+    }
+  },
+  {
+    "id": "osm-way-930447951",
+    "name": "Meat at the Parish",
+    "coordinates": {
+      "lat": 51.4813566,
+      "lng": -0.6067109
+    },
+    "tags": {
+      "addr:city": "Windsor",
+      "addr:postcode": "SL4 1LD",
+      "addr:street": "High Street",
+      "amenity": "restaurant",
+      "name": "Meat at the Parish",
+      "website": "https://www.meatattheparish.com/",
+      "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7683.JPG"
+    }
+  },
+  {
+    "id": "osm-way-930469468",
+    "name": "Esquires Coffee",
+    "coordinates": {
+      "lat": 51.482149,
+      "lng": -0.6074801
+    },
+    "tags": {
+      "addr:city": "Windsor",
+      "addr:postcode": "SL4 1LH",
+      "addr:street": "High Street",
+      "amenity": "cafe",
+      "name": "Esquires Coffee",
+      "image": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7586.JPG"
+    }
+  },
+  {
+    "id": "osm-way-1164375823",
+    "name": "Athens",
+    "coordinates": {
+      "lat": 51.4959013,
+      "lng": -0.6115017
+    },
+    "tags": {
+      "leisure": "sports_centre",
+      "name": "Athens",
+      "sport": "swimming",
+      "image": "https://www.geograph.org.uk/photo/7883745"
+    }
+  },
+  {
+    "id": "osm-way-1204687308",
+    "name": "Clara's Cocina Cafe",
+    "coordinates": {
+      "lat": 51.421727,
+      "lng": -0.603191
+    },
+    "tags": {
+      "amenity": "cafe",
+      "name": "Clara's Cocina Cafe",
+      "opening_hours": "Mid April to Mid September Mon-Sun09:00-16:00",
+      "website": "https://www.clarascocina.com/",
+      "image": "https://raw.githubusercontent.com/lewisevans2007/OSM_Images/main/images/2023/9/3/15.34.58.jpeg"
+    }
+  }
+]

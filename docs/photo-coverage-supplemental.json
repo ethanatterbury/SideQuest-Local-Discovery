@@ -1,0 +1,921 @@
+[
+  {
+    "query": {
+      "id": "osm-way-1164375823",
+      "name": "Athens",
+      "lat": 51.4959013,
+      "lng": -0.6115017,
+      "area": "Nearby",
+      "category": "sports centre",
+      "osmImage": "https://www.geograph.org.uk/photo/7883745",
+      "website": "https://www.openstreetmap.org/way/1164375823"
+    },
+    "checkedAt": "2026-10-08T17:37:59.000Z",
+    "result": {
+      "image": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Eton_College_Swimming_Pool_-_geograph.org.uk_-_7883745.jpg",
+        "credit": "Matthew Chadwick",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Eton_College_Swimming_Pool_-_geograph.org.uk_-_7883745.jpg",
+        "width": 1024,
+        "height": 768,
+        "confidence": 0.99,
+        "strategy": "osm-image-geograph",
+        "matched": [
+          "declared-osm-image",
+          "exact-geograph-id",
+          "declared-file",
+          "coordinate"
+        ]
+      },
+      "source": "live",
+      "diagnostics": {
+        "strategy": "osm-image-geograph",
+        "sourcesAttempted": [
+          "osm-image-geograph",
+          "commons-search",
+          "commons-geo",
+          "commons-mediainfo"
+        ],
+        "candidateCount": 79,
+        "rejected": {
+          "non-photographic": 3,
+          "license-or-quality": 15,
+          "coordinate-conflict": 13,
+          "insufficient-subject-evidence": 45,
+          "incidental-place-reference": 2
+        },
+        "requestCount": 5,
+        "elapsedMs": 4123,
+        "networkRequests": 5,
+        "queuedMs": 1
+      }
+    },
+    "httpStatus": 200,
+    "deploymentSha": "373da70bc76c5fce7be4a23c801a38c879cf18c2",
+    "provenance": {
+      "origin": "https://sidequest-local-discovery.vercel.app/api/photo",
+      "tool": "trusted Vercel public canonical fetch",
+      "deploymentShaSource": "Root supplied deployed revision; local checkout HEAD matches",
+      "verification": "Actual runtime photo API response; no DOM/image decode checked",
+      "sample": "Separate supplemental 16 direct OSM media references; not part of 200 venue sample"
+    },
+    "normalization": "Production normalizeOsmElement + placePhotoQuery; id/name/coordinates/osmImage verified unchanged; catalogue aliases/entities retained"
+  },
+  {
+    "query": {
+      "id": "osm-node-1574742829",
+      "name": "Blue Airmail Pillar Box",
+      "lat": 51.481109,
+      "lng": -0.6056771,
+      "area": "Windsor",
+      "category": "Local attraction",
+      "osmImage": "https://www.geograph.org.uk/photo/403630",
+      "website": "https://www.openstreetmap.org/node/1574742829"
+    },
+    "checkedAt": "2026-10-08T17:38:58.000Z",
+    "result": {
+      "image": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/6/69/Blue_pillar_box%2C_Windsor_-_geograph.org.uk_-_403630.jpg",
+        "credit": "Peter Tarleton",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Blue_pillar_box,_Windsor_-_geograph.org.uk_-_403630.jpg",
+        "width": 339,
+        "height": 640,
+        "confidence": 0.99,
+        "strategy": "osm-image-geograph",
+        "matched": [
+          "declared-osm-image",
+          "exact-geograph-id",
+          "low-resolution",
+          "declared-file",
+          "coordinate",
+          "area"
+        ]
+      },
+      "source": "live",
+      "diagnostics": {
+        "strategy": "osm-image-geograph",
+        "sourcesAttempted": [
+          "osm-image-geograph",
+          "commons-search",
+          "commons-geo",
+          "commons-mediainfo"
+        ],
+        "candidateCount": 31,
+        "rejected": {
+          "license-or-quality": 1,
+          "insufficient-subject-evidence": 29
+        },
+        "requestCount": 5,
+        "elapsedMs": 5425,
+        "networkRequests": 5,
+        "queuedMs": 0
+      }
+    },
+    "httpStatus": 200,
+    "deploymentSha": "373da70bc76c5fce7be4a23c801a38c879cf18c2",
+    "provenance": {
+      "origin": "https://sidequest-local-discovery.vercel.app/api/photo",
+      "tool": "trusted Vercel public canonical fetch",
+      "deploymentShaSource": "Root supplied deployed revision; local checkout HEAD matches",
+      "verification": "Actual runtime photo API response; no DOM/image decode checked",
+      "sample": "Separate supplemental 16 direct OSM media references; not part of 200 venue sample"
+    },
+    "normalization": "Production normalizeOsmElement + placePhotoQuery; id/name/coordinates/osmImage verified unchanged; catalogue aliases/entities retained"
+  },
+  {
+    "query": {
+      "id": "osm-way-144044029",
+      "name": "Crooked House of Windsor",
+      "lat": 51.4822882,
+      "lng": -0.6070764,
+      "area": "Windsor",
+      "category": "Café",
+      "aliases": [
+        "The Crooked House of Windsor"
+      ],
+      "wikidata": "Q5187819",
+      "osmImage": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7562.JPG",
+      "website": "https://www.openstreetmap.org/way/144044029"
+    },
+    "checkedAt": "2026-10-08T17:39:12.000Z",
+    "result": {
+      "image": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Crooked_House_of_Windsor_-_geograph.org.uk_-_1317747.jpg",
+        "credit": "Michael Preston",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Crooked_House_of_Windsor_-_geograph.org.uk_-_1317747.jpg",
+        "width": 640,
+        "height": 480,
+        "confidence": 0.94,
+        "strategy": "commons-search",
+        "matched": [
+          "subject-name",
+          "coordinate",
+          "area"
+        ]
+      },
+      "source": "live",
+      "diagnostics": {
+        "strategy": "commons-search",
+        "sourcesAttempted": [
+          "osm-archive",
+          "commons-search",
+          "commons-geo",
+          "commons-mediainfo"
+        ],
+        "candidateCount": 50,
+        "rejected": {
+          "archive-image-http": 1,
+          "insufficient-subject-evidence": 39,
+          "license-or-quality": 2
+        },
+        "requestCount": 7,
+        "elapsedMs": 5976,
+        "networkRequests": 7,
+        "upstreamErrors": {
+          "archive-image-http": 1
+        },
+        "queuedMs": 0
+      }
+    },
+    "httpStatus": 200,
+    "deploymentSha": "373da70bc76c5fce7be4a23c801a38c879cf18c2",
+    "provenance": {
+      "origin": "https://sidequest-local-discovery.vercel.app/api/photo",
+      "tool": "trusted Vercel public canonical fetch",
+      "deploymentShaSource": "Root supplied deployed revision; local checkout HEAD matches",
+      "verification": "Actual runtime photo API response; no DOM/image decode checked",
+      "sample": "Separate supplemental 16 direct OSM media references; not part of 200 venue sample"
+    },
+    "normalization": "Production normalizeOsmElement + placePhotoQuery; id/name/coordinates/osmImage verified unchanged; catalogue aliases/entities retained"
+  },
+  {
+    "query": {
+      "id": "osm-way-144154149",
+      "name": "Nando's",
+      "lat": 51.4832768,
+      "lng": -0.6087171,
+      "area": "Windsor",
+      "category": "Restaurant",
+      "wikidata": "Q26605377",
+      "osmImage": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7601.JPG",
+      "website": "https://www.nandos.co.uk/restaurants/windsor"
+    },
+    "checkedAt": "2026-10-08T17:38:43.000Z",
+    "result": {
+      "image": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/53/Nando%27s%2C_10_Thames_St%2C_Windsor.jpg",
+        "credit": "Paul the Archivist",
+        "license": "CC BY-SA 4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Nando%27s,_10_Thames_St,_Windsor.jpg",
+        "width": 4608,
+        "height": 3456,
+        "confidence": 0.94,
+        "strategy": "commons-geo",
+        "matched": [
+          "subject-name",
+          "coordinate",
+          "area"
+        ]
+      },
+      "source": "live",
+      "diagnostics": {
+        "strategy": "commons-geo",
+        "sourcesAttempted": [
+          "osm-archive",
+          "commons-search",
+          "commons-geo",
+          "commons-mediainfo"
+        ],
+        "candidateCount": 46,
+        "rejected": {
+          "archive-unsafe-redirect": 1,
+          "license-or-quality": 16,
+          "insufficient-subject-evidence": 28,
+          "non-photographic": 1
+        },
+        "requestCount": 6,
+        "elapsedMs": 4763,
+        "networkRequests": 6,
+        "queuedMs": 0
+      }
+    },
+    "httpStatus": 200,
+    "deploymentSha": "373da70bc76c5fce7be4a23c801a38c879cf18c2",
+    "provenance": {
+      "origin": "https://sidequest-local-discovery.vercel.app/api/photo",
+      "tool": "trusted Vercel public canonical fetch",
+      "deploymentShaSource": "Root supplied deployed revision; local checkout HEAD matches",
+      "verification": "Actual runtime photo API response; no DOM/image decode checked",
+      "sample": "Separate supplemental 16 direct OSM media references; not part of 200 venue sample"
+    },
+    "normalization": "Production normalizeOsmElement + placePhotoQuery; id/name/coordinates/osmImage verified unchanged; catalogue aliases/entities retained"
+  },
+  {
+    "query": {
+      "id": "osm-way-144154161",
+      "name": "PizzaExpress",
+      "lat": 51.4831835,
+      "lng": -0.6086798,
+      "area": "Windsor",
+      "category": "Restaurant",
+      "osmImage": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7598.JPG",
+      "website": "https://www.pizzaexpress.com/windsor-thames-street"
+    },
+    "checkedAt": "2026-10-08T17:39:44.000Z",
+    "result": {
+      "image": null,
+      "source": "unavailable",
+      "diagnostics": {
+        "strategy": null,
+        "sourcesAttempted": [
+          "osm-archive",
+          "commons-search",
+          "commons-geo",
+          "commons-mediainfo"
+        ],
+        "candidateCount": 54,
+        "rejected": {
+          "archive-image-http": 1,
+          "non-photographic": 1,
+          "insufficient-subject-evidence": 38,
+          "coordinate-conflict": 15
+        },
+        "requestCount": 7,
+        "elapsedMs": 4115,
+        "networkRequests": 7,
+        "upstreamErrors": {
+          "archive-image-http": 1
+        },
+        "queuedMs": 0
+      },
+      "retryable": true
+    },
+    "httpStatus": 200,
+    "deploymentSha": "373da70bc76c5fce7be4a23c801a38c879cf18c2",
+    "provenance": {
+      "origin": "https://sidequest-local-discovery.vercel.app/api/photo",
+      "tool": "trusted Vercel public canonical fetch",
+      "deploymentShaSource": "Root supplied deployed revision; local checkout HEAD matches",
+      "verification": "Actual runtime photo API response; no DOM/image decode checked",
+      "sample": "Separate supplemental 16 direct OSM media references; not part of 200 venue sample"
+    },
+    "normalization": "Production normalizeOsmElement + placePhotoQuery; id/name/coordinates/osmImage verified unchanged; catalogue aliases/entities retained"
+  },
+  {
+    "query": {
+      "id": "osm-way-144158804",
+      "name": "Dr Chocs",
+      "lat": 51.4839609,
+      "lng": -0.6084476,
+      "area": "Windsor",
+      "category": "Café",
+      "aliases": [
+        "Candy Cakes",
+        "Cafe Copia"
+      ],
+      "wikidata": "Q26605397",
+      "osmImage": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7610.JPG",
+      "website": "https://www.openstreetmap.org/way/144158804"
+    },
+    "checkedAt": "2026-10-08T17:40:11.000Z",
+    "result": {
+      "image": {
+        "url": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7610.JPG",
+        "source": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7610.JPG",
+        "credit": "Paul Williams (Paul The Archivist)",
+        "license": "CC BY-SA 4.0",
+        "width": 3456,
+        "height": 4608,
+        "confidence": 1,
+        "strategy": "osm-archive",
+        "matched": [
+          "OSM image",
+          "exact Archive file",
+          "JPEG EXIF orientation 6"
+        ]
+      },
+      "source": "live",
+      "diagnostics": {
+        "strategy": "osm-archive",
+        "sourcesAttempted": [
+          "osm-archive",
+          "commons-search",
+          "commons-geo",
+          "commons-mediainfo"
+        ],
+        "candidateCount": 31,
+        "rejected": {
+          "insufficient-subject-evidence": 30
+        },
+        "requestCount": 7,
+        "elapsedMs": 5055,
+        "networkRequests": 7,
+        "queuedMs": 0
+      }
+    },
+    "httpStatus": 200,
+    "deploymentSha": "373da70bc76c5fce7be4a23c801a38c879cf18c2",
+    "provenance": {
+      "origin": "https://sidequest-local-discovery.vercel.app/api/photo",
+      "tool": "trusted Vercel public canonical fetch",
+      "deploymentShaSource": "Root supplied deployed revision; local checkout HEAD matches",
+      "verification": "Actual runtime photo API response; no DOM/image decode checked",
+      "sample": "Separate supplemental 16 direct OSM media references; not part of 200 venue sample"
+    },
+    "normalization": "Production normalizeOsmElement + placePhotoQuery; id/name/coordinates/osmImage verified unchanged; catalogue aliases/entities retained"
+  },
+  {
+    "query": {
+      "id": "osm-way-144158805",
+      "name": "The Crown Café",
+      "lat": 51.4839272,
+      "lng": -0.6085934,
+      "area": "Windsor",
+      "category": "Café",
+      "osmImage": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7608.JPG",
+      "website": "https://www.openstreetmap.org/way/144158805"
+    },
+    "checkedAt": "2026-10-08T17:39:57.000Z",
+    "result": {
+      "image": {
+        "url": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7608.JPG",
+        "source": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7608.JPG",
+        "credit": "Paul Williams (Paul The Archivist)",
+        "license": "CC BY-SA 4.0",
+        "width": 3456,
+        "height": 4608,
+        "confidence": 1,
+        "strategy": "osm-archive",
+        "matched": [
+          "OSM image",
+          "exact Archive file",
+          "JPEG EXIF orientation 6"
+        ]
+      },
+      "source": "live",
+      "diagnostics": {
+        "strategy": "osm-archive",
+        "sourcesAttempted": [
+          "osm-archive",
+          "commons-search",
+          "commons-geo",
+          "commons-mediainfo"
+        ],
+        "candidateCount": 55,
+        "rejected": {
+          "license-or-quality": 16,
+          "coordinate-conflict": 5,
+          "insufficient-subject-evidence": 32,
+          "detail-only-subject": 1
+        },
+        "requestCount": 7,
+        "elapsedMs": 4257,
+        "networkRequests": 7,
+        "queuedMs": 0
+      }
+    },
+    "httpStatus": 200,
+    "deploymentSha": "373da70bc76c5fce7be4a23c801a38c879cf18c2",
+    "provenance": {
+      "origin": "https://sidequest-local-discovery.vercel.app/api/photo",
+      "tool": "trusted Vercel public canonical fetch",
+      "deploymentShaSource": "Root supplied deployed revision; local checkout HEAD matches",
+      "verification": "Actual runtime photo API response; no DOM/image decode checked",
+      "sample": "Separate supplemental 16 direct OSM media references; not part of 200 venue sample"
+    },
+    "normalization": "Production normalizeOsmElement + placePhotoQuery; id/name/coordinates/osmImage verified unchanged; catalogue aliases/entities retained"
+  },
+  {
+    "query": {
+      "id": "osm-way-144158807",
+      "name": "Prezzo",
+      "lat": 51.4838803,
+      "lng": -0.6087425,
+      "area": "Windsor",
+      "category": "Restaurant",
+      "aliases": [
+        "Pizza Hut"
+      ],
+      "wikidata": "Q26411176",
+      "osmImage": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7606.JPG",
+      "website": "https://www.prezzo.co.uk/restaurants/windsor/"
+    },
+    "checkedAt": "2026-10-08T17:40:58.000Z",
+    "result": {
+      "image": {
+        "url": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7606.JPG",
+        "source": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7606.JPG",
+        "credit": "Paul Williams (Paul The Archivist)",
+        "license": "CC BY-SA 4.0",
+        "width": 4608,
+        "height": 3456,
+        "confidence": 1,
+        "strategy": "osm-archive",
+        "matched": [
+          "OSM image",
+          "exact Archive file",
+          "JPEG EXIF orientation 1"
+        ]
+      },
+      "source": "live",
+      "diagnostics": {
+        "strategy": "osm-archive",
+        "sourcesAttempted": [
+          "osm-archive"
+        ],
+        "candidateCount": 1,
+        "rejected": {},
+        "requestCount": 3,
+        "elapsedMs": 1386,
+        "networkRequests": 3,
+        "queuedMs": 0
+      }
+    },
+    "httpStatus": 200,
+    "deploymentSha": "373da70bc76c5fce7be4a23c801a38c879cf18c2",
+    "provenance": {
+      "origin": "https://sidequest-local-discovery.vercel.app/api/photo",
+      "tool": "trusted Vercel public canonical fetch",
+      "deploymentShaSource": "Root supplied deployed revision; local checkout HEAD matches",
+      "verification": "Actual runtime photo API response; no DOM/image decode checked",
+      "sample": "Separate supplemental 16 direct OSM media references; not part of 200 venue sample"
+    },
+    "normalization": "Production normalizeOsmElement + placePhotoQuery; id/name/coordinates/osmImage verified unchanged; catalogue aliases/entities retained"
+  },
+  {
+    "query": {
+      "id": "osm-way-144158809",
+      "name": "Zizzi",
+      "lat": 51.4840035,
+      "lng": -0.6083365,
+      "area": "Windsor",
+      "category": "Restaurant",
+      "osmImage": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7611.JPG",
+      "website": "https://www.zizzi.co.uk/italian/restaurants/windsor"
+    },
+    "checkedAt": "2026-10-08T17:40:49.000Z",
+    "result": {
+      "image": {
+        "url": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7611.JPG",
+        "source": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7611.JPG",
+        "credit": "Paul Williams (Paul The Archivist)",
+        "license": "CC BY-SA 4.0",
+        "width": 4608,
+        "height": 3456,
+        "confidence": 1,
+        "strategy": "osm-archive",
+        "matched": [
+          "OSM image",
+          "exact Archive file",
+          "JPEG EXIF orientation 1"
+        ]
+      },
+      "source": "live",
+      "diagnostics": {
+        "strategy": "osm-archive",
+        "sourcesAttempted": [
+          "osm-archive"
+        ],
+        "candidateCount": 1,
+        "rejected": {},
+        "requestCount": 3,
+        "elapsedMs": 1333,
+        "networkRequests": 3,
+        "queuedMs": 0
+      }
+    },
+    "httpStatus": 200,
+    "deploymentSha": "373da70bc76c5fce7be4a23c801a38c879cf18c2",
+    "provenance": {
+      "origin": "https://sidequest-local-discovery.vercel.app/api/photo",
+      "tool": "trusted Vercel public canonical fetch",
+      "deploymentShaSource": "Root supplied deployed revision; local checkout HEAD matches",
+      "verification": "Actual runtime photo API response; no DOM/image decode checked",
+      "sample": "Separate supplemental 16 direct OSM media references; not part of 200 venue sample"
+    },
+    "normalization": "Production normalizeOsmElement + placePhotoQuery; id/name/coordinates/osmImage verified unchanged; catalogue aliases/entities retained"
+  },
+  {
+    "query": {
+      "id": "osm-way-556866234",
+      "name": "Clarence Brasserie & Tea Room",
+      "lat": 51.4822159,
+      "lng": -0.6063582,
+      "area": "Windsor",
+      "category": "Café",
+      "osmImage": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7616.JPG",
+      "website": "https://www.openstreetmap.org/way/556866234"
+    },
+    "checkedAt": "2026-10-08T17:40:41.000Z",
+    "result": {
+      "image": {
+        "url": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7616.JPG",
+        "source": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7616.JPG",
+        "credit": "Paul Williams (Paul The Archivist)",
+        "license": "CC BY-SA 4.0",
+        "width": 4608,
+        "height": 3456,
+        "confidence": 1,
+        "strategy": "osm-archive",
+        "matched": [
+          "OSM image",
+          "exact Archive file",
+          "JPEG EXIF orientation 1"
+        ]
+      },
+      "source": "live",
+      "diagnostics": {
+        "strategy": "osm-archive",
+        "sourcesAttempted": [
+          "osm-archive"
+        ],
+        "candidateCount": 1,
+        "rejected": {},
+        "requestCount": 3,
+        "elapsedMs": 1712,
+        "networkRequests": 3,
+        "queuedMs": 0
+      }
+    },
+    "httpStatus": 200,
+    "deploymentSha": "373da70bc76c5fce7be4a23c801a38c879cf18c2",
+    "provenance": {
+      "origin": "https://sidequest-local-discovery.vercel.app/api/photo",
+      "tool": "trusted Vercel public canonical fetch",
+      "deploymentShaSource": "Root supplied deployed revision; local checkout HEAD matches",
+      "verification": "Actual runtime photo API response; no DOM/image decode checked",
+      "sample": "Separate supplemental 16 direct OSM media references; not part of 200 venue sample"
+    },
+    "normalization": "Production normalizeOsmElement + placePhotoQuery; id/name/coordinates/osmImage verified unchanged; catalogue aliases/entities retained"
+  },
+  {
+    "query": {
+      "id": "osm-way-556866237",
+      "name": "1423 China Kitchen",
+      "lat": 51.4820221,
+      "lng": -0.6065367,
+      "area": "Windsor",
+      "category": "Restaurant",
+      "osmImage": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7615.JPG",
+      "website": "https://www.openstreetmap.org/way/556866237"
+    },
+    "checkedAt": "2026-10-08T17:41:19.000Z",
+    "result": {
+      "image": {
+        "url": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7615.JPG",
+        "source": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7615.JPG",
+        "credit": "Paul Williams (Paul The Archivist)",
+        "license": "CC BY-SA 4.0",
+        "width": 4608,
+        "height": 3456,
+        "confidence": 1,
+        "strategy": "osm-archive",
+        "matched": [
+          "OSM image",
+          "exact Archive file",
+          "JPEG EXIF orientation 1"
+        ]
+      },
+      "source": "live",
+      "diagnostics": {
+        "strategy": "osm-archive",
+        "sourcesAttempted": [
+          "osm-archive"
+        ],
+        "candidateCount": 1,
+        "rejected": {},
+        "requestCount": 3,
+        "elapsedMs": 1185,
+        "networkRequests": 3,
+        "queuedMs": 0
+      }
+    },
+    "httpStatus": 200,
+    "deploymentSha": "373da70bc76c5fce7be4a23c801a38c879cf18c2",
+    "provenance": {
+      "origin": "https://sidequest-local-discovery.vercel.app/api/photo",
+      "tool": "trusted Vercel public canonical fetch",
+      "deploymentShaSource": "Root supplied deployed revision; local checkout HEAD matches",
+      "verification": "Actual runtime photo API response; no DOM/image decode checked",
+      "sample": "Separate supplemental 16 direct OSM media references; not part of 200 venue sample"
+    },
+    "normalization": "Production normalizeOsmElement + placePhotoQuery; id/name/coordinates/osmImage verified unchanged; catalogue aliases/entities retained"
+  },
+  {
+    "query": {
+      "id": "osm-way-556866318",
+      "name": "Funkywood",
+      "lat": 51.4815624,
+      "lng": -0.6068868,
+      "area": "Windsor",
+      "category": "Restaurant",
+      "aliases": [
+        "Funky Wood"
+      ],
+      "osmImage": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7572.JPG",
+      "website": "https://www.openstreetmap.org/way/556866318"
+    },
+    "checkedAt": "2026-10-08T17:41:29.000Z",
+    "result": {
+      "image": {
+        "url": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7572.JPG",
+        "source": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7572.JPG",
+        "credit": "Paul Williams (Paul The Archivist)",
+        "license": "CC BY-SA 4.0",
+        "width": 4608,
+        "height": 3456,
+        "confidence": 1,
+        "strategy": "osm-archive",
+        "matched": [
+          "OSM image",
+          "exact Archive file",
+          "JPEG EXIF orientation 1"
+        ]
+      },
+      "source": "live",
+      "diagnostics": {
+        "strategy": "osm-archive",
+        "sourcesAttempted": [
+          "osm-archive"
+        ],
+        "candidateCount": 1,
+        "rejected": {},
+        "requestCount": 3,
+        "elapsedMs": 1357,
+        "networkRequests": 3,
+        "queuedMs": 0
+      }
+    },
+    "httpStatus": 200,
+    "deploymentSha": "373da70bc76c5fce7be4a23c801a38c879cf18c2",
+    "provenance": {
+      "origin": "https://sidequest-local-discovery.vercel.app/api/photo",
+      "tool": "trusted Vercel public canonical fetch",
+      "deploymentShaSource": "Root supplied deployed revision; local checkout HEAD matches",
+      "verification": "Actual runtime photo API response; no DOM/image decode checked",
+      "sample": "Separate supplemental 16 direct OSM media references; not part of 200 venue sample"
+    },
+    "normalization": "Production normalizeOsmElement + placePhotoQuery; id/name/coordinates/osmImage verified unchanged; catalogue aliases/entities retained"
+  },
+  {
+    "query": {
+      "id": "osm-way-840731338",
+      "name": "Enzo's",
+      "lat": 51.4805009,
+      "lng": -0.6120758,
+      "area": "Windsor",
+      "category": "Restaurant",
+      "osmImage": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7738.JPG",
+      "website": "https://www.openstreetmap.org/way/840731338"
+    },
+    "checkedAt": "2026-10-08T17:41:46.000Z",
+    "result": {
+      "image": {
+        "url": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7738.JPG",
+        "source": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7738.JPG",
+        "credit": "Paul Williams (Paul The Archivist)",
+        "license": "CC BY-SA 4.0",
+        "width": 4608,
+        "height": 3456,
+        "confidence": 1,
+        "strategy": "osm-archive",
+        "matched": [
+          "OSM image",
+          "exact Archive file",
+          "JPEG EXIF orientation 1"
+        ]
+      },
+      "source": "live",
+      "diagnostics": {
+        "strategy": "osm-archive",
+        "sourcesAttempted": [
+          "osm-archive"
+        ],
+        "candidateCount": 1,
+        "rejected": {},
+        "requestCount": 3,
+        "elapsedMs": 1435,
+        "networkRequests": 3,
+        "queuedMs": 0
+      }
+    },
+    "httpStatus": 200,
+    "deploymentSha": "373da70bc76c5fce7be4a23c801a38c879cf18c2",
+    "provenance": {
+      "origin": "https://sidequest-local-discovery.vercel.app/api/photo",
+      "tool": "trusted Vercel public canonical fetch",
+      "deploymentShaSource": "Root supplied deployed revision; local checkout HEAD matches",
+      "verification": "Actual runtime photo API response; no DOM/image decode checked",
+      "sample": "Separate supplemental 16 direct OSM media references; not part of 200 venue sample"
+    },
+    "normalization": "Production normalizeOsmElement + placePhotoQuery; id/name/coordinates/osmImage verified unchanged; catalogue aliases/entities retained"
+  },
+  {
+    "query": {
+      "id": "osm-way-840731343",
+      "name": "Georgian House",
+      "lat": 51.4800773,
+      "lng": -0.6122112,
+      "area": "Windsor",
+      "category": "Restaurant",
+      "osmImage": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7729.JPG",
+      "website": "https://www.openstreetmap.org/way/840731343"
+    },
+    "checkedAt": "2026-10-08T17:42:47.000Z",
+    "result": {
+      "image": null,
+      "source": "unavailable",
+      "diagnostics": {
+        "strategy": null,
+        "sourcesAttempted": [
+          "osm-archive",
+          "commons-search",
+          "commons-geo"
+        ],
+        "candidateCount": 39,
+        "rejected": {
+          "archive-timeout-or-abort": 1,
+          "license-or-quality": 15,
+          "coordinate-conflict": 15,
+          "insufficient-subject-evidence": 6,
+          "non-photographic": 3,
+          "deadline-exceeded": 1
+        },
+        "requestCount": 6,
+        "elapsedMs": 10003,
+        "networkRequests": 6,
+        "upstreamErrors": {
+          "archive-timeout-or-abort": 1,
+          "deadline-exceeded": 1
+        },
+        "queuedMs": 0
+      },
+      "retryable": true
+    },
+    "httpStatus": 200,
+    "deploymentSha": "373da70bc76c5fce7be4a23c801a38c879cf18c2",
+    "provenance": {
+      "origin": "https://sidequest-local-discovery.vercel.app/api/photo",
+      "tool": "trusted Vercel public canonical fetch",
+      "deploymentShaSource": "Root supplied deployed revision; local checkout HEAD matches",
+      "verification": "Actual runtime photo API response; no DOM/image decode checked",
+      "sample": "Separate supplemental 16 direct OSM media references; not part of 200 venue sample"
+    },
+    "normalization": "Production normalizeOsmElement + placePhotoQuery; id/name/coordinates/osmImage verified unchanged; catalogue aliases/entities retained"
+  },
+  {
+    "query": {
+      "id": "osm-way-930447951",
+      "name": "Meat at the Parish",
+      "lat": 51.4813566,
+      "lng": -0.6067109,
+      "area": "Windsor",
+      "category": "Restaurant",
+      "osmImage": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7683.JPG",
+      "website": "https://www.meatattheparish.com/"
+    },
+    "checkedAt": "2026-10-08T17:42:17.000Z",
+    "result": {
+      "image": {
+        "url": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7683.JPG",
+        "source": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7683.JPG",
+        "credit": "Paul Williams (Paul The Archivist)",
+        "license": "CC BY-SA 4.0",
+        "width": 3456,
+        "height": 4608,
+        "confidence": 1,
+        "strategy": "osm-archive",
+        "matched": [
+          "OSM image",
+          "exact Archive file",
+          "JPEG EXIF orientation 6"
+        ]
+      },
+      "source": "live",
+      "diagnostics": {
+        "strategy": "osm-archive",
+        "sourcesAttempted": [
+          "osm-archive",
+          "commons-search",
+          "commons-geo",
+          "commons-mediainfo"
+        ],
+        "candidateCount": 31,
+        "rejected": {
+          "insufficient-subject-evidence": 29,
+          "license-or-quality": 1
+        },
+        "requestCount": 7,
+        "elapsedMs": 4146,
+        "networkRequests": 7,
+        "queuedMs": 0
+      }
+    },
+    "httpStatus": 200,
+    "deploymentSha": "373da70bc76c5fce7be4a23c801a38c879cf18c2",
+    "provenance": {
+      "origin": "https://sidequest-local-discovery.vercel.app/api/photo",
+      "tool": "trusted Vercel public canonical fetch",
+      "deploymentShaSource": "Root supplied deployed revision; local checkout HEAD matches",
+      "verification": "Actual runtime photo API response; no DOM/image decode checked",
+      "sample": "Separate supplemental 16 direct OSM media references; not part of 200 venue sample"
+    },
+    "normalization": "Production normalizeOsmElement + placePhotoQuery; id/name/coordinates/osmImage verified unchanged; catalogue aliases/entities retained"
+  },
+  {
+    "query": {
+      "id": "osm-way-930469468",
+      "name": "Esquires Coffee",
+      "lat": 51.482149,
+      "lng": -0.6074801,
+      "area": "Windsor",
+      "category": "Café",
+      "osmImage": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7586.JPG",
+      "website": "https://www.openstreetmap.org/way/930469468"
+    },
+    "checkedAt": "2026-10-08T17:42:29.000Z",
+    "result": {
+      "image": {
+        "url": "https://archive.org/download/windsor-2018-09-15/Windsor%202018-09-15/DSCN7586.JPG",
+        "source": "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7586.JPG",
+        "credit": "Paul Williams (Paul The Archivist)",
+        "license": "CC BY-SA 4.0",
+        "width": 4608,
+        "height": 3456,
+        "confidence": 1,
+        "strategy": "osm-archive",
+        "matched": [
+          "OSM image",
+          "exact Archive file",
+          "JPEG EXIF orientation 1"
+        ]
+      },
+      "source": "live",
+      "diagnostics": {
+        "strategy": "osm-archive",
+        "sourcesAttempted": [
+          "osm-archive"
+        ],
+        "candidateCount": 1,
+        "rejected": {},
+        "requestCount": 3,
+        "elapsedMs": 1369,
+        "networkRequests": 3,
+        "queuedMs": 0
+      }
+    },
+    "httpStatus": 200,
+    "deploymentSha": "373da70bc76c5fce7be4a23c801a38c879cf18c2",
+    "provenance": {
+      "origin": "https://sidequest-local-discovery.vercel.app/api/photo",
+      "tool": "trusted Vercel public canonical fetch",
+      "deploymentShaSource": "Root supplied deployed revision; local checkout HEAD matches",
+      "verification": "Actual runtime photo API response; no DOM/image decode checked",
+      "sample": "Separate supplemental 16 direct OSM media references; not part of 200 venue sample"
+    },
+    "normalization": "Production normalizeOsmElement + placePhotoQuery; id/name/coordinates/osmImage verified unchanged; catalogue aliases/entities retained"
+  }
+]

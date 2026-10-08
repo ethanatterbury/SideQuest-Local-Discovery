@@ -713,13 +713,26 @@ function incidentalPlaceReference(query: PhotoQuery, page: Page): boolean {
 }
 function areaMatch(area: string | undefined, text: string): boolean {
   if (!area) return false;
-  const candidate = ` ${normalize(text)} `;
+  const fields = text.split(/\s*\|\s*|[\r\n]+/).filter(Boolean);
   return area.split(/[,/|]/).some((part) => {
     const normalized = normalize(part).replace(
       /^(?:county of|city of|town of) /,
       "",
     );
-    return normalized.length >= 3 && candidate.includes(` ${normalized} `);
+    return (
+      normalized.length >= 3 &&
+      fields.some((field) => {
+        // Numeric inventory labels are not geographic evidence (e.g. a tram's fleet number).
+        const geographicText = normalize(field).replace(
+          new RegExp(
+            `(^| )${normalized} (?:number|numbers|no|id|serial)(?= |$)`,
+            "g",
+          ),
+          " ",
+        );
+        return ` ${geographicText} `.includes(` ${normalized} `);
+      })
+    );
   });
 }
 function nameEvidence(query: PhotoQuery, text: string): string | undefined {
@@ -887,7 +900,11 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
         }
         if (
           /\b(?:blue plaques?|commemorative plaques?|memorial plaques?)\b/.test(
-            normalize(subjectText(page)),
+            normalize(
+              [page.title, page.imageinfo?.[0]?.extmetadata?.ObjectName?.value]
+                .filter(Boolean)
+                .join(" "),
+            ),
           ) &&
           !/\bplaque\b/.test(normalize(`${query.name} ${query.category || ""}`))
         ) {

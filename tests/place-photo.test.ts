@@ -504,7 +504,7 @@ it.each([
   },
   {
     name: "The One Oak",
-    title: "Dame Ethel Smyth, One Oak",
+    title: "Blue plaque, Dame Ethel Smyth, One Oak",
     categories: "Blue plaques in Surrey",
   },
 ])(
@@ -533,6 +533,71 @@ it.each([
     ).toBeNull();
   },
 );
+it("does not infer a local Starbucks branch from a tram's fleet number", async () => {
+  mockPipeline(() => ({
+    query: {
+      pages: [
+        photoPage("Tram at Taksim.jpg", {
+          imageinfo: [
+            {
+              ...info,
+              extmetadata: {
+                ...info.extmetadata,
+                ImageDescription: {
+                  value: "Istiklal Avenue, Istanbul, Turkey",
+                },
+                Categories: {
+                  value:
+                    "Starbucks Coffee in Istanbul|Trams with fleet number 410",
+                },
+              },
+            },
+          ],
+        }),
+      ],
+    },
+  }));
+  const result = await lookupPlacePhoto(
+    { name: "Starbucks", area: "Fleet", lat: 51.2939351, lng: -0.8042545 },
+    { refresh: true },
+  );
+  expect(result.image).toBeNull();
+});
+it("retains a venue exterior even when its metadata also identifies a blue plaque", async () => {
+  mockPipeline(() => ({
+    query: {
+      pages: [
+        photoPage("Dame Ethel Smyth, One Oak.jpg", {
+          coordinates: [{ lat: 51.326201, lon: -0.731674 }],
+          imageinfo: [
+            {
+              ...info,
+              extmetadata: {
+                ...info.extmetadata,
+                ImageDescription: { value: "Dame Ethel Smyth, One Oak" },
+                Categories: { value: "Blue plaques in Surrey|Frimley" },
+              },
+            },
+          ],
+        }),
+      ],
+    },
+  }));
+  expect(
+    (
+      await lookupPlacePhoto(
+        {
+          name: "The One Oak",
+          category: "Restaurant",
+          area: "Frimley",
+          lat: 51.3255044,
+          lng: -0.7333231,
+        },
+        { refresh: true },
+      )
+    ).image,
+  ).not.toBeNull();
+});
 it.each([
   "A public house at Camberley Park Road, Camberley.",
   "The Carpenters Arms, Camberley - Park Street frontage",

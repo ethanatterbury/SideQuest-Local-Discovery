@@ -1,5 +1,8 @@
 import { it, expect } from "vitest";
-import { mergeCatalog } from "../src/providers/place-catalog";
+import {
+  mergeCatalog,
+  revalidateStoredPhotos,
+} from "../src/providers/place-catalog";
 import { PLACES } from "../src/providers/places";
 import type { Place } from "../src/domain/models";
 const live = (i: number): Place => ({
@@ -8,6 +11,24 @@ const live = (i: number): Place => ({
   name: `Test live ${i}`,
   coordinates: { lat: 51.4 + i * 0.00001, lng: -0.59 },
   image: undefined,
+});
+it("revalidates old photographs without removing saved area records or overriding curated photos", () => {
+  const stale = {
+    ...live(999998),
+    image: {
+      url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Wrong_branch.jpg",
+      source: "https://commons.wikimedia.org/wiki/File:Wrong_branch.jpg",
+      credit: "Old Photographer",
+      license: "CC BY-SA 4.0",
+    },
+  };
+  const restored = revalidateStoredPhotos([
+    stale,
+    { ...PLACES[0], image: stale.image },
+  ]);
+  expect(restored[0]).toEqual({ ...stale, image: undefined });
+  expect(restored[1].image).toEqual(PLACES[0].image);
+  expect(stale.image.url).toContain("Wrong_branch");
 });
 it("retains curated records and pinned saved data when recent area data exceeds its cap", () => {
   const old = live(1),

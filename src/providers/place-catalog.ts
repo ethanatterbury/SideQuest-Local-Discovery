@@ -7,9 +7,21 @@ import type {
   Place,
 } from "@/domain/models";
 import { PLACES } from "./places";
+import { indexedPhoto, placePhotoQuery } from "./photo-index";
 
 export type CatalogStatus = "loading" | "live" | "cached" | "fallback";
 const KEY = "sidequest:places:v1";
+const PHOTO_VERSION_KEY = "sidequest:place-photos:version";
+const PHOTO_VERSION = "verified-venue-media-3";
+export function revalidateStoredPhotos(stored: Place[]): Place[] {
+  return stored.map((place) => ({
+    ...place,
+    image:
+      PLACES.find((seed) => seed.id === place.id)?.image ||
+      indexedPhoto(placePhotoQuery(place))?.image ||
+      undefined,
+  }));
+}
 function isPlace(value: unknown): value is Place {
   if (!value || typeof value !== "object") return false;
   const p = value as Place;
@@ -105,8 +117,14 @@ export function usePlaceCatalog(
     if (!ready) return;
     try {
       const stored: unknown = JSON.parse(localStorage.getItem(KEY) || "[]");
-      if (Array.isArray(stored))
-        setPlaces(mergeCatalog(PLACES, stored.filter(isPlace), pinned.current));
+      if (Array.isArray(stored)) {
+        const valid = stored.filter(isPlace);
+        const restored =
+          localStorage.getItem(PHOTO_VERSION_KEY) === PHOTO_VERSION
+            ? valid
+            : revalidateStoredPhotos(valid);
+        setPlaces(mergeCatalog(PLACES, restored, pinned.current));
+      }
     } catch {
       /* The curated catalogue still works without storage. */
     }
@@ -116,6 +134,7 @@ export function usePlaceCatalog(
     if (!ready) return;
     try {
       localStorage.setItem(KEY, JSON.stringify(places));
+      localStorage.setItem(PHOTO_VERSION_KEY, PHOTO_VERSION);
     } catch {
       /* Storage is optional. */
     }

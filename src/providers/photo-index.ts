@@ -6,7 +6,9 @@ export type PhotoIndexEntry = {
   checkedAt: string;
   retryable?: boolean;
 } & Pick<PhotoResult, "image" | "diagnostics">;
-export const photoIndex = generated as {
+// JSON dictionaries infer an optional property for every key used by another row.
+// The generator and schema test validate numeric dictionaries; absent keys are omitted.
+export const photoIndex = generated as unknown as {
   version: number;
   generatedAt: string | null;
   sample: {
@@ -16,6 +18,12 @@ export const photoIndex = generated as {
     retryable?: number;
     unresolved?: number;
   } | null;
+  supplemental?: {
+    label: string;
+    tested: number;
+    matched: number;
+    retryable?: number;
+  };
   entries: PhotoIndexEntry[];
 };
 export function placePhotoQuery(place: Place): PhotoQuery {
