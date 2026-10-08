@@ -13,6 +13,7 @@ import { useApp } from "@/components/providers";
 import { TOWNS } from "@/providers/geocoding";
 import { rankPlaces } from "@/domain/discovery";
 import { Discover } from "@/features/discover/discover";
+import { PhotoDebug } from "./photo-debug";
 import { LazyMap } from "@/features/map/lazy-map";
 import { LocationPicker } from "@/components/location-picker";
 import type {
@@ -318,6 +319,13 @@ export function EnvironmentLab() {
             ))}
             {!ranked.length && <p>No eligible results.</p>}
           </details>
+          <PhotoDebug
+            places={ranked
+              .map((r) => r.place)
+              .concat(
+                catalog.filter((p) => !ranked.some((r) => r.place.id === p.id)),
+              )}
+          />
           <details className="lab-matrix">
             <summary>Visual test matrix</summary>
             <ul>

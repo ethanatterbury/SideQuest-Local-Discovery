@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { readFileSync } from "node:fs";
 async function simulate(
   page: import("@playwright/test").Page,
   state: Record<string, unknown> = {},
@@ -206,36 +207,18 @@ test("saved map marker can select an ineligible place without fake score", async
   );
 });
 
-test("vector map connects selection and mobile sheet with a local style fixture", async ({
-  page,
-}) => {
+test("street map connects selection and mobile sheet", async ({ page }) => {
   await simulate(page, { failures: ["weather"] });
-  await page.route("https://tiles.openfreemap.org/styles/positron", (route) =>
+  await page.route("https://tile.openstreetmap.org/**", (route) =>
     route.fulfill({
-      json: {
-        version: 8,
-        glyphs: "http://localhost:3000/test-fonts/{fontstack}/{range}.pbf",
-        sources: {},
-        layers: [
-          {
-            id: "background",
-            type: "background",
-            paint: { "background-color": "#e5eadb" },
-          },
-        ],
-      },
-    }),
-  );
-  await page.route("**/test-fonts/**", (route) =>
-    route.fulfill({
-      contentType: "application/x-protobuf",
-      body: Buffer.alloc(0),
+      contentType: "image/png",
+      body: readFileSync("public/icons/icon-192.png"),
     }),
   );
   await page.goto("/map");
-  await expect(page.getByText("Your next detour", { exact: true })).toBeVisible(
-    { timeout: 20000 },
-  );
+  await expect(page.locator(".map-status")).toContainText("Street map", {
+    timeout: 20000,
+  });
   const row = page.locator(".map-result-row").nth(1);
   const name = await row.locator("strong").innerText();
   await row.click();
@@ -245,75 +228,4 @@ test("vector map connects selection and mobile sheet with a local style fixture"
   await expect(page.locator(".map-sidebar")).toHaveClass(/expanded/);
   await page.getByRole("button", { name: "Collapse results" }).click();
   await expect(page.locator(".map-sidebar")).not.toHaveClass(/expanded/);
-});
-
-test("map labels use the provider font instead of missing default glyphs", async ({
-  page,
-}) => {
-  await simulate(page, { failures: ["weather"] });
-  const fonts: string[] = [];
-  await page.route("https://tiles.openfreemap.org/styles/positron", (route) =>
-    route.fulfill({
-      json: {
-        version: 8,
-        glyphs: "http://localhost:3000/provider-fonts/{fontstack}/{range}.pbf",
-        sources: {},
-        layers: [
-          {
-            id: "background",
-            type: "background",
-            paint: { "background-color": "#e5eadb" },
-          },
-        ],
-      },
-    }),
-  );
-  await page.route("**/provider-fonts/**", (route) => {
-    fonts.push(decodeURIComponent(route.request().url()));
-    return route.fulfill({
-      status: route.request().url().includes("Noto") ? 200 : 404,
-      contentType: "application/x-protobuf",
-      body: Buffer.alloc(0),
-    });
-  });
-  await page.goto("/map");
-  await expect.poll(() => fonts.length).toBeGreaterThan(0);
-  expect(fonts.every((url) => url.includes("Noto Sans Regular"))).toBe(true);
-  await expect(
-    page.getByText("Your next detour", { exact: true }),
-  ).toBeVisible();
-  await expect(page.locator(".geographic-fallback")).toHaveCount(0);
-});
-
-test("an unavailable label glyph does not hide the entire loaded map", async ({
-  page,
-}) => {
-  await simulate(page, { failures: ["weather"] });
-  await page.route("https://tiles.openfreemap.org/styles/positron", (route) =>
-    route.fulfill({
-      json: {
-        version: 8,
-        glyphs: "http://localhost:3000/missing-glyphs/{fontstack}/{range}.pbf",
-        sources: {},
-        layers: [
-          {
-            id: "background",
-            type: "background",
-            paint: { "background-color": "#e5eadb" },
-          },
-        ],
-      },
-    }),
-  );
-  const glyphFailure = page.waitForResponse(
-    (r) => r.url().includes("/missing-glyphs/") && r.status() === 404,
-  );
-  await page.route("**/missing-glyphs/**", (route) =>
-    route.fulfill({ status: 404, body: "Not found" }),
-  );
-  await page.goto("/map");
-  await glyphFailure;
-  await expect(page.locator(".map-canvas")).not.toHaveClass(/map-hidden/);
-  await page.locator(".map-result-row").nth(1).click();
-  await expect(page.locator(".map-selected .place-title")).toBeVisible();
 });

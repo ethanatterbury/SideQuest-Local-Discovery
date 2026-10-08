@@ -62,6 +62,81 @@ export function safeWebsite(value: unknown): string {
     return "";
   }
 }
+function mediaText(value: unknown): string {
+  return typeof value === "string" &&
+    value.length <= 2048 &&
+    !/[\u0000-\u001f\u007f]/.test(value) &&
+    !/%(?:0[0-9a-f]|1[0-9a-f]|7f)/i.test(value)
+    ? value.trim()
+    : "";
+}
+function mediaUrl(value: string): URL | null {
+  try {
+    const url = new URL(value);
+    return ["https:", "http:"].includes(url.protocol) &&
+      !url.username &&
+      !url.password &&
+      url.href.length <= 2048
+      ? url
+      : null;
+  } catch {
+    return null;
+  }
+}
+function commonsReference(value: unknown): string | undefined {
+  let reference = mediaText(value);
+  if (!reference) return undefined;
+  if (/^https?:/i.test(reference)) {
+    const url = mediaUrl(reference);
+    if (
+      url?.hostname !== "commons.wikimedia.org" ||
+      !url.pathname.startsWith("/wiki/")
+    )
+      return undefined;
+    try {
+      reference = decodeURIComponent(url.pathname.slice(6));
+    } catch {
+      return undefined;
+    }
+  }
+  const match = /^(File|Category):(.+)$/i.exec(reference);
+  const title = match?.[2].replace(/_/g, " ").trim();
+  if (!title || !mediaText(title) || /[\[\]{}<>|#?\\]/.test(title))
+    return undefined;
+  return `${match![1].toLowerCase() === "file" ? "File" : "Category"}:${title}`;
+}
+function osmImageReference(value: unknown): string | undefined {
+  const text = mediaText(value);
+  if (!text) return undefined;
+  const reference = commonsReference(text);
+  if (reference?.startsWith("File:")) return reference;
+  const url = mediaUrl(text);
+  if (url) return url.href;
+  // OSM image tags also contain plain Commons filenames, without a namespace.
+  return !/[/:]/.test(text) && /\.(?:jpe?g|png|webp|gif|tiff?)$/i.test(text)
+    ? commonsReference(`File:${text}`)
+    : undefined;
+}
+function osmAliases(
+  tags: Record<string, unknown>,
+  name: string,
+): string[] | undefined {
+  const aliases: string[] = [];
+  const seen = new Set([name.toLocaleLowerCase()]);
+  for (const key of ["name:en", "alt_name", "old_name"]) {
+    const raw = tags[key];
+    if (typeof raw !== "string") continue;
+    for (const value of raw.slice(0, 2400).split(";")) {
+      const alias = value.replace(/[\u0000-\u001f\u007f]/g, "").trim();
+      const normalized = alias.toLocaleLowerCase();
+      if (!alias || alias.length > 200 || seen.has(normalized)) continue;
+      aliases.push(alias);
+      seen.add(normalized);
+      if (aliases.length === 12) return aliases;
+    }
+  }
+  return aliases.length ? aliases : undefined;
+}
 export function normalizeOsmElement(value: unknown): Place | null {
   if (!value || typeof value !== "object") return null;
   const e = value as Element;
@@ -253,6 +328,9 @@ export function normalizeOsmElement(value: unknown): Place | null {
     ageRange,
     wikidata: /^Q\d+$/.test(clean(t.wikidata)) ? clean(t.wikidata) : undefined,
     wikipedia: clean(t.wikipedia) || undefined,
+    osmImage: osmImageReference(t.image),
+    commons: commonsReference(t.wikimedia_commons),
+    aliases: osmAliases(t, name),
   };
 }
 export function normalizeOsmResponse(value: unknown): Place[] {

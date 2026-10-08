@@ -1,5 +1,6 @@
 "use client";
 import type { Place } from "@/domain/models";
+import { indexedPhoto, placePhotoQuery, photoIdentity } from "./photo-index";
 type Image = NonNullable<Place["image"]>;
 const cache = new Map<string, { image: Image | null; until: number }>();
 const pending = new Map<string, Promise<Image | null>>();
@@ -12,7 +13,10 @@ function next() {
   }
 }
 export function findPlacePhoto(place: Place): Promise<Image | null> {
-  const key = `${place.id}:${place.name}:${place.coordinates.lat}:${place.coordinates.lng}`;
+  const query = placePhotoQuery(place);
+  const indexed = indexedPhoto(query);
+  if (indexed) return Promise.resolve(indexed.image);
+  const key = photoIdentity(query);
   const cached = cache.get(key);
   if (cached && cached.until > Date.now()) return Promise.resolve(cached.image);
   const request = pending.get(key);
@@ -26,10 +30,15 @@ export function findPlacePhoto(place: Place): Promise<Image | null> {
           lat: String(place.coordinates.lat),
           lng: String(place.coordinates.lng),
         });
-        if (place.wikidata) params.set("wikidata", place.wikidata);
-        if (place.wikipedia) params.set("wikipedia", place.wikipedia);
+        for (const [field, value] of Object.entries(query)) {
+          if (value !== undefined)
+            params.set(
+              field,
+              Array.isArray(value) ? JSON.stringify(value) : String(value),
+            );
+        }
         const response = await fetch(`/api/photo?${params}`, {
-          signal: AbortSignal.timeout(12000),
+          signal: AbortSignal.timeout(20000),
         });
         if (response.ok) {
           const value = (await response.json()).image;

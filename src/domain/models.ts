@@ -94,13 +94,27 @@ export type Place = {
   website: string;
   source: string;
   notes: string[];
-  image?: { url: string; credit: string; license: string; source: string };
+  image?: {
+    url: string;
+    credit: string;
+    license: string;
+    source: string;
+    width?: number;
+    height?: number;
+    confidence?: number;
+    strategy?: string;
+    matched?: string[];
+  };
   season?: number[];
   /** Only populate from verified venue age guidance. */
   ageRange?: [number, number];
   familyFeatures?: string[];
   wikidata?: string;
   wikipedia?: string;
+  /** OSM source hints only; licensing and subject identity still need verification. */
+  osmImage?: string;
+  commons?: string;
+  aliases?: string[];
 };
 export type Activity =
   | "any"

@@ -49,7 +49,7 @@ it("rejects a same-name place in a different town and unrelated nearby file", ()
     matchesPlaceName(query.name, "File:Riverside Museum Glasgow.jpg"),
   ).toBe(true);
 });
-it("requires authentic Commons URLs, landscape photos, credit and a reusable license", () => {
+it("requires authentic Commons URLs, usable photos, credit and a reusable license", () => {
   expect(licensedPhoto(info)).toMatchObject({
     credit: "Jane Doe",
     license: "CC BY-SA 4.0",
@@ -193,7 +193,7 @@ it("rejects geographically incorrect Wikidata P18 before requesting its file", a
       wikidata: "Q123",
     }),
   ).toMatchObject({ image: null });
-  expect(fetcher).toHaveBeenCalledTimes(2);
+  expect(fetcher).toHaveBeenCalledTimes(3);
   expect(
     fetcher.mock.calls.some(
       ([url]) => url.searchParams.get("titles") === "File:Wrong.jpg",
@@ -229,9 +229,15 @@ it("matches conservative article/grounds aliases without broadening generic venu
   ).toBe(false);
   expect(isNearPlace(query, 51.5, -0.12, 600)).toBe(false);
 });
-it("rejects portrait and square assets even when Wikimedia licensing is valid", () => {
-  expect(licensedPhoto({ ...info, width: 1200, height: 2000 })).toBeNull();
-  expect(licensedPhoto({ ...info, width: 1200, height: 1200 })).toBeNull();
+it("retains licensed portrait and square photos as crop-aware fallbacks", () => {
+  expect(licensedPhoto({ ...info, width: 1200, height: 2000 })).toMatchObject({
+    width: 1200,
+    height: 2000,
+  });
+  expect(licensedPhoto({ ...info, width: 1200, height: 1200 })).toMatchObject({
+    width: 1200,
+    height: 1200,
+  });
 });
 it("searches a canonical name and accepts a named garden subject within 600m", async () => {
   const fetcher = vi.fn(async (requestedUrl: URL) => {
@@ -260,4 +266,555 @@ it("searches a canonical name and accepts a named garden subject within 600m", a
   expect(url.searchParams.get("gsrsearch")).toBe('"savill garden"');
   expect(url.searchParams.get("coprimary")).toBe("all");
   expect(url.searchParams.get("colimit")).toBe("max");
+});
+
+function mockPipeline(handler: (url: URL) => object) {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: URL) => Response.json(handler(url))),
+  );
+}
+function photoPage(title: string, changes: Record<string, unknown> = {}) {
+  return { pageid: 123, title: `File:${title}`, imageinfo: [info], ...changes };
+}
+it("accepts explicitly declared Commons media without GPS and reports evidence", async () => {
+  mockPipeline(() => ({ query: { pages: [photoPage("Entrance.jpg")] } }));
+  const result = await lookupPlacePhoto(
+    {
+      ...query,
+      osmImage: "https://commons.wikimedia.org/wiki/File:Entrance.jpg",
+    },
+    { refresh: true, debug: true },
+  );
+  expect(result).toMatchObject({
+    image: {
+      strategy: "osm-image",
+      confidence: 0.99,
+      width: 2000,
+      height: 1200,
+      matched: ["declared-file"],
+    },
+    diagnostics: { strategy: "osm-image", candidateCount: 1 },
+  });
+});
+it("never fetches an arbitrary OSM image host or assumes its license", async () => {
+  const fetcher = vi.fn(async (url: URL) => {
+    expect(url.hostname).toBe("commons.wikimedia.org");
+    return Response.json({ query: { pages: [] } });
+  });
+  vi.stubGlobal("fetch", fetcher);
+  const result = await lookupPlacePhoto(
+    { ...query, osmImage: "http://127.0.0.1/private" },
+    { refresh: true, debug: true },
+  );
+  expect(result.image).toBeNull();
+  expect(result.diagnostics?.rejected["unlicensed-external-image"]).toBe(1);
+});
+it("uses validated Wikidata P18 without requiring image GPS", async () => {
+  mockPipeline((url) =>
+    url.hostname === "www.wikidata.org"
+      ? {
+          entities: {
+            Q777: {
+              labels: { en: { value: "Alternate Venue" } },
+              aliases: { en: [{ value: query.name }] },
+              claims: {
+                P625: [
+                  {
+                    mainsnak: {
+                      datavalue: {
+                        value: {
+                          latitude: query.lat,
+                          longitude: query.lng,
+                          globe: "http://www.wikidata.org/entity/Q2",
+                        },
+                      },
+                    },
+                  },
+                ],
+                P18: [{ mainsnak: { datavalue: { value: "Entrance.jpg" } } }],
+              },
+            },
+          },
+        }
+      : { query: { pages: [photoPage("Entrance.jpg")] } },
+  );
+  expect(
+    await lookupPlacePhoto(
+      { ...query, wikidata: "Q777" },
+      { refresh: true, debug: true },
+    ),
+  ).toMatchObject({
+    image: {
+      strategy: "wikidata-p18",
+      matched: expect.arrayContaining(["declared-file", "entity-coordinate"]),
+    },
+  });
+});
+it("matches aliases plus town context when search images omit GPS", async () => {
+  mockPipeline(() => ({
+    query: { pages: [photoPage("Transport Museum Glasgow entrance.jpg")] },
+  }));
+  expect(
+    await lookupPlacePhoto(
+      { ...query, aliases: ["Transport Museum"], area: "Glasgow" },
+      { refresh: true, debug: true },
+    ),
+  ).toMatchObject({
+    image: {
+      matched: expect.arrayContaining(["alias", "area"]),
+      confidence: expect.any(Number),
+    },
+  });
+});
+it("uses Commons category membership and ranks multiple photos by quality", async () => {
+  mockPipeline((url) => ({
+    query: {
+      pages:
+        url.searchParams.get("generator") === "categorymembers"
+          ? [
+              photoPage("Interior portrait.jpg", {
+                imageinfo: [
+                  {
+                    ...info,
+                    width: 1300,
+                    height: 2100,
+                    descriptionurl:
+                      "https://commons.wikimedia.org/wiki/File:Interior.jpg",
+                  },
+                ],
+              }),
+              photoPage("Exterior landscape.jpg", {
+                imageinfo: [
+                  {
+                    ...info,
+                    width: 3200,
+                    height: 1800,
+                    descriptionurl:
+                      "https://commons.wikimedia.org/wiki/File:Exterior.jpg",
+                  },
+                ],
+              }),
+            ]
+          : [],
+    },
+  }));
+  expect(
+    await lookupPlacePhoto(
+      { ...query, commons: "Category:Riverside Museum" },
+      { refresh: true, debug: true },
+    ),
+  ).toMatchObject({
+    image: {
+      source: "https://commons.wikimedia.org/wiki/File:Exterior.jpg",
+      strategy: "osm-commons-category",
+      width: 3200,
+    },
+    diagnostics: { candidateCount: 2 },
+  });
+});
+it("accepts a legitimate portrait when it is the available declared photograph", async () => {
+  mockPipeline(() => ({
+    query: {
+      pages: [
+        photoPage("Museum portrait.jpg", {
+          imageinfo: [{ ...info, width: 1200, height: 2000 }],
+        }),
+      ],
+    },
+  }));
+  expect(
+    await lookupPlacePhoto(
+      { ...query, commons: "File:Museum portrait.jpg" },
+      { refresh: true },
+    ),
+  ).toMatchObject({ image: { width: 1200, height: 2000 } });
+});
+it("uses geo search captions for the actual subject and rejects an unrelated nearby photo", async () => {
+  mockPipeline((url) => ({
+    query: {
+      pages:
+        url.searchParams.get("generator") === "geosearch"
+          ? [
+              photoPage("DSC01234.jpg", {
+                coordinates: [{ lat: query.lat, lon: query.lng }],
+                imageinfo: [
+                  {
+                    ...info,
+                    extmetadata: {
+                      ...info.extmetadata,
+                      ImageDescription: {
+                        value: "The Riverside Museum, Glasgow, main entrance",
+                      },
+                    },
+                  },
+                ],
+              }),
+              photoPage("Nearby Cafe.jpg", {
+                coordinates: [{ lat: query.lat, lon: query.lng }],
+              }),
+            ]
+          : [],
+    },
+  }));
+  const result = await lookupPlacePhoto(
+    { ...query, area: "Glasgow" },
+    { refresh: true, debug: true },
+  );
+  expect(result).toMatchObject({
+    image: {
+      strategy: "commons-geo",
+      matched: expect.arrayContaining(["subject-name", "coordinate", "area"]),
+    },
+    diagnostics: { rejected: { "insufficient-subject-evidence": 1 } },
+  });
+});
+it("rejects a contextual namesake with contradictory geographic evidence", async () => {
+  mockPipeline(() => ({
+    query: {
+      pages: [
+        photoPage("Riverside Museum Glasgow.jpg", {
+          coordinates: [{ lat: 51.5, lon: -0.1 }],
+        }),
+      ],
+    },
+  }));
+  const result = await lookupPlacePhoto(
+    { ...query, area: "Glasgow" },
+    { refresh: true, debug: true },
+  );
+  expect(result.image).toBeNull();
+  expect(result.diagnostics?.rejected["coordinate-conflict"]).toBeGreaterThan(
+    0,
+  );
+});
+it("rejects licensed diagrams and surfaces rejection reasons", async () => {
+  mockPipeline(() => ({
+    query: { pages: [photoPage("Riverside Museum floor plan.png")] },
+  }));
+  expect(
+    await lookupPlacePhoto(
+      { ...query, commons: "File:Riverside Museum floor plan.png" },
+      { refresh: true, debug: true },
+    ),
+  ).toMatchObject({
+    image: null,
+    diagnostics: { rejected: { "non-photographic": expect.any(Number) } },
+  });
+});
+it("refresh bypasses a negative cached lookup", async () => {
+  const place = {
+    ...query,
+    name: "Riverside Refresh",
+    commons: "File:Refresh.jpg",
+  };
+  mockPipeline(() => ({ query: { pages: [] } }));
+  expect((await lookupPlacePhoto(place)).image).toBeNull();
+  mockPipeline(() => ({ query: { pages: [photoPage("Refresh.jpg")] } }));
+  expect((await lookupPlacePhoto(place)).source).toBe("cached");
+  expect(
+    (await lookupPlacePhoto(place, { refresh: true })).image,
+  ).not.toBeNull();
+});
+
+it("uses a validated Wikidata Commons category when P18 is missing", async () => {
+  mockPipeline((url) =>
+    url.hostname === "www.wikidata.org"
+      ? {
+          entities: {
+            Q778: {
+              labels: { en: { value: query.name } },
+              claims: {
+                P373: [
+                  {
+                    mainsnak: {
+                      datavalue: { value: "Riverside Museum Glasgow" },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        }
+      : {
+          query: {
+            pages:
+              url.searchParams.get("generator") === "categorymembers"
+                ? [photoPage("Museum entrance.jpg")]
+                : [],
+          },
+        },
+  );
+  expect(
+    await lookupPlacePhoto(
+      { ...query, wikidata: "Q778" },
+      { refresh: true, debug: true },
+    ),
+  ).toMatchObject({
+    image: {
+      strategy: "wikidata-p373",
+      matched: expect.arrayContaining(["declared-entity", "entity-category"]),
+    },
+  });
+});
+it("resolves redirected Wikipedia article imagery without file coordinates", async () => {
+  mockPipeline((url) =>
+    url.hostname === "en.wikipedia.org"
+      ? {
+          query: {
+            redirects: [{ from: "Transport Museum", to: query.name }],
+            pages: [
+              {
+                title: query.name,
+                pageimage: "Entrance.jpg",
+                coordinates: [{ lat: query.lat, lon: query.lng }],
+              },
+            ],
+          },
+        }
+      : { query: { pages: [photoPage("Entrance.jpg")] } },
+  );
+  expect(
+    await lookupPlacePhoto(
+      { ...query, wikipedia: "en:Transport Museum" },
+      { refresh: true, debug: true },
+    ),
+  ).toMatchObject({
+    image: {
+      strategy: "wikipedia-image",
+      matched: expect.arrayContaining([
+        "article-coordinate",
+        "declared-article",
+      ]),
+    },
+  });
+});
+it("matches structured Commons depicts claims without relying on a camera filename", async () => {
+  mockPipeline((url) => {
+    if (url.hostname === "www.wikidata.org") return { entities: {} };
+    if (url.searchParams.get("action") === "wbgetentities")
+      return {
+        entities: {
+          M123: {
+            statements: {
+              P180: [{ mainsnak: { datavalue: { value: { id: "Q779" } } } }],
+            },
+          },
+        },
+      };
+    return {
+      query: {
+        pages:
+          url.searchParams.get("generator") === "geosearch"
+            ? [
+                photoPage("DSC995.jpg", {
+                  coordinates: [{ lat: query.lat, lon: query.lng }],
+                }),
+              ]
+            : [],
+      },
+    };
+  });
+  expect(
+    await lookupPlacePhoto(
+      { ...query, wikidata: "Q779" },
+      { refresh: true, debug: true },
+    ),
+  ).toMatchObject({
+    image: {
+      strategy: "commons-geo",
+      matched: expect.arrayContaining(["depicts-entity", "coordinate"]),
+    },
+  });
+});
+it("treats a Wikimedia API error as retryable and preserves other source attempts", async () => {
+  mockPipeline(() => ({
+    error: { code: "maxlag", info: "Waiting for replicas" },
+  }));
+  expect(
+    await lookupPlacePhoto(
+      { ...query, commons: "File:Lag.jpg" },
+      { refresh: true, debug: true },
+    ),
+  ).toMatchObject({
+    image: null,
+    retryable: true,
+    diagnostics: {
+      rejected: { "upstream-error": expect.any(Number) },
+      sourcesAttempted: expect.arrayContaining([
+        "osm-commons-file",
+        "commons-search",
+        "commons-geo",
+      ]),
+    },
+  });
+});
+it("recovers photos inside a named category subcategory", async () => {
+  mockPipeline((url) => {
+    if (url.searchParams.get("gcmtype") === "subcat")
+      return {
+        query: { pages: [{ title: "Category:Riverside Museum exterior" }] },
+      };
+    return {
+      query: {
+        pages:
+          url.searchParams.get("gcmtitle") ===
+          "Category:Riverside Museum exterior"
+            ? [photoPage("Entrance landscape.jpg")]
+            : [],
+      },
+    };
+  });
+  expect(
+    await lookupPlacePhoto(
+      { ...query, commons: "Category:Riverside Museum" },
+      { refresh: true, debug: true },
+    ),
+  ).toMatchObject({
+    image: {
+      strategy: "osm-commons-category",
+      matched: expect.arrayContaining(["category-membership"]),
+    },
+  });
+});
+it("uses a geographically corroborated named category for files without GPS", async () => {
+  mockPipeline((url) => {
+    if (url.searchParams.get("generator") === "search")
+      return {
+        query: {
+          pages: [
+            photoPage("Museum map.png", {
+              coordinates: [{ lat: query.lat, lon: query.lng }],
+              categories: [{ title: "Category:Riverside Museum" }],
+            }),
+          ],
+        },
+      };
+    return {
+      query: {
+        pages:
+          url.searchParams.get("generator") === "categorymembers"
+            ? [
+                photoPage("DSC entrance.jpg", {
+                  categories: [{ title: "Category:Riverside Museum" }],
+                }),
+              ]
+            : [],
+      },
+    };
+  });
+  expect(
+    await lookupPlacePhoto(query, { refresh: true, debug: true }),
+  ).toMatchObject({
+    image: {
+      strategy: "commons-category",
+      matched: expect.arrayContaining([
+        "verified-category",
+        "category-coordinate",
+      ]),
+    },
+  });
+});
+it("validates extended query hints and limits alias input", () => {
+  expect(
+    parsePhotoQuery(
+      new URLSearchParams({
+        name: query.name,
+        lat: String(query.lat),
+        lng: String(query.lng),
+        area: "Glasgow",
+        aliases: '["Transport Museum"]',
+        commons: "Category:Riverside Museum",
+        id: "osm-123",
+      }),
+    ),
+  ).toMatchObject({
+    aliases: ["Transport Museum"],
+    area: "Glasgow",
+    commons: "Category:Riverside Museum",
+    id: "osm-123",
+  });
+  expect(
+    parsePhotoQuery(
+      new URLSearchParams({
+        name: query.name,
+        lat: String(query.lat),
+        lng: String(query.lng),
+        aliases: "[123]",
+      }),
+    ),
+  ).toBeNull();
+});
+
+it("rejects an adjacent business whose caption merely references the sought venue", async () => {
+  mockPipeline(() => ({
+    query: {
+      pages: [
+        photoPage("Cafe opposite Riverside Museum Glasgow.jpg", {
+          coordinates: [{ lat: query.lat, lon: query.lng }],
+          imageinfo: [
+            {
+              ...info,
+              extmetadata: {
+                ...info.extmetadata,
+                ImageDescription: {
+                  value: "A cafe opposite Riverside Museum in Glasgow",
+                },
+              },
+            },
+          ],
+        }),
+      ],
+    },
+  }));
+  expect(
+    await lookupPlacePhoto(
+      { ...query, area: "Glasgow" },
+      { refresh: true, debug: true },
+    ),
+  ).toMatchObject({
+    image: null,
+    diagnostics: {
+      rejected: { "incidental-place-reference": expect.any(Number) },
+    },
+  });
+});
+it("quality ranking prefers a large landscape over the first small matched search result", async () => {
+  mockPipeline(() => ({
+    query: {
+      pages: [
+        photoPage("Riverside Museum Glasgow small.jpg", {
+          index: 1,
+          coordinates: [{ lat: query.lat, lon: query.lng }],
+          imageinfo: [
+            {
+              ...info,
+              width: 640,
+              height: 480,
+              descriptionurl:
+                "https://commons.wikimedia.org/wiki/File:Small.jpg",
+            },
+          ],
+        }),
+        photoPage("Riverside Museum Glasgow exterior.jpg", {
+          index: 2,
+          coordinates: [{ lat: query.lat, lon: query.lng }],
+          imageinfo: [
+            {
+              ...info,
+              width: 3000,
+              height: 1800,
+              descriptionurl:
+                "https://commons.wikimedia.org/wiki/File:Large.jpg",
+            },
+          ],
+        }),
+      ],
+    },
+  }));
+  expect(
+    await lookupPlacePhoto({ ...query, area: "Glasgow" }, { refresh: true }),
+  ).toMatchObject({
+    image: { source: "https://commons.wikimedia.org/wiki/File:Large.jpg" },
+  });
 });

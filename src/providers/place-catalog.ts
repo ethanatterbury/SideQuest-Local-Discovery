@@ -50,7 +50,20 @@ export function mergeCatalog(
         Math.abs(other.coordinates.lat - p.coordinates.lat) < 0.002 &&
         Math.abs(other.coordinates.lng - p.coordinates.lng) < 0.003,
     );
-    if (duplicate) continue;
+    if (duplicate) {
+      merged.set(duplicate.id, {
+        ...duplicate,
+        wikidata: duplicate.wikidata || p.wikidata,
+        wikipedia: duplicate.wikipedia || p.wikipedia,
+        osmImage: duplicate.osmImage || p.osmImage,
+        commons: duplicate.commons || p.commons,
+        aliases: [
+          ...new Set([...(duplicate.aliases || []), ...(p.aliases || [])]),
+        ].slice(0, 12),
+        image: duplicate.image || p.image,
+      });
+      continue;
+    }
     const previous = merged.get(p.id);
     merged.set(p.id, {
       ...(previous && !p.id.startsWith("osm-") ? previous : p),

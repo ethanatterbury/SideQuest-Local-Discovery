@@ -92,7 +92,7 @@ export function Discover({ explore = false }: { explore?: boolean }) {
       )
     : [];
   const results = nameMatches.length ? nameMatches : ranked;
-  const featured = ranked.find((r) => r.place.image) || ranked[0];
+  const featured = ranked[0];
   const headline = contextualHeadline(env);
   const wet = env.weather.source !== "unavailable" && env.weather.rain > 0;
   useEffect(() => {

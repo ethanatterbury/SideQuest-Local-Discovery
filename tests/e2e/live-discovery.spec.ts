@@ -329,3 +329,34 @@ test("a photo update preserves the chosen map place and camera", async ({
   await expect(chosen).toHaveClass(/selected/);
   await expect(pane).toHaveAttribute("style", camera!);
 });
+
+test("home hero keeps the top recommendation when only a lower-ranked place has a photo", async ({
+  page,
+}) => {
+  await source(page, [
+    fixture(0, {
+      name: "Best venue without media",
+      novelty: 1,
+      intents: ["walk", "scenic", "kids", "culture", "relax", "active"],
+      image: undefined,
+    }),
+    fixture(1, {
+      name: "Lower venue with media",
+      novelty: 0,
+      image: {
+        url: "/icons/icon-192.png",
+        credit: "Test",
+        license: "CC0",
+        source: "https://example.com",
+      },
+    }),
+  ]);
+  await page.goto("/");
+  await expect(page.locator(".hero-pick h2")).toHaveText(
+    "Best venue without media",
+  );
+  await page.getByRole("button", { name: "Get me out of the house" }).click();
+  await expect(page.locator(".signature-body h2")).toHaveText(
+    "Best venue without media",
+  );
+});

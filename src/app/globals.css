@@ -4010,3 +4010,46 @@ textarea {
 .raster-map .leaflet-tooltip { background:var(--paper); color:var(--ink); font-family:inherit; }
 .geographic-fallback { z-index:1; }
 @media(max-width:640px) { .activity-filter label { align-items:flex-start; flex-direction:column; gap:6px; } .activity-filter select { width:100%; } .child-age-row { gap:8px; } .discovery-source .text-link { margin-left:0; } }
+
+/* Street geography uses the same renderer across GPU/device capabilities. */
+.raster-map .map-place-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+}
+.map-place-dot {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid white;
+  border-radius: 50%;
+  background: #243b30;
+  box-shadow: 0 1px 5px #243b3040;
+}
+.map-place-saved .map-place-dot { background: #bed653; }
+.map-place-visited .map-place-dot { border-color: #bed653; }
+.map-place-visited .map-place-dot::after {
+  content: "✓";
+  display: block;
+  color: white;
+  font: bold 10px/12px sans-serif;
+  text-align: center;
+}
+.map-place-saved.map-place-visited .map-place-dot::after { color: #243b30; }
+.map-place-selected .map-place-dot { width: 25px; height: 25px; box-shadow: 0 0 0 4px #243b3038; }
+.map-place-selected.map-place-visited .map-place-dot::after { line-height: 19px; font-size: 13px; }
+.raster-map .map-place-marker:focus-visible { outline: 3px solid #4766a1; outline-offset: 4px; border-radius: 50%; }
+.map-controls button:disabled { opacity: .4; cursor: default; }
+.fallback-map-heading .button { align-self: flex-start; margin-top: 14px; }
+.raster-map.raster-unavailable { visibility: hidden; pointer-events: none; }
+
+.lab-photo-debug { border-top: 1px solid var(--line); padding-top: 18px; font-size: 12px; line-height: 1.6; }
+.lab-photo-debug summary { cursor: pointer; font-weight: 700; }
+.lab-photo-debug select { max-width: 100%; }
+.lab-photo-preview { height: 155px; overflow: hidden; border-radius: 10px; margin: 12px 0; }
+.lab-photo-preview .place-image { height: 100%; }
+.lab-photo-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.lab-photo-debug ul { padding-left: 18px; }
+.image-fallback { background-image: repeating-radial-gradient(ellipse at 90% 100%, transparent 0 18px, #ffffff35 19px 20px, transparent 21px 36px); }

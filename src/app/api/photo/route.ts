@@ -1,13 +1,40 @@
-import { lookupPlacePhoto, parsePhotoQuery } from "@/providers/place-photo";
+import {
+  lookupPlacePhoto,
+  parsePhotoQuery,
+  type PhotoResult,
+} from "@/providers/place-photo";
+import { indexedPhoto } from "@/providers/photo-index";
 export const runtime = "nodejs";
+export const maxDuration = 30;
 export async function GET(request: Request) {
-  const query = parsePhotoQuery(new URL(request.url).searchParams);
+  const params = new URL(request.url).searchParams;
+  const query = parsePhotoQuery(params);
   if (!query)
     return Response.json(
       { image: null, source: "unavailable" },
       { status: 400 },
     );
-  return Response.json(await lookupPlacePhoto(query), {
-    headers: { "Cache-Control": "private, max-age=60" },
+  const labEnabled =
+    process.env.NODE_ENV === "development" ||
+    process.env.NEXT_PUBLIC_ENABLE_ENVIRONMENT_LAB === "true";
+  const debug = labEnabled && params.get("debug") === "1";
+  const refresh = debug && params.get("refresh") === "1";
+  const entry = !refresh && indexedPhoto(query);
+  const result: PhotoResult = entry
+    ? {
+        image: entry.image,
+        source: "cached",
+        ...(debug && entry.diagnostics
+          ? { diagnostics: { ...entry.diagnostics, cacheHit: true } }
+          : {}),
+      }
+    : await lookupPlacePhoto(query, { debug, refresh });
+  return Response.json(result, {
+    headers: {
+      "Cache-Control":
+        debug || result.retryable
+          ? "private, no-store"
+          : `public, max-age=60, s-maxage=${result.image ? 86400 : 300}, stale-while-revalidate=3600`,
+    },
   });
 }

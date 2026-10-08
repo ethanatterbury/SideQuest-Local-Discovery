@@ -15,7 +15,8 @@ REGIONS = ("berkshire", "surrey", "hampshire")
 KEYS = {"name", "name:en", "leisure", "tourism", "amenity", "sport", "website",
         "contact:website", "addr:city", "addr:town", "addr:county", "addr:street",
         "addr:postcode", "fee", "access", "indoor", "lit", "opening_hours",
-        "wikidata", "wikipedia", "min_age", "max_age", "playground:toddler",
+        "wikidata", "wikipedia", "image", "wikimedia_commons", "alt_name", "old_name",
+        "min_age", "max_age", "playground:toddler",
         "playground:indoor", "playground:soft_play"}
 LEISURE = {"playground", "indoor_play", "soft_play", "trampoline_park", "water_park",
            "park", "garden", "nature_reserve", "sports_centre", "fitness_centre",

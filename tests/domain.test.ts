@@ -359,3 +359,38 @@ it("rejects incomplete stored itineraries", () => {
   });
   expect(store.read().plans).toEqual([]);
 });
+
+describe("photo-independent discovery", () => {
+  it("keeps eligibility, scores, Get Me Out and Surprise choices identical after enrichment", () => {
+    const records = [park, indoor];
+    const enriched = records.map((p) => ({
+      ...p,
+      image: {
+        url: "/photo.jpg",
+        credit: "Author",
+        license: "CC0",
+        source: "https://example.com",
+        confidence: 0.99,
+      },
+      commons: "File:Photo.jpg",
+      aliases: ["Photo alias"],
+    }));
+    for (const mode of ["normal", "surprise"] as const) {
+      const query = { ...DEFAULT_QUERY, mode };
+      const summarize = (data: Place[]) =>
+        rankPlaces(data, query, env, emptyState()).map((r) => ({
+          id: r.place.id,
+          score: r.score,
+          components: r.components,
+          travel: r.travel,
+          reasons: r.reasons,
+        }));
+      expect(summarize(enriched)).toEqual(summarize(records));
+      expect(
+        buildItinerary(enriched, query, env, emptyState(), { food: true }),
+      ).toEqual(
+        buildItinerary(records, query, env, emptyState(), { food: true }),
+      );
+    }
+  });
+});
