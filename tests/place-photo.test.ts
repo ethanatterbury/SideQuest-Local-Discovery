@@ -563,6 +563,53 @@ it("does not infer a local Starbucks branch from a tram's fleet number", async (
   );
   expect(result.image).toBeNull();
 });
+it.each([
+  {
+    title: "Fleet Street, London",
+    description: "Starbucks on Fleet Street, London",
+    categories: "Starbucks Coffee in London",
+  },
+  {
+    title: "Fleet town centre street scene",
+    description: "A street scene in Fleet",
+    categories: "Starbucks Coffee",
+  },
+])(
+  "requires actual branch subject and town evidence without GPS: $title",
+  async ({ title, description, categories }) => {
+    mockPipeline(() => ({
+      query: {
+        pages: [
+          photoPage(title + ".jpg", {
+            imageinfo: [
+              {
+                ...info,
+                extmetadata: {
+                  ...info.extmetadata,
+                  ImageDescription: { value: description },
+                  Categories: { value: categories },
+                },
+              },
+            ],
+          }),
+        ],
+      },
+    }));
+    expect(
+      (
+        await lookupPlacePhoto(
+          {
+            name: "Starbucks",
+            area: "Fleet",
+            lat: 51.2939351,
+            lng: -0.8042545,
+          },
+          { refresh: true },
+        )
+      ).image,
+    ).toBeNull();
+  },
+);
 it("retains a venue exterior even when its metadata also identifies a blue plaque", async () => {
   mockPipeline(() => ({
     query: {

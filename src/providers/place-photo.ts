@@ -644,15 +644,15 @@ function commonsReference(value: string | undefined): string | null {
     ? reference
     : null;
 }
-function subjectText(page: Page): string {
+function subjectText(page: Page, includeCategories = true): string {
   const meta = page.imageinfo?.[0]?.extmetadata || {};
   return [
     page.title?.replace(/^File:/, ""),
     page.caption,
     meta.ImageDescription?.value,
     meta.ObjectName?.value,
-    meta.Categories?.value,
-    ...(page.categories || []).map((category) =>
+    ...(includeCategories ? [meta.Categories?.value] : []),
+    ...(includeCategories ? page.categories || [] : []).map((category) =>
       category.title.replace(/^Category:/, ""),
     ),
   ]
@@ -725,7 +725,7 @@ function areaMatch(area: string | undefined, text: string): boolean {
         // Numeric inventory labels are not geographic evidence (e.g. a tram's fleet number).
         const geographicText = normalize(field).replace(
           new RegExp(
-            `(^| )${normalized} (?:number|numbers|no|id|serial)(?= |$)`,
+            `(^| )${normalized} (?:number|numbers|no|id|serial|road|street|lane|avenue|drive|crescent|close|way|terrace|boulevard)(?= |$)`,
             "g",
           ),
           " ",
@@ -925,7 +925,10 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
           continue;
         }
         const text = subjectText(page);
-        const name = nameEvidence(query, text);
+        // Without nearby GPS, a generic category alone cannot identify a venue branch.
+        const name =
+          nameEvidence(query, subjectText(page, false)) ||
+          (near ? nameEvidence(query, text) : undefined);
         const area = areaMatch(query.area, text);
         const depicts =
           query.wikidata && page.depicts?.includes(query.wikidata);
