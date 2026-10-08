@@ -96,7 +96,11 @@ export function parsePhotoQuery(params: URLSearchParams): PhotoQuery | null {
     "website",
   ] as const) {
     const value = params.get(key)?.trim();
-    if (value && (value.length > 500 || /[\x00-\x1f]/.test(value))) return null;
+    const maxLength = ["osmImage", "commons", "website"].includes(key)
+      ? 2048
+      : 500;
+    if (value && (value.length > maxLength || /[\x00-\x1f]/.test(value)))
+      return null;
     if (value) optional[key] = value;
   }
   const aliasValues = params.getAll("aliases");
@@ -111,7 +115,7 @@ export function parsePhotoQuery(params: URLSearchParams): PhotoQuery | null {
       aliases.some(
         (alias) =>
           typeof alias !== "string" ||
-          alias.length > 160 ||
+          alias.length > 200 ||
           /[\x00-\x1f]/.test(alias),
       )
     )
@@ -324,7 +328,7 @@ function claimValues(entity: Entity | undefined, property: string): unknown[] {
 }
 /** Only Commons file/category references are dereferenced; external OSM image URLs have no verified license. */
 function commonsReference(value: string | undefined): string | null {
-  if (!value || value.length > 500) return null;
+  if (!value || value.length > 2048) return null;
   let reference = value.trim();
   if (/^https?:\/\//i.test(reference)) {
     try {
@@ -432,6 +436,26 @@ function photoQuality(photo: PlacePhoto): number {
   const landscape =
     ratio >= 1.15 && ratio <= 2.3 ? 0.09 : ratio >= 0.9 ? 0.04 : 0;
   return resolution + landscape;
+}
+
+function preferredLandscape(photo: PlacePhoto): boolean {
+  const width = photo.width || 0;
+  const height = photo.height || 0;
+  const ratio = width / height;
+  return width >= 1200 && height >= 600 && ratio >= 1.15 && ratio <= 2.3;
+}
+function photoScore(photo: PlacePhoto): number {
+  // Every contender has already passed the subject-evidence threshold. Crop and
+  // resolution choose among these verified photos, with confidence as a tie-break.
+  return photoQuality(photo) + (photo.confidence || 0) * 0.1;
+}
+function betterPhoto(
+  current: PlacePhoto | null,
+  candidate: PlacePhoto | null,
+): PlacePhoto | null {
+  if (!candidate) return current;
+  if (!current || photoScore(candidate) > photoScore(current)) return candidate;
+  return current;
 }
 
 async function resolve(query: PhotoQuery): Promise<PhotoResult> {
@@ -542,7 +566,7 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
       photo.confidence = confidence;
       photo.strategy = candidate.strategy;
       photo.matched = [...new Set(matched)];
-      photos.push({ photo, score: confidence + photoQuality(photo) });
+      photos.push({ photo, score: photoScore(photo) });
     }
     photos.sort(
       (a, b) =>
@@ -550,7 +574,13 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
     );
     return photos[0]?.photo || null;
   };
-  const finish = (image: PlacePhoto | null): PhotoResult => {
+  let fallback: PlacePhoto | null = null;
+  const consider = (photo: PlacePhoto | null): PlacePhoto | null => {
+    fallback = betterPhoto(fallback, photo);
+    return fallback && preferredLandscape(fallback) ? fallback : null;
+  };
+  const finish = (selected: PlacePhoto | null): PhotoResult => {
+    const image = selected || fallback;
     diagnostics.strategy = image?.strategy || null;
     diagnostics.elapsedMs = Date.now() - started;
     return {
@@ -614,7 +644,7 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
     };
     const candidates = await members(title);
     const direct = evaluate(candidates);
-    if (direct) return direct;
+    if (direct && preferredLandscape(direct)) return direct;
     // One bounded subcategory level recovers exterior/interior galleries without crawling Commons.
     const subcategories = await request(
       "commons.wikimedia.org",
@@ -642,7 +672,7 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
       )
         subcategoryCandidates.push(...(await members(page.title)));
     }
-    return evaluate(subcategoryCandidates);
+    return betterPhoto(direct, evaluate(subcategoryCandidates));
   };
   for (const [value, fileStrategy, categoryStrategy] of [
     [query.osmImage, "osm-image", "osm-image-category"],
@@ -657,7 +687,8 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
     const image = /^Category:/i.test(ref)
       ? await category(ref, categoryStrategy!, true)
       : await files([ref], fileStrategy!);
-    if (image) return finish(image);
+    const ready = consider(image);
+    if (ready) return finish(ready);
   }
   let wikipedia = query.wikipedia;
   if (query.wikidata && /^Q[1-9]\d{0,11}$/.test(query.wikidata)) {
@@ -719,7 +750,8 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
           "wikidata-p18",
           evidence,
         );
-        if (image) return finish(image);
+        const ready = consider(image);
+        if (ready) return finish(ready);
       }
       const categories = claimValues(entity, "P373").filter(
         (title): title is string => typeof title === "string",
@@ -731,7 +763,8 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
           true,
           evidence,
         );
-        if (image) return finish(image);
+        const ready = consider(image);
+        if (ready) return finish(ready);
       }
       wikipedia ||= entity?.sitelinks?.enwiki?.title
         ? `en:${entity.sitelinks.enwiki.title}`
@@ -771,7 +804,8 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
         "declared-article",
         ...(near ? ["article-coordinate"] : []),
       ]);
-      if (image) return finish(image);
+      const ready = consider(image);
+      if (ready) return finish(ready);
     } else if (page?.pageimage)
       rejected(
         points.length && !near
@@ -825,7 +859,8 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
     const image = evaluate(
       pages.map((page) => ({ page, strategy: "commons-search" })),
     );
-    if (image) return finish(image);
+    const ready = consider(image);
+    if (ready) return finish(ready);
   }
   const geo = await request(
     "commons.wikimedia.org",
@@ -876,7 +911,8 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
   const geoImage = evaluate(
     geoPages.map((page) => ({ page, strategy: "commons-geo" })),
   );
-  if (geoImage) return finish(geoImage);
+  const geoReady = consider(geoImage);
+  if (geoReady) return finish(geoReady);
   for (const page of geoPages)
     for (const item of page.categories || [])
       if (
@@ -894,7 +930,8 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
       "verified",
       evidence,
     );
-    if (image) return finish(image);
+    const ready = consider(image);
+    if (ready) return finish(ready);
   }
   return finish(null);
 }

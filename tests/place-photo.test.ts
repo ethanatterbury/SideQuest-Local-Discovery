@@ -818,3 +818,281 @@ it("quality ranking prefers a large landscape over the first small matched searc
     image: { source: "https://commons.wikimedia.org/wiki/File:Large.jpg" },
   });
 });
+
+it("accepts imported media and alias boundary lengths while rejecting oversized fields", () => {
+  const params = new URLSearchParams({
+    name: query.name,
+    lat: String(query.lat),
+    lng: String(query.lng),
+    osmImage:
+      "https://upload.wikimedia.org/wikipedia/commons/a/ab/Riverside.jpg?tracking=".padEnd(
+        2048,
+        "a",
+      ),
+    commons: "File:" + "c".repeat(2043),
+    website: "https://example.org/".padEnd(2048, "w"),
+    aliases: JSON.stringify(["a".repeat(200)]),
+  });
+  expect(parsePhotoQuery(params)).toMatchObject({
+    osmImage: params.get("osmImage"),
+    commons: params.get("commons"),
+    website: params.get("website"),
+    aliases: ["a".repeat(200)],
+  });
+  for (const field of ["osmImage", "commons", "website"] as const) {
+    const oversized = new URLSearchParams(params);
+    oversized.set(field, oversized.get(field)! + "x");
+    expect(parsePhotoQuery(oversized)).toBeNull();
+  }
+  const oversizedAlias = new URLSearchParams(params);
+  oversizedAlias.set("aliases", JSON.stringify(["a".repeat(201)]));
+  expect(parsePhotoQuery(oversizedAlias)).toBeNull();
+  const oversizedArea = new URLSearchParams(params);
+  oversizedArea.set("area", "x".repeat(501));
+  expect(parsePhotoQuery(oversizedArea)).toBeNull();
+});
+it("extracts a declared Commons file from a normalized long media URL", async () => {
+  mockPipeline(() => ({ query: { pages: [photoPage("Riverside.jpg")] } }));
+  expect(
+    await lookupPlacePhoto(
+      {
+        ...query,
+        osmImage:
+          "https://upload.wikimedia.org/wikipedia/commons/a/ab/Riverside.jpg?tracking=".padEnd(
+            2048,
+            "a",
+          ),
+      },
+      { refresh: true, debug: true },
+    ),
+  ).toMatchObject({
+    image: {
+      strategy: "osm-image",
+      matched: expect.arrayContaining(["declared-file"]),
+    },
+  });
+});
+
+function qualityEntity(file: string, commonsCategory?: string) {
+  return {
+    labels: { en: { value: query.name } },
+    claims: {
+      P625: [
+        {
+          mainsnak: {
+            datavalue: {
+              value: {
+                latitude: query.lat,
+                longitude: query.lng,
+                globe: "http://www.wikidata.org/entity/Q2",
+              },
+            },
+          },
+        },
+      ],
+      P18: [{ mainsnak: { datavalue: { value: file } } }],
+      ...(commonsCategory
+        ? { P373: [{ mainsnak: { datavalue: { value: commonsCategory } } }] }
+        : {}),
+    },
+  };
+}
+it("keeps a low-resolution P18 fallback while preferring a large P373 landscape", async () => {
+  mockPipeline((url) => {
+    if (url.hostname === "www.wikidata.org")
+      return {
+        entities: { Q780: qualityEntity("Small.jpg", "Riverside Museum") },
+      };
+    const pages =
+      url.searchParams.get("titles") === "File:Small.jpg"
+        ? [
+            photoPage("Small.jpg", {
+              imageinfo: [
+                {
+                  ...info,
+                  width: 640,
+                  height: 480,
+                  descriptionurl:
+                    "https://commons.wikimedia.org/wiki/File:Small.jpg",
+                },
+              ],
+            }),
+          ]
+        : url.searchParams.get("generator") === "categorymembers"
+          ? [
+              photoPage("Large.jpg", {
+                imageinfo: [
+                  {
+                    ...info,
+                    width: 3200,
+                    height: 1800,
+                    descriptionurl:
+                      "https://commons.wikimedia.org/wiki/File:Large.jpg",
+                  },
+                ],
+              }),
+            ]
+          : [];
+    return { query: { pages } };
+  });
+  expect(
+    await lookupPlacePhoto(
+      { ...query, wikidata: "Q780" },
+      { refresh: true, debug: true },
+    ),
+  ).toMatchObject({
+    image: {
+      source: "https://commons.wikimedia.org/wiki/File:Large.jpg",
+      strategy: "wikidata-p373",
+      width: 3200,
+    },
+    diagnostics: {
+      sourcesAttempted: expect.arrayContaining([
+        "wikidata-p18",
+        "wikidata-p373",
+      ]),
+    },
+  });
+});
+it("prefers a verified large search landscape over a declared portrait P18", async () => {
+  mockPipeline((url) => {
+    if (url.hostname === "www.wikidata.org")
+      return { entities: { Q781: qualityEntity("Portrait.jpg") } };
+    return {
+      query: {
+        pages:
+          url.searchParams.get("titles") === "File:Portrait.jpg"
+            ? [
+                photoPage("Portrait.jpg", {
+                  imageinfo: [
+                    {
+                      ...info,
+                      width: 1200,
+                      height: 2000,
+                      descriptionurl:
+                        "https://commons.wikimedia.org/wiki/File:Portrait.jpg",
+                    },
+                  ],
+                }),
+              ]
+            : url.searchParams.get("generator") === "search"
+              ? [
+                  photoPage("Riverside Museum Glasgow landscape.jpg", {
+                    coordinates: [{ lat: query.lat, lon: query.lng }],
+                    imageinfo: [
+                      {
+                        ...info,
+                        width: 1500,
+                        height: 900,
+                        descriptionurl:
+                          "https://commons.wikimedia.org/wiki/File:Landscape.jpg",
+                      },
+                    ],
+                  }),
+                ]
+              : [],
+      },
+    };
+  });
+  expect(
+    await lookupPlacePhoto(
+      { ...query, wikidata: "Q781", area: "Glasgow" },
+      { refresh: true, debug: true },
+    ),
+  ).toMatchObject({
+    image: {
+      source: "https://commons.wikimedia.org/wiki/File:Landscape.jpg",
+      strategy: "commons-search",
+      width: 1500,
+    },
+  });
+});
+it("preserves a legitimate small declared photo when subsequent Wikimedia sources fail", async () => {
+  mockPipeline((url) => {
+    if (url.hostname === "www.wikidata.org")
+      return {
+        entities: { Q782: qualityEntity("Only.jpg", "Riverside Museum") },
+      };
+    if (url.searchParams.get("titles") === "File:Only.jpg")
+      return {
+        query: {
+          pages: [
+            photoPage("Only.jpg", {
+              imageinfo: [{ ...info, width: 640, height: 480 }],
+            }),
+          ],
+        },
+      };
+    return { error: { code: "maxlag" } };
+  });
+  expect(
+    await lookupPlacePhoto(
+      { ...query, wikidata: "Q782" },
+      { refresh: true, debug: true },
+    ),
+  ).toMatchObject({
+    image: { strategy: "wikidata-p18", width: 640 },
+    source: "live",
+    diagnostics: {
+      sourcesAttempted: expect.arrayContaining([
+        "wikidata-p373",
+        "commons-search",
+      ]),
+      rejected: { "upstream-error": expect.any(Number) },
+    },
+  });
+});
+it("looks through named category subgalleries when direct members are only portraits", async () => {
+  mockPipeline((url) => {
+    if (url.searchParams.get("gcmtype") === "subcat")
+      return {
+        query: { pages: [{ title: "Category:Riverside Museum exterior" }] },
+      };
+    return {
+      query: {
+        pages:
+          url.searchParams.get("gcmtitle") === "Category:Riverside Museum"
+            ? [
+                photoPage("Portrait.jpg", {
+                  imageinfo: [
+                    {
+                      ...info,
+                      width: 480,
+                      height: 640,
+                      descriptionurl:
+                        "https://commons.wikimedia.org/wiki/File:Portrait.jpg",
+                    },
+                  ],
+                }),
+              ]
+            : url.searchParams.get("gcmtitle") ===
+                "Category:Riverside Museum exterior"
+              ? [
+                  photoPage("Exterior.jpg", {
+                    imageinfo: [
+                      {
+                        ...info,
+                        width: 4800,
+                        height: 2700,
+                        descriptionurl:
+                          "https://commons.wikimedia.org/wiki/File:Exterior.jpg",
+                      },
+                    ],
+                  }),
+                ]
+              : [],
+      },
+    };
+  });
+  expect(
+    await lookupPlacePhoto(
+      { ...query, commons: "Category:Riverside Museum" },
+      { refresh: true, debug: true },
+    ),
+  ).toMatchObject({
+    image: {
+      source: "https://commons.wikimedia.org/wiki/File:Exterior.jpg",
+      width: 4800,
+    },
+  });
+});
