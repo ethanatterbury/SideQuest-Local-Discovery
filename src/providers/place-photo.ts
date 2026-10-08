@@ -184,7 +184,11 @@ export function licensedPhoto(info: ImageInfo): PlacePhoto | null {
     (info.width || 0) <= (info.height || 0)
   )
     return null;
-  return { url: url!, credit, license, source: info.descriptionurl! };
+  // Commons may append campaign parameters; image identity is entirely in its path.
+  const imageUrl = new URL(url!);
+  imageUrl.search = "";
+  imageUrl.hash = "";
+  return { url: imageUrl.href, credit, license, source: info.descriptionurl! };
 }
 async function api(
   host: string,

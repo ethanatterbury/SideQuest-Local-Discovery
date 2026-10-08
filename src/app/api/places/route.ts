@@ -1,4 +1,5 @@
 import { getNearbyPlaces } from "@/providers/nearby-places";
+import { after } from "next/server";
 export const maxDuration = 25;
 export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
@@ -23,7 +24,12 @@ export async function GET(request: Request) {
       { error: "Invalid coordinates or radius." },
       { status: 400 },
     );
-  return Response.json(await getNearbyPlaces(coords, radiusKm), {
+  const result = await getNearbyPlaces(coords, radiusKm);
+  if (result.source === "cached" && result.message?.includes("area snapshot"))
+    after(async () => {
+      await getNearbyPlaces(coords, radiusKm, false);
+    });
+  return Response.json(result, {
     headers: { "Cache-Control": "private, max-age=60" },
   });
 }

@@ -1,5 +1,6 @@
 import type { Coordinates, Place } from "@/domain/models";
 import { PLACES } from "@/providers/places";
+import regionalSnapshot from "./data/regional-osm.json";
 
 export type NearbyResult = {
   places: Place[];
@@ -15,8 +16,8 @@ type Element = {
   tags?: Record<string, unknown>;
 };
 const endpoints = [
-  "https://overpass-api.de/api/interpreter",
-  "https://overpass.kumi.systems/api/interpreter",
+  "https://overpass.private.coffee/api/interpreter",
+  "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
 ];
 const cache = new Map<
   string,
@@ -311,12 +312,20 @@ export function selectNearbyPlaces(
       distanceKm(coords, a.coordinates) - distanceKm(coords, b.coordinates),
   );
 }
+const snapshotPlaces = normalizeOsmResponse(regionalSnapshot);
+const snapshotById = new Map(snapshotPlaces.map((place) => [place.id, place]));
+const snapshotMessage = `OpenStreetMap area snapshot · imported ${regionalSnapshot.generatedAt.slice(0, 10)} · check venue details before going.`;
 async function queryOverpass(query: string): Promise<Place[]> {
   for (const endpoint of endpoints) {
     try {
       const response = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "application/json",
+          "User-Agent":
+            "SideQuest/1.0 (https://sidequest-local-discovery.vercel.app)",
+        },
         body: new URLSearchParams({ data: query }),
         signal: AbortSignal.timeout(10500),
         cache: "no-store",
@@ -338,6 +347,7 @@ function remember(places: Place[]) {
 export async function getNearbyPlaces(
   coords: Coordinates,
   radiusKm = 25,
+  preferSnapshot = true,
 ): Promise<NearbyResult> {
   if (!validCoordinates(coords) || !Number.isFinite(radiusKm))
     throw new Error("Invalid location or radius");
@@ -358,10 +368,18 @@ export async function getNearbyPlaces(
       source: entry.failed ? "fallback" : "cached",
       ...(entry.failed
         ? {
-            message:
-              "Live discovery is unavailable. Showing curated places where available.",
+            message: entry.places.some((place) => snapshotById.has(place.id))
+              ? snapshotMessage + " Live discovery is temporarily unavailable."
+              : "Live discovery is unavailable. Showing curated places where available.",
           }
         : {}),
+    };
+  const areaSnapshot = within(snapshotPlaces);
+  if (preferSnapshot && areaSnapshot.length)
+    return {
+      places: within([...PLACES, ...areaSnapshot]),
+      source: "cached",
+      message: snapshotMessage,
     };
   try {
     let request = pending.get(key);
@@ -378,7 +396,12 @@ export async function getNearbyPlaces(
       request = queryOverpass(query);
       pending.set(key, request);
     }
-    const places = await request;
+    const livePlaces = await request;
+    const places = [
+      ...new Map(
+        [...areaSnapshot, ...livePlaces].map((place) => [place.id, place]),
+      ).values(),
+    ];
     remember(places);
     cache.set(key, { places, at: Date.now() });
     if (cache.size > 64) cache.delete(cache.keys().next().value!);
@@ -393,14 +416,15 @@ export async function getNearbyPlaces(
           "Live discovery is unavailable. Showing previously fetched places.",
       };
     }
-    const places = within(PLACES);
+    const places = within([...PLACES, ...areaSnapshot]);
     cache.set(key, { places, at: Date.now(), failed: true });
     if (cache.size > 64) cache.delete(cache.keys().next().value!);
     return {
       places,
       source: "fallback",
-      message:
-        "Live discovery is temporarily unavailable. Try again shortly; curated places are shown where available.",
+      message: areaSnapshot.length
+        ? snapshotMessage + " Live discovery is temporarily unavailable."
+        : "Live discovery is temporarily unavailable. Try again shortly; curated places are shown where available.",
     };
   } finally {
     pending.delete(key);
@@ -410,6 +434,7 @@ export async function getLivePlace(id: string): Promise<Place | null> {
   const match = /^osm-(node|way|relation)-([1-9]\d{0,15})$/.exec(id);
   if (!match || !Number.isSafeInteger(Number(match[2]))) return null;
   if (details.has(id)) return details.get(id)!;
+  if (snapshotById.has(id)) return snapshotById.get(id)!;
   const key = `detail:${id}`;
   try {
     let request = pending.get(key);

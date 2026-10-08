@@ -40,11 +40,18 @@ export default function About() {
       <h2>The first patch of the world.</h2>
       <p>
         Our curated launch places are in Surrey, Berkshire and Hampshire. You
-        can start elsewhere, but we won’t invent local coverage. Place
-        descriptions are SideQuest editorial copy, with links to the official
-        sources. Photographs come from Wikimedia Commons under their stated
-        licences, with credits on place pages. Other places use intentional
-        typographic artwork.
+        can start elsewhere and fetch nearby places from OpenStreetMap. An
+        automatically imported regional snapshot keeps thousands of named venues
+        available when live discovery is busy. Map and place data are ©{" "}
+        <a href="https://www.openstreetmap.org/copyright">
+          OpenStreetMap contributors
+        </a>
+        , available under the Open Database Licence; regional extracts are
+        distributed by <a href="https://download.geofabrik.de/">Geofabrik</a>.
+        Age limits and facilities need checking with the venue. Photographs are
+        found automatically on Wikimedia Commons, with author and licence
+        credits on place pages. A placeholder remains when a matching licensed
+        photo is unavailable.
       </p>
       <h2>A little app in your pocket.</h2>
       <p>

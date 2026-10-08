@@ -42,6 +42,9 @@ export function PlaceImage({
 }) {
   const { places, rememberPhoto } = useApp();
   const image = places.find((p) => p.id === place.id)?.image || place.image;
+  const imageSource = image?.url.startsWith("https://upload.wikimedia.org/")
+    ? image.url.split(/[?#]/)[0]
+    : image?.url;
   const container = useRef<HTMLDivElement>(null);
   const [looking, setLooking] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -86,7 +89,7 @@ export function PlaceImage({
     >
       {image && !failed ? (
         <Image
-          src={image.url}
+          src={imageSource!}
           unoptimized={!image.url.startsWith("https://upload.wikimedia.org/")}
           sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 800px"
           alt={place.name}

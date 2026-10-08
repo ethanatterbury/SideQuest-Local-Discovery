@@ -152,6 +152,34 @@ describe("OSM place normalization", () => {
   });
 });
 describe("nearby discovery", () => {
+  it("serves hundreds of real regional venues without waiting for a public mirror", async () => {
+    const fetcher = vi.fn();
+    vi.stubGlobal("fetch", fetcher);
+    const result = await getNearbyPlaces({ lat: 51.347, lng: -0.8 }, 18);
+    expect(result.source).toBe("cached");
+    expect(result.places).toHaveLength(300);
+    expect(result.message).toContain("area snapshot");
+    expect(result.places.some((p) => p.category === "Indoor soft play")).toBe(
+      true,
+    );
+    const imported = result.places.find((p) => p.id.startsWith("osm-"))!;
+    expect(await getLivePlace(imported.id)).toEqual(imported);
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+  it("retains regional coverage when a background live refresh fails", async () => {
+    const fetcher = vi.fn().mockRejectedValue(new Error("offline"));
+    vi.stubGlobal("fetch", fetcher);
+    const result = await getNearbyPlaces(
+      { lat: 51.236, lng: -0.57 },
+      10,
+      false,
+    );
+    expect(result.source).toBe("fallback");
+    expect(result.places.length).toBeGreaterThan(100);
+    expect(result.message).toContain("area snapshot");
+    expect(result.message).toContain("temporarily unavailable");
+    expect(fetcher).toHaveBeenCalledTimes(2);
+  });
   it("validates query coordinates without calling the public service", async () => {
     const fetcher = vi.fn();
     vi.stubGlobal("fetch", fetcher);

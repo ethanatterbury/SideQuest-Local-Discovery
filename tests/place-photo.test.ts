@@ -96,6 +96,16 @@ it("requires authentic Commons URLs, landscape photos, credit and a reusable lic
     "Alice & Bob",
   );
 });
+it("normalizes Commons tracking parameters for the restricted image optimizer", () => {
+  expect(
+    licensedPhoto({
+      ...info,
+      thumburl:
+        info.thumburl +
+        "?utm_source=commons.wikimedia.org&utm_campaign=imageinfo#photo",
+    })?.url,
+  ).toBe(info.thumburl);
+});
 it("does not accept a named Commons photo without matching subject coordinates", async () => {
   vi.stubGlobal(
     "fetch",
