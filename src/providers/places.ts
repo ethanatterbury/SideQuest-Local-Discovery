@@ -163,7 +163,7 @@ const seeds: Seed[] = [
     "Free entry · parking extra",
     0.6,
     true,
-    "https://www.dinton-pastures.co.uk/",
+    "https://www.wokinghamcountryside.co.uk/dinton-pastures-country-park",
     "Lakeside paths and a change of pace just outside Wokingham.",
   ],
   [
@@ -529,9 +529,9 @@ const seeds: Seed[] = [
   [
     "escape-reading",
     "Escape Reading",
-    "Reading, Berkshire",
-    51.456,
-    -0.974,
+    "Queens Walk, Reading",
+    51.4545707,
+    -0.9772849,
     "Escape rooms",
     "indoor",
     ["unusual", "active", "date"],

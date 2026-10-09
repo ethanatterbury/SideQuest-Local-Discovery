@@ -29,6 +29,15 @@ const cache = new Map<
 >();
 const pending = new Map<string, Promise<Place[]>>();
 const details = new Map<string, Place>();
+// OSM currently calls this flying-theatre ride a cinema. Keep official evidence
+// separate from upstream tags and never turn a height rule into an age range.
+const verifiedRideSources: Record<string, { url: string; checkedAt: string }> =
+  {
+    "osm-way-914244345": {
+      url: "https://www.legoland.co.uk/explore/theme-park/rides-attractions/flight-of-the-sky-lion/",
+      checkedAt: "2026-10-09",
+    },
+  };
 export function validCoordinates(coords: Coordinates): boolean {
   return (
     Number.isFinite(coords.lat) &&
@@ -141,6 +150,22 @@ function osmAliases(
   }
   return aliases.length ? aliases : undefined;
 }
+
+/** Specific mapped rides override broad venue tags such as cinema or aquarium. */
+function isAmusementRide(tags: Record<string, unknown>): boolean {
+  const mapped = (key: string) => {
+    const value = clean(tags[key]).toLowerCase();
+    return !!value && !["no", "false", "0"].includes(value);
+  };
+  return (
+    clean(tags.leisure) === "amusement_ride" ||
+    mapped("amusement_ride") ||
+    mapped("roller_coaster") ||
+    /^(amusement_ride|roller_coaster|carousel|big_wheel|ferris_wheel|pirate_ship|free_fall|drop_tower|simulator|motion_simulator|flying_theatre|flying_theater|dark_ride|water_ride|water_slide|log_flume|river_rafting|kiddie_ride|swing_carousel|bumper_car|bumper_cars)$/.test(
+      clean(tags.attraction).toLowerCase(),
+    )
+  );
+}
 export function normalizeOsmElement(value: unknown): Place | null {
   if (!value || typeof value !== "object") return null;
   const e = value as Element;
@@ -174,11 +199,21 @@ export function normalizeOsmElement(value: unknown): Place | null {
     leisure === "soft_play" ||
     t["playground:indoor"] === "yes" ||
     t["playground:soft_play"] === "yes";
+  const verifiedRide = verifiedRideSources[`osm-${e.type}-${e.id}`];
   let category = "Local attraction",
     environment: Place["environment"] = "mixed",
     intents: Place["intents"] = ["unusual"],
     duration: Place["duration"] = [45, 90];
-  if (soft) {
+  if (verifiedRide || isAmusementRide(t)) {
+    category = "Amusement ride";
+    environment =
+      t.indoor === "yes" || amenity === "cinema"
+        ? "indoor"
+        : t.indoor === "no"
+          ? "outdoor"
+          : "mixed";
+    intents = ["active", "unusual"];
+  } else if (soft) {
     category = "Indoor soft play";
     environment = "indoor";
     intents = ["kids", "active"];
@@ -277,6 +312,10 @@ export function normalizeOsmElement(value: unknown): Place | null {
     "Place information: © OpenStreetMap contributors (ODbL). Check venue details before leaving.",
     "Visit duration is a SideQuest estimate. Admission and availability have not been verified.",
   ];
+  if (verifiedRide)
+    notes.push(
+      `Ride classification verified against official venue information on ${verifiedRide.checkedAt}: ${verifiedRide.url}. The venue reports minimum height and accompaniment requirements; no minimum child age is inferred from height.`,
+    );
   if (ageRange) {
     notes.push(
       `Age limits reported by OpenStreetMap: ${min !== undefined ? `minimum ${min}` : "minimum unknown"}, ${max !== undefined ? `maximum ${max}` : "maximum unknown"}. Missing bounds in filters do not establish eligibility; confirm venue rules.`,
@@ -289,7 +328,9 @@ export function normalizeOsmElement(value: unknown): Place | null {
     );
   const description =
     clean(t.description) ||
-    `${category} mapped by OpenStreetMap contributors. Check access, opening times and booking requirements with the venue.`;
+    (verifiedRide
+      ? "A flying theatre ride, classified using the official venue information. Check height, accompaniment, access and booking requirements with the venue."
+      : `${category} mapped by OpenStreetMap contributors. Check access, opening times and booking requirements with the venue.`);
   const place: Place = {
     id: `osm-${e.type}-${e.id}`,
     name,
@@ -319,7 +360,10 @@ export function normalizeOsmElement(value: unknown): Place | null {
     daylightOnly:
       environment === "outdoor" && t.lit !== "yes" && hours !== "24/7",
     website:
-      safeWebsite(t.website) || safeWebsite(t["contact:website"]) || source,
+      safeWebsite(t.website) ||
+      safeWebsite(t["contact:website"]) ||
+      verifiedRide?.url ||
+      source,
     source,
     tagline: `${category} near you`,
     description,
@@ -332,7 +376,10 @@ export function normalizeOsmElement(value: unknown): Place | null {
     commons: commonsReference(t.wikimedia_commons),
     aliases: osmAliases(t, name),
   };
-  place.suitability = { ...inferVenueSuitability(place), source: "osm" };
+  place.suitability = {
+    ...inferVenueSuitability(place),
+    source: verifiedRide ? "official" : "osm",
+  };
   place.company = effectiveCompany(place);
   if (place.suitability.requiresAgeCheck)
     place.notes.push(

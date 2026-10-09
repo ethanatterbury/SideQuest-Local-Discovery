@@ -1,0 +1,28 @@
+{
+  "savedAt": "2026-10-09T12:57:34.146557+00:00",
+  "status": "paused-at-user-request",
+  "catalogueVenues": 7212,
+  "preparedVenuePhotoRecords": 308,
+  "curatedVenuesWithPhotos": 30,
+  "mapsImport": {
+    "totalVenues": 7212,
+    "processedUniqueVenues": 576,
+    "nextIndex": 576,
+    "evidenceRecords": 594,
+    "acceptedCandidates": 277,
+    "storedPhotographs": 253,
+    "archives": 12,
+    "archiveBytes": 33678142,
+    "pausedReason": "User requested wrap-up; no new searches or downloads",
+    "completedAssetBatch": "010"
+  },
+  "remaining": "Full regional photo coverage is unfinished. No new searches/downloads continue after wrap-up.",
+  "localResumeFiles": [
+    "work/bulk-map-state.json",
+    "work/bulk-map-queries-all.json",
+    "work/bulk-map-media.json",
+    "work/bulk-map-candidates.json",
+    "work/bulk-map-runtime.js"
+  ],
+  "nextStep": "Resume unprocessed public venue evidence from nextIndex; import remaining accepted candidates only after fresh user authorization to continue."
+}

@@ -29,15 +29,37 @@ try {
   await page.waitForFunction(() => !!navigator.serviceWorker.controller, null, {
     timeout: 30000,
   });
+  await page.goto(`${base}/place/escape-reading`);
+  await page
+    .getByRole("button", { name: "Save for later", exact: true })
+    .click();
   await page.goto(`${base}/saved`);
   await expect(
     page.getByRole("link", { name: /Virginia Water/ }).first(),
   ).toBeVisible();
+  const preparedPhoto = page.locator('img[alt="Escape Reading"]');
+  await expect(preparedPhoto).toBeVisible();
+  await expect
+    .poll(() => preparedPhoto.evaluate((image) => image.naturalWidth))
+    .toBeGreaterThan(0);
+  const photoUrl = await preparedPhoto.getAttribute("src");
+  expect(photoUrl).toContain("/venue-images/");
+  await page.waitForFunction(
+    async (src) => !!(await caches.match(src)),
+    photoUrl,
+  );
   await context.setOffline(true);
   await page.reload();
   await expect(
     page.getByRole("link", { name: /Virginia Water/ }).first(),
   ).toBeVisible();
+  await expect
+    .poll(() =>
+      page
+        .locator('img[alt="Escape Reading"]')
+        .evaluate((image) => image.naturalWidth),
+    )
+    .toBeGreaterThan(0);
   await page.goto(`${base}/history`);
   await expect(
     page.getByRole("heading", { name: /A little more of the world/ }),
@@ -48,7 +70,7 @@ try {
   ).toBeVisible();
   expect(errors).toEqual([]);
   console.log(
-    "PASS: production Lab hidden, install manifest valid, saved and history work offline, uncached navigation recovers.",
+    "PASS: production Lab hidden, install manifest valid, saved places and prepared photographs work offline, uncached navigation recovers.",
   );
 } finally {
   await browser.close();

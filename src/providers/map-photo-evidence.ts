@@ -29,6 +29,12 @@ export interface MapPhotoEvidenceResult {
   rejected: Record<string, number>;
   distanceMeters: number | null;
 }
+export interface MapPlaceIdentityResult {
+  matched: boolean;
+  source: string | null;
+  rejected: Record<string, number>;
+  distanceMeters: number | null;
+}
 type MapPhotoPlace =
   | PhotoQuery
   | {
@@ -220,12 +226,14 @@ function streetViewUrl(value: string): string | null {
   }
 }
 
-export function assessMapPhotoEvidence(
+/** Identity belongs to the place panel, even when the panel has no photograph. */
+export function assessMapPlaceIdentity(
   place: MapPhotoPlace,
   record: MapPhotoRecord,
-): MapPhotoEvidenceResult {
-  const result: MapPhotoEvidenceResult = {
-    candidates: [],
+): MapPlaceIdentityResult {
+  const result: MapPlaceIdentityResult = {
+    matched: false,
+    source: null,
     rejected: {},
     distanceMeters: null,
   };
@@ -233,11 +241,7 @@ export function assessMapPhotoEvidence(
     result.rejected[reason] = (result.rejected[reason] || 0) + 1;
     return result;
   };
-  if (
-    !record ||
-    typeof record.title !== "string" ||
-    !Array.isArray(record.images)
-  )
+  if (!record || typeof record.title !== "string")
     return reject("invalid-record");
   const coordinates = "coordinates" in place ? place.coordinates : place;
   if (
@@ -266,6 +270,60 @@ export function assessMapPhotoEvidence(
     /\b(?:park|gardens?|reserve|wood|forest|lake|lakes)\b/i.test(place.name);
   const radius = identity.generic ? 75 : nature ? 1000 : 300;
   if (result.distanceMeters > radius) return reject("venue-location-mismatch");
+  result.matched = true;
+  result.source = source.url;
+  return result;
+}
+
+/** A captured authority link is usable only after the containing venue is verified.
+ * Network callers must still use the official adapter's public DNS/redirect checks.
+ */
+export function verifiedMapWebsite(
+  place: MapPhotoPlace,
+  record: MapPhotoRecord,
+): string | null {
+  if (!assessMapPlaceIdentity(place, record).matched || !record.website)
+    return null;
+  try {
+    const url = new URL(record.website);
+    if (
+      !["http:", "https:"].includes(url.protocol) ||
+      url.username ||
+      url.password ||
+      url.port ||
+      !url.hostname.includes(".") ||
+      /^[\d.]+$/.test(url.hostname) ||
+      url.hostname.includes(":") ||
+      /\.(?:localhost|local|internal|test|invalid)$/.test(url.hostname) ||
+      /(?:^|\.)(?:google\.com|google\.co\.uk|googleusercontent\.com)$/.test(
+        url.hostname,
+      )
+    )
+      return null;
+    url.protocol = "https:";
+    url.hash = "";
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
+export function assessMapPhotoEvidence(
+  place: MapPhotoPlace,
+  record: MapPhotoRecord,
+): MapPhotoEvidenceResult {
+  const identity = assessMapPlaceIdentity(place, record);
+  const result: MapPhotoEvidenceResult = {
+    candidates: [],
+    rejected: { ...identity.rejected },
+    distanceMeters: identity.distanceMeters,
+  };
+  const reject = (reason: string) => {
+    result.rejected[reason] = (result.rejected[reason] || 0) + 1;
+    return result;
+  };
+  if (!identity.matched) return result;
+  if (!Array.isArray(record.images)) return reject("invalid-record");
   const seen = new Set<string>();
   for (const image of record.images.slice(0, 40)) {
     if (
@@ -302,7 +360,7 @@ export function assessMapPhotoEvidence(
     result.candidates.push({
       url,
       originalUrl,
-      source: source.url,
+      source: identity.source!,
       credit: contributorUrl
         ? "Google Maps contributors"
         : "Google Maps Street View",

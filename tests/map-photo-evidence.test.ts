@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   assessMapPhotoEvidence,
+  assessMapPlaceIdentity,
   canonicalMapPlace,
   getMapPhotoCandidates,
   normalizeMapPhotoUrl,
+  verifiedMapWebsite,
 } from "../src/providers/map-photo-evidence";
 import type { MapPhotoRecord } from "../src/providers/map-photo-evidence";
 
@@ -30,6 +32,66 @@ const record = (changes: Partial<MapPhotoRecord> = {}): MapPhotoRecord => ({
 });
 
 describe("public Maps place photo evidence", () => {
+  it("verifies an official authority link independently of Maps photo availability", () => {
+    const withoutPhotos = record({
+      images: [],
+      website: "https://thorpe-lakes.example/venue/",
+    });
+    expect(assessMapPlaceIdentity(query, withoutPhotos)).toMatchObject({
+      matched: true,
+      source: source().split("?")[0],
+    });
+    expect(getMapPhotoCandidates(query, withoutPhotos)).toEqual([]);
+    expect(verifiedMapWebsite(query, withoutPhotos)).toBe(
+      "https://thorpe-lakes.example/venue/",
+    );
+    expect(
+      verifiedMapWebsite(
+        query,
+        record({
+          images: [{ url: photo, alt: "Venue logo" }],
+          website: withoutPhotos.website,
+        }),
+      ),
+    ).toBe(withoutPhotos.website);
+  });
+  it("rejects website fallbacks from unchecked searches, mismatched names, and another branch", () => {
+    for (const changes of [
+      { url: "https://www.google.com/maps/search/Thorpe+Lakes" },
+      { title: "Thorpe Park" },
+      { url: source(51.42) },
+      { id: "other" },
+    ])
+      expect(
+        verifiedMapWebsite(
+          query,
+          record({ website: "https://thorpe-lakes.example/", ...changes }),
+        ),
+      ).toBeNull();
+  });
+  it("sanitizes panel website URLs before the transport performs public DNS verification", () => {
+    for (const website of [
+      "https://127.0.0.1/",
+      "https://2130706433/",
+      "https://[::1]/",
+      "https://private.local/",
+      "https://venue.example:8443/",
+      "https://user:pass@venue.example/",
+      "javascript:alert(1)",
+      "https://www.google.com/maps/place/Somewhere/",
+      "https://internal/",
+    ])
+      expect(
+        verifiedMapWebsite(query, record({ website })),
+        website,
+      ).toBeNull();
+    expect(
+      verifiedMapWebsite(
+        query,
+        record({ website: "http://venue.example/branch/#photos" }),
+      ),
+    ).toBe("https://venue.example/branch/");
+  });
   it("preserves the contributor's photo identity and source attribution", () => {
     expect(getMapPhotoCandidates(query, record())[0]).toMatchObject({
       url: photo.replace("=w408-h240-k-no", "=w1400-h1000-k-no"),

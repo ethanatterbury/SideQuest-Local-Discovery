@@ -463,3 +463,41 @@ it("a new company choice clears a stale romantic search as well as child searche
   expect(changed).toMatchObject({ company: "family", intent: "any", text: "" });
   expect(parseIntent(changed.text, changed).company).toBe("family");
 });
+
+it("excludes the officially identified flying-theatre ride for toddler outings while retaining genuine cinemas", () => {
+  const source = regionalSnapshot.elements.find(
+    (item) => item.type === "way" && item.id === 914244345,
+  )!;
+  const ride = {
+    ...normalizeOsmElement(source)!,
+    coordinates: env.location,
+  };
+  const cinema = normalizeOsmElement({
+    type: "node",
+    id: 987654321,
+    lat: env.location.lat,
+    lon: env.location.lng,
+    tags: { name: "Ordinary Cinema", amenity: "cinema" },
+  })!;
+  const venues = [ride, cinema];
+  expect(
+    rankPlaces(
+      venues,
+      { ...DEFAULT_QUERY, company: "family", childrenAges: [1, 2] },
+      env,
+      emptyState(),
+    ).map((result) => result.place.id),
+  ).toEqual([cinema.id]);
+  for (const company of ["solo", "couple"] as const) {
+    expect(
+      rankPlaces(venues, { ...DEFAULT_QUERY, company }, env, emptyState()).map(
+        (result) => result.place.id,
+      ),
+    ).toContain(ride.id);
+  }
+  expect(matchesActivity(ride, "gardens")).toBe(false);
+  expect(matchesActivity(ride, "cinema")).toBe(false);
+  expect(matchesActivity(cinema, "cinema")).toBe(true);
+  expect(ride.ageRange).toBeUndefined();
+  expect(isChildOuting(ride)).toBe(false);
+});

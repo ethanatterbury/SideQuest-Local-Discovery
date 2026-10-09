@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-09T08:07:10.899Z",
+  "generatedAt": "2026-10-09T12:55:25.243Z",
   "entries": [
     {
       "id": "osm-way-738010127",
@@ -4319,20 +4319,21 @@
       "name": "360 Play",
       "lat": 51.2930536,
       "lng": -0.7561961,
-      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9Q86QkXiOAHT2FXhlM0-ZNMS9tBZf0qo3fQC76C5wKACVc36SY010yVqCPsPONwqNslNaLz5G_cQgfvnFF_Wk986sClXLmBGqE-BcPLuoD7x8-nWh_ChPmg_Jid7tdaaKqFEqdl=w408-h544-k-no",
+      "originalUrl": "https://360play.co.uk/wp-content/uploads/2026/09/Fa-street-scene-1030x687.jpeg",
       "image": {
-        "url": "/venue-images/osm-node-13716728657-51ce0ef12166f2fc.webp",
-        "source": "https://www.google.com/maps/place/360+Play+Farnborough+-+Family+Entertainment+Centre+and+Party+Venue/@51.2930536,-0.7561961,16z/data=!4m6!3m5!1s0x48742b2dfe6af767:0x65bfddf174419690!8m2!3d51.2932642!4d-0.7560035!16s%2Fg%2F11gcqx501c",
-        "credit": "Google Maps contributors",
-        "license": "Google Maps contributors — rights reserved",
-        "strategy": "google-maps-place",
-        "width": 480,
-        "height": 640,
-        "blurDataURL": "data:image/webp;base64,UklGRoAAAABXRUJQVlA4IHQAAADQAwCdASoPABQAPxFysFAsJqSisAgBgCIJbACdMoACECVj+w135UAA/iXmoGm6hnLE+mLE3L+6CX5GKZQrxgWn2+4QlMGr+Jd794bJdgEmM8xsvWQubdlkKcsLvHthdhEnlHadDj1g8fRNBHZeyasKmAAAAA==",
+        "source": "https://360play.co.uk/360-play-farnborough/",
+        "credit": "360 Play Farnborough",
+        "license": "Venue website — rights reserved",
+        "strategy": "official-website",
+        "width": 1030,
+        "height": 687,
         "matched": [
-          "maps-place-title",
-          "maps-place-coordinates"
-        ]
+          "official-branch-page-title",
+          "official-branch-page-path",
+          "visually verified interior play area"
+        ],
+        "url": "/venue-images/osm-node-13716728657-8d49436ea544.webp",
+        "blurDataURL": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAADQAwCdASoUAA0APyV6tVGuJ6UisAgBwCSJbACdMoACgfdPCS9BRQAA/l9miLxBfiMZkUcmkhRV6Vj8RCmSzNZjw88IfQNql3wDRAVGu93lj1hTnfr7x41rKckkoUZcvkN3LxWehhwMsCZy2+bIH2dLq0+cJapwaaLu/Cpde5AAAA=="
       }
     },
     {
@@ -4560,6 +4561,2048 @@
         "width": 1280,
         "height": 960,
         "blurDataURL": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAAAQBACdASoUAA8APxFysFAsJqSisAgBgCIJbACdIHGJ/gF2U+TyTAjfAAD+ZU2k60Kuz+ZPdIlQVyu+W8uqb+fiJcAlMN7vO5c0a9jHFxP47u3aiTRGIxjHfM4sum0LB78lYOH0Xkm9WxBI513yIAHQxx+nApJxC+cBH8Bdg2j4N9A31BBDIoAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-56179952",
+      "name": "Bachelors Acre",
+      "lat": 51.4805463,
+      "lng": -0.6078366,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnqkSzaSD9PqnI9KJF1zBisSQPAOT-lWkMvAOz_uZSobl5hjQSkj9XH9aOm6Yzj4Zh06yvq_bfi6dDi-qp1bUi3PDQSBWtkn6gbokmbFAjLgtOclJa28vQ3QWZA9Y1awLe3TNYG=w408-h530-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-56179952-f66b4d899bcc9cb7.webp",
+        "source": "https://www.google.com/maps/place/Bachelors+Acre,+Windsor,+UK/@51.4805463,-0.6078366,16z/data=!4m6!3m5!1s0x48767afcb8a4c6c5:0x3b8627d8d12958fe!8m2!3d51.4809261!4d-0.6086266!16s%2Fg%2F1tdnwddf",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 769,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAABQAwCdASoPABQAPxFysFAsJqSisAgBgCIJZgC7ABZMvE/BAAD7V1E9v5iOsYPo+UQWE2nX4KfN0a30gHinyGXwAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-934485077",
+      "name": "The Jelly Lounge",
+      "lat": 51.4803443,
+      "lng": -0.6108663,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QXnHLXuSbGuJlHqBoySZ83xd-mLRr6FnGsiFn7WcW4GogVGjAbeO4bqFOo0Aj72IATQUuoz96zTdpC4iBZkFEaee3hd4pfaBM0JAtKgZJz_cjj2QigEVnDxYFm0R1gA_uDGu8j=w408-h402-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-934485077-e8d67d16dd4b6c2f.webp",
+        "source": "https://www.google.com/maps/place/Creche+at+Jelly+Lounge/data=!4m7!3m6!1s0x48767b3ee459587d:0xea08799f166afdec!8m2!3d51.4802672!4d-0.6108485!16s%2Fg%2F11fk0867rx!19sChIJfVhZ5D57dkgR7P1qFp95COo",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1015,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRrAAAABXRUJQVlA4IKQAAAAwBQCdASoUABQAPxF+tlWsJ6SjKAgBgCIJQBdgAkclAb1BPBbUWV4dffbsp4PgXN02AAD+sH+FopRiBG1KTO/J2sB8VO0FN2VGk2QfBFXllTQc5HDYy0IuKhJIt7lhPlQFp4G5vM5nPgoCO4alzcYmVPuUI4GKlNtnrGV+elW6IuayUYeSGAO5qNg/dZ1iPfn6iNMeOUDD9nl9YeBr5jwrHgAAAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-934485076",
+      "name": "The Little Gym",
+      "lat": 51.4802392,
+      "lng": -0.6108797,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmHP8Dch9dYirlefgm6ePbeaduHL_rHLUkF0eTGZEE5y2STq1MG6UQAZetE52Vmku-tbANRL-_exR6mbPDY6SVAkuOu3D5mgNhdnYt4bQFV6ruA6JTJLUMwHelPA_Fv42ad49ja=w408-h408-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-934485076-053662820b424c6f.webp",
+        "source": "https://www.google.com/maps/place/The+Little+Gym+of+Windsor/@51.4802392,-0.6108797,16z/data=!4m6!3m5!1s0x48767afd19fddb85:0xf890945fdc4017ba!8m2!3d51.480256!4d-0.6105131!16s%2Fg%2F11f2w5lsht",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1000,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRuIAAABXRUJQVlA4INYAAADwBgCdASoUABQAPxGAt1WsJ6UjKAgBgCIJbACdMoR5mOA158XfUttgPEa9ZCyeQFIeW9UIsI/c3z5/1pk3Un4AAPhNH5ATMpiNOBsrNqBVeGx0cQvCfgIK8x+mGMovVM99W3KPLnCMDM/wS3rN33AraG7niXf50/Rq/lQ61frFiuq7/KnSFEMDO5jb8RJ6aMsWxl/BFFyfGTmGO8f1kZbAUsYn+B1gOQ3odtvGYEAa5YshJK0pTuD1gikQayFa49Ii5HZoLLoCW/mjKjX/lBtkzlr9AAAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-12077619770",
+      "name": "Ancient Well",
+      "lat": 51.4811606,
+      "lng": -0.6057123,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9RRvPYjIWdO2p5NfUd8o4N2ES9v8QDiE-0zf-vKd3oQ7lV39gDq829OVgDNkqorsaWwmt34RZuVEiIO5UyVQvJZe6W7Ne4IlpFzNHQZNoADbmRJSn4icBGi6wfoYdafsK9ql6ir=w408-h544-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-12077619770-f2189762d825a648.webp",
+        "source": "https://www.google.com/maps/place/Ancient+Well/@51.4811606,-0.6057123,16z/data=!4m6!3m5!1s0x48767b82d4cf361d:0xd22bf8062c82ad43!8m2!3d51.4811158!4d-0.6057045!16s%2Fg%2F11h0cd0_df",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 750,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRoAAAABXRUJQVlA4IHQAAADwAwCdASoPABQAPxFysFAsJqSisAgBgCIJQBOmUABR6zOUtG0p2xSAAP6USbt5jIzVB9sW7Be+FxZEnjTw4mWrZZze+VrbA3KkLlNdOSzes436EcmhQdAEY7RRORbRcAmhZ3dJ7rUpAx2fWtGGAmtyggHAAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-1557427149",
+      "name": "Windsor & Eton Bowling Club",
+      "lat": 51.4844103,
+      "lng": -0.6099177,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkrYjDbnOB8u4XDK2_FVY21oDOURmCYWORPQxHGpflYEZamw74hnEG_CROnKuvLH3CS_yeuAgVJpW9NSZk0AWYUPWZz8Hcrq8T_hSwbVGzy9_9Fz4p0PC_YgajPfH5txFlTxlbz=w408-h482-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-1557427149-de1eac0b28f67ea0.webp",
+        "source": "https://www.google.com/maps/place/Windsor+%26+Eton+Bowling+Club/@51.4844103,-0.6099177,16z/data=!4m6!3m5!1s0x48767b1d811bce31:0xffc88214f4963f66!8m2!3d51.4845427!4d-0.6097484!16s%2Fg%2F1hc12vkk9",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 846,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAABQBACdASoRABQAPxF2sVIsJySiqA1RgCIJQBl6YAAWMrw2T9S+0NayS/4AAP6r3BibVoZULzcVFcwjCHUT3ZQRrai08t5fDqT0YCZi8P0aOAvTRP/GUcgtFXYUcMJHRhaIAJ08blGQHlwq1A5i889QAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-144166852",
+      "name": "Theatre Royal",
+      "lat": 51.4844827,
+      "lng": -0.607968,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlT9oiniE6IxB0jZxNz38tSKZV02ZVe_C6Vq8o_82ndTGHaxypqScquWwdUPYcpsVB-xyvH2g4vdniJJf1OPYvnYeoeVMxWKU9kziBcHq01h7NgdUBibAs5dmSiKkCaUBYJUr28=w408-h400-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-144166852-c829e3f56c383cba.webp",
+        "source": "https://www.google.com/maps/place/Theatre+Royal+Windsor/@51.4844827,-0.607968,16z/data=!4m6!3m5!1s0x48767ae379299747:0x9375d9eceb45adf9!8m2!3d51.484327!4d-0.607764!16s%2Fg%2F11bxf4wbb3",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1018,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRqYAAABXRUJQVlA4IJoAAACwBACdASoUABQAPxF+tlWsJ6SjKAgBgCIJZAC06AisdRET448SWpe+fNtr5W7AAP6wGiHW0MBdNF88cVVqaCkRVbvxMW6s5XWXSwsYXtHimd1Svm4bbH+LHbST6hZq0hYjuYeZHQjSDlfRMbYTMFpTI6OGbXj8T4eW5sFN1XArVXPhg8YB49b8RH2B85Zg4VlrvzDIjmCJoAAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-23580556",
+      "name": "Windsor Castle",
+      "lat": 51.483796,
+      "lng": -0.6041355,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlR4zAW2AaW3fRs7mHeTm9X3ajhecx4mKBDVTYzxYi2gOn9nx0bL95ufg3rdJwChYpLNjquuqDOvmXjr6zLJSPuskQYY6lrPNlbBRWLf_-YbCWqfc0DsJxf4IdfDvhLNZMqvAkeKQ=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-23580556-cf793398ed1a8452.webp",
+        "source": "https://www.google.com/maps/place/Windsor+Castle/@51.483796,-0.6041355,16z/data=!4m6!3m5!1s0x4876113b36b5e89b:0xce2f4846c5f7e1e5!8m2!3d51.483894!4d-0.6044027!16zL20vMGNoZ3Nt",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAABQBACdASoUAA8APxFysVCsJqSisAgBgCIJZgCdMoMpAE5KPXJ6pRjzy7kAAN1R1Fw6nOmT6IC/UInGeqEwT9LgQaFPoovn118BeqzUBb7nEtDSFtDK+RtjTimEyII9d/wEza0Q8ujiRQjO3hLF9wAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-4341725243",
+      "name": "The Old Ticket Hall",
+      "lat": 51.4855487,
+      "lng": -0.6064827,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkpTpBM5cQ4KMBRwMGpGp8vfNiSMxNaCkCame79eVSuW40V2a90h61Wmau6cUxThnjY0oGcn4L9S_pn_Gp3t5Xjb05i87rmKvFfK50hNveMipwSzOsCCdlQPUDjnMg02PWx8t40BQ=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-4341725243-d30f04408539f616.webp",
+        "source": "https://www.google.com/maps/place/Old+Ticket+Hall/@51.4855487,-0.6064827,16z/data=!4m6!3m5!1s0x48767ae4748ad539:0xc97b580f73af3cb1!8m2!3d51.4856071!4d-0.6066121!16s%2Fg%2F1wbrx89t",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAABwBACdASoUAAsAPxFysFAsJqSisAgBgCIJbACdL1Ds/wHkh+iFhxR9kbBKsAD+6Tn4ALrIQLeKOD+XcacX0IDormAlmX+KuWMFXJ7Dbmad2SGeyIDPzkWK0Br5iPLs+K6fScrmkDeJF4M7xjGXuB6N4AA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-38700240",
+      "name": "Alexandra Gardens",
+      "lat": 51.484545,
+      "lng": -0.6140204,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9R0wlhHfD-Xscff5hVpwlPyHddVmRNf1Dh0HL-rdIeZqtS1vjsIx6qcQKFhitZ0987hBd2IestfBUaR2M8z5v_44domAkvoC_Q5z0F5srS0tKO_nJzIMdzjExjEw1o6-JCWFr5NhQ=w408-h451-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-38700240-9174eb751e842e92.webp",
+        "source": "https://www.google.com/maps/place/Alexandra+Gardens,+Windsor,+UK/@51.484545,-0.6140204,16z/data=!4m6!3m5!1s0x48767b1c50ec2729:0xb8876087ec9cf8fa!8m2!3d51.484512!4d-0.6138343!16s%2Fg%2F1hhmv05_j",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 903,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAACwBACdASoSABQAPxF2slIsJySiqA1RgCIJZwC7Ef/gFD9hFBuCcR8WtTx1yr1AAP7odMQ1UZWYNe2gHE0Wrw22XlZzJ3u6RZRcnzuOx7jRu1xim95wA8HIWF4yOBJiMcKq3tivpCDmGQOByqCbxbBemlKEi2m6JajXe3lq50gHkeX0f5UPDGoA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-10820303262",
+      "name": "Queen Mary's Dolls' House",
+      "lat": 51.4844521,
+      "lng": -0.6027286,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmJhetB5WvvBTIEMN_TAkZEeC9o1sopt6auoj0awJ9yLyIP25wOrUditDWBfRudJz1VWfJJ1EDUw2w9icGqULO72jZQ-yVVM41byR63hCnGX_YF5ANhhdQ-8pcvMIE2Vh9hXfZFFg=w408-h272-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-10820303262-7323e769fa383935.webp",
+        "source": "https://www.google.com/maps/place/Queen+Mary's+Dolls'+House/@51.4844521,-0.6027286,16z/data=!4m6!3m5!1s0x48767ae4a4572f65:0x51fc0ac6c3af8b94!8m2!3d51.4843953!4d-0.6027291!16zL20vMDN3bmY1",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 683,
+        "blurDataURL": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAAAQBACdASoUAA0APxFysFAsJqSisAgBgCIJZACdMoMrZEJHOmIE4hOkgAD+2fNgceDOPONSK1FHY0zyDA04EiKE0dQntNgvKEreMzGMwfcNQVybkl2oYOXnAb/cWmgzbrS10VeepLiDsojDG9u2HE7klpc9yvMUAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-11901119398",
+      "name": "Museum of Antiquities",
+      "lat": 51.4901238,
+      "lng": -0.6128792,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QABOU-HJb2hCiZyco_YCk7PsUu_tZjfu0Tj5ZVt1SSMUPrX3_r7ZfwDzUbiDYORtiex0NNu4_U9syF1MVg0kyPd3HOpdfG_iVwpPDovfj3I28pXEjyH6Wb7x-tW_AkXtnZTaN3=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-11901119398-bec6e39fc08fabda.webp",
+        "source": "https://www.google.com/maps/place/Eton+Museum+of+Antiquities/@51.4901238,-0.6128792,16z/data=!4m6!3m5!1s0x48767b9b1ee0c8b1:0xf4c44d036e448b8e!8m2!3d51.4901385!4d-0.6128604!16s%2Fg%2F11h35fvn27",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRmQAAABXRUJQVlA4IFgAAADQAwCdASoUAA8APxFysVCsJqSisAgBgCIJYwC+SB4FKJ9G8Gui4GAA/q+bGG8ZMV7CLe+adl1DleK/rmE4KefM57lhhlHFBkABY+OWnE8Pw09fbMEgcAAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-114709119",
+      "name": "Windsor Leisure Centre",
+      "lat": 51.4859143,
+      "lng": -0.6214898,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkqyKRpZm1u5zUtUYGmI7JFTMjFXUfm-5xaO4zHhpc8Dl4qVHLvi0zEVU00sKRxlq3DMljF8kjYqFhfRVT9O91HfJs_plUCQ8gw4U_S0snMFXhLkTwJH2nghMItWFFfBsuFDFE_=w408-h246-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-114709119-c3ca4678365144de.webp",
+        "source": "https://www.google.com/maps/place/Windsor+Leisure+Centre/@51.4859143,-0.6214898,16z/data=!4m6!3m5!1s0x48767b0f6c3dcd6b:0xd3ec5d0fc3a89051!8m2!3d51.4858125!4d-0.6219703!16s%2Fg%2F1tl0wv9z",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 620,
+        "blurDataURL": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAADwAwCdASoUAAwAPxFysFAsJqSisAgBgCIJbACxAQAAS+hJNL0hp53gAP34jrQgD0AI0Xp2bSxxa/oWkl35qsUkQCwUNXYZDFVjcD/u5it7o8DdfpGr6ybUmTZM0x9JJGvWF8J3xg98qwSfxI4AAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-194923622",
+      "name": "Eton Natural History Museum",
+      "lat": 51.4908998,
+      "lng": -0.6112195,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlkqxfh1SjpSTAhCBOoulBiyp8VcND5qbqHDjeLksKTEvzlwiayd8D9fRvMaTvlU9kLCcLsv_U_62HLBlq535B_X3eSPWuRJdXdxUmIRKG_yp1LDdHDtq5PB8iWa2G82WNvRDKC8A=w408-h544-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-194923622-a51fc4f5ac923d3b.webp",
+        "source": "https://www.google.com/maps/place/Eton+College+Natural+History+Museum/@51.4908998,-0.6112195,16z/data=!4m6!3m5!1s0x48767ae042523797:0x600d68e95c25ce15!8m2!3d51.4909036!4d-0.6112352!16s%2Fg%2F11f3jcqltq",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 750,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRnQAAABXRUJQVlA4IGgAAACwAwCdASoPABQAPxFysFAsJqSisAgBgCIJZQCsACBoixNVbcGgIAD+R+WSBCfZqNSCUrvI3vSlgJ5B7P1kWa4CD3YXKg4sD9fC1yu2Eeh/JffaLQtDCtJ9MqCIr1xOdu9Nn+NosOeQAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-116171292",
+      "name": "Pirate Park",
+      "lat": 51.4795285,
+      "lng": -0.6325299,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9R3SK6bpkMv8lJb4ht3Dn-ACnqOTQY0gmHf_iS2fgxB2ey3JO5EMWML6ufJ0dVKMgFTxXllXOiWpqWBR7GtaH1Q8qDbVIEkXhyM9ym6NyXWmWKkZNj2KITDtEjVrZa5ovd7hJBM_w=w408-h544-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-116171292-2a0dd1f894e75695.webp",
+        "source": "https://www.google.com/maps/place/The+Pirate+Park/@51.4795285,-0.6325299,16z/data=!4m6!3m5!1s0x48767b70eb01928f:0xcc57f1ba01dfe412!8m2!3d51.4793656!4d-0.6325997!16s%2Fg%2F11c6lhym4r",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 750,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAACwAwCdASoPABQAPxFysFCsJqSisAgBgCIJYgCdACEP1ibnOTrhCAD9QX6R8JTYiTNgHT2Fj3euijTWMJIFBfuUnlseYKoTbhxfT62KXLEcaCMQ0A4AAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-546141913",
+      "name": "Upton Court Playground",
+      "lat": 51.4991918,
+      "lng": -0.5829534,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmEfIPKvs6pDoYvkSl5dyxbcEUmGKtxMejaTjxfSpyDDK5OQnr-Y31B5X2dJ1Dm8aIJiLu3uj3bJyKJ1Wlfp2E0KeD-C5xapYJDABfbVLfiMLxtmqpuDMT38UfJSMDTjg338Tg=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-546141913-3998b618e24cfc77.webp",
+        "source": "https://www.google.com/maps/place/Upton+Court+Park/data=!4m7!3m6!1s0x48767aa521fb50bd:0xd1c733bec031e143!8m2!3d51.4989003!4d-0.5810753!16s%2Fg%2F1tdvjp2v!19sChIJvVD7IaV6dkgRQ-ExwL4zx9E",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAABQAwCdASoUAAsAPxFysVCsJqSisAgBgCIJYwAAPTtGtWVRAAD90m7FJpIlnrZ7xAbTtJRrCbMNRrhmaDT62VCxOq7NRpEAXl7vkB9QUb/G3Q4QAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-177576350",
+      "name": "Osgood Park",
+      "lat": 51.4749175,
+      "lng": -0.6452248,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm__tCKb6szqtKEQOImqyx8QT6WM089VvNNhni2jB093kkDWkwfUkcpex12ZzSyjqSUgQNYHW78doryB3BemVb4MwcMcJkDr3AWsV0ZM_YZkZttYqHlkYE6ibenDx-f4cDYwdRY3w=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-177576350-ebbd18bd4aaf1643.webp",
+        "source": "https://www.google.com/maps/place/Osgood+Park/@51.4749175,-0.6452248,16z/data=!4m6!3m5!1s0x48767b76e64643a1:0x88c6b7e608eadd8a!8m2!3d51.4749283!4d-0.6449655!16s%2Fg%2F11h9tkp3vm",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAAAQBACdASoUAA8APxFysFAsJqSisAgBgCIJZACdMoACOgansNHTs6aXAAD+Wgu2cj4Z9hgQjxGSlG8Svt7kL+vzlfcpXBqWFcc7HZSlhGoOATGB64AWQ79fhA/sAAAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-481873148",
+      "name": "Chalvey Recreation Ground",
+      "lat": 51.5065675,
+      "lng": -0.6120002,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWks8QvJgyEMl0wzjAS00HOXkElFrFoR-j-GImgTxSm6ocXzmWVE1UdLpXBeoXVOh1N62OU4HY0DzQ_K_HP5_Cd8xbX-qoIekwRbXhilIStW_A3wnFhq3ci3c4qfFEIDB__8MJF2Yw=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-481873148-7df1bafeac8876d8.webp",
+        "source": "https://www.google.com/maps/place/Chalvey+Recreation+Ground/@51.5065675,-0.6120002,16z/data=!4m6!3m5!1s0x48767ad635431939:0xc697324b07a7aa8e!8m2!3d51.5056005!4d-0.6122079!16s%2Fg%2F11gfbyhnyr",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAADwAwCdASoUAA8APxF0sFAsJySisAgBgCIJagCsOUDZABJ4kEHoUBxcAPHI/S3ZWU0qxuB93C5avBIxM0nP1NV2WvA3Hp9UqRiMKwQzyv8MzyOO4QyWdEJ2fLHUAAAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-7471708675",
+      "name": "easyGym",
+      "lat": 51.5078939,
+      "lng": -0.5883318,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmMDcsC8HKKXUt7Pcsr-VUUNl-StOV35vUktBzomenkJj-NtCDlx9BgPEANl5OiZS_2Oh4JasQqQYS5u_qSEkHUlkfDioV12Pthkxu2LTtat3vut-UcDU4Pk6kCVkJdjvEQVFBpOrg=w463-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-7471708675-cf3587dcbacecf37.webp",
+        "source": "https://www.google.com/maps/place/easyGym+Slough/data=!4m7!3m6!1s0x48767ab676e655fb:0x1970bd4c94c00ad1!8m2!3d51.507886!4d-0.588175!16s%2Fg%2F119vj9j22!19sChIJ-1XmdrZ6dkgR0QrAlEy9cBk",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 530,
+        "blurDataURL": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAADQAwCdASoUAAoAPxFysFAsJqSisAgBgCIJQBOmUABPkABZPg+NLIAA/j+w8lSiH6GIiLo9zppYwA97pReVxV/tI+Qfig4qvEQEyyWxGpKLGK1lsewI3cM73uukuIf0BRJAAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-481448779",
+      "name": "Lodge Farm Park",
+      "lat": 51.5096683,
+      "lng": -0.624313,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmNmFPYHMoZoPzOkYkr5LliJL_UAsK02tUuXvQuF_CrK9_2A57SXHfIV0MB51rLuxTaln7TuWF9q6_WH8CVZuCx_NhSa5vZtCpvzGRB2FcepdwQ42HyL6rEiYcCLg4nYzL9XbaQc=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-481448779-c4d4d6d2eaa061e0.webp",
+        "source": "https://www.google.com/maps/place/Lodge+Farm+Park/data=!4m7!3m6!1s0x48767b2d93ff1c2f:0xbc7e684b5c89ad6!8m2!3d51.509722!4d-0.6245056!16s%2Fg%2F11g6vn237_!19sChIJLxz_ky17dkgR1prItYTmxws",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAADwAwCdASoUAA8APxFysFAsJqSisAgBgCIJZACdMoACjRoPgBUc4ebQAP6HbWXOSfCCe0lXM43DhJMJ7Vsi1RuMwR/m1/7ERQ0kW/3jPBQ22H/eyqqlsRDLSs6/skFRdydX3AhxBiI7nz+uhjR8hirOQMPr5hKoAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-536749186",
+      "name": "Deep Sea Adventure",
+      "lat": 51.4654237,
+      "lng": -0.647783,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/AABkmLeZcR-HjDp4_cOkKo9m96BC-yAyzXXgr0iFqc1VQSj2eMlPC6vSuXXW2IINxjylTZbBx_KPo4-C-NHd4_9xQ_9jd5pzUWnza2sOvX-PGKz9zssm-_QgSJL-Ydq2ZJao9pcmAA6GrA=w408-h272-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-536749186-f53a7a7ffa3455df.webp",
+        "source": "https://www.google.com/maps/place/LEGO+City+Deep+Sea+Adventure/@51.4654237,-0.647783,16z/data=!4m6!3m5!1s0x48767be5e9c416ad:0x22eb125f31b1f585!8m2!3d51.4653355!4d-0.6477726!16s%2Fg%2F11kfbhzy71",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 683,
+        "blurDataURL": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAADwAwCdASoUAA0APxFysFAsJqSisAgBgCIJaACdACIZZvv1Fl/Bh5YAAP6uoZJKRJGKdzRaoACj1hhy8/Lk6V5w5sxJ56zUNyYnEfaF1qFeU7KbCqEF1X/bEv3GNAVvZ7VbUkYXYU8eEQfUSoCjWZsXpL4e5bVzPGB1WyqAAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-681248048",
+      "name": "Haunted House Monster Party",
+      "lat": 51.4646533,
+      "lng": -0.6482997,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmMj57LxfNi-mCk3VdnoRHN8chWXXQaxS7DZ5pq-zKWwtj8Krh8NIMcPd9cQB2Cqig061E26lpkSujs3QGbqcR8PwI5pGmOM11wq5R_TDEGku1LYdZ_eokMt7JeERjpmau2GLMSmWw=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-681248048-b8d490d5124684bb.webp",
+        "source": "https://www.google.com/maps/place/Haunted+House+Monster+Party/@51.4646533,-0.6482997,16z/data=!4m6!3m5!1s0x48767b54c55f13d9:0x3fe5f591ff1a5329!8m2!3d51.4646871!4d-0.6483295!16s%2Fg%2F11h12tr0x9",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAAAQBACdASoUAA8APxFysFAsJqSisAgBgCIJQBWHKASgAWCuLtv7LPNZQAD+i8/yZiX4LWEX+OBElB127tQfQlAij81wQoJc7V4Ho5ugV7DiZfwJhZvmjqw7NsXVoqAb4BxYLWE/WA5d0Nnx4CQQ7c9K4KheZgMq6KJmRywo3AA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-784953274",
+      "name": "Salt Hill Play Area",
+      "lat": 51.5122233,
+      "lng": -0.6058638,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmNvbAZtox3a1A2bqhqojKkobT6-6tV6tXNe0SmlINYb1hYC_GNcU7PAbMsyf7KsOjIu85zb7V3B9TcjGwoiNRSD82wOMVK-m4gKcPvWjONqd8yeuJ48h8SAbDvpwp64loNN2Tcp=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-784953274-7270b8fc0fe897c4.webp",
+        "source": "https://www.google.com/maps/place/Salt+Hill+Park/data=!4m7!3m6!1s0x48767ad32c405e45:0xd1b2e24492cd8d91!8m2!3d51.5130002!4d-0.6048101!16s%2Fg%2F1v2d__s8!19sChIJRV5ALNN6dkgRkY3NkkTistE",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAAAwBACdASoUAAsAPxFwsFAsJiSisAgBgCIJQBbdCYhgm2KHRA608dJPNKAA/ffDHziPoljV2bivVKQVK/jTaQ0z4FRY9F8QskO/Mz9kWYFNS8cl4/TQ6SXIyIy/z7W3ALDvUE1BrJQqmS+njGCP2AAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-738185408",
+      "name": "Salt Hill Activity Centre",
+      "lat": 51.5123169,
+      "lng": -0.6078127,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmPtiJMpmoxj4RfS6Bu1VV6HbODkR6805_IQqAzzOzX0aBFogqhdWZFXnBH76wiDL3hczZsFMoOETGzX2VO0uB4oXP2GfaNQ9Mn6dNkEh9JQqI1_fxuIu9YVv2rK6Ry1efnsjBwO1A=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-738185408-3dec62b64194a475.webp",
+        "source": "https://www.google.com/maps/place/Salt+Hill+Activity+Centre/@51.5123169,-0.6078127,16z/data=!4m6!3m5!1s0x48766520ddc436d1:0x134179bcfcdca9a6!8m2!3d51.5123692!4d-0.6077252!16s%2Fg%2F11g0m4g_mm",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAADQAwCdASoUAA8APxFysFCsJqSisAgBgCIJZACdACHPZpLdKPGxaQAA3SepGUykzBJMwgXGP6tAffXa2oYvDItwmBF2Lf884rIAEHBowTxUBToclPg6L4nv2eCVIAVH/DAAAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-1143444994",
+      "name": "Heartlake City",
+      "lat": 51.4638221,
+      "lng": -0.6481843,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmPa2kunN_CRh0j0r6g6KhTz2S4Mt_YwKLiNGD7Y_6sTqnDzp6uSqY_VzJUrcwR1HDWtabOI5gXaIxtS2HkYZl1AYdLKLyHLqKEKAK5HETt_vt7cjW06lkZ0ou5EldAO8qoGjA4=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-1143444994-a46ede9b7cc11fdc.webp",
+        "source": "https://www.google.com/maps/place/Heartlake+City+Shopping+Mall/@51.4638221,-0.6481843,16z/data=!4m6!3m5!1s0x48767b8ac37ad7bf:0xd799d498f1178642!8m2!3d51.4638229!4d-0.6483569!16s%2Fg%2F11gtstd0v5",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAACwBACdASoUAA8APxFysFAsJqSisAgBgCIJZACdFQA59sBvzQwiVbvdqMEWrhCAAPik2iEChgQdtxJKsUqN54PXdMlCXa4lfcgmPIKUbJroqXwpR1wG/Nt9v3PQaDu22IFO0YXpLf2TjVQwZsix0uFw0xfR0beUrZaP4dSYXqAAAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-914244345",
+      "name": "Flight of the Sky Lion",
+      "lat": 51.463249,
+      "lng": -0.6474887,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmM6ef2JkJSKOntJeCK2EA9CIuKIZsk9Y8C7OGrZFsbZtn-QPwNZmStdtniK_5Ukzv1xz7kaLMLudkiZXCM2dLyk1F9nqgSK0F7jclhiEYsJSSYkz0FYXqkVy6W3TFVB5I-aivqr6Q=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-914244345-229f53c855420142.webp",
+        "source": "https://www.google.com/maps/place/Flight+of+the+Sky+Lion/@51.463249,-0.6474887,16z/data=!4m6!3m5!1s0x48767bbed4222165:0x26842960aee1b5c7!8m2!3d51.4633083!4d-0.647273!16s%2Fg%2F11rg8s_t07",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAADwAwCdASoUAA8APxFysFCsJqSisAgBgCIJQAALlfGTagYPSOf4fW6gAP7nOGXZI9HJwobvYCn6tVgTZrRcTWLOLZh+fEhbXfOKeFoNzzsZ23TljaoS792AgMHqHUl+wfU/KopvB6H5Lhj95FTgAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-535693976",
+      "name": "Balloon School",
+      "lat": 51.4644772,
+      "lng": -0.6499896,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmOAu9bNi5z2tB8yTF9iAjvQn-FOGcCWjmXr7pRv4kKGJuh2b5pFnlZQ4mQHEcxNTJJgA4zffBeE_FSZG9_0FM6qAsDy0sDLgV1LnHDGWVtkSOENv1K9RI3yH7xTdM2CpULfiSPQ-A=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-535693976-5596d076dcf7dddd.webp",
+        "source": "https://www.google.com/maps/place/Balloon+School/@51.4644772,-0.6499896,16z/data=!4m6!3m5!1s0x48767b9b884f4b9f:0x9aced1126b27243e!8m2!3d51.4644064!4d-0.6499633!16s%2Fg%2F11gf9f1t07",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAABQBACdASoUAA8APxFysFAsJqSisAgBgCIJbACdLoAAUxQpLQTp66ZTv+CgAPnaRc1byjXfLsSrxQzWRaGKw19GYWjZDUDkrGnI1sa2ItEI69sOogU1ZjotP9UQ2QFbTEY2bP7+SmNFO/8vzW6oLGGmmlqxAR7QSgpyzSKOAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-51289567",
+      "name": "Salt Hill Park",
+      "lat": 51.5131671,
+      "lng": -0.6054053,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9SbepG63w3Ok9aJd4G9THF_2pmLGZqfpO2_XxUjGEYYkB4pWWVfvhEB-w3uPIK2wxzIOTPbiMOJEgba1r04qA5AvIl_dV_n8eFtew-9sZ_2FEEeye43ScFPE1gKq95bNQTEnkaz=w529-h298-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-51289567-7270b8fc0fe897c4.webp",
+        "source": "https://www.google.com/maps/place/Salt+Hill+Park/@51.5131671,-0.6054053,16z/data=!4m6!3m5!1s0x48767ad32c405e45:0xd1b2e24492cd8d91!8m2!3d51.5130002!4d-0.6048101!16s%2Fg%2F1v2d__s8",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAAAwBACdASoUAAsAPxFwsFAsJiSisAgBgCIJQBbdCYhgm2KHRA608dJPNKAA/ffDHziPoljV2bivVKQVK/jTaQ0z4FRY9F8QskO/Mz9kWYFNS8cl4/TQ6SXIyIy/z7W3ALDvUE1BrJQqmS+njGCP2AAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-436537571",
+      "name": "Pirate Falls: Treasure Quest",
+      "lat": 51.4618554,
+      "lng": -0.64931,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmPCEs8LmrtgM-p4VlpuRmLAZbl2WV838VQVLMaBMg1A1YJVQMwIhQ9WbR0BPxxxcMuOdMwRDvUpQZPob1ac9hfGmuQrrU2-aNdqPtY3JGcNq-co4ZIUdwzwPb_XwQX8vSe0Bxz1=w408-h272-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-436537571-3fc7d56337f1e968.webp",
+        "source": "https://www.google.com/maps/place/Pirate+Falls:+Treasure+Quest/@51.4618554,-0.64931,16z/data=!4m6!3m5!1s0x48767b8515febb47:0x7d9f6a8cfd99f8cd!8m2!3d51.4622993!4d-0.6498057!16s%2Fg%2F1hhxk40rm",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 683,
+        "blurDataURL": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAAAQBACdASoUAA0APxFysFAsJqSisAgBgCIJZQAAUv0XV8qFGTwI4Fy4AAD+7WEFdflUH6+ubMakLHxU1fjWHbwLFkHFO/ae6G4LJpDXr3yqT39e7nzq8se0hBManaiulT1lH8hcCecOV3k1l5n589ygAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-436532626",
+      "name": "Castaway Camp",
+      "lat": 51.4621393,
+      "lng": -0.6506321,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmOaPm9qTDT1OKZZiSsq6Fh05cJIaXccdB-e9HxXfU2bF2IEKjMn3RP0fIzpvGB6eKnOfs8vhuFeLsFV_iVU_iTprgoFC5c35twciDTJJM5kEcBl0UfU5QZasSW8xeC65UoGSiEL=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-436532626-16e67c1d682a2e39.webp",
+        "source": "https://www.google.com/maps/place/Castaway+Camp/@51.4621393,-0.6506321,16z/data=!4m6!3m5!1s0x48767b851272ee1b:0x2691646e8b819a9f!8m2!3d51.4622165!4d-0.6504568!16s%2Fg%2F11bzq1h93v",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRnQAAABXRUJQVlA4IGgAAABwAwCdASoUAAsAPxFysFAsJqSisAgBgCIJYwAAIR9P90FT0mAA/lsw9DVzzFdqvWJmqWlFV0KpQ1nSe0YGcUifFdjc3SvH1LKkOvpX8v5xz3z4GDjHUqlsOtPTlig9eE1aW8Ck4QAAAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-2458247429",
+      "name": "The Dragon's Apprentice",
+      "lat": 51.4614584,
+      "lng": -0.6501816,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmNhAooHYfMYQGhQk4zsa5ER4borXlxVB64BSXNaXWn-ZfDT6gM9bluUVEOYw-67RteaHux8_-OKc6xsoXfkmhRxfBkTe0oWjqxhRCvsC5bUw5RXdofrOrXha6SUhnlt9pRfNBKwOYCom9Q=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-2458247429-dda256fdc433e6fb.webp",
+        "source": "https://www.google.com/maps/place/Dragon%27s+apprentice/data=!4m7!3m6!1s0x48767b004a931109:0x2981e5a1e8e0890a!8m2!3d51.4614413!4d-0.6501856!16s%2Fg%2F11zx3483v7!19sChIJCRGTSgB7dkgRCong6KHlgSk",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRoYAAABXRUJQVlA4IHoAAADwAwCdASoUAAsAPxFwsFAsJiSisAgBgCIJbACdAB7AZ8rxeqTavLbgAP61nCW4L7dj03O+0qVexngSTo9OtkRxA1dxkx/dKgJpDlYhiAt+urY/2PdWNXU+7SHtWz2cgewFFIY9TMXPc4o0il07lzZjtEHMBcMVyswQAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-260525134",
+      "name": "Dragon",
+      "lat": 51.4616757,
+      "lng": -0.6511062,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmPQxXw8srJERZ0EVXYCxQUnshDQWlevHM-pnAli31-OuLz0dvQiPQUg6wE1-xDvdqC_DCtcDzsTNcogPR3TaPZqSbsVBXv6Xar7CT7ueQp_0fS9s8YegqY-y9ZQnpV6KnIGWKgX=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-260525134-3e9265020b8e5982.webp",
+        "source": "https://www.google.com/maps/place/The+Dragon/@51.4616757,-0.6511062,16z/data=!4m6!3m5!1s0x48767bc78c7f619b:0x90571189cc38851c!8m2!3d51.4617016!4d-0.6509232!16s%2Fg%2F11p5_vb_jy",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAAAQBACdASoUAA8APxFysFAsJqSisAgBgCIJZgCdH8ACSJwEvRQGuOvH4AC9E109JNnFBRcoxxsgI4GSvrGHCkRxwvvd+/xf6iUDueWgWxzASkcNUU/Oz5PCR3hV81sGm/xEVGu9XJ2nQ379KYM5XzaPxBxg5ZILdZRETo38i5YAAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-705065002",
+      "name": "The Gym",
+      "lat": 51.5180502,
+      "lng": -0.6135998,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmMzqgX8s4RP4WcFYJTcwbHkCRB7sp_STfCb3KtHSVI5o19sYP6HVhfJlWXkfIkKg49jeitb7If0IYM24lSx8qpXekkotLqCtYnzUQbODXLlH2CDF-Yi5RQMAd5fbx7egOKbTM-0eQ=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-705065002-45f530aa9b319202.webp",
+        "source": "https://www.google.com/maps/place/The+Gym+Group+Slough/data=!4m7!3m6!1s0x4876659cc2d78a71:0x14904be430f24400!8m2!3d51.5180524!4d-0.6135605!16s%2Fg%2F11h5q50jq4!19sChIJcYrXwpxldkgRAETyMORLkBQ",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAABQAwCdASoUAAsAPxFysVCsJqSisAgBgCIJQBgbgYuDj/8rgADWgKoCNJgQ1w/vgGR8WlEf29mDnZ5WNbMWFxS+li05boXqBrEED7zGvB6AAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-86514405",
+      "name": "Kedermister Park",
+      "lat": 51.4994041,
+      "lng": -0.5580371,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmMS7khELwJK-JQHcZ37inKDtEzuM_ZM95WI4vfsgwunFdDqg46L45Ra1VadBtXy257uWgbIfzt9-BwQyCTrp29uQFhmFzPuNppLto91DXM5Zd43MlVqGuSbeHZdYF-n-TbKgiAicQ=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-86514405-256af71974c31d14.webp",
+        "source": "https://www.google.com/maps/place/Kedermister+Park/@51.4994041,-0.5580371,16z/data=!4m6!3m5!1s0x4876700e6c099891:0x7106339650603591!8m2!3d51.4998877!4d-0.5578896!16s%2Fg%2F1tgvd3pc",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAABQBACdASoUAA8APxFysFAsJqSisAgBgCIJbACdIKnC4I4HAzlyX/PZ36GAAPg9u8Xtn9eiTptwcg1bRKPZg604PKApQcHIb8kiWDuOl1ZKmqVbIx5coFIykeBFKVE9gBPQGuNqNehKFSNZCY+gy5gIAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-51289568",
+      "name": "Godolphin Recreation Ground",
+      "lat": 51.5200267,
+      "lng": -0.6075867,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmNGXah124te3PJnw4gRQXOUoJ3pV7vUCevE1YgGUL-qVv5K83NypMZZnNnyKXu2TxusRJWn4cbjugYI_OOFIMZHZsM5x5Ps5-e12kejVpe8q8GZCr0Z-VSjaEk1TfdoUpq71Xz7=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-51289568-985069543b515944.webp",
+        "source": "https://www.google.com/maps/place/Godolphin+Recreation+Ground/@51.5200267,-0.6075867,16z/data=!4m6!3m5!1s0x487665c04fab354d:0x88f5fd39cfaf2b09!8m2!3d51.5204655!4d-0.6072132!16s%2Fg%2F11gxgbzxff",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAAAQBACdASoUAA8APxFysVAsJqSisAgBgCIJaACsIIjDEmCyaDAD7dMjAAD+7UhCqTjPRa3B18lQ7t0YWBG74ggLskvMcAWIDYHAos/kZmaIHWXOQlpwScx7C3PjHkUErvEYXe0CPdmbwq+dAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-375282803",
+      "name": "Bloom Park",
+      "lat": 51.5110521,
+      "lng": -0.5688773,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmOAYf8iCxRmmbJ2qux8pg8eTWzNNPQ4npMuKr2K8JN9M_j_j7YRgY_qcSOvGcTt392PHqYlCqP1aquikcEtIObaW7rPiAfS62c1tnYl7gYjSgQY0amS-9aaBZ45OEDUydMHYBUYLw=w408-h543-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-375282803-6e124e199fa912cf.webp",
+        "source": "https://www.google.com/maps/place/Bloom+Park/@51.5110521,-0.5688773,16z/data=!4m6!3m5!1s0x48767b3a9f26181b:0xe6696cba92946294!8m2!3d51.5099386!4d-0.5666096!16s%2Fg%2F11pxl70ykg",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 751,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRoAAAABXRUJQVlA4IHQAAACwAwCdASoPABQAPxFysFAsJqSisAgBgCIJagCdABMeiBh23FNEyAD+RIouZEoAe0y2Jt0Rudr3erFqAPyhE4FCg5xTKGLxFBwNOYPE6PJGDuzTbL47dpLlvuzfmXhqZXDyPdCbuuYJJXhpJbV+sQ3tN1AAAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-56214572",
+      "name": "The Royal Windsor Maze",
+      "lat": 51.4840248,
+      "lng": -0.6106653,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnW_Bno5Ty88WAD2GsjEsrx43NTvD1ASR-HuUtfyXnhkRoiOE6IkaSUGyTpJYsIdHiORAW-MZt2t-cZcuWbjasZYNESxt3PErVhhk7c_HasLMy1RXbLUiubFcI3BDNtBC4RSUaL=w529-h298-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-56214572-c6db81b182704811.webp",
+        "source": "https://www.google.com/maps/place/Royal+Windsor+Maze/@51.4840248,-0.6106653,16z/data=!4m6!3m5!1s0x48767ae2fb833d39:0xe7b450ad1bbc7c0c!8m2!3d51.4840446!4d-0.6106237!16s%2Fg%2F11g8yw28j6",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAADQAwCdASoUAAsAPxFysFAsJqSisAgBgCIJZAAAW78svdZzkQsYugAA/nhbdAzwP3YkMD31hDjAwqczf4if3Vj/gmKsH2FNIDnXkm4ml04d+Kgx7yOKMv+xGa5ZscH4D7N0iE8vAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "escape-reading",
+      "name": "Escape Reading",
+      "lat": 51.4545707,
+      "lng": -0.9772849,
+      "originalUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/22/20/30/15/queens-walk.jpg?w=1000&h=-1&s=1",
+      "image": {
+        "url": "/venue-images/escape-reading-98f37515eedb.webp",
+        "source": "https://www.tripadvisor.com/LocationPhotoDirectLink-g186363-d10487389-i572534805-Escape_Reading-Reading_Berkshire_England.html",
+        "credit": "Escape Reading management (Tripadvisor)",
+        "license": "Venue management photo — rights reserved",
+        "strategy": "official-public-gallery",
+        "width": 960,
+        "height": 1280,
+        "blurDataURL": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAAAwBQCdASoUABsAPyV+tFGuKCUisAgBwCSJZQCjzCP/Y2C3qYUOhwwjHmGOXp1PAcqqcAD+nwihdYwQ2Skt/zaaYl6IsjmADFWGZ2wwQNtlGDrgjGkLyqyEGUjnP9L9Qg8TqFyKgVZ75mdKWHTF944EgN6XOZb9TGvlSdUGl7jbSNqlnSXcuHKUUwuQNnHA7nL8YUCoAAA=",
+        "matched": [
+          "visually verified physical venue interior",
+          "management photograph in official-site-linked Tripadvisor gallery",
+          "branch caption Queens walk"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-1629465834",
+      "name": "Escape Reading",
+      "lat": 51.4545707,
+      "lng": -0.9772849,
+      "originalUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/22/20/30/15/queens-walk.jpg?w=1000&h=-1&s=1",
+      "image": {
+        "url": "/venue-images/osm-node-1629465834-98f37515eedb.webp",
+        "source": "https://www.tripadvisor.com/LocationPhotoDirectLink-g186363-d10487389-i572534805-Escape_Reading-Reading_Berkshire_England.html",
+        "credit": "Escape Reading management (Tripadvisor)",
+        "license": "Venue management photo — rights reserved",
+        "strategy": "official-public-gallery",
+        "width": 960,
+        "height": 1280,
+        "blurDataURL": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAAAwBQCdASoUABsAPyV+tFGuKCUisAgBwCSJZQCjzCP/Y2C3qYUOhwwjHmGOXp1PAcqqcAD+nwihdYwQ2Skt/zaaYl6IsjmADFWGZ2wwQNtlGDrgjGkLyqyEGUjnP9L9Qg8TqFyKgVZ75mdKWHTF944EgN6XOZb9TGvlSdUGl7jbSNqlnSXcuHKUUwuQNnHA7nL8YUCoAAA=",
+        "matched": [
+          "visually verified physical venue interior",
+          "management photograph in official-site-linked Tripadvisor gallery",
+          "branch caption Queens walk"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-1143439222",
+      "name": "LEGO City",
+      "lat": 51.4648347,
+      "lng": -0.649386,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmV3i3oHFKFXpTeyGnSJ2lDvOwy2sggxu8Xq9NkLcT5npIAHHu8YNXkmRyGAU6g_pAR6ji-uHhPNQzWlPQelbHJ8C9W6zh4vTJ3O9wp7llLJf5fAxmwJfwSYQT-7IrZS9NhwaHCVWOymIjD=w529-h298-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-1143439222-5436b09690dad292.webp",
+        "source": "https://www.google.com/maps/place/LEGO+City+Deep+Sea+Adventure/@51.4648347,-0.649386,16z/data=!4m6!3m5!1s0x48767be5e9c416ad:0x22eb125f31b1f585!8m2!3d51.4653355!4d-0.6477726!16s%2Fg%2F11kfbhzy71",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAADQAwCdASoUAAsAPxFysFAsJqSisAgBgCIJaAAAW+FDCOUewskpmAAA/ujPtaVmAr5bZONC81XxJL6fwLGHETF1jcm0WtNOSe98jG703J19vixAufy2aTa/M302amd3hG4MpKVeuLHYBPoO/U/kiAkQAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-966566223",
+      "name": "Lismore Park",
+      "lat": 51.5198081,
+      "lng": -0.5945403,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmNzcWviPPjg-kLRwRadFPYrc7bt0LBkXmuDhyvGNmGx1J4PKm_csgokM-dXciyM45qKa7RhK8IgO4LC8Ap76SdlyCYdrc9NgB4eJQ3loSsbb8bLbne19xumrKbqyQCMXqEDaJg5Fw=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-966566223-2c98576f03815cad.webp",
+        "source": "https://www.google.com/maps/place/Lismore+Park,+Slough,+UK/@51.5198081,-0.5945403,16z/data=!4m6!3m5!1s0x4876653644c67823:0xbbc86ab7f9090c02!8m2!3d51.5204888!4d-0.5924477!16s%2Fg%2F1v96l8r2",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAADQAwCdASoUAAsAPxFysFAsJqSisAgBgCIJZQCnFCP6PC5eU2TTYAAA/rFAPKbPTu+5j3bDtr9RzlUvgQ6naO22qJ+Ly8Ml+MVtniygwgA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-12522756827",
+      "name": "Slough Museum",
+      "lat": 51.5213363,
+      "lng": -0.6217173,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/AABkmLcLhVkHTj51NQI-AL-wDUkiE03TEpy38obnghjQlgCNX8uVV4aqVTVGhhAU3hBrXQHT3zGclm6wMTRZN4STqhyjTe4T8UW2JUnWnaMqmi61O-J6rptcbFEtvns7usYYdqpVIg6VJdEo0PFq=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-12522756827-a2c38c8e363c457e.webp",
+        "source": "https://www.google.com/maps/place/Slough+Museum/@51.5213363,-0.6217173,16z/data=!4m6!3m5!1s0x48767ab692434a9d:0xc34cba6a4d7b85dd!8m2!3d51.5213081!4d-0.6217921!16zL20vMDhoel8z",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAAAwBACdASoUAA8APxFysFAsJqSisAgBgCIJQBOmUABp0sPpgz42A1ojMHAA+Qjzx82NCKGM3M2q7xbIA+AqmM3Sa6Cv5kalJjvUFRWXSfYiFcJhtgesGAPpK8J7uj1rUAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-459600804",
+      "name": "Absolutely Fitness",
+      "lat": 51.5221805,
+      "lng": -0.6228314,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmNLsSQ1FLXQ3-MJugNYCf3pwkUOkw4Cb3Lh_l-GPGwnw2jyOgDYaHbds1N2VMOP2Icez9rFPBfgMkI2VrK8BmqEpqvaqFqCr3ROJsP62DEzqmowMv6xAcmzirz5hNowd5-Mq9uGVg=w474-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-459600804-764740ac39876d7d.webp",
+        "source": "https://www.google.com/maps/place/Absolutely+Fitness+Slough/@51.5221805,-0.6228314,16z/data=!4m6!3m5!1s0x487664d0f63a9777:0xcd07a3d9bf1e6c4a!8m2!3d51.5221168!4d-0.6228805!16s%2Fg%2F12hkj824l",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 518,
+        "blurDataURL": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAACwAwCdASoUAAoAPxFysFAsJqSisAgBgCIJbACdABghs+nHO88uAAD+oMxCL0SNCFywgt39Ue6RUWvtXdfikJUNgBI3jfPMT7/Kg2/oxAYioCkKCrb/yGw5IU/k43Ue5/8nG49upQviLbooWr7OEbJaVgA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-764474191",
+      "name": "Rochfords Gardens Park",
+      "lat": 51.5168216,
+      "lng": -0.5690778,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/AABkmLcWMW39RXHeprb7_FX7je7yWDS5BbDR3kCbx28PYFlkYMqUpYwejjOVW7Zm-nZ94p79eQYnJwEiZFXmcX9_03-QoBEA2OV0ghK4vPkazikQ7CRV4zXTAceAXat8mLNBf1iOPisXxw=w408-h725-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-764474191-c1bb2d76f699cfa1.webp",
+        "source": "https://www.google.com/maps/place/Rochfords+Gardens+Park+%26+Open+Space/@51.5168216,-0.5690778,16z/data=!4m6!3m5!1s0x48766555adc5ea3b:0x66b8b5139042e383!8m2!3d51.5166797!4d-0.5690602!16s%2Fg%2F1tfhfxt2",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 562,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAADQAwCdASoLABQAPxFysFAsJqSisAgBgCIJZACdMoABdvBOKRb7wAAAnyqZ9fYUWpU4w07+5EzufuWfME64K/8xygz+C0LwAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-259572986",
+      "name": "Granville Recreation Ground",
+      "lat": 51.5248443,
+      "lng": -0.6041152,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmOaoNCSDK3un1-IJ0SuV5fX_DTzbFuwRSbaHiSWqDy8S5rO3ouckFL2kOkOYeE75D_M-WmWqarOnW-StWC35zpd4k8x6PXVCDksO6g89SvaZMEfxee6mppb8Md5B-WBz0cRCeX2=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-259572986-1514abd99b870f0e.webp",
+        "source": "https://www.google.com/maps/place/Granville+Recreation+Ground/@51.5248443,-0.6041152,16z/data=!4m6!3m5!1s0x487665dc44b18961:0xec8f67dbb9667824!8m2!3d51.5251312!4d-0.6036143!16s%2Fg%2F11hzpng5b_",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAADQAwCdASoUAAsAPxFysFAsJqSisAgBgCIJQBOgBDvbcKv8NSvHaeAA94suLKHVwIqAh96if8u5OHCmrmqXsNVgqiaSV1JeAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-1419233713",
+      "name": "Kennedy Memorial",
+      "lat": 51.4452176,
+      "lng": -0.5685479,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmN-hXK0Bdhlsvg330O2wcH3ltXT7MlZswEfNVv2QUeSUBUt8iI_Da5ZsQSnJaSLaA7ztjfCZo45jJo9e4GrBSeMUwg3Y85UDSCpHo6gW0ODr6cj9SBULU_md5pTe-9y7v3yysmOBcRZxYw=w408-h541-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-1419233713-634d142e903fd1b0.webp",
+        "source": "https://www.google.com/maps/place/John+F+Kennedy+Memorial/data=!4m7!3m6!1s0x48767a097ac69dd3:0xd22fef1707de3278!8m2!3d51.4452007!4d-0.5685448!16s%2Fg%2F1tjt1fbz!19sChIJ053Gegl6dkgReDLeBxfvL9I",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 753,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAAAQBACdASoPABQAPxFysFAsJqSisAgBgCIJaACdMoACj7U7gkoO27sYAADMHYgRBTTkEkXauTsCjNcw1FxY4w3eWa3NS6N+MmtwWEC4i2UKj0yrOzSqLbBDFNUsGdO6oAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-253267405",
+      "name": "Cippenham Recreation Ground",
+      "lat": 51.5220683,
+      "lng": -0.6433321,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmNRwSvLvCIY4BYJtifxB2O0LSX2Xj5lG8TqKgqftrb-Ti0-w3wtdUU021ZgffotbVPMkPkOFvOHre50qckvbLkNbEOhnsBWKiBUYker1_lo9nkr_PualPlamixwj9itQnXO_KRU=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-253267405-6af87273e7bc9c89.webp",
+        "source": "https://www.google.com/maps/place/Cippenham+Recreation+Ground/@51.5220683,-0.6433321,16z/data=!4m6!3m5!1s0x487664b7336361fd:0xa009e15efb2c651a!8m2!3d51.5221192!4d-0.6433466!16s%2Fg%2F1tcxcppm",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAADwAwCdASoUAAsAPxFysFCsJqSisAgBgCIJYgC7AB0kUT4+ZwU12EEAAM47me6kArfLYf3yPi7blc0iwADGYd/YLV9oGBwz1ljEOK1AgmuvvUTyL9qXHVJeZV6ATK0ABUp74mwZAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-86512476",
+      "name": "Langley Memorial Ground",
+      "lat": 51.5030706,
+      "lng": -0.5439864,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmNupCSAVTjvw1ZYOKW2TxcIt6e-XfUxy19B_oMixGqxOi0NrnMSwi143PM_5imxXKVa734iUfF_9QplevF00ZpcngZCEB9ZNjKRyf6-qh1Js1eer4oi0a9sPvYEKxga4dxRKFjH=w408-h725-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-86512476-098de05f0702009c.webp",
+        "source": "https://www.google.com/maps/place/Langley+Memorial+Ground,+Langley+Rd,+Langley,+Slough+SL3+8BS,+UK/@51.5030706,-0.5439864,16z/data=!4m6!3m5!1s0x487670178ae77819:0x5d0705f0fd862ed7!8m2!3d51.5029079!4d-0.5442377!16s%2Fg%2F11b8tcsvtb",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 562,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAABwAwCdASoLABQAPxFysVCsJqSisAgBgCIJQAAKU4pA9RwM6gAA/SvLScXmPjbpq2AND2zViib5o781KHBFm1IZpt+Xpl0BGldsLDTBVgUDwWiAAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-934826428",
+      "name": "Westfield Estate Play Area",
+      "lat": 51.4924139,
+      "lng": -0.5362429,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmPthM3demOVCOqs5e5QmKwxytD-1WMAU25K1uhYI_MarW9_iC5uuJXN9AFlBwnQJB5QccoYuVudpvfCAXcO2RPIPJ7DNuHzTol9qcxhilGQ8OBIyekR91ql9SO3Rb9pFVJhkjL3ZA=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-934826428-056e711a40a83524.webp",
+        "source": "https://www.google.com/maps/place/Westfield+Estate+Community+Centre/data=!4m7!3m6!1s0x48767040afc94ded:0x53cb3a3e752e8808!8m2!3d51.4921616!4d-0.5361621!16s%2Fg%2F1tg6v5rp!19sChIJ7U3Jr0BwdkgRCIgudT46y1M",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAABwAwCdASoUAA8APxFysFAsJqSisAgBgCIJZwAAVEfOpcMLQUAA/usT2EMqQpRVcbjqlvxAaqsfKvM8UbNySUDqgx3z39Hw4AA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-393239080",
+      "name": "PureGym",
+      "lat": 51.5239406,
+      "lng": -0.6415059,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmNeOUIQmUzwEnmSk6ZdjFBds0ehFqSKqlI52MRdAxKhGzyTs8j5bXmyFMZEyg2IQEVFtvZ80W1Mt1oHrz9DvicPDlaVy52uq5lS_VQSBBdIg-dzbjFj8zWY_sU63qaYXu0sARd7QRrzV8uP=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-393239080-6d602587d3aaa2c1.webp",
+        "source": "https://www.google.com/maps/place/PureGym+Burnham/@51.5239406,-0.6415059,16z/data=!4m6!3m5!1s0x487664b9d78746d5:0x153ac8d7f3fad110!8m2!3d51.5238115!4d-0.6415448!16s%2Fg%2F1w0j3psh",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAADwAwCdASoUAAsAPxFwsFAsJiSisAgBgCIJZQDCgB9Dvt47BIxjbVOAAP7e7IZqJu7MuVtdLzx6SwRm9CVoFTwe8KskYRIErC6mLzB6qiLbLokci4EVBV4t17IowTUAAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-393243681",
+      "name": "Jump In",
+      "lat": 51.5274108,
+      "lng": -0.6304682,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/AABkmLdu9ECv3KEncZIiB-cAz8h1VkReyVMN7VIPuTo42eaOpTiENI5eJLBAmvye7nS9o65d6Yk-_hjD4av15NDMUa_YYUduAtWvecSx86OqYYuQG9-8wwAmjp0BmsjrMpPdyfuHrM4Urw=w408-h274-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-393243681-0b9a9d6c49ee30b5.webp",
+        "source": "https://www.google.com/maps/place/Jump+In+by+AirHop+Adventure+%26+Trampoline+Park+Slough/data=!4m7!3m6!1s0x487664c43e97e211:0x796891831c77ffb1!8m2!3d51.5273899!4d-0.6305068!16s%2Fg%2F11b8ybd52y!19sChIJEeKXPsRkdkgRsf93HIORaHk",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 688,
+        "blurDataURL": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAADQAwCdASoUAA0APxFysFAsJqSisAgBgCIJYgC/WMgCNnMzCiRVtgAA/qn6/vrIXkBJlX8MtTUXKtGoHLy+DOGtzNjlsxEx9ZgfB1xq46bEgrJgewaGHRPa9DArssRi+RJdha4JIAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-259431204",
+      "name": "Harvey Park",
+      "lat": 51.4970452,
+      "lng": -0.5361316,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmMu8BhVgBxJEY6LUHtgUyNET8ygfsMaM61BEGog_NsXQppvapGPbI28Tf3ieJarrwpKyBUmQ7mFFxg2UMwE4Zlf3KojcDElVhbnZLhC4Vpj-d53XCFyRZ0F56NLdTj1KgMQhwuFWg=w408-h307-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-259431204-53e2f10317e7a3a4.webp",
+        "source": "https://www.google.com/maps/place/Harvey+Park/@51.4970452,-0.5361316,16z/data=!4m6!3m5!1s0x4876703ea96904f1:0xefed4042d57a93c4!8m2!3d51.4970352!4d-0.5359335!16s%2Fg%2F1tfm64ff",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 771,
+        "blurDataURL": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAADQAwCdASoUAA8APxFwsFAsJiSisAgBgCIJbACdABPIinJhwCMjK8gA/JlN0Q96PQa7SOkWLf8V5vm7KZSy15izA9BhATn7F/HBiFCplRNaB2vswSglRQZV9dzQ65NDU4U2w4Ynzg/HI+eBR7pgAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-1222557363",
+      "name": "Langley Leisure Centre",
+      "lat": 51.4991771,
+      "lng": -0.5356747,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmNCK4ozuVhlGcLzvdCufnFyKFp7nVhg23k1vcRtK2YwJAGIMHlEi6T2lGqeaFAXBFYmOat0fh44qqLWhwwyqVD5bzJa9YFWVjd0L9CSGWNsWQRAhu83J2-se63E21W-B0gaZzO_G2U7eo8i=w408-h271-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-1222557363-1f8d8ccf009709da.webp",
+        "source": "https://www.google.com/maps/place/Langley+Leisure+Centre/@51.4991771,-0.5356747,16z/data=!4m6!3m5!1s0x4876703b854fea35:0x1ec44b6d82be204c!8m2!3d51.4991705!4d-0.5356402!16s%2Fg%2F1td4d0z3",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 682,
+        "blurDataURL": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAADQAwCdASoUAA0APxFysFAsJqSisAgBgCIJZQC7ABPliH7AbtWkdMAAzXRMVxVGncdJWzXCOV1dwMBijl6Fj6ULV4WO+xAMwgRWaaOurRy6lu4qEYSx5iQm8A27+FLSYIgAAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-766001821",
+      "name": "Colnbrook Recreation Ground Playground",
+      "lat": 51.485988,
+      "lng": -0.5299746,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmMxH6xxNNywdGzYrDIvrxKeK04G9qyvkHCyJ2qzkOYKiQ_eEEsEyyILyiAhxdpEWEG8mjl7H7t82Vdpbw3zNlORMxXq8o1PwO3AINWRYJSkWhEcUwdWyk0wSbxE7EwSCu20lZzi=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-766001821-d36272f60b49d1aa.webp",
+        "source": "https://www.google.com/maps/place/Colnbrook+Recreation+Ground/@51.485988,-0.5299746,16z/data=!4m6!3m5!1s0x4876704f6750f373:0x50f5ad1826aa4342!8m2!3d51.4861944!4d-0.5298015!16s%2Fg%2F11d_798285",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAACwAwCdASoUAA8APxFwsFAsJiSisAgBgCIJQBkTBDqjetjqMfZSAAD+7U5GcEyzMi3sR8Ux7zKkMS4WZ5xPUEINL+Wuf6+K7vMqZBDY5/s8wQAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-253267392",
+      "name": "Haymill Valley",
+      "lat": 51.5268174,
+      "lng": -0.6428406,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmNKG4G0AMm63WEATMI6UaslSSvNZstk9XqlDjH13DPlG8Z1DRenZqbCFcjU8oFUwaC6M2393pPJ3Di-75uhdHSL_IubfEmu_vUJXAASRbu8W2NekT5D7fi0BvsQ4tZtfrMOPrXwYg=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-253267392-2f61d2fb0af68893.webp",
+        "source": "https://www.google.com/maps/place/Haymill+Valley/@51.5268174,-0.6428406,16z/data=!4m6!3m5!1s0x487664b99e211c31:0x1bfd8b48934d0069!8m2!3d51.5263839!4d-0.6425931!16s%2Fg%2F11c75smh61",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAACwAwCdASoUAA8APxFysFAsJqSisAgBgCIJQBOkEyhdy0MOi2FTAAD8zkoICzV1PZ8kohtkFgYIMXMt6sWIGC9uW1vVebA/pAErasdOxJTqWevANr/BIo0fgAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-1725620097",
+      "name": "Ankerwycke Yew",
+      "lat": 51.444661,
+      "lng": -0.556533,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/AABkmLcmzMAIn5rEtrMKxG9ZwpPosr_eHNxxRdGJ1PuN0vR6FXudB-eteMyEFiZpF_KuTNxo3YOtS8HJhR4vf8S5SIgdEpraXQ_0XQx31rXnBQfFeA8rDLbTbCD8-V-1cS0EGbl9fl3OHw=w408-h544-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-1725620097-84f5b043c3131640.webp",
+        "source": "https://www.google.com/maps/place/National+Trust+-+Ankerwycke+Yew/@51.444661,-0.556533,16z/data=!4m6!3m5!1s0x487670a463a50913:0x9de0960beffbef64!8m2!3d51.4447053!4d-0.5565205!16s%2Fm%2F0b74n_h",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 750,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAACwAwCdASoPABQAPxFysFAsJqSisAgBgCIJZQDE2Bb8sKaFx1SnGAD6/5T1Otd8LEtAhA+jT18GxIg2l2m1y9TSpDTYa0qNYsi+7NLx4TpU4XQ2sselyKDTjFrnUTBBs5V9k7xAAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-203986130",
+      "name": "St Mary's Priory",
+      "lat": 51.4441997,
+      "lng": -0.5565638,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmNmX-IP19o0OYrIlNhewWaXzv3H1RwzvDOtH1zOVl_5H4mk4pQob9neNThF2NxlRvrzJQWH-cg-6wzfVxiPzfV-R9hDF9_4kqTv9PfON3ZHTOFHymus6bIaI07eJUirS17XE_pz7ISoczCG=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-203986130-4b7194e642234836.webp",
+        "source": "https://www.google.com/maps/place/St+Mary's+Priory,+Benedictine+Nunnery/@51.4441997,-0.5565638,16z/data=!4m6!3m5!1s0x487671003f0f8623:0xebdecc5cecbc4f3a!8m2!3d51.4442071!4d-0.5565725!16s%2Fg%2F11vx6vglc4",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRoAAAABXRUJQVlA4IHQAAACQAwCdASoUAA8APxFysFAsJqSisAgBgCIJQBWGUAA77C1A5FnYAP7ccAuLenT4nrrhX646lENmmem3h6oPjsUbGPLw15Pqb3Nk157xgEbK/p6YHxCdvm7eb2UxGkRiQ42+Fq6UA1PW9i6PUg0HssWjnAAAAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-1274594863",
+      "name": "Arthur Jacob Nature Reserve",
+      "lat": 51.4729193,
+      "lng": -0.5292779,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmPHcXZe7Wds4D23QXK62ZFVw1ZmNRzdotofu9V36RnbMiehS6s5ZuyBLDAoMKgKScBQjbqLeKFAGjw4kGCAzhPnKH1zlatxLu59ZouToTSmgcwnHFAWFiR1gmTXH6Q04o7645t6=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-1274594863-09fc26dee99c75f7.webp",
+        "source": "https://www.google.com/maps/place/Arthur+Jacob+Nature+Reserve/@51.4729193,-0.5292779,16z/data=!4m6!3m5!1s0x48767057f25385e1:0x8e30c4f2e3b1a882!8m2!3d51.4727652!4d-0.5288466!16s%2Fg%2F11ddzzmb1l",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAABQBACdASoUAAsAPxFwsFAsJiSisAgBgCIJZACsAB9HkO8ZKLXc0VzEcRyAAP5AOye76FBelR8WSWKIjAHzuoqr30+62nUL3QBb0cpoLcZF4lAtZuRkBjbuMRhCC39pfEWkiL7gAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-52243882",
+      "name": "Monksfield Recreation Ground",
+      "lat": 51.5328837,
+      "lng": -0.6277027,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmP9QVskM6HtXgN91DC5Z5roGZ5c4sJP1pdXIaNhDdZ_pXOhawsv1pk5W7_huow4QpJ8aDgZPD_t62LLsvlyDyvrNwpw4p8GGvdLBnSuKBDgf1mVAeISbLDpA_RpeBbYHnfpYSd_=w408-h544-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-52243882-1811432d4529289b.webp",
+        "source": "https://www.google.com/maps/place/Monksfield+Recreation+Ground/@51.5328837,-0.6277027,16z/data=!4m6!3m5!1s0x48766574bb62e759:0xa1f7d407d710b88!8m2!3d51.5327784!4d-0.6277102!16s%2Fg%2F11fn1m6_83",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 750,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAADwAwCdASoPABQAPxFysFAsJqSisAgBgCIJYgDCgCK4VyJUrLz3AkAAAP7T22G9mQMnMn5Y3NpT7Nr9o7sWZrnAEs5VMAg+fSd8OpJiHkbsoAAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-24179314",
+      "name": "Air Forces Memorial",
+      "lat": 51.4374451,
+      "lng": -0.5648284,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmNG6Wa0QHzWPIIpokLMTzZEjPbTqOLCvkxZZ4lCOsZQjGLkP177EOW6OCD05Jhuw7PlNqHMBxRUJBjEXhD_lhFEbZ1OrLkUC58MvmKNJXD8jKU6W9QB2mJnYVLnb2iPUF5-QO3c=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-24179314-50bdabb0d5af458a.webp",
+        "source": "https://www.google.com/maps/place/Runnymede+Air+Forces+Memorial/@51.4374451,-0.5648284,16z/data=!4m6!3m5!1s0x48767a00f4fcf5a7:0x1b5db3b3c730e096!8m2!3d51.43775!4d-0.564949!16zL20vMGQyOXE5",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAACwAwCdASoUAA8APxFysFAsJqSisAgBgCIJQBOgAtp1nd6hvSWemAD+jcyUski6o9lbcHrLCv7t/Wzxm+LVTPsPqfRZ82T4T/0/Z1O8rwF03nou5inlsi/P1T4S5XbANo2gNw62GiyvIAAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-259431191",
+      "name": "Maplin Park",
+      "lat": 51.5048412,
+      "lng": -0.5311829,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmNMm3hGmIjmszOD4PlhxV2GN48mf9aAA6A32viQZDPIX-n_a5Gc4yebLAXbCTuOE2Ar-RA5jU0LWhB5wuNQGH7vO0Y2oTVVygqOFHgcbkhrZ41rmhiDkrYbYkmHRd6JI2e4jq0a=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-259431191-2577d522e254ac33.webp",
+        "source": "https://www.google.com/maps/place/Maplin+Park,+Langley,+Slough,+UK/@51.5048412,-0.5311829,16z/data=!4m6!3m5!1s0x48767025a8a4771f:0x24366aa8af8adec8!8m2!3d51.505989!4d-0.5328473!16s%2Fg%2F1t_tjswt",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAAAQBACdASoUAA8APxFysFAsJqSisAgBgCIJQBOkFThBKjwttXhrREgagAD+U/5FK+uAjWgPlbueUp8WO18trLeNVR7GxRlqqcUK5LnZMPeDIfoZ8ZEArwNob8bS9OJG3HMAAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-555009255",
+      "name": "The Savill Garden",
+      "lat": 51.4276569,
+      "lng": -0.5994373,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/AABkmLfUzmGiIdKdt3mMwZHNWvAVy35GFXYZFALOJPHbuLaaCcCynNg5OnAMZODuULzq0QSNgmJJ45SM1-g-BdfELXL8F-sOmhzcQ-ZlKI1aFQgJik1Gy3u3UNk7Ij8DwswtjtX3sn88WvxfaBYG=w408-h271-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-555009255-2ea1200c9d070b13.webp",
+        "source": "https://www.google.com/maps/place/The+Savill+Garden/@51.4276569,-0.5994373,16z/data=!4m6!3m5!1s0x48767bc3804c6e41:0x2f71d4572c5df232!8m2!3d51.4282058!4d-0.5988968!16s%2Fm%2F04ggxpg",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 683,
+        "blurDataURL": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAABwAwCdASoUAA0APxFysFAsJqSisAgBgCIJbACdABTTuCfwXQgA/rn5lG1rrT/EXw0JpnV5GacXLYEd52sbu19NvvNQtr2Zm7sg5jdd8Vtwa34NNRnxyimIbZ8qHF7rA7ZbL04np3Kyvc9vU4JKnwiiGsoxiAWyvey8tnJllHdoBxAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-765998030",
+      "name": "Albany Park",
+      "lat": 51.4825395,
+      "lng": -0.5180502,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmPJahtH2qOPeiaUNnW_aEGHP4YhE4MEfQW2TFP13T7ElL8gUA58kpZfzVaEPMbAeOPUoV70D8wq35BdcfzlZN18f3dGTPyQixuxjQVEawBPDkwsEXoNEFsx8hfQUBuEadDgFKY=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-765998030-de17daed6dd7d6d0.webp",
+        "source": "https://www.google.com/maps/place/Albany+Park,+Slough,+UK/@51.4825395,-0.5180502,16z/data=!4m6!3m5!1s0x4876704d5777d547:0xa088f1bc0d91ef57!8m2!3d51.4826179!4d-0.5187641!16s%2Fg%2F1vd75dr5",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAACwAwCdASoUAA8APxFysFAsJqSisAgBgCIJZQAAPCM8ivTh6OkigAD8IQZgB7ysUoJnyZTFyNzxPl6AntdJqtEGfSJnu9fE79wPgkOikbofOy8xoUX+wZDS3gSiBwacbKbtDwmG7vSkbMZ6g+37xcAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-433028164",
+      "name": "Burnham Park",
+      "lat": 51.5302683,
+      "lng": -0.6568553,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/AABkmLf183E0ZnK101rewAaHrCH3s8rXjh7yQ41fAJCFQMh-NCtuX-bSQB4TkHgG0lYWY4CLThP76RJ9ipEuB28KBze7V6U4f_7OsTYzM7YFBBnCGSHIg9ZZ813roLbp2-R3luwoLul0Jg=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-433028164-66440fc93f24ce18.webp",
+        "source": "https://www.google.com/maps/place/Burnham+Park,+Burnham,+Slough+SL1+7HR,+UK/@51.5302683,-0.6568553,16z/data=!4m6!3m5!1s0x487664a1753864bf:0xe74889bfd6faac5c!8m2!3d51.5313763!4d-0.6571605!16s%2Fg%2F1tdvd25v",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAABwAwCdASoUAA8APxFysFAsJqSisAgBgCIJbACdAAivSlYV6rgA/VzyvuQcITCuv/gm54T0+XQdbleLrZyYkYe3KacbuteNO6mhWgdx1pJ9zM4Jj9CiOPl0wAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-1285362651",
+      "name": "Ava’s Play Café",
+      "lat": 51.2741836,
+      "lng": -0.8400503,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkexb24PfD3s5har_-17RlKaX414pEDSY_s8Bkr2L3NUPM6rWtdQgQy4ELOv8L1epgVuYBNrf4TGstVoSBxRPK1RPQsGH1xUlqmMUSDKvXlPknV0ze_XywK8JIA8bDz18Jw-sWhNdyvyBWz=w1400-h1000-k-no",
+      "image": {
+        "source": "https://www.google.com/maps/search/Ava%27s+Play+Cafe+70+Reading+Road+Fleet",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1280,
+        "height": 960,
+        "matched": [
+          "maps-place-title",
+          "maps-place-address",
+          "maps-place-coordinates",
+          "visually verified play courtyard"
+        ],
+        "url": "/venue-images/osm-way-1285362651-6b395a060f40.webp",
+        "blurDataURL": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAADQAwCdASoUAA8APyV6tFGuJ6UisAgBwCSJZgC7ABD/ebxLNCfNEwAA/rYbo9qwk3VKkZtpUnfY7s5GtiPnUPI+FHSFH6vWtMat6Ghc/loZN6IpQSoHI9/9Zio6hgSaZAlz2y9rIDb8bNzvTewLveQwAAA="
+      }
+    },
+    {
+      "id": "osm-node-5030782219",
+      "name": "Escape Reading",
+      "lat": 51.4584248,
+      "lng": -0.9942877,
+      "originalUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/22/20/2f/e1/audley-street.jpg?w=1000&h=-1&s=1",
+      "image": {
+        "source": "https://www.tripadvisor.com/LocationPhotoDirectLink-g186363-d10487389-i572534753-Escape_Reading-Reading_Berkshire_England.html",
+        "credit": "Escape Reading management (Tripadvisor)",
+        "license": "Venue management photo — rights reserved",
+        "strategy": "official-public-gallery",
+        "matched": [
+          "visually verified physical venue interior",
+          "management photograph in official-site-linked Tripadvisor gallery",
+          "branch caption Audley street"
+        ],
+        "url": "/venue-images/osm-node-5030782219-706cffe8e86c.webp",
+        "width": 960,
+        "height": 1280,
+        "blurDataURL": "data:image/webp;base64,UklGRogAAABXRUJQVlA4IHwAAAAQBQCdASoUABsAPyWAtVIuKKUisAgBwCSJZQDLpBPPRJ4W2vWO+/IKem64noy1Cq6AAP6pOWHzgGDl6R9b682fQX4m1/jeE2DrvBAG0/8PYUoUXP4xjJoPD/ZEh7zNtp+rgk3o/C4LefA+Cl1B/J4aurpI+sunSJNiAAAA"
+      }
+    },
+    {
+      "id": "osm-way-1190575741",
+      "name": "Adventure Play",
+      "lat": 51.4256156,
+      "lng": -0.5976729,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmO4XC6IqMMP1gIJQi41nXh6gRtA22O5IyLLRBCXdfTsHoFnc0AV15jxuoS-m_YTtFGn8hLygDin8UlVrIDJIf_oLv1-PCoPAi3QhIG8ChjOhg1jiZPgCotGd2B4jVfcapGO7UFE6305n-vV=w408-h271-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-1190575741-2e51a29bf7bfc16b.webp",
+        "source": "https://www.google.com/maps/place/Adventure+Play/@51.4256156,-0.5976729,16z/data=!4m6!3m5!1s0x4876798c93709e13:0x120fec2e36c1db1!8m2!3d51.4258037!4d-0.5974835!16s%2Fg%2F11tgby612j",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 682,
+        "blurDataURL": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAACQAwCdASoUAA0APxFysFAsJqSisAgBgCIJYgC1GoACSpzNMGCIAPk4udXrLuqmPPqTuUbi7GVZ7o72hP1UY4mc+gR0Uahp+k9iUBzi5bR3TDkeFEb9jXqtIgo0j/tO13cKWktAAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-1266647558",
+      "name": "Cocksherd Wood",
+      "lat": 51.5366195,
+      "lng": -0.6381333,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmP0x7q4JckTQ9kQzaBMNLsNYAKRf0VkjqyshOuQTq6oSd9ZUg2YAd0yuMHbWb-wu1eDESwe2Sx-S8wEU1VZOUcxfZ6SSIQ-PuHzLH7Kw5E9o5T2A_VF-HHBKN0eLUvanvQGWhfMIMmUp7Im=w408-h270-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-1266647558-e672be4a99c187b8.webp",
+        "source": "https://www.google.com/maps/place/Cocksherd+Wood/@51.5366195,-0.6381333,16z/data=!4m6!3m5!1s0x487664953a8a8edb:0xa2388a42ee8c5d2f!8m2!3d51.5367623!4d-0.6379195!16s%2Fg%2F11dymtvj83",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 680,
+        "blurDataURL": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAADQAwCdASoUAA0APxFysFAsJqSisAgBgCIJZAC1CMgCDDn6cp3JiEgAzhhZsQe3uD1jk4Oa4W51Yx9lTZkhn+GuAhBsJWkDSd/we0lTTg1FUJIPv9Ve5pxEV3FYp8BKk1fAAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-163575530",
+      "name": "Waverley Park",
+      "lat": 51.3918853,
+      "lng": -0.858296,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmMerYJBhEt0L_AqM064Wypv2PqYzcKmGvb5PBS9l3mx6RPTzWNRfTTbVZijTDEiYkO4rntD7G8DV4mT0lQPuDy9fivAADTjHQQjpUFOCmyA7aaxYEy4azjDkQfs7uxI6IMb8CPv=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-163575530-46d30e48c192066a.webp",
+        "source": "https://www.google.com/maps/place/Waverley+Park+Playground/@51.3918853,-0.858296,16z/data=!4m6!3m5!1s0x48768344cf742fbf:0x7bea0568ea5d8edd!8m2!3d51.3907228!4d-0.8584554!16s%2Fg%2F11q42ypnhf",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAADQAwCdASoUAAsAPxFysVAsJqSisAgBgCIJYwC7ACHXXFEWHWnI8hAA/rIJPaNPydlS/itjQEEOkeKJGVC0Z4L6LYl2V4M9ec02gKOAAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-1326260053",
+      "name": "Woodpecker Park",
+      "lat": 51.4063027,
+      "lng": -0.7849548,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmPmUNnqV8ffSTKyrGpp3cCU8UYzR1F2UAZsgr57QdeR6hX-F_V67I20KWgM31CJVfJLO2wj4JBoICDQB3WL-LP30tN714YUuk3l2W2R6c6q6KogPUgruIpN_iFsjf8bHLrFbiv_=w360-h120-k-no-pi-0-ya42.999992-ro-0-fo100",
+      "image": {
+        "url": "/venue-images/osm-way-1326260053-475112966d0d5b9e.webp",
+        "source": "https://www.google.com/maps/place/Woodpecker+Park/@51.4063027,-0.7849548,16z/data=!4m6!3m5!1s0x487680e9c1906a0d:0xc4f5842c98b8086!8m2!3d51.4063355!4d-0.7849049!16s%2Fg%2F11gbwphxnf",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 512,
+        "blurDataURL": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAACQAwCdASoUAAoAPxFwsFAsJiSisAgBgCIJQBOgBECtPVCX1mpAAPfTwPE2shlQe9+jMjIpFgD+3rZAIaKU0N2V6CwxjfEZlByfPYf4gAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-1036511918",
+      "name": "Core Personal Training Studio",
+      "lat": 51.4322153,
+      "lng": -0.554857,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmPYwtIWztttNEz7WtqabJv_y2i89q1P38Li21tO4Iy8Hn-Wcu2jXHwk1sY8thLMBv5xmeuO4ywRnOKQSQESr5LzJIf7SAyZtk-hHkwsZqAxr-aeQ7tM1XJ858Du_LMt8d_MAOzF=w408-h272-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-1036511918-d4be5e726b4c9ac6.webp",
+        "source": "https://www.google.com/maps/place/Core+Personal+Training+Studio/@51.4322153,-0.554857,16z/data=!4m6!3m5!1s0x487671d93b488af3:0xdab262244f2bbdde!8m2!3d51.4321605!4d-0.5548635!16s%2Fg%2F11y1t8r9vl",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 683,
+        "blurDataURL": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAABwBACdASoUAA0APxFwsFAsJiSisAgBgCIJQBdilAOn/AfAgyEwG3f1MoooTAD+qc3b5hSIjU+v2QXkxP1YlyVSbdURmcvxNM8W2JsPIMlfH7L7tvcllDSVucpDbVrAwyL14VBfl/49Oif7mEULJ3FoVqxj5BsosAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-765948744",
+      "name": "Pippins Park",
+      "lat": 51.4821526,
+      "lng": -0.5108842,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmNfdMoMsvuVWcXvnB1HV_7L2s1WIKKuAbPeRQAXYbh8Sq7UbegFN6KLM7eZ8I2p4e9qr4c1RenAMUQi1XlRA2atxY655ApP3KCrW6BT5pnUrpKwBkmvF-fzIiwCqQTJmK5OFH7c=w408-h273-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-765948744-e6ab20881e3dd535.webp",
+        "source": "https://www.google.com/maps/place/Pippins+Park/@51.4821526,-0.5108842,16z/data=!4m6!3m5!1s0x487671ae1f4b7fa7:0x41b67dafa64fde6b!8m2!3d51.4820479!4d-0.510958!16s%2Fg%2F11d_76wt5l",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 685,
+        "blurDataURL": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAADQAwCdASoUAA0APxFwsFAsJiSisAgBgCIJQAAMLuQdu+vvFKHCzQAA/rI69G16FSoOCXeZsheOVEdFZ3KgJBIwHLf/30vY0NiF2vGLhht0jHw3g58QAQKwBtd3i4AA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-1326260802",
+      "name": "Osprey Park",
+      "lat": 51.4075319,
+      "lng": -0.7829617,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmNCajaQVE6xUz8EEX-Sw-sUO7uAzw3Lmdqsd3DkL3ykSNLc4YWa0u4IpHAwG0P9MVguGfyGlY0t8wHKCLn4MxCO-yyJhqUPYvmg0VeN-zxWQKlriY7Cbj2yXp4Zj4cITT5ReSDrKw=w211-h120-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-1326260802-6ae3c4a381e0d530.webp",
+        "source": "https://www.google.com/maps/place/Osprey+Park/@51.4075319,-0.7829617,16z/data=!4m6!3m5!1s0x4876818a736b20cb:0xced2d8cc2a5ebaad!8m2!3d51.407601!4d-0.7831071!16s%2Fg%2F11v59_ldrn",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 891,
+        "height": 506,
+        "blurDataURL": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAACwAwCdASoUAAsAPxFysVAsJqSisAgBgCIJYwC06CIEwY9AbkExgAD+kai/OAaBJoD3K1aKXxDdZkFsiuFdLljhR7dFYVxThIkMIYYGoOorHi3ajEuvlxgAAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-148091183",
+      "name": "Threshfield Play Area",
+      "lat": 51.4037812,
+      "lng": -0.761229,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmPAp-lMGlfKxS9P4BzWiuePGP48BT2NRfDrOXfdQ19CRqf8S9PWgBri3v54nDUiRKLJsOBDTDD_PuqlietmrRcsr1i2kyK00Q-ea845XfWJ7g9UUqz-Tr9QXxkgXHxRrekcrgY=w408-h725-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-148091183-1ca1cc4bf13898fd.webp",
+        "source": "https://www.google.com/maps/place/Threshfield+Recreation+Ground/data=!4m7!3m6!1s0x487680997583c157:0x9c0b498d6c7adc2c!8m2!3d51.4035776!4d-0.7619418!16s%2Fg%2F11f1237p5r!19sChIJV8GDdZmAdkgRLNx6bI1JC5w",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 562,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRkwAAABXRUJQVlA4IEAAAABwAwCdASoLABQAPxFysFAsJqSisAgBgCIJQAAI1B2UaxapQuAA+M98TzDURWY1a+nCfeslNbe9x2J9muOboAAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-1617148703",
+      "name": "The Picture Gallery",
+      "lat": 51.4250511,
+      "lng": -0.5677605,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmMOUYPn_oJw21oq0fc3cWqrLuPIVdvj5REgM3Wgv-5FDtn5X2cwPKVvkJ1I-uDxrD9Ncr2J4QltfzlVLJ1z8G9ONUDe4oaDOcl3sa0hIadFrYsIOqsZaL38_5OBta2_J_OAr0sQ=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-1617148703-41feb97591566344.webp",
+        "source": "https://www.google.com/maps/place/Royal+Holloway+Picture+Gallery/data=!4m7!3m6!1s0x487679fe884a205f:0x6498446f881f9d02!8m2!3d51.4251076!4d-0.5675973!16s%2Fg%2F11f30fnb__!19sChIJXyBKiP55dkgRAp0fiG9EmGQ",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAABwAwCdASoUAA8APxFysFAsJqSisAgBgCIJbACsAAsm78JYtcAA+ffnpVdSGuXcUFgvlt4kjPxpwB3751gM70ZadcXNnTcN0c/mxOZRpxn3NSZSJ5x8jYLr6EQGTf6c9DYvYAP7B7BS2eYDnuNwAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-1326261216",
+      "name": "Pigeon Grove Play Area",
+      "lat": 51.4082694,
+      "lng": -0.7802875,
+      "originalUrl": "https://lh3.googleusercontent.com/grass-cs/ACvplmPrY51N1D1Ms0q4ysR-T2GOnjpGsHL8KxBXYKY-MtQ0--L19yPjeiLHMRE1xZCJlCsKsEdJLQoNtu_BFjH1R8BeKspLUTNxBZjyfGRm3vK43lHcuLByHAo_0w84-jO86re0Q5piGw=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-1326261216-c798a6af284e89f1.webp",
+        "source": "https://www.google.com/maps/place/Pigeon+Grove+Play+Area/data=!4m7!3m6!1s0x487680c03311fbe9:0x44df700efdc763c3!8m2!3d51.408252!4d-0.7802975!16s%2Fg%2F11gbwpj0wr!19sChIJ6fsRM8CAdkgRw2PH_Q5w30Q",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAACwAwCdASoUAAsAPxFysFAsJqSisAgBgCIJaAC7ABoAWWENyQOBAAD9dRAOpOs6zTLct7gnMuk/WYnSl3PFp+Um9d1M8VGtwece2surSLkyCFfT+7jr0ubAAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-12540017248",
+      "name": "Egham Museum",
+      "lat": 51.4320562,
+      "lng": -0.5480236,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmUEVi1K6CGVZd06FyTkX752NHcgvIvCUZ5cxxz4adJtqE1FpICdMmkYJM8MXbmTXneU2dmhI_xun5TmrhqrD9EiSOrz8SESL43PqtwVMB3Pm7HgK_FWwr1l-ED56Y7_gcIMRP_=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-12540017248-cc4e06768599d98a.webp",
+        "source": "https://www.google.com/maps/place/Egham+Museum+%28The+Literary+Institute%29/data=!4m7!3m6!1s0x487670b3734a6add:0xa395f4237ccf4ec8!8m2!3d51.4318879!4d-0.5478549!16s%2Fg%2F1tjdqv0b!19sChIJ3WpKc7NwdkgRyE7PfCP0laM",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAADQAwCdASoUAAsAPxFysFAsJqSisAgBgCIJYwCdAB+QoavBtHJ9QAAA/a08UxhEIlbis+Nu0BKa3wkkHAbjEUQTMxyb1nbSVzJu0KvFjNz6p6X9xlC6d2WJboB9QaS6LROLrHHhAdHqG4/AAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-233158475",
+      "name": "Crown Wood Play Area",
+      "lat": 51.3970596,
+      "lng": -0.7380454,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlODFYrOoJny-ruKpfyUgDlmVeJnCpr12GRV0UuQQHSWbRJufOTFzrfOpjmG6c98QrqB_rSqV-EyWEK8QZaNKamlmvWWA9pPI3lbDifgiD3TKpdk9Q2gtWjfMaRkUVrnD8X5mdH=w408-h543-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-233158475-c84fac2591925834.webp",
+        "source": "https://www.google.com/maps/place/Crown+Wood+Play+Area/@51.3970596,-0.7380454,16z/data=!4m6!3m5!1s0x48767f1c3e422269:0xd4a16ccd0cc66d39!8m2!3d51.3969885!4d-0.7380457!16s%2Fg%2F11gzpt4y06",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 750,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAACwAwCdASoPABQAPxFysFAsJqSisAgBgCIJZQC2yB9fttfN/EbMvAD+Ga63XVSV+5SQlvT9l0/EDVsAuwYfzQWBu3aBdfagcKjqXZN4G2iPQDX3N9huvNIAAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-492678088",
+      "name": "TeamSport Farnborough",
+      "lat": 51.286837,
+      "lng": -0.7678874,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmML7Nb-PGyaMixFjw_B9hMot5VNtsEQyrJG-HB-x3CsNnzynuq6_jU5l19nGgaguiCOt1UVlNPuLjJlVcCswkXkgjMCIlNRbvEXK-kFs6tsrPDrBGGh5krrbE79vV-AuGy1r8fo2ZzfiM8=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-492678088-d0fa259388b1763b.webp",
+        "source": "https://www.google.com/maps/place/TeamSport+Go+Karting+Farnborough/@51.286837,-0.7678874,16z/data=!4m6!3m5!1s0x48742b3959823885:0x4a7c5227ac9ff86!8m2!3d51.2869377!4d-0.767376!16s%2Fg%2F11ckr6dk24",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 853,
+        "height": 480,
+        "blurDataURL": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAACQAwCdASoUAAsAPxFysFAsJqSisAgBgCIJZwAAXk105eKOnrEAAP7CNnm/tQ/F1pZJ1ZqHkX+Meo6S8vy/G03xsn46ExKH1fQDrnrvSHdb2ZlZ81KeZmepWm1XDlaIoAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-103023750",
+      "name": "Bracknell Leisure Centre",
+      "lat": 51.4016842,
+      "lng": -0.74808,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmGlgYuJOo8iBajXxBa2NzyUEpFz_YAQ177uUhgJ2G8NnXmwLV_4p0LBuatlmuoYyr9De8iF2nflfNy5naItogKgpKCP84fr08qacmn9bQmzC7FzQ8445xHS_oON4z1OLnCuWofxw=w461-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-103023750-ce064e87be54a51a.webp",
+        "source": "https://www.google.com/maps/place/Bracknell+Leisure+Centre/@51.4016842,-0.74808,16z/data=!4m6!3m5!1s0x48767e26a47c8b43:0x5a3426f9c383b7cb!8m2!3d51.401844!4d-0.7474394!16s%2Fg%2F11c2j2psx_",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 540,
+        "height": 281,
+        "blurDataURL": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAADwAwCdASoUAAoAPxFysFAsJqSisAgBgCIJaACAAAXZu3ye82p9HBgAAP3v+Cy4WyCBGe/q2VfzSPxKuVbp2vV8QsgSEFgPPPA/nmoUXYxT06wqoTLvyP8AAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-9986325241",
+      "name": "Everyman",
+      "lat": 51.4309276,
+      "lng": -0.5480215,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm6VN2JH6bKZtfgKFEQ8phQV4kPy8A-vsQGPn6QrE_yBpqIHskCA8yzQQVFD9E1fbVHPlczuCoL-mOPmgYoRrzwb_R0aD_eYYjPcx08g0Nuy7kgQmpOZ6Kr2gHt-Oeass6yFicOBNwFnaw=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-9986325241-41bc7a1ef5e3259c.webp",
+        "source": "https://www.google.com/maps/place/Everyman/@51.4309276,-0.5480215,16z/data=!4m6!3m5!1s0x487671d08f7f2ecf:0x854e8bf4e69a7bbf!8m2!3d51.4309579!4d-0.5479176!16s%2Fg%2F11s53bpwsn",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAAAQBACdASoUAAsAPxFysFAsJqSisAgBgCIJaACdACIj3RLfFZn3lpSQgAD+5Ea5EYgDdxXVKyV8tvQ8cNo937dWW+G1rs1slnOPjW4NDDVhqLMiiq2gNujPuvNoAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-1796966886",
+      "name": "Heather Garden",
+      "lat": 51.4176597,
+      "lng": -0.6064014,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkW0z0WVUNLVCIekQWxq8H4_TlHV1_WqUIaYfQIQOzJyOBQSX2772cyEKQMViJzOtWyT-d7lxgTo1MIEmn3wiRkWUPoLEgiBNy0dyfi_6ceHdQ3lXPLFEpmgZMu3GaoxwEgLFdK=w408-h544-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-1796966886-a6a4ac6ac14dcce1.webp",
+        "source": "https://www.google.com/maps/place/Heather+Garden/@51.4176597,-0.6064014,16z/data=!4m6!3m5!1s0x4876795301a35ad1:0x6fd726f1475dab1!8m2!3d51.4184943!4d-0.6053404!16s%2Fg%2F11gmts41b9",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 750,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAACwAwCdASoPABQAPxFysFAsJqSisAgBgCIJZACw7BwcX0C+Dgf2AAD+wAbm8JtPCqO2QsU+LJCjRZXrGs5a4wuqOcwEwa9eGu8jH13THPx32mDtCnEMYpAo3yh75kT+TAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-552900566",
+      "name": "Elles Close Play Area",
+      "lat": 51.2882666,
+      "lng": -0.7573819,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9SOV4czZtpik8uCFwLL-fxn5mQT3SHBX_rTQRp9w_odCEoLv24CwyzfzF5uYrM7NIc36FIhpIBT7AJHNOOyYR6_dQpLObDnRz7YR9IxiWl-Tl0_DP5RoDrfsDl7KoY269I-dynr4k9qc-sb=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-552900566-92025d10f939b79a.webp",
+        "source": "https://www.google.com/maps/place/Elles+Close+Play+Area/@51.2882666,-0.7573819,16z/data=!4m6!3m5!1s0x48742b9f7e1d92c7:0x880e57423aed8ec5!8m2!3d51.2882457!4d-0.7573455!16s%2Fg%2F11h230_2sw",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAACQAwCdASoUAA8APxFysFAsJqSisAgBgCIJQBOmUABUHNousFTgAPd1An7jN4vTsHSgBiHqFZKsqrggXKLQ6BdTF78SxatKtwic2haJrimdfvU+utDvs8i5nDVl71nLIyv2kQ6ee6Cow4AA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-13357221906",
+      "name": "Studio 9",
+      "lat": 51.4031911,
+      "lng": -0.8509878,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9TFrTzZWJ_VA_oPhW6jwqbQvX56J04Wgd_BfYP8UWNhPcbIiiEbD1zBoyAVn6lBPQXYPCeO1rVghlyCXxKrRbVaUZfKEv5f9Q21RQm6IHiuXsZpsivuOOiO0jP4FREiO_gIOCA=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-13357221906-2b6cba1e37531d3e.webp",
+        "source": "https://www.google.com/maps/place/Studio+9+Fitness/@51.4031911,-0.8509878,16z/data=!4m6!3m5!1s0x487683df1c9246bb:0xcf9941f19b79e654!8m2!3d51.4032336!4d-0.8509918!16s%2Fg%2F11cssyhj6s",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAADQAwCdASoUAA8APxFysFAsJqSisAgBgCIJZQCsACFsKUtHYwJvYcAA/MkfKRwnAzZhBPtFUsEMmLoqIc6rWYHiWsKPSzZftlSozh7zs6pK5DDIvH2JnB0XAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-233158472",
+      "name": "Nettlecombe Play Area",
+      "lat": 51.3981943,
+      "lng": -0.7361483,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9T8rsMQOdz8Lmo7OYFwQz9RTjFpxnnifnkPVzBBXnXecbGmfbr4l368fgR1GxCU2ucV21snEkqeeWzoNqxt6ygFIRSumRRVCnCouS2aZbs0DAg-iGgqxJqP8L2iehd6JXViMUI=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-233158472-6c500829d63813bb.webp",
+        "source": "https://www.google.com/maps/place/Nettlecombe+Play+Area/@51.3981943,-0.7361483,16z/data=!4m6!3m5!1s0x48767e3a191b6403:0xd0a626b539673465!8m2!3d51.3982872!4d-0.7361624!16s%2Fg%2F11fz9z9nl6",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAADQAwCdASoUAA8APxFysFCsJqSisAgBgCIJZQC7ACHepoiX6TMQygAA/uc37PofKotbYLgpW0ez4mXzb+DlbC8fIHBReD658089E6eLi+iNZBiYBSFu1GHWagAAAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-408005886",
+      "name": "World's End Play Area",
+      "lat": 51.3953576,
+      "lng": -0.7302374,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmbfR2fO7wyjkZSHtk0KIofZzxHZ5ge35ZDbQCmT1qJHHJOgyc47boakauqKftu3WJ5rAn_btUnQeRZT0H51rDGq5kQyA-HfzW6ejAdsZGzbCrG3XBOMLmJ5TYtTWDi5vLr6gz9=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-408005886-d86291df725d4207.webp",
+        "source": "https://www.google.com/maps/place/World's+End+Playground/@51.3953576,-0.7302374,16z/data=!4m6!3m5!1s0x48767e37dac6ac75:0x2df2bb48281dc765!8m2!3d51.3953899!4d-0.730283!16s%2Fg%2F11fz98prjj",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAACwAwCdASoUAA8APxFwsFAsJiSisAgBgCIJQBOgAuJ75OolglHcAAD+g7W+8lYfp71wroLPBNKf4Jf5lCaCXljPOdoZ0UDQRcsjTb08htgKwU0BgWuVVfjX2yl1JfGbikRfIYTQGDHllZ+SpzcEwAAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-26221443",
+      "name": "Howard Palmer Gardens",
+      "lat": 51.4088292,
+      "lng": -0.8325868,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl68CIhSJfNy1GQ7FtLfPaXSlsdTiuZaBFtazwys78nQxltEdalM5SInB0Ju5bspBffobfomoGWqVpBx8uztsoaPpfL5kxx9hFXN6KQ63RD4foizAFagwm8Oho2S93ViVAtor4=w408-h544-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-26221443-38de8bb47976889c.webp",
+        "source": "https://www.google.com/maps/place/Howard+Palmer+Gardens/@51.4088292,-0.8325868,16z/data=!4m6!3m5!1s0x4876814238764471:0x106f54f9b36216b8!8m2!3d51.4088196!4d-0.8322485!16s%2Fg%2F11b7qtlm17",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 750,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAADQAwCdASoPABQAPxFysFAsJqSisAgBgCIJQBWAA/L7/R8YhdGOfCQA1ayxxXWDN6N9rq5TK8koIkgIqLfdvic0yX2QF1I957JwncqVk22sdxJBsIa39UWTgAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-532679789",
+      "name": "Heatherside Recreation Ground",
+      "lat": 51.3292577,
+      "lng": -0.6991331,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl73TBCLl1b2m6HvdId031RCqY7c7KTsb0N56vDmbb75oPJMuhXb9B-nmcUr9rwWq_PMmQtTvgGNOOHdGDZh28e8WOgkuciWVSypdhsrF7oKa8vzpBrbZtiLlV47o9i8d-TVBw8=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-532679789-23330eea7bb89237.webp",
+        "source": "https://www.google.com/maps/place/Heatherside+Recreation+Ground/@51.3292577,-0.6991331,16z/data=!4m6!3m5!1s0x4875d59c2595e0fb:0xc9383bc37ff5e6de!8m2!3d51.3295366!4d-0.6997978!16s%2Fg%2F11hbnr5_p4",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAAAQBACdASoUAA8APxFysFAsJqSisAgBgCIJbACxDCdJ/gNnoSX8GyT+4ADKo6WaDHcnB5G9gsmM5EqGWH/FsvVD2p2d9Jbn7Yl64zV3w3z9SXn0XgAW1JUdo2d5bjoJ+bZQAAAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-56045846",
+      "name": "St Crispin's Leisure Centre",
+      "lat": 51.4113996,
+      "lng": -0.8229973,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmp7VsSayOZCT-4nshKuJTsfphvbmuSwvWPZAS4_EGKOE5OjMJIieCYdQGd0hwTtngymunPcTbNrLYUnYPj2RwEj-WDIb5hruALhGdJPOYQ_bnJewLAAHJIV86PzXG86_Uo5VKh=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-56045846-66d38f4b6a2ab2c1.webp",
+        "source": "https://www.google.com/maps/place/St+Crispin%27s+Leisure+Centre/data=!4m7!3m6!1s0x4876813f24c35e7d:0x3960be94e7f6f36e!8m2!3d51.4114583!4d-0.8230661!16s%2Fg%2F11b6v687wc!19sChIJfV7DJD-BdkgRbvP255S-YDk",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAACQAwCdASoUAAsAPxFysFAsJqSisAgBgCIJZwAAKaER0InhXIEAAPPJX0GuVIo4lETxCr/9bQQ7jisZC5qe9bIyyagtjNjRxLZdDVvYyIqlLBMzhtDj2COHCA29B/BG8KyYbEAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-4572933691",
+      "name": "Nuffield Health Fitness & Wellbeing",
+      "lat": 51.409618,
+      "lng": -0.8363783,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnTRofRyw6mDkCq3kw0vp8O18cCTKNSm6qqZkcuuMNhJ6PT31EJ2Ey1BeEumTCSaxLTXBUDUOkrJ7VSsLPAF4D8dCxSrvmkxhmbGfs206OUmPUS2T3EqAO6xjatxzL1pUiI4_Tm=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-4572933691-03c99ad92f64e235.webp",
+        "source": "https://www.google.com/maps/place/Nuffield+Health+Wokingham+Fitness+%26+Wellbeing+Gym/@51.409618,-0.8363783,16z/data=!4m6!3m5!1s0x48768142e8194687:0x99fa16de4b6c73ad!8m2!3d51.4096755!4d-0.8359736!16s%2Fg%2F1v41zz3y",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAADQAwCdASoUAAsAPxFysFAsJqSisAgBgCIJaADE2CPXEr14+zDfP1gA/liIHHpID73inSHK+XP0h1EgHW3JVxWgRl2bdLTzFFA10nNJVfmBfbLSw8ffqVO8qrq8m1Te6a3ATFAsyl7DVbof5V6DiAAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-912576872",
+      "name": "Nuthurst Play Area",
+      "lat": 51.3990816,
+      "lng": -0.7330669,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmed-p_UgRAcBAN7dfGWdtnvd5j887zMPwXqe3MVzsAazkKL79Q_q3Mm0j9NPhvcpcFmwHUv3hcwd641R4zEY1npW5o1O9dmeVLhX5aHLb-wkE9ldWXb2MU5MRjpKwIC7CVwOqL=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-912576872-fefb76bbf3fd3ad4.webp",
+        "source": "https://www.google.com/maps/place/Nuthurst+Play+Area/@51.3990816,-0.7330669,16z/data=!4m6!3m5!1s0x48767f5c7803ff05:0x2922f44f54955d5a!8m2!3d51.399246!4d-0.7329036!16s%2Fg%2F11t7psnqg_",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAADwAwCdASoUAA8APxFysFAsJqSisAgBgCIJQBdgA0g4Xz7wJaF1HZGAAP6RdD40WxHQP92dmwwBZZrzS7ngZgwMXDdxreA3ZJc8PjkNMBkwe3KWUokoDyqDFa+o8aBHAsN2mcRSALV/JEuckAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-node-1796966869",
+      "name": "The Valley Gardens",
+      "lat": 51.4149431,
+      "lng": -0.6011658,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlGV_9oX-S8JGDM0Sfro5sXU8qQ9VvikV59FDN5KR5v3QkdCgHq0UgDechZVC56uw4FksBLLLNnqfjTPBeJT21tmN5Hz9yFZY5u7-7vOHSzcOdA0XzR-HdLOyiYn7xiB4fJS0SJaVGk5Rs=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-node-1796966869-d79a05fe301c2947.webp",
+        "source": "https://www.google.com/maps/place/The+Valley+Gardens/@51.4149431,-0.6011658,16z/data=!4m6!3m5!1s0x4876799afa68e521:0x2b78f593e92baea4!8m2!3d51.4153955!4d-0.6020385!16s%2Fg%2F11hbfkx48w",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAAAwBACdASoUAA8APxFysFAsJqSisAgBgCIJagCdMoGv/gJU5VH8GqjxdYAAzdXToxawKNT2H3NaX8DHB4GMHtG59KpkKqlXwTzGDyeKslOKObVbIt1AYRriF9wt+Y+6qtxOqo42r12zrdDnW5+A7+pAAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-959105393",
+      "name": "The Punch Bowl",
+      "lat": 51.4145867,
+      "lng": -0.5999056,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9TrZEcgwmhDS1fy50YuC32IYl_6kClMdQc8CdCSQKRGKT61R6nA3PQkBWM_mOjq8KRyYutfFDxdTx7Mc4dEyr5mF2Hn5nCvJZaFJo-bY5oihH1ce_ynXeDcUnqRikDfbwIWj1panQoKqAbf=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-959105393-08166077ec5229db.webp",
+        "source": "https://www.google.com/maps/place/Punch+Bowl/data=!4m7!3m6!1s0x48767900323854d9:0x49a46ed47df9ffc1!8m2!3d51.4143719!4d-0.599294!16s%2Fg%2F11z53897t8!19sChIJ2VQ4MgB5dkgRwf_5fdRupEk",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAABwAwCdASoUAA8APxFysFAsJqSisAgBgCIJYwCdAAMWJe0JIUAA/fwbaq9xG4bGYm6rceDlu/TR3GmtvVIy7jPh3xYAp1jWW7dpiIza3OtKH8qKxXVcHD9D0U1TEDTT1Rmo9oYNefCQQAAA",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-33503881",
+      "name": "Bill Hill",
+      "lat": 51.408161,
+      "lng": -0.7532093,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm6ZFWr8drQfDfRfxCNESyAyJMESvdYs6r37PuYRlfzY25RbTgnK7tcRyH16a6A1NPc7E26T69yP-Ykx0wTL1YYPotzZ07X40gOGD6niDF9nof46aOLjvJvFPBjXQ-Wr90g7yYC=w408-h544-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-33503881-64862e78c2fbc81e.webp",
+        "source": "https://www.google.com/maps/place/Bill+Hill/@51.408161,-0.7532093,16z/data=!4m6!3m5!1s0x48767e1ffdcc138b:0xb78981e01215425e!8m2!3d51.4078759!4d-0.7533415!16s%2Fg%2F12hkcn_0p",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 750,
+        "height": 1000,
+        "blurDataURL": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAACwAwCdASoPABQAPxFysFAsJqSisAgBgCIJZQDCgBjwdw23FOKcAADzR/NOisAk6UY0Kyvvw/E8UsGRbMxzx326VkPAEzML9pxgLwIAAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-162568688",
+      "name": "Staines Moor",
+      "lat": 51.4465347,
+      "lng": -0.5160534,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9RywHQYwKeeClaJnTSaxszbcc21iN93WkepuO34b8WoQ-fHwcINZcquZUsW3rxuydhU1zRhzP8FFuZ0sJS4hD4U8GhVcZIXYs0BKEQ5iTAlEUqPHEiSVVzix_AzUmiMfsBY9BnxOVBxbwY=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-162568688-1e45e3844f321753.webp",
+        "source": "https://www.google.com/maps/place/Staines+Moor/@51.4465347,-0.5160534,16z/data=!4m6!3m5!1s0x4876710fef5df037:0xf9dc85cb02cf0c67!8m2!3d51.4471617!4d-0.5154349!16s%2Fm%2F03ydndl",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAADQAwCdASoUAA8APxF0sFCsJqSisAgBgCIJZACdACHT0uAZPZuimgAA95z8ttC6QSYLI/P9+WSJY000EVL8+ymIA+gIQa1XE6i84crtHmqNg0z8QAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-321896984",
+      "name": "Holyport War Memorial Hall Playground",
+      "lat": 51.4889787,
+      "lng": -0.7176802,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmXj0A0ikm5cdtPtkrD2oU2yfLyQn5O4yxN-BQrvuoE6qxLjcrkTN7icm6RMqiX7G0zB7VbUDrZxvPYM4vOZKE3reSKWSZmFXSJjfNcN2ydOIl1rIiIhHZbDuYRoJmEcO-5o9h-=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-321896984-08bb8c4fea7038f8.webp",
+        "source": "https://www.google.com/maps/place/Holyport+War+Memorial+Hall/@51.4889787,-0.7176802,16z/data=!4m6!3m5!1s0x48767d1984e802bf:0xff2de12346f6d0fa!8m2!3d51.4885621!4d-0.7173042!16s%2Fg%2F1ttpgd3q",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAADQAwCdASoUAA8APxF0sVCsJqSisAgBgCIJQBhQA4Mdmybkwl3S+wAA/tOWSnAVZCjJ4kuPN5lkXyfsP4JYUXOm2oiLoGwi5rJl3JzJAAA=",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-169317489",
+      "name": "Church Lammas",
+      "lat": 51.4391226,
+      "lng": -0.5239753,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9ThMqeUXzMfdGSdmbwuctpJa84yUG6Z2M9PfqERxEiZdoUNWrv4jlejzNslZBbJMLmqPna03OOZiuscew_CRZis0I_7H_GWp9MnbaVefJW7SVi7pH7OPzuU0Bwl82uMDAVpjrGa=w408-h306-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-169317489-56a825e2a0126ca0.webp",
+        "source": "https://www.google.com/maps/place/Church+Lammas+Lake/@51.4391226,-0.5239753,16z/data=!4m6!3m5!1s0x487671453ac80d53:0x3f4e47fa0310b2df!8m2!3d51.4376882!4d-0.5222358!16s%2Fg%2F11kpww3tt5",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 768,
+        "blurDataURL": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAADQAwCdASoUAA8APxFysFAsJqSisAgBgCIJZgAAO0mdgvZTCbsGCAAAx2FFgJCm5MpE30UicrvOMOj3bcreSsxET3IlN3LasJTUljDte7a8IMbapa5D0eKnAwUcJovo3CkAAA==",
+        "matched": [
+          "maps-place-title",
+          "maps-place-coordinates"
+        ]
+      }
+    },
+    {
+      "id": "osm-way-171757458",
+      "name": "School Lane Field",
+      "lat": 51.3584546,
+      "lng": -0.6921049,
+      "originalUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm26AUdYT5aiYTwaf8hbWE2hf6B67Z2X0NMUbfS4IrmTnbvNwBDfHCveGcdZasonVEB9jLV8SuKqv9qpfCiNuxA9OD56HUPyDMFc7vA82bn6hvGLkRV7LqvwRQ3DodTbzzADpU=w426-h240-k-no",
+      "image": {
+        "url": "/venue-images/osm-way-171757458-5df0c07212d13e84.webp",
+        "source": "https://www.google.com/maps/place/School+Lane+Field/@51.3584546,-0.6921049,16z/data=!4m6!3m5!1s0x48767f6e31555555:0xb8bfe1def0cb781b!8m2!3d51.358414!4d-0.6920672!16s%2Fg%2F11x31gthkb",
+        "credit": "Google Maps contributors",
+        "license": "Google Maps contributors — rights reserved",
+        "strategy": "google-maps-place",
+        "width": 1024,
+        "height": 576,
+        "blurDataURL": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAABQAwCdASoUAAsAPxFysFAsJqSisAgBgCIJQBdgA2ArnmNSYAD+zC1zzU/MFEdQDg+N16aKMcqBdJL1bArFLOUtPkR9hVtIPoM4HWOzyIWxlbm+VK3+I3+cMRXn9toAAAA=",
         "matched": [
           "maps-place-title",
           "maps-place-coordinates"

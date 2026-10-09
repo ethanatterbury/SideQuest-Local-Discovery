@@ -17,7 +17,7 @@ export type VenueSuitability = {
   audience: "children" | "all" | "adults" | "unknown";
   ageGuidance: "reported" | "unknown";
   requiresAgeCheck: boolean;
-  source: "osm" | "inferred";
+  source: "osm" | "official" | "inferred";
 };
 
 /** Category and mapped facilities are evidence; venue names and photos are not. */
@@ -40,7 +40,7 @@ export function inferVenueSuitability(
     audience = "adults";
   } else if (
     has(
-      /\bwater park\b|\btrampoline\b|\btheme park\b|\bwake(?:board|boarding)?\b|\bwater ?ski\b|\bwater ?sports?\b|\bkarting\b|\bclimb|\bbouldering\b|\badventure\b/,
+      /\bwater park\b|\btrampoline\b|\btheme park\b|\bamusement ride\b|\bwake(?:board|boarding)?\b|\bwater ?ski\b|\bwater ?sports?\b|\bkarting\b|\bclimb|\bbouldering\b|\badventure\b/,
     )
   ) {
     kind = "adventure";

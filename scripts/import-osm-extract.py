@@ -17,8 +17,10 @@ KEYS = {"name", "name:en", "leisure", "tourism", "amenity", "sport", "website",
         "addr:postcode", "fee", "access", "indoor", "lit", "opening_hours",
         "wikidata", "wikipedia", "image", "wikimedia_commons", "alt_name", "old_name",
         "min_age", "max_age", "playground:toddler",
+        "attraction", "amusement_ride", "roller_coaster", "min_height", "max_height",
         "playground:indoor", "playground:soft_play"}
 LEISURE = {"playground", "indoor_play", "soft_play", "trampoline_park", "water_park",
+           "amusement_ride",
            "park", "garden", "nature_reserve", "sports_centre", "fitness_centre",
            "swimming_pool", "bowling_alley", "escape_game", "miniature_golf"}
 TOURISM = {"museum", "gallery", "attraction", "zoo", "theme_park", "aquarium", "viewpoint"}
@@ -34,7 +36,9 @@ class Venues(osmium.SimpleHandler):
         if not (t.get("name") or t.get("name:en")) or t.get("access") in {"private", "no"}:
             return None
         return t if (t.get("leisure") in LEISURE or t.get("tourism") in TOURISM or
-                     t.get("amenity") in AMENITY or t.get("sport") in {"climbing", "karting"}) else None
+                     t.get("amenity") in AMENITY or t.get("sport") in {"climbing", "karting"} or
+                     any(t.get(key) not in {None, "", "no", "false", "0"}
+                         for key in ("amusement_ride", "roller_coaster"))) else None
 
     def node(self, obj):
         tags = self.tags(obj)
@@ -76,7 +80,8 @@ def main():
         venues = Venues(records)
         # Filter in C++ before Python callbacks; location caching still sees every node.
         processor = osmium.FileProcessor(str(destination)).with_locations("flex_mem")
-        processor = processor.with_filter(osmium.filter.KeyFilter("leisure", "tourism", "amenity", "sport"))
+        processor = processor.with_filter(osmium.filter.KeyFilter(
+            "leisure", "tourism", "amenity", "sport", "amusement_ride", "roller_coaster"))
         for obj in processor:
             if obj.is_node():
                 venues.node(obj)

@@ -22,12 +22,11 @@ const { normalizeOsmElement } = loadProvider("src/providers/nearby-places.ts");
 const { PLACES } = loadProvider("src/providers/places.ts");
 const { TOWNS } = loadProvider("src/providers/geocoding.ts");
 const { placePhotoQuery } = loadProvider("src/providers/photo-index.ts");
-const { assessMapPhotoEvidence } = loadProvider(
+const { assessMapPhotoEvidence, verifiedMapWebsite } = loadProvider(
   "src/providers/map-photo-evidence.ts",
 );
-const { downloadOfficialPhoto } = loadProvider(
-  "src/providers/official-photo.ts",
-);
+const { downloadOfficialPhoto, resolveOfficialPhotos, safeOfficialPhotoUrl } =
+  loadProvider("src/providers/official-photo.ts");
 const readJson = async (file, fallback) => {
   try {
     return JSON.parse(await readFile(file, "utf8"));
@@ -176,21 +175,52 @@ async function capture(place) {
 
 async function store(place, record) {
   const evidence = assessMapPhotoEvidence(place, record);
+  const website = verifiedMapWebsite(place, record);
   const outcome = {
     id: place.id,
     name: place.name,
     candidates: evidence.candidates.length,
     rejected: evidence.rejected,
     distanceMeters: evidence.distanceMeters,
+    officialWebsite: website,
     status: "unavailable",
     retryable: false,
   };
   if (options["dry-run"] === "true")
     return {
       ...outcome,
-      status: evidence.candidates.length ? "validated" : "unavailable",
+      status: evidence.candidates.length
+        ? "validated"
+        : website
+          ? "official-website-ready"
+          : "unavailable",
     };
-  for (const photo of evidence.candidates.slice(0, 6)) {
+  const mapped = await attemptPhotos(place, evidence.candidates, outcome);
+  if (mapped) return mapped;
+  // Maps establishes the venue and its official link; the existing website adapter
+  // then proves branch/photographic subject evidence and checks every public DNS hop.
+  if (website && safeOfficialPhotoUrl(website)) {
+    const query = placePhotoQuery(place);
+    const official = await resolveOfficialPhotos({
+      ...query,
+      area: query.area === "Nearby" ? record.area || query.area : query.area,
+      website,
+    });
+    outcome.officialFallback = {
+      candidates: official.candidates.length,
+      rejected: official.rejected,
+      reason: official.reason,
+      retryable: official.retryable,
+    };
+    outcome.retryable ||= official.retryable;
+    const fallback = await attemptPhotos(place, official.candidates, outcome);
+    if (fallback) return fallback;
+  }
+  return outcome;
+}
+
+async function attemptPhotos(place, photos, outcome) {
+  for (const photo of photos.slice(0, 6)) {
     const downloaded = await downloadOfficialPhoto(photo.url);
     if (!downloaded) {
       outcome.retryable = true;
@@ -226,7 +256,7 @@ async function store(place, record) {
         .resize({ width: 20 })
         .webp({ quality: 25 })
         .toBuffer();
-      const { originalUrl, ...image } = photo;
+      const { originalUrl = photo.url, ...image } = photo;
       const query = placePhotoQuery(place);
       saved.set(place.id, {
         id: place.id,
@@ -244,12 +274,18 @@ async function store(place, record) {
         },
       });
       assets.push(file);
-      return { ...outcome, status: "stored", retryable: false, file };
+      return {
+        ...outcome,
+        status: "stored",
+        strategy: photo.strategy,
+        retryable: false,
+        file,
+      };
     } catch {
       /* Actual image decoding and quality checks determine eligibility. */
     }
   }
-  return outcome;
+  return null;
 }
 
 try {

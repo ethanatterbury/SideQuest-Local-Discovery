@@ -8,6 +8,7 @@ import {
   selectNearbyPlaces,
 } from "@/providers/nearby-places";
 import { GET } from "@/app/api/places/route";
+import regionalSnapshot from "../src/providers/data/regional-osm.json";
 const element = (
   tags: Record<string, unknown> = {},
   extra: Record<string, unknown> = {},
@@ -134,6 +135,68 @@ describe("OSM place normalization", () => {
     expect(
       normalizeOsmElement(element({ max_age: "6" }))!.notes.join(" "),
     ).toContain("minimum unknown");
+  });
+  it("uses the official ride classification for the exact OSM cinema record without inventing age limits", () => {
+    const source = regionalSnapshot.elements.find(
+      (item) => item.type === "way" && item.id === 914244345,
+    )!;
+    expect(source.tags).toMatchObject({
+      name: "Flight of the Sky Lion",
+      amenity: "cinema",
+    });
+    const ride = normalizeOsmElement(source)!;
+    expect(ride).toMatchObject({
+      id: "osm-way-914244345",
+      name: "Flight of the Sky Lion",
+      category: "Amusement ride",
+      suitability: {
+        kind: "adventure",
+        requiresAgeCheck: true,
+        ageGuidance: "unknown",
+        source: "official",
+      },
+    });
+    expect(ride.ageRange).toBeUndefined();
+    expect(ride.suitability!.activities).not.toContain("cinema");
+    expect(ride.notes.join(" ")).toContain(
+      "https://www.legoland.co.uk/explore/theme-park/rides-attractions/flight-of-the-sky-lion/",
+    );
+    // A matching name on another source identity is never used as ride evidence.
+    expect(
+      normalizeOsmElement(
+        element({ leisure: "", amenity: "cinema", name: ride.name }),
+      )!.category,
+    ).toBe("Cinema");
+  });
+  it("gives structured ride evidence precedence over broad cinema, aquarium and park tags", () => {
+    for (const tags of [
+      { leisure: "", amenity: "cinema", attraction: "flying_theatre" },
+      { leisure: "", tourism: "aquarium", attraction: "dark_ride" },
+      { leisure: "garden", attraction: "roller_coaster" },
+      { leisure: "amusement_ride" },
+      { leisure: "", amusement_ride: "simulator" },
+      { leisure: "", roller_coaster: "yes" },
+    ]) {
+      const ride = normalizeOsmElement(element(tags))!;
+      expect(ride.category).toBe("Amusement ride");
+      expect(ride.suitability).toMatchObject({
+        kind: "adventure",
+        requiresAgeCheck: true,
+        source: "osm",
+      });
+      expect(ride.suitability!.activities).not.toContain("gardens");
+      expect(ride.suitability!.activities).not.toContain("cinema");
+      expect(ride.suitability!.activities).not.toContain("animals");
+    }
+    const cinema = normalizeOsmElement(
+      element({ leisure: "", amenity: "cinema", amusement_ride: "no" }),
+    )!;
+    expect(cinema.category).toBe("Cinema");
+    expect(cinema.suitability).toMatchObject({
+      kind: "cinema",
+      requiresAgeCheck: false,
+      activities: ["cinema"],
+    });
   });
   it("keeps outdoor visits in daylight unless lighting or 24/7 access is mapped", () => {
     expect(
