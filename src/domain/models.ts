@@ -1,5 +1,10 @@
 export type Coordinates = { lat: number; lng: number };
 export type Location = Coordinates & { name: string };
+export type OptionalCategory = "food" | "pubs" | "fitness" | "shops";
+export type Evidence = { source: "osm" | "official" | "wikidata" | "inferred"; url?: string; checkedAt?: string; confidence: "reported" | "verified" | "unknown" };
+export type AccessNeeds = { wheelchair?: boolean; stepFree?: boolean; dogs?: boolean };
+export type PlaceAccess = { wheelchair?: "yes" | "limited" | "no"; stepFree?: "yes" | "no"; dogs?: "yes" | "no"; public?: boolean };
+
 export type WeatherKind =
   | "clear"
   | "sunny"
@@ -40,6 +45,10 @@ export type Weather = {
   observedAt: string;
   source: "live" | "cached" | "unavailable" | "simulation";
   rainAt?: string;
+  cloudCover?: number;
+  windDirection?: number;
+  gusts?: number;
+  snowfall?: number;
 };
 export type Environment = {
   location: Location;
@@ -59,6 +68,11 @@ export type EnvironmentOverrides = {
   reducedMotion?: boolean;
   failures?: Failure[];
   device?: string;
+  cloudCover?: number;
+  windDirection?: number;
+  gusts?: number;
+  snowfall?: number;
+  atmosphereQuality?: "auto" | "high" | "low";
 };
 export type Company = "solo" | "couple" | "family" | "friends";
 export type Intent =
@@ -79,6 +93,14 @@ export type Place = {
   area: string;
   coordinates: Coordinates;
   category: string;
+  optionalCategory?: OptionalCategory;
+  access?: PlaceAccess;
+  evidence?: Record<string, Evidence>;
+  parentId?: string;
+  requiresBooking?: boolean;
+  heightRange?: [number | null, number | null];
+  quality?: number;
+  openingHoursRaw?: string;
   description: string;
   tagline: string;
   environment: "indoor" | "outdoor" | "mixed";
@@ -105,6 +127,8 @@ export type Place = {
     strategy?: string;
     matched?: string[];
     blurDataURL?: string;
+    rights?: "open" | "permissioned" | "unverified";
+    checkedAt?: string;
   };
   season?: number[];
   /** Only populate from verified venue age guidance. */
@@ -129,12 +153,19 @@ export type Activity =
   | "climbing"
   | "swimming"
   | "food"
-  | "walk";
+  | "walk"
+  | "pubs"
+  | "fitness"
+  | "shops";
 export type DiscoveryQuery = {
   activity?: Activity;
   intent: Intent;
   company: Company;
   childrenAges?: number[];
+  interests?: Intent[];
+  includeCategories?: OptionalCategory[];
+  accessNeeds?: AccessNeeds;
+  strictSuitability?: boolean;
   minutes: number;
   travel: number;
   budget: number;
@@ -159,6 +190,7 @@ export type LocalState = {
   visits: Visit[];
   dismissed: Dismissal[];
   recent: string[];
+  impressions?: { id: string; date: string }[];
   collections: Collection[];
   preferences: Partial<DiscoveryQuery>;
   plans: Itinerary[];
