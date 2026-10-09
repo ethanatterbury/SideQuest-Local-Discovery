@@ -17,6 +17,7 @@ import {
   Compass,
   FlaskConical,
 } from "lucide-react";
+import { LocationTransition } from "./location-transition";
 import { Mark, Modal } from "./primitives";
 import { LocationPicker } from "./location-picker";
 import { useApp, LAB_ENABLED } from "./providers";
@@ -67,6 +68,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
+      <LocationTransition />
       <header className="header">
         <Link className="brand" href="/" aria-label="SideQuest home">
           <Mark />

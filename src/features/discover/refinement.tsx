@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useApp } from "@/components/providers";
-import type { DiscoveryQuery } from "@/domain/models";
+import type { DiscoveryQuery, Intent, OptionalCategory } from "@/domain/models";
 import { changeActivity, changeCompany } from "@/domain/venue-suitability";
 export function Refinement({
   expanded = false,
@@ -120,6 +120,9 @@ export function Refinement({
               ["climbing", "Climbing"],
               ["swimming", "Swimming"],
               ["food", "Food & coffee"],
+              ["pubs", "Pubs & bars"],
+              ["fitness", "Gyms & fitness"],
+              ["shops", "Shops"],
               ["walk", "Walks"],
             ]
               .filter(([value]) => !mapFood || value !== "food")
@@ -228,55 +231,168 @@ export function Refinement({
         </fieldset>
       )}
       {open && (
-        <div className="advanced-controls">
-          <label>
-            <Wallet size={16} />
-            Spend per person
-            <select
-              value={query.budget}
-              onChange={(e) => set({ budget: Number(e.target.value) })}
-            >
-              {[0, 15, 40, 80, 200].map((v) => (
-                <option key={v} value={v}>
-                  {v === 0
-                    ? "Free entry"
-                    : v === 200
-                      ? "Treat ourselves"
-                      : `Up to £${v}`}
-                </option>
+        <div className="preference-panel">
+          <fieldset className="interest-choices">
+            <legend>Your kind of afternoon</legend>
+            <div>
+              {(
+                [
+                  ["culture", "Art & culture"],
+                  ["unusual", "Something different"],
+                  ["active", "Get moving"],
+                  ["scenic", "Beautiful places"],
+                  ["relax", "Take it slowly"],
+                  ["walk", "A good walk"],
+                ] as [Intent, string][]
+              ).map(([interest, label]) => (
+                <button
+                  key={interest}
+                  type="button"
+                  aria-pressed={query.interests?.includes(interest) ?? false}
+                  onClick={() =>
+                    set({
+                      interests: query.interests?.includes(interest)
+                        ? query.interests.filter((v) => v !== interest)
+                        : [...(query.interests ?? []), interest],
+                    })
+                  }
+                >
+                  {label}
+                </button>
               ))}
-            </select>
-          </label>
-          <label>
-            Inside or outside?
-            <select
-              value={query.environment}
-              onChange={(e) =>
-                set({
-                  environment: e.target.value as DiscoveryQuery["environment"],
-                })
-              }
-            >
-              <option value="any">Either works</option>
-              <option value="indoor">Keep it indoors</option>
-              <option value="outdoor">Fresh air please</option>
-            </select>
-          </label>
-          <label>
-            <Footprints size={16} />
-            Getting there
-            <select
-              value={query.travelMode}
-              onChange={(e) =>
-                set({
-                  travelMode: e.target.value as DiscoveryQuery["travelMode"],
-                })
-              }
-            >
-              <option value="drive">Driving</option>
-              <option value="walk">Walking</option>
-            </select>
-          </label>
+            </div>
+          </fieldset>
+          <div className="advanced-controls">
+            <label>
+              <Wallet size={16} />
+              Spend per person
+              <select
+                value={query.budget}
+                onChange={(e) => set({ budget: Number(e.target.value) })}
+              >
+                {[0, 15, 40, 80, 200].map((v) => (
+                  <option key={v} value={v}>
+                    {v === 0
+                      ? "Free entry"
+                      : v === 200
+                        ? "Treat ourselves"
+                        : `Up to £${v}`}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Inside or outside?
+              <select
+                value={query.environment}
+                onChange={(e) =>
+                  set({
+                    environment: e.target
+                      .value as DiscoveryQuery["environment"],
+                  })
+                }
+              >
+                <option value="any">Either works</option>
+                <option value="indoor">Keep it indoors</option>
+                <option value="outdoor">Fresh air please</option>
+              </select>
+            </label>
+            <label>
+              <Footprints size={16} />
+              Getting there
+              <select
+                value={query.travelMode}
+                onChange={(e) =>
+                  set({
+                    travelMode: e.target.value as DiscoveryQuery["travelMode"],
+                  })
+                }
+              >
+                <option value="drive">Driving</option>
+                <option value="walk">Walking</option>
+              </select>
+            </label>
+          </div>
+          <fieldset className="optional-choices">
+            <legend>Include everyday places</legend>
+            <p>Hidden by default. Add them when they’re part of your plans.</p>
+            <div>
+              {(
+                [
+                  ["food", "Food & coffee"],
+                  ["pubs", "Pubs & bars"],
+                  ["fitness", "Gyms & fitness"],
+                  ["shops", "Shops"],
+                ] as [OptionalCategory, string][]
+              ).map(([category, label]) => (
+                <label key={category}>
+                  <input
+                    type="checkbox"
+                    checked={
+                      query.includeCategories?.includes(category) ?? false
+                    }
+                    onChange={(e) =>
+                      set({
+                        includeCategories: e.target.checked
+                          ? [
+                              ...new Set([
+                                ...(query.includeCategories ?? []),
+                                category,
+                              ]),
+                            ]
+                          : query.includeCategories?.filter(
+                              (v) => v !== category,
+                            ),
+                      })
+                    }
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <fieldset className="access-choices">
+            <legend>Make it work for you</legend>
+            <div>
+              {(
+                [
+                  ["wheelchair", "Wheelchair access"],
+                  ["stepFree", "Step-free access"],
+                  ["dogs", "Dogs welcome"],
+                ] as const
+              ).map(([need, label]) => (
+                <label key={need}>
+                  <input
+                    type="checkbox"
+                    checked={query.accessNeeds?.[need] ?? false}
+                    onChange={(e) =>
+                      set({
+                        accessNeeds: {
+                          ...query.accessNeeds,
+                          [need]: e.target.checked,
+                        },
+                      })
+                    }
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
+            <p>
+              Required access needs show only places with positive reported
+              evidence. Confirm details before travelling.
+            </p>
+            {query.company === "family" && (
+              <label>
+                <input
+                  type="checkbox"
+                  checked={query.strictSuitability ?? false}
+                  onChange={(e) => set({ strictSuitability: e.target.checked })}
+                />
+                Only show reported age suitability
+              </label>
+            )}
+          </fieldset>
         </div>
       )}
     </div>

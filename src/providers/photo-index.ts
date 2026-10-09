@@ -1,6 +1,7 @@
 import generated from "./data/place-photo-index.json";
 import type { PhotoQuery, PhotoResult } from "./place-photo";
-import type { Place } from "../domain/models";
+import { photoIdentity } from "./photo-query";
+import { approvedPhoto } from "./photo-policy";
 export type PhotoIndexEntry = {
   query: PhotoQuery;
   checkedAt: string;
@@ -26,35 +27,7 @@ export const photoIndex = generated as unknown as {
   };
   entries: PhotoIndexEntry[];
 };
-export function placePhotoQuery(place: Place): PhotoQuery {
-  return {
-    id: place.id,
-    name: place.name,
-    lat: place.coordinates.lat,
-    lng: place.coordinates.lng,
-    area: place.area,
-    category: place.category,
-    aliases: place.aliases,
-    wikidata: place.wikidata,
-    wikipedia: place.wikipedia,
-    osmImage: place.osmImage,
-    commons: place.commons,
-    website: place.website,
-  };
-}
-export function photoIdentity(query: PhotoQuery): string {
-  return JSON.stringify([
-    query.id,
-    query.name.toLowerCase().trim(),
-    query.lat,
-    query.lng,
-    query.wikidata,
-    query.wikipedia,
-    query.osmImage,
-    query.commons,
-    query.aliases || [],
-  ]);
-}
+export { placePhotoQuery, photoIdentity } from "./photo-query";
 export function indexedPhoto(
   query: PhotoQuery,
   entries: PhotoIndexEntry[] = photoIndex.entries,
@@ -70,5 +43,9 @@ export function indexedPhoto(
     age > (entry.image ? 30 * 86400000 : 86400000)
   )
     return null;
+  if (entry.image) {
+    const image = approvedPhoto(entry.image, entry.checkedAt);
+    return image ? { ...entry, image } : null;
+  }
   return entry;
 }

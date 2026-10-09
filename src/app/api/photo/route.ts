@@ -4,13 +4,34 @@ import {
   type PhotoResult,
 } from "@/providers/place-photo";
 import { indexedPhoto } from "@/providers/photo-index";
-import { getLivePlace } from "@/providers/nearby-places";
-import { storedVenueImage } from "@/providers/venue-media";
-import { resolveOfficialPhotos } from "@/providers/official-photo";
+import { storedQueryImage, storedVenueImage } from "@/providers/venue-media";
+import { PHOTO_DEADLINE_MS, approvedPhoto } from "@/providers/photo-policy";
 import { PLACES } from "@/providers/places";
 export const runtime = "nodejs";
-export const maxDuration = 30;
+export const maxDuration = 5;
 export async function GET(request: Request) {
+  let deadline: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      resolveRequest(request, Date.now()),
+      new Promise<Response>((resolve) => {
+        deadline = setTimeout(
+          () =>
+            resolve(
+              Response.json(
+                { image: null, source: "unavailable", retryable: true },
+                { headers: { "Cache-Control": "private, no-store" } },
+              ),
+            ),
+          PHOTO_DEADLINE_MS,
+        );
+      }),
+    ]);
+  } finally {
+    if (deadline) clearTimeout(deadline);
+  }
+}
+async function resolveRequest(request: Request, started: number) {
   const params = new URL(request.url).searchParams;
   const query = parsePhotoQuery(params);
   if (!query)
@@ -25,10 +46,7 @@ export async function GET(request: Request) {
   const debug = params.get("debug") === "1";
   const refresh = labEnabled && debug && params.get("refresh") === "1";
   const entry = refresh ? null : indexedPhoto(query);
-  const venue = query.id
-    ? PLACES.find((place) => place.id === query.id) ||
-      (await getLivePlace(query.id))
-    : null;
+  const venue = query.id ? PLACES.find((place) => place.id === query.id) : null;
   const matchingVenue =
     venue &&
     venue.name === query.name &&
@@ -36,7 +54,10 @@ export async function GET(request: Request) {
     Math.abs(venue.coordinates.lng - query.lng) < 0.0001
       ? venue
       : null;
-  const stored = !refresh && matchingVenue && storedVenueImage(matchingVenue);
+  const stored =
+    !refresh &&
+    (storedQueryImage(query) ||
+      (matchingVenue && storedVenueImage(matchingVenue)));
   if (stored)
     return Response.json(
       {
@@ -60,42 +81,8 @@ export async function GET(request: Request) {
         headers: { "Cache-Control": "public, max-age=3600, s-maxage=86400" },
       },
     );
-  // Source URLs come from the venue catalogue, never an arbitrary client URL.
-  if (
-    matchingVenue &&
-    !/openstreetmap\.org/.test(matchingVenue.website) &&
-    (!entry?.image || refresh)
-  ) {
-    const official = await resolveOfficialPhotos(
-      { ...query, website: matchingVenue.website },
-      { timeoutMs: 6500, maxCandidates: 3 },
-    );
-    if (official.candidates.length)
-      return Response.json(
-        {
-          image: official.candidates[0],
-          source: "live",
-          ...(debug
-            ? {
-                diagnostics: {
-                  strategy: "official-website",
-                  sourcesAttempted: [matchingVenue.website],
-                  candidateCount: official.candidates.length,
-                  rejected: official.rejected,
-                  requestCount: official.requestCount,
-                  elapsedMs: official.elapsedMs,
-                },
-              }
-            : {}),
-        },
-        {
-          headers: {
-            "Cache-Control":
-              "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800",
-          },
-        },
-      );
-  }
+  // Website attribution is not permission. Official-site scraping is excluded by
+  // default; permissioned prepared assets need explicit evidence and policy opt-in.
   const result: PhotoResult = entry
     ? {
         image: entry.image,
@@ -104,13 +91,18 @@ export async function GET(request: Request) {
           ? { diagnostics: { ...entry.diagnostics, cacheHit: true } }
           : {}),
       }
-    : await lookupPlacePhoto(query, { debug, refresh });
+    : await lookupPlacePhoto(query, {
+        debug,
+        refresh,
+        timeoutMs: Math.max(1, PHOTO_DEADLINE_MS - (Date.now() - started) - 50),
+      });
+  if (result.image) result.image = approvedPhoto(result.image) || null;
   return Response.json(result, {
     headers: {
       "Cache-Control":
         debug || result.retryable
           ? "private, no-store"
-          : `public, max-age=60, s-maxage=${result.image ? 86400 : 300}, stale-while-revalidate=3600`,
+          : `public, max-age=3600, s-maxage=${result.image ? 86400 : 604800}, stale-while-revalidate=3600`,
     },
   });
 }

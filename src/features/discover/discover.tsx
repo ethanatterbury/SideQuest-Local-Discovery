@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import {
   ArrowUpRight,
   ArrowRight,
@@ -62,6 +62,7 @@ export function Discover({ explore = false }: { explore?: boolean }) {
     state,
     setLocation,
     ready,
+    update,
   } = useApp();
   const [signature, setSignature] = useState<"escape" | "surprise" | null>(
       null,
@@ -79,9 +80,22 @@ export function Discover({ explore = false }: { explore?: boolean }) {
     if (collection === "Worth the drive") q = { ...q, travel: 90 };
     return q;
   }, [query, collection, catalog]);
+  // Impression scoring is stable for this visit; new impressions affect the next visit.
+  const [visitImpressions, setVisitImpressions] = useState<{
+    captured: boolean;
+    items: { id: string; date: string }[];
+  }>({ captured: false, items: [] });
+  useEffect(() => {
+    if (ready && !visitImpressions.captured)
+      setVisitImpressions({ captured: true, items: state.impressions ?? [] });
+  }, [ready, visitImpressions.captured, state.impressions]);
+  const impressionState = useMemo(
+    () => ({ ...state, impressions: visitImpressions.items }),
+    [state, visitImpressions.items],
+  );
   const ranked = useMemo(
-    () => rankPlaces(catalog, effective, env, state),
-    [catalog, effective, env, state],
+    () => rankPlaces(catalog, effective, env, impressionState),
+    [catalog, effective, env, impressionState],
   );
   const nameMatches = query.text
     ? ranked.filter((r) =>
@@ -92,6 +106,27 @@ export function Discover({ explore = false }: { explore?: boolean }) {
     : [];
   const results = nameMatches.length ? nameMatches : ranked;
   const featured = ranked[0];
+  const shown = useRef(new Set<string>());
+  const impressions = useRef<string[]>([]);
+  useEffect(() => {
+    impressions.current = results
+      .slice(0, explore ? visibleCount : 3)
+      .map((r) => r.place.id);
+    const record = () => {
+      const ids = impressions.current.filter((id) => !shown.current.has(id));
+      if (!ids.length) return;
+      ids.forEach((id) => shown.current.add(id));
+      update((s) => ({
+        ...s,
+        impressions: [
+          ...(s.impressions ?? []),
+          ...ids.map((id) => ({ id, date: new Date().toISOString() })),
+        ].slice(-200),
+      }));
+    };
+    const timer = setTimeout(record, 1800);
+    return () => clearTimeout(timer);
+  }, [results, explore, visibleCount, update]);
   const headline = contextualHeadline(env);
   const wet = env.weather.source !== "unavailable" && env.weather.rain > 0;
   useEffect(() => {
@@ -122,8 +157,8 @@ export function Discover({ explore = false }: { explore?: boolean }) {
                   <span>{headline[1]}</span>
                 </h1>
                 <p className="hero-description">
-                  A few hours. A little curiosity. <br />
-                  We’ll find something actually worth going out for.
+                  The places that make an ordinary day feel different. Chosen
+                  for you, wherever you start.
                 </p>
                 <Refinement />
                 <button
@@ -158,7 +193,7 @@ export function Discover({ explore = false }: { explore?: boolean }) {
                     <span>
                       <Sun size={15} />A good place to start
                     </span>
-                    <span className="hero-match">{featured.score}% match</span>
+                    <span className="hero-match">Picked for your plans</span>
                   </div>
                   <div className="hero-image-bottom">
                     <p>
@@ -263,9 +298,9 @@ export function Discover({ explore = false }: { explore?: boolean }) {
         ) : (
           <section className="explore-heading">
             <h1>
-              There’s more
+              Your next
               <br />
-              <span>around the corner.</span>
+              <span>good story.</span>
             </h1>
             <p>Good places. A little context. Find your kind of detour.</p>
             <form
@@ -308,7 +343,7 @@ export function Discover({ explore = false }: { explore?: boolean }) {
             <p className="search-interpretation">
               {nameMatches.length
                 ? `Places matching “${query.text}”.`
-                : `Ideas for “${query.text}” · ${effective.environment === "any" ? "indoors or outdoors" : effective.environment} · ${effective.minutes / 60} hours · within ${effective.travel} min. Familiar phrases set simple filters; unrecognised words keep your current preferences.`}
+                : `Ideas for “${query.text}” · ${effective.environment === "any" ? "indoors or outdoors" : effective.environment} · ${effective.minutes / 60} hours · within ${effective.travel} min. Interests, your company and practical preferences shape these ideas.`}
             </p>
           )}
           <div className="section-heading">

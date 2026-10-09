@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useApp } from "@/components/providers";
-import { findPlacePhoto, photoRetryDelay } from "@/providers/photo-client";
+import { findPlacePhoto } from "@/providers/photo-client";
 import type { Place } from "@/domain/models";
 import { seedVenueImage } from "@/providers/seed-venue-media";
 export function Mark() {
@@ -56,17 +56,12 @@ export function PlaceImage({
   useEffect(() => {
     if (image || !container.current) return;
     let cancelled = false;
-    let retry: ReturnType<typeof setTimeout> | undefined;
-    let attempts = 0;
     async function resolvePhoto() {
       setLooking(true);
       const photo = await findPlacePhoto(place);
       if (cancelled) return;
       if (photo) rememberPhoto(place.id, photo);
       setLooking(false);
-      const delay = photoRetryDelay(place);
-      if (!photo && delay !== null && attempts++ < 2)
-        retry = setTimeout(resolvePhoto, delay);
     }
     const observer = new IntersectionObserver(
       (entries) => {
@@ -74,15 +69,14 @@ export function PlaceImage({
         observer.disconnect();
         void resolvePhoto();
       },
-      { rootMargin: "250px" },
+      { rootMargin: priority ? "250px" : "60px" },
     );
     observer.observe(container.current);
     return () => {
       cancelled = true;
-      clearTimeout(retry);
       observer.disconnect();
     };
-  }, [place, image, rememberPhoto]);
+  }, [place, image, rememberPhoto, priority]);
   useEffect(() => setFailed(false), [place.id, imageSource]);
   const Icon =
     place.category.includes("lake") || place.id === "virginia-water"
@@ -121,7 +115,7 @@ export function PlaceImage({
           <span>{place.category}</span>
           <small>
             {looking
-              ? "Finding a photo…"
+              ? "Photo arriving…"
               : failed
                 ? "Photo unavailable"
                 : place.area}

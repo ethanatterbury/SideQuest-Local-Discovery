@@ -1,7 +1,12 @@
 "use client";
 import type { Place } from "@/domain/models";
-import { indexedPhoto, placePhotoQuery, photoIdentity } from "./photo-index";
-import { parseArchivePhotoUrl, safeArchivePhotoUrl } from "./archive-photo";
+import { placePhotoQuery, photoIdentity } from "./photo-query";
+import {
+  approvedPhoto,
+  PHOTO_DEADLINE_MS,
+  PHOTO_NEGATIVE_TTL_MS,
+  PHOTO_TRANSIENT_TTL_MS,
+} from "./photo-policy";
 type Image = NonNullable<Place["image"]>;
 const cache = new Map<
   string,
@@ -18,16 +23,53 @@ function next() {
 }
 export function findPlacePhoto(place: Place): Promise<Image | null> {
   const query = placePhotoQuery(place);
-  const indexed = indexedPhoto(query);
-  // A Commons miss does not mean the venue has no website photograph.
-  if (indexed?.image) return Promise.resolve(indexed.image);
+  const prepared = approvedPhoto(place.image);
+  if (prepared) return Promise.resolve(prepared);
   const key = photoIdentity(query);
   const cached = cache.get(key);
   if (cached && cached.until > Date.now()) return Promise.resolve(cached.image);
   const request = pending.get(key);
   if (request) return request;
+  const enqueuedAt = Date.now();
   const promise = new Promise<Image | null>((resolve) => {
-    queue.push(async () => {
+    let settled = false;
+    let running = false;
+    const controller = new AbortController();
+    const finish = (image: Image | null, retryable: boolean) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(deadline);
+      cache.set(key, {
+        image,
+        retryable,
+        until:
+          Date.now() +
+          (image
+            ? 86400000
+            : retryable
+              ? PHOTO_TRANSIENT_TTL_MS
+              : PHOTO_NEGATIVE_TTL_MS),
+      });
+      if (cache.size > 1000) cache.delete(cache.keys().next().value!);
+      pending.delete(key);
+      if (running) active--;
+      else {
+        const index = queue.indexOf(job);
+        if (index >= 0) queue.splice(index, 1);
+      }
+      resolve(image);
+      next();
+    };
+    const deadline = setTimeout(() => {
+      controller.abort();
+      finish(null, true);
+    }, PHOTO_DEADLINE_MS);
+    const job = async () => {
+      running = true;
+      if (Date.now() - enqueuedAt >= PHOTO_DEADLINE_MS) {
+        finish(null, true);
+        return;
+      }
       let image: Image | null = null;
       let retryable = false;
       try {
@@ -44,7 +86,7 @@ export function findPlacePhoto(place: Place): Promise<Image | null> {
             );
         }
         const response = await fetch(`/api/photo?${params}`, {
-          signal: AbortSignal.timeout(30000),
+          signal: controller.signal,
         });
         if (!response.ok)
           retryable =
@@ -62,57 +104,16 @@ export function findPlacePhoto(place: Place): Promise<Image | null> {
             typeof value.license === "string" &&
             typeof value.source === "string"
           ) {
-            const url = new URL(value.url),
-              source = new URL(value.source);
-            const archive = parseArchivePhotoUrl(value.url);
-            const trustedArchive =
-              safeArchivePhotoUrl(value.url) &&
-              safeArchivePhotoUrl(value.source, true) &&
-              archive?.source === value.source;
-            if (
-              (url.protocol === "https:" &&
-                !url.username &&
-                !url.password &&
-                !url.port &&
-                value.strategy === "official-website" &&
-                source.protocol === "https:" &&
-                !source.username &&
-                !source.password &&
-                !source.port &&
-                source.hostname.replace(/^www\./, "") ===
-                  new URL(place.website).hostname.replace(/^www\./, "")) ||
-              trustedArchive ||
-              (url.protocol === "https:" &&
-                !url.username &&
-                !url.password &&
-                !url.port &&
-                url.hostname === "upload.wikimedia.org" &&
-                url.pathname.startsWith("/wikipedia/commons/") &&
-                source.protocol === "https:" &&
-                !source.username &&
-                !source.password &&
-                !source.port &&
-                source.hostname === "commons.wikimedia.org" &&
-                source.pathname.startsWith("/wiki/File:"))
-            )
-              image = value;
+            image = approvedPhoto(value) || null;
           }
         }
       } catch {
         retryable = true;
         /* Missing photos never prevent discovery. */
       }
-      cache.set(key, {
-        image,
-        retryable,
-        until: Date.now() + (image ? 86400000 : retryable ? 30000 : 60000),
-      });
-      if (cache.size > 1000) cache.delete(cache.keys().next().value!);
-      pending.delete(key);
-      active--;
-      resolve(image);
-      next();
-    });
+      finish(image, retryable);
+    };
+    queue.push(job);
     next();
   });
   pending.set(key, promise);

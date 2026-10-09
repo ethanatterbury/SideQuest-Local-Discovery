@@ -62,7 +62,7 @@ export function Signature({
             <PlaceImage place={item.place} priority />
             <span className="match-badge">
               <Sparkles size={13} />
-              {item.score}% SideQuest match
+              Your kind of detour
             </span>
           </div>
           <div className="signature-body">

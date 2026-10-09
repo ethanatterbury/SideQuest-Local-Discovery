@@ -73,7 +73,8 @@ export function LocationPicker({ onClose }: { onClose: () => void }) {
   return (
     <Modal title="Where are you starting from?" onClose={onClose}>
       <p className="dialog-intro">
-        A good escape starts nearby. Your precise location stays on this device.
+        Pick a starting point anywhere in the UK. Map, weather and discovery
+        services receive the coordinates you choose.
       </p>
       <button className="button full" onClick={locate} disabled={busy}>
         <LocateFixed size={18} /> Use my location <ArrowRight size={18} />
@@ -118,8 +119,8 @@ export function LocationPicker({ onClose }: { onClose: () => void }) {
         ))}
       </div>
       <p className="fine-print">
-        Current seed coverage: Surrey, Berkshire & Hampshire. Other locations
-        work, but curated options may be further away.
+        Across the UK, with live discovery where available. Recently explored
+        areas stay on this device.
       </p>
     </Modal>
   );

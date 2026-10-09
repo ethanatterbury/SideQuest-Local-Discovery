@@ -7,6 +7,7 @@ import {
   Clock,
   Check,
   Footprints,
+  X,
 } from "lucide-react";
 import type { Recommendation } from "@/domain/models";
 import { PlaceImage } from "@/components/primitives";
@@ -40,7 +41,7 @@ export function PlaceCard({
           <PlaceImage place={p} />
         </Link>
         <span className="match-badge">
-          <span /> {item.score}% match
+          <span /> Fits your plans
         </span>
         <button
           className={`save-button ${saved ? "saved" : ""}`}
@@ -83,6 +84,14 @@ export function PlaceCard({
           </span>
         </div>
         {!compact && <p className="card-reason">{item.explanation}</p>}
+        {!compact &&
+          (query.accessNeeds?.wheelchair ||
+            query.accessNeeds?.stepFree ||
+            query.accessNeeds?.dogs) && (
+            <p className="reported-access">
+              Access reported · confirm with venue
+            </p>
+          )}
         <div className="card-bottom">
           <span>
             {p.environment === "mixed"
@@ -97,6 +106,29 @@ export function PlaceCard({
               : item.opening.label}
           </span>
         </div>
+        {!compact && (
+          <button
+            className="card-dismiss"
+            onClick={() => {
+              update((s) => ({
+                ...s,
+                dismissed: [
+                  ...s.dismissed,
+                  {
+                    id: p.id,
+                    reason: "Not my thing",
+                    date: new Date().toISOString(),
+                  },
+                ].slice(-500),
+              }));
+              toast("We’ll leave that one out.");
+            }}
+            aria-label={`Not interested in ${p.name}`}
+          >
+            <X size={13} />
+            Not for me
+          </button>
+        )}
       </div>
     </article>
   );

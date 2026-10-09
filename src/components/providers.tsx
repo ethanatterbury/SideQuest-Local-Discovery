@@ -18,6 +18,7 @@ import {
   type DiscoveryQuery,
 } from "@/domain/models";
 import { emptyState, LocalPersistence } from "@/providers/persistence";
+import { inUK } from "@/domain/geo-cells";
 import { TOWNS } from "@/providers/geocoding";
 import { openMeteo } from "@/providers/weather";
 import { applyOverrides, unavailableWeather } from "@/domain/environment";
@@ -68,6 +69,15 @@ export function AppProviders({ children }: { children: ReactNode }) {
     } catch {}
     persistence.current = new LocalPersistence(store);
     const saved = persistence.current.read();
+    try {
+      const restored = JSON.parse(
+        localStorage.getItem("sidequest:location:v2") || "null",
+      );
+      if (restored && typeof restored.name === "string" && inUK(restored))
+        setLocationState(restored);
+    } catch {
+      /* A starting location is optional. */
+    }
     setState(saved);
     setStorageAvailable(persistence.current.available);
     setNow(new Date().toISOString());
@@ -174,6 +184,17 @@ export function AppProviders({ children }: { children: ReactNode }) {
     },
     [update],
   );
+  const setLocation = useCallback((next: Location) => {
+    if (!inUK(next)) {
+      setMessage("Choose a starting point in the UK.");
+      return;
+    }
+    setLocationState(next);
+    setWeather(unavailableWeather());
+    try {
+      localStorage.setItem("sidequest:location:v2", JSON.stringify(next));
+    } catch {}
+  }, []);
   const setOverrides = useCallback((o: EnvironmentOverrides) => {
     if (!labEnabled) return;
     setOverridesState(o);
@@ -197,7 +218,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
         state,
         update,
         env,
-        setLocation: setLocationState,
+        setLocation,
         query,
         setQuery,
         overrides,

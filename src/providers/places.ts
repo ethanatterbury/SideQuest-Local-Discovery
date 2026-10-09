@@ -593,6 +593,8 @@ export const PLACES: Place[] = seeds.map(
           ? ["Guildford Castle"]
           : [],
     category,
+    quality: 0.75,
+    evidence: { quality: { source: "inferred", confidence: "unknown" } },
     environment,
     intents,
     company: intents.includes("kids")
@@ -717,7 +719,10 @@ const photos: Record<string, NonNullable<Place["image"]>> = {
   },
 };
 PLACES.forEach((p) => {
-  p.image = photos[p.id];
+  const image = photos[p.id];
+  p.image = image
+    ? { ...image, rights: "open", checkedAt: "2026-10-07T12:00:00Z" }
+    : undefined;
 });
 
 // Official regular weekend hours checked 7 October 2026. Bank holidays require checking.

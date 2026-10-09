@@ -3,10 +3,14 @@ import { readFile } from "node:fs/promises";
 import sharp from "sharp";
 import media from "@/providers/data/venue-media.json";
 import { storedVenueImage, withStoredPhoto } from "@/providers/venue-media";
+import { approvedPhoto } from "@/providers/photo-policy";
 import { PLACES } from "@/providers/places";
 import snapshot from "@/providers/data/regional-osm.json";
 import { normalizeOsmElement } from "@/providers/nearby-places";
 
+const approved = media.entries.filter((entry) =>
+  approvedPhoto(entry.image, media.generatedAt),
+);
 const catalogue = [
   ...PLACES,
   ...snapshot.elements.map(normalizeOsmElement).filter((place) => !!place),
@@ -14,7 +18,7 @@ const catalogue = [
 
 describe("prepared venue photography", () => {
   it("delivers the venue photograph in catalogue data before rendering a card", () => {
-    const entry = media.entries.find((entry) => entry.id.startsWith("osm-"))!;
+    const entry = approved.find((entry) => entry.id.startsWith("osm-"))!;
     const place = catalogue.find((place) => place!.id === entry.id)!;
     expect(withStoredPhoto(place).image?.url).toBe(entry.image.url);
     expect(
@@ -33,12 +37,12 @@ describe("prepared venue photography", () => {
     ).not.toBe(entry.image.url);
   });
 
-  it("ships a decodable, correctly sized local photograph for every stored media record", async () => {
+  it("ships a decodable, correctly sized local photograph for every approved stored media record", async () => {
     expect(new Set(media.entries.map((entry) => entry.id)).size).toBe(
       media.entries.length,
     );
     await Promise.all(
-      media.entries.map(async (entry) => {
+      approved.map(async (entry) => {
         const place = catalogue.find((place) => place!.id === entry.id)!;
         expect(place, entry.id).toBeDefined();
         expect(
@@ -65,4 +69,14 @@ describe("prepared venue photography", () => {
       }),
     );
   });
+});
+
+it("excludes rights-reserved prepared photos even when they have attribution", () => {
+  const entry = media.entries.find((row) =>
+    /rights reserved/.test(row.image.license),
+  )!;
+  const place = catalogue.find((row) => row.id === entry.id)!;
+  expect(storedVenueImage({ ...place, image: undefined })?.url).not.toBe(
+    entry.image.url,
+  );
 });

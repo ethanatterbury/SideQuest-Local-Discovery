@@ -1,6 +1,6 @@
 /** Free, repeatable media preparation. Browsing and recommendation order never wait for this job. */
 import { readFile, writeFile, mkdir } from "node:fs/promises";
-import { execFileSync } from "node:child_process";
+import { gzipSync } from "node:zlib";
 import { createHash } from "node:crypto";
 import sharp from "sharp";
 import { loadProvider } from "./lib/provider-loader.mjs";
@@ -12,12 +12,18 @@ const options = Object.fromEntries(
 );
 const { normalizeOsmElement } = loadProvider("src/providers/nearby-places.ts");
 const { PLACES } = loadProvider("src/providers/places.ts");
-const { resolveOfficialPhotos, downloadOfficialPhoto } = loadProvider(
+const { downloadOfficialPhoto } = loadProvider(
   "src/providers/official-photo.ts",
 );
 const { placePhotoQuery, indexedPhoto } = loadProvider(
   "src/providers/photo-index.ts",
 );
+const { approvedPhoto } = loadProvider("src/providers/photo-policy.ts");
+const stamp = new Date()
+  .toISOString()
+  .replace(/[^0-9]/g, "")
+  .slice(0, 14);
+const archiveName = `photos-${stamp}.tar.gz`;
 const snapshot = JSON.parse(
   await readFile("src/providers/data/regional-osm.json", "utf8"),
 );
@@ -30,28 +36,54 @@ const index = JSON.parse(await readFile(indexPath, "utf8"));
 const saved = new Map(index.entries.map((entry) => [entry.id, entry]));
 const candidates = catalogue.filter(
   (place) =>
-    !saved.has(place.id) &&
-    (indexedPhoto(placePhotoQuery(place))?.image ||
-      !/openstreetmap\.org/.test(place.website)),
+    !approvedPhoto(saved.get(place.id)?.image, index.generatedAt) &&
+    approvedPhoto(indexedPhoto(placePhotoQuery(place))?.image),
 );
 const selected = candidates.slice(
   Number(options.offset || 0),
-  Number(options.offset || 0) + Number(options.limit || 200),
+  Number(options.offset || 0) +
+    Math.min(25, Math.max(0, Number(options.limit || 10))),
 );
+// Manifest-only by default: no network sourcing or downloads without explicit opt-in.
+if (options.download !== "true") {
+  await mkdir("work", { recursive: true });
+  await writeFile(
+    "work/photo-preparation-manifest.json",
+    JSON.stringify(
+      {
+        version: 1,
+        entries: selected.map((place) => ({
+          query: placePhotoQuery(place),
+          image: indexedPhoto(placePhotoQuery(place))?.image,
+        })),
+      },
+      null,
+      2,
+    ) + "\n",
+  );
+  console.log(
+    JSON.stringify({
+      prepared: selected.length,
+      downloaded: 0,
+      manifest: "work/photo-preparation-manifest.json",
+    }),
+  );
+  process.exit(0);
+}
+const started = Date.now();
 const folder = "work/media-import";
 await mkdir(folder, { recursive: true });
 const added = [];
 let cursor = 0;
 await Promise.all(
-  Array.from({ length: Math.min(6, selected.length) }, async () => {
-    while (cursor < selected.length) {
+  Array.from({ length: Math.min(3, selected.length) }, async () => {
+    while (cursor < selected.length && Date.now() - started < 60000) {
       const place = selected[cursor++],
         query = placePhotoQuery(place);
       const indexed = indexedPhoto(query)?.image;
-      const photos = indexed
-        ? [indexed]
-        : (await resolveOfficialPhotos(query)).candidates;
-      for (const photo of photos.slice(0, 6)) {
+      const approved = approvedPhoto(indexed);
+      const photos = approved ? [approved] : [];
+      for (const photo of photos.slice(0, 1)) {
         const downloaded = await downloadOfficialPhoto(photo.url);
         if (!downloaded) continue;
         try {
@@ -88,6 +120,7 @@ await Promise.all(
             lat: query.lat,
             lng: query.lng,
             originalUrl: photo.url,
+            archive: archiveName,
             image: {
               ...photo,
               url: `/venue-images/${file}`,
@@ -107,17 +140,53 @@ await Promise.all(
 );
 if (added.length) {
   await mkdir("src/providers/data/venue-media-assets", { recursive: true });
-  const stamp = new Date()
-    .toISOString()
-    .replace(/[^0-9]/g, "")
-    .slice(0, 14);
-  execFileSync("tar", [
-    "-czf",
-    `src/providers/data/venue-media-assets/photos-${stamp}.tar.gz`,
-    "-C",
-    folder,
-    ...added,
-  ]);
+  // A small portable tar bundle, created without a shell or unrestricted extraction.
+  const parts = [];
+  for (const file of added) {
+    const data = await readFile(`${folder}/${file}`);
+    const header = Buffer.alloc(512);
+    header.write(file, 0, 100, "utf8");
+    header.write("0000644\0", 100, 8, "ascii");
+    header.write("0000000\0", 108, 8, "ascii");
+    header.write("0000000\0", 116, 8, "ascii");
+    header.write(
+      data.length.toString(8).padStart(11, "0") + "\0",
+      124,
+      12,
+      "ascii",
+    );
+    header.write(
+      Math.floor(Date.now() / 1000)
+        .toString(8)
+        .padStart(11, "0") + "\0",
+      136,
+      12,
+      "ascii",
+    );
+    header.fill(32, 148, 156);
+    header[156] = 48;
+    header.write("ustar\0", 257, 6, "ascii");
+    header.write("00", 263, 2, "ascii");
+    const checksum = header.reduce((sum, value) => sum + value, 0);
+    header.write(
+      checksum.toString(8).padStart(6, "0") + "\0 ",
+      148,
+      8,
+      "ascii",
+    );
+    parts.push(header, data, Buffer.alloc((512 - (data.length % 512)) % 512));
+  }
+  parts.push(Buffer.alloc(1024));
+  const tar = Buffer.concat(parts);
+  if (tar.length > 64 * 1024 * 1024)
+    throw new Error("Photo preparation exceeded bundle budget");
+  const bundle = gzipSync(tar);
+  if (bundle.length > 16 * 1024 * 1024)
+    throw new Error("Photo preparation exceeded compressed bundle budget");
+  await writeFile(
+    `src/providers/data/venue-media-assets/${archiveName}`,
+    bundle,
+  );
   index.generatedAt = new Date().toISOString();
   index.entries = [...saved.values()];
   await writeFile(indexPath, JSON.stringify(index, null, 2) + "\n");

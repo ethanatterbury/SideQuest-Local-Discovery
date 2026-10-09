@@ -1,3 +1,4 @@
+import { PHOTO_DEADLINE_MS, PHOTO_NEGATIVE_TTL_MS } from "./photo-policy";
 import { TOWNS } from "./geocoding";
 import {
   parseArchivePhotoUrl,
@@ -29,6 +30,8 @@ export interface PlacePhoto {
   confidence?: number;
   strategy?: string;
   matched?: string[];
+  rights?: "open" | "permissioned" | "unverified";
+  checkedAt?: string;
 }
 export interface PhotoDiagnostics {
   strategy: string | null;
@@ -76,12 +79,12 @@ const pending = new Map<string, Promise<PhotoResult>>();
 let active = 0;
 const waiting: { grant: () => void }[] = [];
 type Admission = "acquired" | "concurrency-limit" | "queue-timeout";
-function acquirePhotoSlot(): Promise<Admission> {
-  if (active < 6) {
+function acquirePhotoSlot(timeoutMs: number): Promise<Admission> {
+  if (active < 3) {
     active++;
     return Promise.resolve("acquired");
   }
-  if (waiting.length >= 18) return Promise.resolve("concurrency-limit");
+  if (waiting.length >= 9) return Promise.resolve("concurrency-limit");
   return new Promise((resolve) => {
     const waiter = {
       grant: () => {
@@ -89,17 +92,20 @@ function acquirePhotoSlot(): Promise<Admission> {
         resolve("acquired");
       },
     };
-    const timer = setTimeout(() => {
-      const index = waiting.indexOf(waiter);
-      if (index >= 0) waiting.splice(index, 1);
-      resolve("queue-timeout");
-    }, 8000);
+    const timer = setTimeout(
+      () => {
+        const index = waiting.indexOf(waiter);
+        if (index >= 0) waiting.splice(index, 1);
+        resolve("queue-timeout");
+      },
+      Math.max(1, timeoutMs),
+    );
     waiting.push(waiter);
   });
 }
 function releasePhotoSlot(): void {
   const waiter = waiting.shift();
-  // Transfer the occupied slot directly to the next lookup; never exceed six.
+  // Transfer the occupied slot directly to the next lookup; never exceed three.
   if (waiter) waiter.grant();
   else active--;
 }
@@ -798,7 +804,10 @@ function betterPhoto(
   return current;
 }
 
-async function resolve(query: PhotoQuery): Promise<PhotoResult> {
+async function resolve(
+  query: PhotoQuery,
+  timeoutMs: number,
+): Promise<PhotoResult> {
   const recAliases = /\brec\.?$/i.test(query.name)
     ? [
         query.name.replace(/\brec\.?$/i, "Recreation Ground"),
@@ -822,7 +831,7 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
   const started = Date.now();
   const controller = new AbortController();
   const signal = controller.signal;
-  const deadline = setTimeout(() => controller.abort(), 10_000);
+  const deadline = setTimeout(() => controller.abort(), Math.max(1, timeoutMs));
   try {
     const diagnostics: PhotoDiagnostics = {
       strategy: null,
@@ -846,7 +855,7 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
       strategy: string,
     ) => {
       attempted(strategy);
-      if (signal.aborted || diagnostics.requestCount >= 14) {
+      if (signal.aborted || diagnostics.requestCount >= 8) {
         hadError = true;
         return null;
       }
@@ -859,7 +868,7 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
       });
       try {
         // Race the complete fetch/body operation: an upstream implementation that
-        // ignores AbortSignal must not hold one of the six admission slots forever.
+        // ignores AbortSignal must not hold one of the three admission slots forever.
         return await Promise.race([
           api(host, params, signal, diagnostics),
           aborted,
@@ -994,7 +1003,14 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
       return fallback && preferredLandscape(fallback) ? fallback : null;
     };
     const finish = (selected: PlacePhoto | null): PhotoResult => {
-      const image = selected || fallback;
+      const chosen = selected || fallback;
+      const image = chosen
+        ? {
+            ...chosen,
+            rights: "open" as const,
+            checkedAt: new Date().toISOString(),
+          }
+        : null;
       diagnostics.strategy = image?.strategy || null;
       diagnostics.elapsedMs = Date.now() - started;
       return {
@@ -1411,7 +1427,7 @@ async function resolve(query: PhotoQuery): Promise<PhotoResult> {
 
 export async function lookupPlacePhoto(
   query: PhotoQuery,
-  options: { refresh?: boolean; debug?: boolean } = {},
+  options: { refresh?: boolean; debug?: boolean; timeoutMs?: number } = {},
 ): Promise<PhotoResult> {
   const key = JSON.stringify([
     normalize(query.name),
@@ -1448,7 +1464,11 @@ export async function lookupPlacePhoto(
   if (existing) return present(await existing);
   const started = Date.now();
   const promise = (async (): Promise<PhotoResult> => {
-    const admission = await acquirePhotoSlot();
+    const budgetMs = Math.min(
+      PHOTO_DEADLINE_MS,
+      options.timeoutMs ?? PHOTO_DEADLINE_MS,
+    );
+    const admission = await acquirePhotoSlot(budgetMs);
     const queuedMs = Date.now() - started;
     if (admission !== "acquired") {
       // Admission failures are transient and never become negative cache entries.
@@ -1468,7 +1488,7 @@ export async function lookupPlacePhoto(
       };
     }
     try {
-      const result = await resolve(query);
+      const result = await resolve(query, Math.max(1, budgetMs - queuedMs));
       if (result.diagnostics) {
         result.diagnostics.queuedMs = queuedMs;
         result.diagnostics.elapsedMs += queuedMs;
@@ -1482,7 +1502,7 @@ export async function lookupPlacePhoto(
             ? 24 * 60 * 60_000
             : result.retryable
               ? 30_000
-              : 5 * 60_000),
+              : PHOTO_NEGATIVE_TTL_MS),
       });
       return result;
     } finally {

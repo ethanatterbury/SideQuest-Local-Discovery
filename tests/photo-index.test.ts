@@ -41,7 +41,11 @@ it("reuses a generated match only for the same venue name and position", () => {
     checkedAt: new Date().toISOString(),
     retryable: false,
   };
-  expect(indexedPhoto(query, [entry])?.image).toEqual(image);
+  expect(indexedPhoto(query, [entry])?.image).toEqual({
+    ...image,
+    rights: "open",
+    checkedAt: entry.checkedAt,
+  });
   expect(indexedPhoto({ ...query, name: "Other Branch" }, [entry])).toBeNull();
   expect(indexedPhoto({ ...query, lat: 52 }, [entry])).toBeNull();
   expect(photoIdentity(query)).not.toBe(

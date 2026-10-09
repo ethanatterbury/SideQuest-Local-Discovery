@@ -19,6 +19,8 @@ it("sends imported media hints and retries a temporary failure instead of record
     url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Venue.jpg",
     source: "https://commons.wikimedia.org/wiki/File:Venue.jpg",
     credit: "Author",
+    rights: "open",
+    checkedAt: "2026-10-09T00:00:00Z",
     license: "CC0",
   };
   const fetcher = vi
@@ -59,6 +61,8 @@ it("accepts a canonical Archive photo only with its matching exact-file source",
     url: "https://archive.org/download/venue-album/Folder/DSCN1.JPG",
     source: "https://archive.org/details/venue-album/Folder/DSCN1.JPG",
     credit: "Venue Photographer",
+    rights: "open",
+    checkedAt: "2026-10-09T00:00:00Z",
     license: "CC BY-SA 4.0",
     width: 4608,
     height: 3456,
@@ -97,4 +101,28 @@ it("accepts a canonical Archive photo only with its matching exact-file source",
       }),
     ).toBeNull();
   }
+});
+
+it("expires queued work from enqueue and never starts more than three network requests", async () => {
+  vi.useFakeTimers();
+  const fetcher = vi.fn(() => new Promise<Response>(() => {}));
+  vi.stubGlobal("fetch", fetcher);
+  const promises = Array.from({ length: 12 }, (_, i) =>
+    findPlacePhoto({ ...PLACES[0], id: `deadline-${i}`, image: undefined }),
+  );
+  expect(fetcher).toHaveBeenCalledTimes(3);
+  await vi.advanceTimersByTimeAsync(4500);
+  expect(await Promise.all(promises)).toEqual(Array(12).fill(null));
+  expect(fetcher).toHaveBeenCalledTimes(3);
+});
+
+it("caches a definitive miss for a week", async () => {
+  vi.useFakeTimers();
+  const fetcher = vi.fn(async () => Response.json({ image: null }));
+  vi.stubGlobal("fetch", fetcher);
+  const place = { ...PLACES[0], id: "negative-week", image: undefined };
+  await findPlacePhoto(place);
+  await vi.advanceTimersByTimeAsync(86400000);
+  await findPlacePhoto(place);
+  expect(fetcher).toHaveBeenCalledTimes(1);
 });
