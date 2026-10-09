@@ -1,153 +1,107 @@
 import { test, expect, type Page } from "@playwright/test";
-import sharp from "sharp";
+import { mapFixture as fixture, gpuLaunchOptions } from "./fixtures/map";
 
-// A decoded, labeled raster tile is deterministic here; release screenshots must
-// separately verify real provider roads and labels, without route interception.
-const geography = sharp(
-  Buffer.from(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="#e8ecdf"/><path d="M0 100H256M110 0V256" stroke="#fff" stroke-width="15"/><path d="M0 100H256M110 0V256" stroke="#aaa" stroke-width="1"/><text x="15" y="90" font-size="14">Test High Street</text><text x="130" y="180" font-size="15">Test Town</text></svg>`,
-  ),
-)
-  .png()
-  .toBuffer();
+// Real MapLibre renderer, deterministic local GeoJSON. This verifies rendering
+// and interaction, not hosted OpenFreeMap connectivity or factual geography.
 
-async function environment(page: Page) {
-  await page.addInitScript(() => {
-    sessionStorage.setItem(
-      "sidequest:environment",
-      JSON.stringify({
-        weather: "sunny",
-        time: "midday",
-        failures: ["weather"],
-      }),
-    );
-  });
-  await page.route("**/api/places?**", (route) =>
-    route.fulfill({ json: { places: [], source: "live" } }),
-  );
-  await page.route("**/api/photo?**", (route) =>
-    route.fulfill({ json: { image: null, source: "unavailable" } }),
-  );
-}
+test.use({ launchOptions: gpuLaunchOptions });
 
-async function rasterTiles(page: Page) {
-  const tile = await geography;
-  await page.route("https://tile.openstreetmap.org/**", (route) =>
-    route.fulfill({ contentType: "image/png", body: tile }),
+async function environment(page: Page, empty = false) {
+  page.on("pageerror", (error) =>
+    console.error("Browser error:", error.message),
   );
-}
-
-test("Leaflet is primary with WebGL available and a successfully loaded empty vector style", async ({
-  page,
-}) => {
-  await environment(page);
-  await rasterTiles(page);
-  // This is the production regression: MapLibre can load this style successfully
-  // without painting any geography. WebGL is deliberately left enabled.
-  await page.route("https://tiles.openfreemap.org/styles/positron", (route) =>
-    route.fulfill({
-      json: {
-        version: 8,
-        sources: {},
-        layers: [
-          {
-            id: "background",
-            type: "background",
-            paint: { "background-color": "#e5eadb" },
-          },
-        ],
-      },
-    }),
-  );
-  await page.goto("/map");
-  expect(
-    await page.evaluate(
-      () => !!document.createElement("canvas").getContext("webgl2"),
-    ),
-  ).toBe(true);
-  await expect(page.locator('[data-map-engine="leaflet"]')).toBeVisible();
-  await expect(page.locator(".leaflet-tile-loaded")).not.toHaveCount(0);
-  await expect
-    .poll(() =>
-      page
-        .locator(".leaflet-tile-loaded")
-        .evaluateAll(
-          (tiles) =>
-            tiles.filter(
-              (tile) =>
-                tile instanceof HTMLImageElement &&
-                tile.complete &&
-                tile.naturalWidth === 256,
-            ).length,
-        ),
+  await page.route("**/*", (route) => {
+    const url = new URL(route.request().url());
+    if (!["localhost", "127.0.0.1"].includes(url.hostname))
+      return route.fulfill({
+        status: 503,
+        body: "External services intentionally disabled by renderer fixture",
+      });
+    if (
+      url.pathname === "/_next/image" &&
+      /^https?:/.test(url.searchParams.get("url") ?? "")
     )
-    .toBeGreaterThan(0);
-  await expect(page.locator(".map-status")).toHaveText(
-    /Street map · your next detour/,
+      return route.fulfill({
+        status: 503,
+        body: "Remote photography disabled in renderer tests",
+      });
+    if (url.pathname === "/api/places")
+      return route.fulfill({ json: { places: [], source: "cached" } });
+    if (url.pathname === "/api/photo")
+      return route.fulfill({ json: { image: null, source: "unavailable" } });
+    return route.continue();
+  });
+  await page.addInitScript(
+    ({ style, empty }) => {
+      (
+        window as Window & { __SIDEQUEST_MAP_STYLE__?: unknown }
+      ).__SIDEQUEST_MAP_STYLE__ = empty
+        ? {
+            version: 8,
+            sources: {},
+            layers: [
+              {
+                id: "background",
+                type: "background",
+                paint: { "background-color": "#f5f3eb" },
+              },
+            ],
+          }
+        : style;
+      sessionStorage.setItem(
+        "sidequest:environment",
+        JSON.stringify({
+          weather: "sunny",
+          time: "midday",
+          reducedMotion: true,
+        }),
+      );
+    },
+    { style: fixture, empty },
   );
-  await expect(page.locator(".maplibregl-canvas")).toHaveCount(0);
-});
+}
 
-test("missing raster geography is reported unavailable and can be retried", async ({
+async function ready(page: Page) {
+  await expect(
+    page.locator('[data-map-engine="maplibre"] .maplibregl-canvas'),
+  ).toBeVisible({ timeout: 15000 });
+  await expect(page.locator(".map-status")).toHaveText(
+    /Landscape map · your next detour/,
+    { timeout: 15000 },
+  );
+}
+
+test("MapLibre renders local geography and style load alone fails with a recoverable retry", async ({
   page,
 }) => {
-  await environment(page);
-  await page.route("https://tile.openstreetmap.org/**", (route) =>
-    route.abort(),
-  );
+  await environment(page, true);
   await page.goto("/map");
+  await expect(page.locator(".maplibregl-canvas")).toBeVisible({
+    timeout: 15000,
+  });
   await expect(page.locator(".map-status")).toHaveText(
     /Location overview · map unavailable/,
+    { timeout: 14000 },
   );
   await expect(page.locator(".geographic-fallback")).toBeVisible();
-  await expect(page.locator('[data-map-engine="leaflet"]')).not.toBeVisible();
   await expect(
     page.getByRole("button", { name: "Zoom in", exact: true }),
   ).toBeDisabled();
-  await rasterTiles(page);
+  await page.evaluate((style) => {
+    (
+      window as Window & { __SIDEQUEST_MAP_STYLE__?: unknown }
+    ).__SIDEQUEST_MAP_STYLE__ = style;
+  }, fixture);
   await page.getByRole("button", { name: "Retry street map" }).click();
-  await expect(page.locator(".map-status")).toHaveText(
-    /Street map · your next detour/,
-  );
+  await ready(page);
   await expect(page.locator(".geographic-fallback")).toHaveCount(0);
+  await expect(page.locator(".leaflet-container")).toHaveCount(0);
 });
 
-test("Lab weather and night preserve decoded geography on desktop and mobile", async ({
+test("saved and visited native markers support keyboard selection", async ({
   page,
 }) => {
   await environment(page);
-  await rasterTiles(page);
-  await page.goto("/dev/environment");
-  const map = page.locator('[data-map-engine="leaflet"]');
-  await expect(page.locator(".map-status")).toHaveText(
-    /Street map · your next detour/,
-  );
-  for (const width of [1440, 390]) {
-    await page.setViewportSize({ width, height: 900 });
-    for (const [weather, time] of [
-      ["clear", "midday"],
-      ["heavy-rain", "midday"],
-      ["clear", "midnight"],
-    ]) {
-      await page.getByLabel("Weather", { exact: true }).selectOption(weather);
-      await page.getByLabel("Time of day").selectOption(time);
-      await expect(map).toBeVisible();
-      await expect(page.locator(".map-status")).toHaveText(
-        /Street map · your next detour/,
-      );
-      await expect(map.locator(".leaflet-tile-loaded").first()).toBeVisible();
-      await expect(map).toHaveClass(
-        time === "midnight" ? /raster-night/ : /^(?!.*raster-night)/,
-      );
-    }
-  }
-});
-
-test("saved and visited map markers expose keyboard selection and distinct state", async ({
-  page,
-}) => {
-  await environment(page);
-  await rasterTiles(page);
   await page.addInitScript(() =>
     localStorage.setItem(
       "sidequest:v1",
@@ -166,41 +120,76 @@ test("saved and visited map markers expose keyboard selection and distinct state
       }),
     ),
   );
-  await page.goto("/map");
+  await page.goto("/map?place=virginia-water");
+  await ready(page);
   const marker = page.getByRole("button", {
-    name: "Select Virginia Water · saved · visited",
+    name: "Select Virginia Water, saved, visited",
     exact: true,
   });
-  await expect(marker).toHaveClass(/map-place-visited/);
+  await expect(marker).toBeVisible();
+  await expect(marker.locator("svg")).toHaveCount(2);
+  await marker.evaluate((button) =>
+    button.addEventListener(
+      "click",
+      () => button.setAttribute("data-keyboard-activated", "true"),
+      { once: true },
+    ),
+  );
   await marker.focus();
   await page.keyboard.press("Enter");
+  await expect(marker).toHaveAttribute("data-keyboard-activated", "true");
   await expect(marker).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator(".map-selected")).toContainText("Virginia Water");
 });
 
-test("search this area preserves the user's panned camera", async ({
+test("keyboard panning exposes search area and preserves the user's camera", async ({
   page,
 }) => {
   await environment(page);
-  await rasterTiles(page);
   await page.goto("/map?place=virginia-water");
-  const map = page.locator('[data-map-engine="leaflet"]');
-  await expect(page.locator(".map-selected")).toContainText("Virginia Water");
-  await expect(page.locator(".map-status")).toHaveText(
-    /Street map · your next detour/,
+  await ready(page);
+  await page.evaluate(() => {
+    document
+      .querySelector(".map-canvas-wrap")!
+      .addEventListener("sq-camera", (event) => {
+        const detail = (event as CustomEvent).detail;
+        (
+          window as Window & { testCamera?: { x: number; y: number } }
+        ).testCamera = { x: detail.x, y: detail.y };
+      });
+  });
+  const canvas = page.locator(".maplibregl-canvas");
+  await canvas.focus();
+  await canvas.press("ArrowRight");
+  await expect(
+    page.getByRole("button", { name: "Search this area", exact: true }),
+  ).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => (window as Window & { testCamera?: unknown }).testCamera,
+      ),
+    )
+    .toBeTruthy();
+  const before = await page.evaluate(
+    () =>
+      (window as Window & { testCamera?: { x: number; y: number } })
+        .testCamera!,
   );
-  const pane = page.locator(".leaflet-map-pane");
-  const initial = await pane.getAttribute("style");
-  await map.focus();
-  await map.press("ArrowRight");
-  await expect.poll(() => pane.getAttribute("style")).not.toBe(initial);
-  await expect(pane).not.toHaveClass(/leaflet-pan-anim/);
-  const camera = await pane.getAttribute("style");
   await page
     .getByRole("button", { name: "Search this area", exact: true })
     .click();
   await expect(
     page.getByRole("button", { name: "Change starting location: Map area" }),
   ).toBeVisible();
-  await expect(pane).toHaveAttribute("style", camera!);
+  await expect(
+    page.getByRole("button", { name: "Search this area", exact: true }),
+  ).toHaveCount(0);
+  const after = await page.evaluate(
+    () =>
+      (window as Window & { testCamera?: { x: number; y: number } })
+        .testCamera!,
+  );
+  expect(after.x).toBeCloseTo(before.x, 6);
+  expect(after.y).toBeCloseTo(before.y, 6);
 });

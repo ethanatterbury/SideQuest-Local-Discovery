@@ -2,9 +2,9 @@
 name: SideQuest
 description: An editorial decision surface for a considered local detour.
 colors:
-  paper: "#f6f6ef"
+  paper: "#f5f3eb"
   surface: "#fff"
-  ink: "#243b30"
+  ink: "#203d30"
   muted: "#647064"
   accent: "#d9eb84"
   line: "#dce0d5"
@@ -236,7 +236,7 @@ The signature pairs a photograph, match badge, name, explanation, practical fact
 
 ### Map Atmosphere
 
-Atmosphere is pointer-free and hidden from assistive technology. Static washes respond to weather, night and the approach to sunset. Overcast, partly cloudy and rain use two soft cloud shadows drifting on independent 38s/53s paths. Fine diagonal rain and snow stay bounded to 12 drops, or 24 for heavy rain; rain adds four sparse surface ripples. Hidden tabs remove drops/ripples and pause cloud/fog animation. Effective reduced motion leaves a static atmosphere and removes particles; the Lab’s explicit Normal preference can override a system reduced-motion preference. Map controls remain above the atmosphere, and marker colors remain readable through its light shading. The signature delay becomes zero when reduced motion is enabled.
+Atmosphere is pointer-free and hidden from assistive technology. One GPU pass combines map-anchored cloud fields, wind-driven layered rain/snow, fog, solar colour and water-masked ripples. Storm illumination is broad and infrequent. Hidden tabs suspend rendering; reduced motion leaves a static field. Quality adapts on narrow/slow devices and has explicit Lab overrides. Labels, marker interaction and map controls stay readable above the atmosphere. The signature delay becomes zero when reduced motion is enabled.
 
 ## Do's and Don'ts
 
@@ -255,3 +255,9 @@ Atmosphere is pointer-free and hidden from assistive technology. Static washes r
 - **Don't** convert rectangular filters and fields into a universal pill shape.
 - **Don't** add perpetual decorative movement outside the bounded map atmosphere.
 - **Don't** style unknown information as a verified live fact.
+
+## V2 direction
+
+Warm paper, deep forest, genuine landscape photography and retained Manrope/DM Sans. Larger editorial heroes; quiet native preferences; explicit optional venue categories and access requirements; useful fit explanations rather than percentage certainty. Location changes use a small non-blocking animated line. Mobile grids allow preference fields to shrink without horizontal overflow.
+
+MapLibre uses British landscape colours, SVG category markers, native accessible cluster counts and UK camera limits. The Environment Lab and map share a GPU atmosphere: layered precipitation, wind, world-anchored cloud shadows, fog, solar lighting and water-masked rain ripples. Reduced motion uses a static field; unavailable WebGL has a restrained static fallback. Deterministic visual fixtures prove renderer behaviour, not live cartographic accuracy or provider uptime.

@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
-import { readFileSync } from "node:fs";
+import { localMapFixture, gpuLaunchOptions } from "./fixtures/map";
+test.use({ launchOptions: gpuLaunchOptions });
 async function simulate(
   page: import("@playwright/test").Page,
   state: Record<string, unknown> = {},
@@ -208,16 +209,11 @@ test("saved map marker can select an ineligible place without fake score", async
   await expect(page.locator(".map-selected")).not.toContainText(/\d+% match/);
 });
 
-test("street map connects selection and mobile sheet", async ({ page }) => {
+test("landscape map connects selection and mobile sheet", async ({ page }) => {
   await simulate(page, { failures: ["weather"] });
-  await page.route("https://tile.openstreetmap.org/**", (route) =>
-    route.fulfill({
-      contentType: "image/png",
-      body: readFileSync("public/icons/icon-192.png"),
-    }),
-  );
+  await localMapFixture(page);
   await page.goto("/map");
-  await expect(page.locator(".map-status")).toContainText("Street map", {
+  await expect(page.locator(".map-status")).toContainText("Landscape map", {
     timeout: 20000,
   });
   const row = page.locator(".map-result-row").nth(1);

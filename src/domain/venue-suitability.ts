@@ -80,7 +80,7 @@ export function inferVenueSuitability(
   } else if (
     !/\bbusiness park\b|\bindustrial park\b|\bcar park\b/.test(category) &&
     has(
-      /\bgardens?\b|\bpark\b|\bnature reserve\b|\bwoodland\b|\bforest\b|\bwalk\b|\bviewpoint\b|\blake(?:side)?\b|\bpond\b/,
+      /\bgardens?\b|\bpark\b|\bnature reserve\b|\bwoodland\b|\bheath(?:land)?\b|\bforest\b|\bwalk\b|\bviewpoint\b|\blake(?:side)?\b|\bpond\b/,
     )
   ) {
     kind = "nature";

@@ -102,6 +102,10 @@ export function EnvironmentLab() {
                   rain: undefined,
                   wind: undefined,
                   visibility: undefined,
+                  cloudCover: undefined,
+                  windDirection: undefined,
+                  gusts: undefined,
+                  snowfall: undefined,
                   weather:
                     e.target.value === "live"
                       ? undefined
@@ -155,6 +159,34 @@ export function EnvironmentLab() {
               max: 15,
               unit: "mm/h",
             },
+            {
+              key: "cloudCover",
+              label: "Cloud cover",
+              min: 0,
+              max: 100,
+              unit: "%",
+            },
+            {
+              key: "windDirection",
+              label: "Wind direction",
+              min: 0,
+              max: 360,
+              unit: "°",
+            },
+            {
+              key: "gusts",
+              label: "Wind gusts",
+              min: 0,
+              max: 150,
+              unit: "km/h",
+            },
+            {
+              key: "snowfall",
+              label: "Snowfall",
+              min: 0,
+              max: 5,
+              unit: "cm/h",
+            },
             { key: "wind", label: "Wind", min: 0, max: 100, unit: "km/h" },
             {
               key: "visibility",
@@ -164,12 +196,20 @@ export function EnvironmentLab() {
               unit: "km",
             },
           ].map((s) => {
-            const key = s.key as "temperature" | "rain" | "wind" | "visibility";
+            const key = s.key as
+              | "temperature"
+              | "rain"
+              | "wind"
+              | "visibility"
+              | "cloudCover"
+              | "windDirection"
+              | "gusts"
+              | "snowfall";
             return (
               <label key={key}>
                 {s.label}
                 <output>
-                  {env.weather[key].toFixed(1)} {s.unit}
+                  {(env.weather[key] ?? 0).toFixed(1)} {s.unit}
                 </output>
                 <input
                   aria-label={s.label}
@@ -177,7 +217,7 @@ export function EnvironmentLab() {
                   min={s.min}
                   max={s.max}
                   step="0.1"
-                  value={overrides[key] ?? env.weather[key]}
+                  value={overrides[key] ?? env.weather[key] ?? 0}
                   onChange={(e) =>
                     set({
                       [key]: Number(e.target.value),
@@ -268,6 +308,22 @@ export function EnvironmentLab() {
               <option value="android">Small Android · 360px</option>
               <option value="tablet">Tablet · 768px</option>
               <option value="laptop">Laptop · fluid</option>
+            </select>
+          </label>
+          <label>
+            Atmosphere quality
+            <select
+              aria-label="Atmosphere quality"
+              value={overrides.atmosphereQuality ?? "auto"}
+              onChange={(e) =>
+                set({
+                  atmosphereQuality: e.target.value as "auto" | "high" | "low",
+                })
+              }
+            >
+              <option value="auto">Automatic</option>
+              <option value="high">High</option>
+              <option value="low">Low · 30 fps</option>
             </select>
           </label>
           <label>

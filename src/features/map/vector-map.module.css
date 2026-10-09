@@ -1,0 +1,93 @@
+.map {
+  position: absolute;
+  inset: 0;
+  background: #f3f1e7;
+}
+.map :global(.maplibregl-ctrl-attrib) {
+  font-size: 10px;
+  background: #f6f6efd9;
+  color: #526252;
+}
+.marker {
+  position: relative;
+  z-index: 2;
+  border: 2px solid #fffef5;
+  border-radius: 50%;
+  width: 29px;
+  height: 29px;
+  padding: 0;
+  background: #36543f;
+  color: #fffef5;
+  box-shadow: 0 2px 7px #243b3033;
+  font: 600 13px sans-serif;
+  cursor: pointer;
+}
+.marker:hover {
+  transform: scale(1.1);
+}
+.saved {
+  background: #d9eb84;
+  color: #243b30;
+}
+.visited {
+  background: #788674;
+}
+.selected {
+  width: 36px;
+  height: 36px;
+  background: #243b30;
+  outline: 3px solid #d9eb84;
+}
+.marker:focus-visible {
+  outline: 3px solid #537a3c;
+  outline-offset: 4px;
+}
+
+.map :global(.maplibregl-ctrl-bottom-right) {
+  z-index: 2;
+}
+.marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.marker :global(.sq-marker-badge) {
+  position: absolute;
+  right: -4px;
+  top: -4px;
+  width: 13px;
+  height: 13px;
+  padding: 2px;
+  border-radius: 3px;
+  background: #d9eb84;
+  color: #243b30;
+  box-shadow: 0 0 0 1px #f6f6ef;
+}
+
+.cluster {
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  background: #36543f;
+  color: #fffef5;
+  border: 2px solid #f5f3eb;
+  font:
+    550 13px "DM Sans Variable",
+    sans-serif;
+  box-shadow: 0 3px 10px #243b3024;
+  cursor: pointer;
+}
+.cluster:focus-visible {
+  outline: 3px solid #d9eb84;
+  outline-offset: 3px;
+}
+.marker {
+  width: 36px;
+  height: 36px;
+}
+.marker::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+}

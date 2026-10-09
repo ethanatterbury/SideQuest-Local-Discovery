@@ -36,6 +36,32 @@ describe("OSM place normalization", () => {
     expect(normalizeOsmElement(element({ access: "private" }))).toBeNull();
     expect(() => normalizeOsmResponse({ elements: "broken" })).toThrow();
   });
+  it("excludes ancillary infrastructure and closed facilities without venue-specific corrections", () => {
+    expect(
+      normalizeOsmElement(
+        element({
+          name: "Community pool changing facility",
+          leisure: "sports_centre",
+          sport: "swimming",
+        }),
+      ),
+    ).toBeNull();
+    expect(
+      normalizeOsmElement(
+        element({
+          name: "Garden parking",
+          leisure: "park",
+          amenity: "parking",
+        }),
+      ),
+    ).toBeNull();
+    expect(normalizeOsmElement(element({ disused: "yes" }))).toBeNull();
+    expect(
+      normalizeOsmElement(
+        element({ name: "Community swimming pool", leisure: "swimming_pool" }),
+      ),
+    ).not.toBeNull();
+  });
   it("accepts way centers and cleans control characters in names", () => {
     expect(
       normalizeOsmElement(
@@ -87,7 +113,9 @@ describe("OSM place normalization", () => {
       cost: null,
     });
     expect(place.familyFeatures).toContain("Soft play");
-    expect(place.hours).toEqual([{days:[1,2,3,4,5],open:540,close:1020}]);
+    expect(place.hours).toEqual([
+      { days: [1, 2, 3, 4, 5], open: 540, close: 1020 },
+    ]);
     for (const tags of [
       { min_age: "6", max_age: "1" },
       { min_age: "2 years", max_age: "seven" },

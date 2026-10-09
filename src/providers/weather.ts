@@ -28,7 +28,7 @@ export const openMeteo: WeatherProvider = {
       return { ...stored.weather, source: "cached" };
     try {
       const r = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lng}&current=temperature_2m,precipitation,weather_code,wind_speed_10m&hourly=precipitation_probability,visibility&daily=sunrise,sunset&forecast_days=2&timezone=Europe%2FLondon`,
+        `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lng}&current=temperature_2m,precipitation,weather_code,wind_speed_10m,cloud_cover,wind_direction_10m,wind_gusts_10m,snowfall&hourly=precipitation_probability,visibility&daily=sunrise,sunset&forecast_days=2&timezone=Europe%2FLondon`,
         {
           signal: signal
             ? AbortSignal.any([signal, AbortSignal.timeout(8000)])
@@ -88,6 +88,18 @@ export const openMeteo: WeatherProvider = {
         temperature: v.temperature_2m,
         rain: v.precipitation,
         wind: v.wind_speed_10m,
+        cloudCover: Number.isFinite(v.cloud_cover)
+          ? Math.max(0, Math.min(100, v.cloud_cover))
+          : undefined,
+        windDirection: Number.isFinite(v.wind_direction_10m)
+          ? ((v.wind_direction_10m % 360) + 360) % 360
+          : undefined,
+        gusts: Number.isFinite(v.wind_gusts_10m)
+          ? Math.max(0, Math.min(300, v.wind_gusts_10m))
+          : undefined,
+        snowfall: Number.isFinite(v.snowfall)
+          ? Math.max(0, Math.min(100, v.snowfall))
+          : undefined,
         visibility:
           Number.isFinite(visibility) && visibility >= 0
             ? visibility / 1000

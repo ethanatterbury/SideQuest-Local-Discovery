@@ -1,15 +1,20 @@
 import type { Weather } from "./models";
 const clamp = (n: number, min = 0, max = 1) => Math.max(min, Math.min(max, n));
 
-/** Bounded CSS effects use actual measurements, rather than a weather label. */
+/** Bounded GPU densities use measurements; labels only fill missing provider fields. */
 export function atmosphereMetrics(weather: Weather) {
   const available = weather.source !== "unavailable";
   const rain =
-    available && weather.kind !== "snow" ? clamp(weather.rain / 15) : 0;
+    available &&
+    weather.kind !== "snow" &&
+    !(weather.snowfall && weather.snowfall > 0)
+      ? clamp(weather.rain / 15)
+      : 0;
   const wind = available ? clamp(weather.wind / 100) : 0;
-  const snow = available && weather.kind === "snow";
+  const snow =
+    available && (weather.kind === "snow" || (weather.snowfall ?? 0) > 0);
   const fog = available ? clamp((10 - weather.visibility) / 10) : 0;
-  const cloud = !available
+  const estimatedCloud = !available
     ? 0
     : weather.kind === "partly-cloudy"
       ? 0.45
@@ -23,7 +28,16 @@ export function atmosphereMetrics(weather: Weather) {
     wind,
     snow,
     fog,
-    cloud,
+    cloud: available
+      ? clamp((weather.cloudCover ?? estimatedCloud * 100) / 100)
+      : 0,
+    snowIntensity: snow
+      ? clamp((weather.snowfall ?? weather.rain) / 2, 0.15, 1)
+      : 0,
+    direction: ((weather.windDirection ?? 225) * Math.PI) / 180,
+    gust: available
+      ? clamp(((weather.gusts ?? weather.wind) - weather.wind) / 60)
+      : 0,
     rainCount: rain > 0 ? Math.round(38 + rain * 98) : 0,
     snowCount: snow ? Math.round(52 + clamp(weather.rain / 4) * 32) : 0,
     windCount: wind >= 0.12 ? Math.round(4 + wind * 16) : 0,

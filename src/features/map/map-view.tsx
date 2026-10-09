@@ -16,8 +16,11 @@ import {
   X,
 } from "lucide-react";
 import { useApp } from "@/components/providers";
-import { matchesActivity, rankPlaces } from "@/domain/discovery";
-import { isChildOuting } from "@/domain/venue-suitability";
+import { rankPlaces } from "@/domain/discovery";
+import {
+  categoryRequested,
+  optionalCategory,
+} from "@/domain/venue-suitability";
 import { PlaceImage } from "@/components/primitives";
 import { Refinement } from "@/features/discover/refinement";
 import { WeatherAtmosphere } from "./weather-atmosphere";
@@ -25,33 +28,52 @@ import { isMapFoodPlace } from "./map-food";
 import { isDark } from "@/domain/time";
 import { directionsUrl, estimatedRouting } from "@/providers/routing";
 import { track } from "@/providers/analytics";
-import type { Coordinates, Itinerary, Place } from "@/domain/models";
-import { RasterMap, type RasterHandle, type RasterStatus } from "./raster-map";
+import type {
+  Coordinates,
+  DiscoveryQuery,
+  Itinerary,
+  Place,
+} from "@/domain/models";
+import type { RasterHandle, RasterStatus } from "./raster-map";
+import { VectorMap } from "./vector-map";
 import styles from "./map-selection.module.css";
 export function MapView({ itinerary }: { itinerary?: Itinerary }) {
   const {
     places: catalog,
     env,
     query,
+    setQuery,
     state,
     setLocation,
     update,
     toast,
   } = useApp();
-  const [includeFood, setIncludeFood] = useState(false);
+  const includeFood = categoryRequested(query, "food");
+  const setIncludeFood = (included: boolean) => {
+    const categories = query.includeCategories ?? [];
+    setQuery({
+      ...query,
+      includeCategories: included
+        ? [...new Set([...categories, "food" as const])]
+        : categories.filter((category) => category !== "food"),
+      ...(!included && query.activity === "food"
+        ? { activity: "any" as const }
+        : {}),
+      ...(!included && query.intent === "food"
+        ? { intent: "any" as const }
+        : {}),
+      ...(!included
+        ? {
+            interests: query.interests?.filter(
+              (interest) => interest !== "food",
+            ),
+          }
+        : {}),
+    });
+  };
   const ranked = useMemo(
-    () =>
-      rankPlaces(catalog, { ...query, activity: "any" }, env, state).filter(
-        ({ place }) =>
-          isMapFoodPlace(place)
-            ? includeFood
-            : (query.intent !== "kids" || isChildOuting(place)) &&
-              matchesActivity(
-                place,
-                query.activity === "food" ? "any" : query.activity,
-              ),
-      ),
-    [catalog, query, env, state, includeFood],
+    () => rankPlaces(catalog, query, env, state),
+    [catalog, query, env, state],
   );
   const [selectedId, setSelectedId] = useState(""),
     [rasterStatus, setRasterStatus] = useState<RasterStatus>("loading"),
@@ -66,8 +88,7 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
   const selectedPlace = catalog.find((place) => place.id === selectedId);
   const selectionAllowed =
     !selectedPlace ||
-    !isMapFoodPlace(selectedPlace) ||
-    includeFood ||
+    mapCategoryAllowed(selectedPlace, query) ||
     linkedPlaceId === selectedId;
   const selected = selectionCleared
     ? undefined
@@ -97,9 +118,7 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
         trigger.focus({ preventScroll: true });
       else
         page.current
-          ?.querySelector<HTMLElement>(
-            '[data-map-engine="leaflet"], .sheet-handle',
-          )
+          ?.querySelector<HTMLElement>(".maplibregl-canvas, .sheet-handle")
           ?.focus({ preventScroll: true });
     });
   }
@@ -156,11 +175,10 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
     ].filter(
       (p, i, a) =>
         a.findIndex((x) => x.id === p.id) === i &&
-        (includeFood ||
-          !isMapFoodPlace(p) ||
+        (mapCategoryAllowed(p, query) ||
           (p.id === selectedId && p.id === linkedPlaceId)),
     );
-  }, [catalog, ranked, state, includeFood, selectedId, linkedPlaceId]);
+  }, [catalog, ranked, state, query, selectedId, linkedPlaceId]);
   const night = isDark(env.now, env.weather.sunrise, env.weather.sunset);
   const unavailable = failure || rasterStatus === "unavailable";
   const saved = !!activePlace && state.saved.includes(activePlace.id);
@@ -216,14 +234,19 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
             />
           </div>
           <div className="map-results">
-            {ranked.slice(0, 5).map((r) => (
+            {ranked.slice(0, 5).map((r, index) => (
               <button
                 key={r.place.id}
                 className={`map-result-row ${selected?.place.id === r.place.id ? "selected" : ""}`}
                 aria-pressed={activePlace?.id === r.place.id}
                 onClick={() => selectPlace(r.place.id)}
               >
-                <span className="map-result-score">{r.score}</span>
+                <span
+                  className="map-result-score"
+                  aria-label={`Suggestion ${index + 1}`}
+                >
+                  {index + 1}
+                </span>
                 <span>
                   <strong>{r.place.name}</strong>
                   <small>
@@ -247,7 +270,7 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
           {activePlace ? `Selected ${activePlace.name}` : "No place selected"}
         </span>
         {!failure && (
-          <RasterMap
+          <VectorMap
             ref={raster}
             places={visible}
             origin={env.location}
@@ -308,7 +331,7 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
               <h2>{activePlace.name}</h2>
               <div className={styles.meta}>
                 {selected && (
-                  <span className={styles.match}>{selected.score}% match</span>
+                  <span className={styles.match}>Fits your plans</span>
                 )}
                 <span>
                   {query.travelMode === "walk" ? (
@@ -326,7 +349,8 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
               </div>
               {!selected && (
                 <p className={styles.notice}>
-                  {!includeFood && isMapFoodPlace(activePlace)
+                  {!mapCategoryAllowed(activePlace, query) &&
+                  isMapFoodPlace(activePlace)
                     ? "Food & coffee is hidden from map results. Enable it to include this place."
                     : "This place doesn’t fit the current conditions or preferences."}
                 </p>
@@ -363,7 +387,7 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
           {unavailable
             ? "Location overview · map unavailable"
             : rasterStatus === "ready"
-              ? "Street map · your next detour"
+              ? "Landscape map · your next detour"
               : rasterStatus === "partial"
                 ? "Street map · some tiles unavailable"
                 : "Opening the map…"}
@@ -503,4 +527,10 @@ function GeographicFallback({
       </div>
     </div>
   );
+}
+
+function mapCategoryAllowed(place: Place, query: DiscoveryQuery) {
+  const category =
+    optionalCategory(place) ?? (isMapFoodPlace(place) ? "food" : undefined);
+  return !category || categoryRequested(query, category);
 }

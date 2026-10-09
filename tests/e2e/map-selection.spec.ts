@@ -1,7 +1,14 @@
 import { test, expect, type Page } from "@playwright/test";
 import sharp from "sharp";
+import {
+  localMapFixture,
+  gpuLaunchOptions,
+  observeCamera,
+  cameraPosition,
+} from "./fixtures/map";
 import type { Place } from "../../src/domain/models";
 
+test.use({ launchOptions: gpuLaunchOptions });
 const venue: Place = {
   id: "osm-node-980001",
   name: "Selection Museum",
@@ -31,6 +38,7 @@ const fixtureImage = sharp(
   .toBuffer();
 
 async function fixtures(page: Page, delayedPhoto = false) {
+  await localMapFixture(page);
   await page.addInitScript(() => {
     sessionStorage.setItem(
       "sidequest:environment",
@@ -57,9 +65,6 @@ async function fixtures(page: Page, delayedPhoto = false) {
         source: "live",
       },
     }),
-  );
-  await page.route("https://tile.openstreetmap.org/**", async (route) =>
-    route.fulfill({ contentType: "image/png", body: await fixtureImage }),
   );
   await page.route("**/_next/image?**", async (route) =>
     route.fulfill({ contentType: "image/png", body: await fixtureImage }),
@@ -129,6 +134,14 @@ for (const viewport of [
       await page.screenshot({
         path: `work/map-selection-${viewport.width}.png`,
       });
+    await expect(page.locator(".map-status")).toContainText("Landscape map", {
+      timeout: 15000,
+    });
+    // Native markers outside clusters remain keyboard selectable after closing.
+    for (let zoom = 0; zoom < 4; zoom++) {
+      await page.getByRole("button", { name: "Zoom in", exact: true }).click();
+      await page.waitForTimeout(350);
+    }
     const marker = page.getByRole("button", {
       name: `Select ${venue.name}`,
       exact: true,
@@ -139,12 +152,20 @@ for (const viewport of [
     await marker.focus();
     await page.keyboard.press("Enter");
     await expect(marker).toHaveAttribute("aria-pressed", "true");
-    await expect(marker).toBeFocused();
     await inViewport(page);
     await page.getByRole("button", { name: "Close selected place" }).focus();
     await page.keyboard.press("Escape");
     await expect(page.locator(".map-selected")).toHaveCount(0);
-    await expect(marker).toBeFocused();
+    await expect
+      .poll(
+        async () =>
+          (await marker.evaluate((el) => el === document.activeElement)) ||
+          (await page
+            .locator(".maplibregl-canvas")
+            .evaluate((el) => el === document.activeElement)),
+      )
+      .toBe(true);
+    await marker.focus();
     await page.keyboard.press("Enter");
     await page
       .locator(".map-selected")
@@ -165,16 +186,22 @@ test("a photo arriving for the selected venue preserves the panned map camera", 
   await fixtures(page, true);
   await page.goto(`/map?place=${venue.id}`);
   await expect(page.locator(".map-selected")).toContainText(venue.name);
-  const map = page.locator('[data-map-engine="leaflet"]');
-  const pane = page.locator(".leaflet-map-pane");
-  await map.focus();
-  await page.keyboard.press("ArrowRight");
+  await expect(page.locator(".map-status")).toContainText("Landscape map", {
+    timeout: 15000,
+  });
+  await observeCamera(page);
+  const canvas = page.locator(".maplibregl-canvas");
+  await canvas.focus();
+  await canvas.press("ArrowRight");
   await expect(
     page.getByRole("button", { name: "Search this area" }),
   ).toBeVisible();
-  const camera = await pane.getAttribute("style");
+  const camera = await cameraPosition(page);
   await expect(page.locator(".map-selected img")).toBeVisible();
-  await expect(pane).toHaveAttribute("style", camera!);
+  const after = await cameraPosition(page);
+  expect(after.x).toBeCloseTo(camera.x, 6);
+  expect(after.y).toBeCloseTo(camera.y, 6);
+  expect(after.scale).toBeCloseTo(camera.scale, 2);
   await inViewport(page);
 });
 

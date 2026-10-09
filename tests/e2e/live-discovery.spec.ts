@@ -1,6 +1,13 @@
 import { test, expect } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import type { Place } from "../../src/domain/models";
+import {
+  localMapFixture,
+  gpuLaunchOptions,
+  observeCamera,
+  cameraPosition,
+} from "./fixtures/map";
+test.use({ launchOptions: gpuLaunchOptions });
 const icon = readFileSync("public/icons/icon-192.png");
 function fixture(index: number, patch: Partial<Place> = {}): Place {
   return {
@@ -157,39 +164,44 @@ test("child ages and soft play filter update recommendations and survive reload"
     ),
   ).toBe(true);
 });
-test("a browser without WebGL gets a street map with working controls in the Lab", async ({
+test("a browser without WebGL keeps accessible geographic fallback and static weather in the Lab", async ({
   page,
 }) => {
   await source(page, [fixture(0)]);
-  await page.addInitScript(() =>
-    Object.defineProperty(HTMLCanvasElement.prototype, "getContext", {
-      value: () => null,
-    }),
-  );
-  await page.route("https://tile.openstreetmap.org/**", (route) =>
-    route.fulfill({ contentType: "image/png", body: icon }),
-  );
+  await localMapFixture(page);
+  await page.addInitScript(() => {
+    const native = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (
+      this: HTMLCanvasElement,
+      kind: string,
+      ...args: unknown[]
+    ) {
+      if (kind === "webgl" || kind === "webgl2") return null;
+      return Reflect.apply(native, this, [kind, ...args]);
+    } as typeof native;
+  });
   await page.goto("/dev/environment");
-  await expect(page.locator('[data-map-engine="leaflet"]')).toBeVisible();
-  await expect(page.locator(".leaflet-tile-loaded").first()).toBeVisible();
+  await expect(page.locator(".geographic-fallback")).toBeVisible();
+  await expect(page.locator(".map-status")).toContainText("map unavailable");
   await expect(
-    page.getByText("Street map · your next detour", { exact: true }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "Zoom in", exact: true }).click();
-  await expect
-    .poll(() => page.locator('.leaflet-tile-loaded[src*="/12/"]').count())
-    .toBeGreaterThan(0);
+    page.getByRole("button", { name: "Zoom in", exact: true }),
+  ).toBeDisabled();
+  await page.getByLabel("Weather", { exact: true }).selectOption("heavy-rain");
+  await expect(page.locator(".weather-atmosphere")).toHaveAttribute(
+    "data-renderer",
+    "static",
+  );
+  await expect(page.locator(".weather-atmosphere")).toHaveAttribute(
+    "data-weather",
+    "heavy-rain",
+  );
   await page
-    .getByRole("checkbox", { name: "Weather unavailable", exact: true })
-    .uncheck();
-  await page
-    .getByRole("combobox", { name: "Weather", exact: true })
-    .selectOption("heavy-rain");
-  await expect(page.locator(".weather-atmosphere.heavy-rain")).toBeVisible();
-  await page
-    .getByRole("combobox", { name: "Time of day", exact: true })
+    .getByLabel("Time of day", { exact: true })
     .selectOption("midnight");
-  await expect(page.locator(".raster-map")).toHaveClass(/raster-night/);
+  await expect(page.locator(".weather-atmosphere")).toHaveAttribute(
+    "data-time",
+    "midnight",
+  );
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
     await page.evaluate(
@@ -304,9 +316,7 @@ test("a photo update preserves the chosen map place and camera", async ({
       value: () => null,
     }),
   );
-  await page.route("https://tile.openstreetmap.org/**", (route) =>
-    route.fulfill({ contentType: "image/png", body: icon }),
-  );
+  await localMapFixture(page);
   let started = false;
   let release!: () => void;
   const pending = new Promise<void>((resolve) => {
@@ -343,32 +353,27 @@ test("a photo update preserves the chosen map place and camera", async ({
   await expect(chosen).toHaveClass(/selected/);
   await page.locator(".map-selected .place-image").scrollIntoViewIfNeeded();
   await expect.poll(() => started).toBe(true);
-  await page.getByRole("button", { name: "Zoom in", exact: true }).click();
-  await expect
-    .poll(() => page.locator('.leaflet-tile-loaded[src*="/12/"]').count())
-    .toBeGreaterThan(0);
-  const map = page.locator('[data-map-engine="leaflet"]');
-  await expect(map).not.toHaveClass(/leaflet-zoom-anim/);
-  const pane = page.locator(".leaflet-map-pane");
-  const beforePan = await pane.getAttribute("style");
-  await map.focus();
-  await map.press("ArrowRight");
-  await expect.poll(() => pane.getAttribute("style")).not.toBe(beforePan);
-  await expect(pane).not.toHaveClass(/leaflet-pan-anim/);
-  const camera = await pane.getAttribute("style");
+  await expect(page.locator(".map-status")).toContainText("Landscape map", {
+    timeout: 15000,
+  });
+  await observeCamera(page);
+  const canvas = page.locator(".maplibregl-canvas");
+  await canvas.focus();
+  await canvas.press("ArrowRight");
+  await expect(
+    page.getByRole("button", { name: "Search this area" }),
+  ).toBeVisible();
+  const camera = await cameraPosition(page);
   release();
-  await expect
-    .poll(() =>
-      page.evaluate(
-        () =>
-          JSON.parse(localStorage.getItem("sidequest:places:v1") || "[]").find(
-            (p: Place) => p.id === "osm-node-900001",
-          )?.image?.credit,
-      ),
-    )
-    .toBe("Test photographer");
+  await expect(page.locator(".map-selected img")).toHaveAttribute(
+    "src",
+    /Test_fixture/,
+  );
   await expect(chosen).toHaveClass(/selected/);
-  await expect(pane).toHaveAttribute("style", camera!);
+  const after = await cameraPosition(page);
+  expect(after.x).toBeCloseTo(camera.x, 6);
+  expect(after.y).toBeCloseTo(camera.y, 6);
+  expect(after.scale).toBeCloseTo(camera.scale, 2);
 });
 
 test("home hero keeps the top recommendation when only a lower-ranked place has a photo", async ({

@@ -5,6 +5,8 @@ import {
   type Environment,
   type Place,
 } from "../src/domain/models";
+import { PLACES } from "../src/providers/places";
+import { venueSuitability } from "../src/domain/venue-suitability";
 import { emptyState } from "../src/providers/persistence";
 
 const env: Environment = {
@@ -144,6 +146,23 @@ describe("V2 eligibility and relevance", () => {
 });
 
 describe("V2 diversity and novelty", () => {
+  it("recognises curated heathland as nature when applying the first-three cap", () => {
+    const yateley = PLACES.find((place) => place.name === "Yateley Common")!;
+    expect(yateley).toBeDefined();
+    expect(venueSuitability(yateley).kind).toBe("nature");
+    const parks = [
+      venue("heath", yateley.category, { intents: ["walk"], quality: 1 }),
+      venue("pond", "nature reserve", { intents: ["walk"], quality: 1 }),
+    ];
+    const result = rank([...parks, venue("museum"), venue("cinema", "cinema")]);
+    expect(
+      result
+        .slice(0, 3)
+        .filter((item) => venueSuitability(item.place).kind === "nature"),
+    ).toHaveLength(1);
+    expect(venueSuitability(venue("heath", "Heath")).kind).toBe("nature");
+  });
+
   it("caps nature in the first six close peers unless nature is requested", () => {
     const parks = Array.from({ length: 8 }, (_, i) =>
       venue(`park${i}`, "park", { intents: ["walk"], novelty: 1 }),
@@ -157,6 +176,9 @@ describe("V2 diversity and novelty", () => {
     const kinds = rank([...parks, ...other])
       .slice(0, 6)
       .map((r) => r.place.category);
+    expect(
+      kinds.slice(0, 3).filter((category) => category === "park").length,
+    ).toBeLessThanOrEqual(1);
     expect(kinds.filter((category) => category === "park")).toHaveLength(2);
     expect(new Set(kinds).size).toBe(5);
     expect(
@@ -164,6 +186,58 @@ describe("V2 diversity and novelty", () => {
         .slice(0, 6)
         .every((r) => r.place.category === "park"),
     ).toBe(true);
+  });
+  it("keeps the first-three nature cap when weather and evidence scores put alternatives outside the initial score band", () => {
+    const parks = Array.from({ length: 4 }, (_, i) =>
+      venue(`sunny-park${i}`, "park", {
+        intents: ["walk"],
+        environment: "outdoor",
+        novelty: 1,
+        quality: 1,
+        hours: [{ days: [5], open: 0, close: 1440 }],
+      }),
+    );
+    const indoor = [
+      venue("museum", "museum", {
+        environment: "indoor",
+        novelty: 0,
+        cost: null,
+      }),
+      venue("cinema", "cinema", {
+        environment: "indoor",
+        novelty: 0,
+        cost: null,
+      }),
+    ];
+    const results = rank([...parks, ...indoor]);
+    const nature = results.filter((item) => item.place.category === "park");
+    const alternatives = results.filter(
+      (item) => item.place.environment === "indoor",
+    );
+    expect(nature[0].score - alternatives[0].score).toBeGreaterThan(12);
+    expect(
+      results.slice(0, 3).filter((item) => item.place.category === "park"),
+    ).toHaveLength(1);
+    expect(results.slice(0, 3).map((item) => item.place.id)).toEqual(
+      expect.arrayContaining(["museum", "cinema"]),
+    );
+  });
+  it("keeps relevance ahead of diversity without unrelated fillers", () => {
+    const parks = Array.from({ length: 3 }, (_, i) =>
+      venue(`nature${i}`, "park", { intents: ["relax"] }),
+    );
+    const unrelated = venue("unrelated", "museum", { intents: ["culture"] });
+    expect(
+      rank([...parks, unrelated], { ...DEFAULT_QUERY, intent: "relax" })
+        .slice(0, 3)
+        .every((item) => item.place.category === "park"),
+    ).toBe(true);
+    expect(
+      rank([venue("gallery", "gallery")], {
+        ...DEFAULT_QUERY,
+        intent: "culture",
+      })[0].explanation,
+    ).toBe("Fits your interest in culture.");
   });
   it("excludes duplicate identities and parent attractions", () => {
     const main = venue("main");

@@ -54,9 +54,29 @@ export function applyOverrides(
   if (o.weather) {
     result.weather.kind = o.weather;
     result.weather.source = "simulation";
-    Object.assign(result.weather, WEATHER_PRESETS[o.weather]);
+    Object.assign(result.weather, WEATHER_PRESETS[o.weather], {
+      cloudCover: ["clear", "sunny", "heat"].includes(o.weather)
+        ? 5
+        : o.weather === "partly-cloudy"
+          ? 45
+          : o.weather === "thunderstorm"
+            ? 100
+            : 95,
+      windDirection: 225,
+      gusts: WEATHER_PRESETS[o.weather].wind * 1.4,
+      snowfall: o.weather === "snow" ? 0.8 : 0,
+    });
   }
-  for (const key of ["temperature", "rain", "wind", "visibility"] as const)
+  for (const key of [
+    "temperature",
+    "rain",
+    "wind",
+    "visibility",
+    "cloudCover",
+    "windDirection",
+    "gusts",
+    "snowfall",
+  ] as const)
     if (o[key] !== undefined) {
       result.weather[key] = o[key]!;
       result.weather.source = "simulation";

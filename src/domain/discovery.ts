@@ -214,7 +214,8 @@ export function rankPlaces(
                 ) * 3,
               )
             : 0,
-        // Only supplied quality evidence contributes. Unknown quality and photo coverage are neutral.
+        // Supplied experience-depth estimates are a small signal, never a visitor rating.
+        // Missing estimates and photo coverage are neutral.
         quality: Number.isFinite(place.quality)
           ? Math.round(Math.max(0, Math.min(1, place.quality!)) * 6)
           : 0,
@@ -268,15 +269,13 @@ export function rankPlaces(
         ? "Weather unavailable; check the forecast before heading out."
         : rainy
           ? outdoor
-            ? "A shorter outdoor option. Take a waterproof."
-            : "Keep the plans, skip the rain. This one has shelter."
+            ? "Take a waterproof."
+            : place.environment === "indoor"
+              ? "An indoor option for the rain."
+              : "Check which parts are sheltered."
           : env.weather.kind === "heat" || env.weather.temperature >= 28
             ? "Take water and avoid the hottest part of the day."
-            : isDark(env.now, env.weather.sunrise, env.weather.sunset)
-              ? "An indoor option for after dark."
-              : outdoor
-                ? "A little fresh air fits the conditions."
-                : "An easy change of scene, whatever the sky does.";
+            : "";
       const reasons = [
         `${route.minutes} min ${query.travelMode === "walk" ? "walk" : "drive"} estimate`,
         place.costLabel,
@@ -293,7 +292,31 @@ export function rankPlaces(
                 : `Venue age guidance: ${place.ageRange[0]}–${place.ageRange[1]} years; includes all entered ages`
             : "Check age suitability with the venue",
         );
-      const explanation = `${weatherReason} ${route.minutes <= 15 ? "Close enough to make a quick escape." : `About ${route.minutes} minutes away.`} ${query.mode === "surprise" ? "A little less obvious, and still a sensible fit." : recentVisit ? "You have been here recently." : place.tagline}`;
+      const matchedInterests = interests.filter((interest) =>
+        place.intents.includes(interest),
+      );
+      const interestLabels = {
+        any: "",
+        scenic: "scenery",
+        walk: "walking",
+        unusual: "something unusual",
+        relax: "relaxing",
+        culture: "culture",
+        active: "getting active",
+        food: "food",
+        date: "a date",
+        kids: "a child-oriented outing",
+      };
+      const fitReason = matchedInterests.length
+        ? `Fits your interest in ${matchedInterests.map((interest) => interestLabels[interest]).join(" and ")}.`
+        : `${place.category.charAt(0).toUpperCase()}${place.category.slice(1)} within your time and travel limits.`;
+      const explanation = [
+        fitReason,
+        weatherReason,
+        recentVisit ? "You visited recently." : "",
+      ]
+        .filter(Boolean)
+        .join(" ");
       return [
         {
           place,
@@ -366,10 +389,18 @@ export function diversifyRecommendations(
     if (
       !natureRequested &&
       result.length < 6 &&
-      natureCount >= 2 &&
-      pool.some((item) => kind(item) !== "nature")
-    )
-      pool = pool.filter((item) => kind(item) !== "nature");
+      natureCount >= (result.length < 3 ? 1 : 2) &&
+      peers.some((item) => kind(item) !== "nature")
+    ) {
+      // The nature cap is a presentation constraint among equally relevant,
+      // already eligible candidates. Weather/distance/evidence score gaps must
+      // not silently disable it after the strongest alternative is selected.
+      const alternatives = peers.filter((item) => kind(item) !== "nature");
+      const bestAlternative = Math.max(
+        ...alternatives.map((item) => item.score),
+      );
+      pool = alternatives.filter((item) => item.score >= bestAlternative - 12);
+    }
     const adjusted = (item: Recommendation) =>
       item.score -
       result.slice(-6).filter((previous) => kind(previous) === kind(item))
