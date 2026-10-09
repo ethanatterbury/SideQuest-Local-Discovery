@@ -6,12 +6,13 @@ import type {
   Recommendation,
   OpeningStatus,
 } from "./models";
-import { estimatedRouting } from "../providers/routing";
+import { distanceKm, estimatedRouting } from "../providers/routing";
 import { addMinutes, isDark, londonParts } from "./time";
 import {
   childActivityRequested,
   isSuitableForQuery,
   venueSuitability,
+  optionalCategory,
 } from "./venue-suitability";
 export function openingStatus(place: Place, now: string): OpeningStatus {
   if (!place.hours?.length)
@@ -41,7 +42,8 @@ export function matchesActivity(
   return (
     !activity ||
     activity === "any" ||
-    venueSuitability(place).activities.includes(activity)
+    venueSuitability(place).activities.includes(activity) ||
+    optionalCategory(place) === activity
   );
 }
 
@@ -90,7 +92,10 @@ export function rankPlaces(
   const likedCategories = state.visits
     .filter((v) => v.reaction === "Loved it")
     .map((v) => places.find((p) => p.id === v.id)?.category);
-  return places
+  const interests = [
+    ...new Set([query.intent, ...(query.interests ?? [])]),
+  ].filter((intent) => intent !== "any");
+  const ranked = places
     .flatMap((place) => {
       if (searchedName && place.name.trim().toLowerCase() !== searchedName)
         return [];
@@ -191,15 +196,41 @@ export function rankPlaces(
       const components = {
         weather: weatherPoints,
         family: familyPoints,
-        distance: Math.round(18 * (1 - route.minutes / (query.travel * 1.5))),
+        distance: Math.round(
+          6 * (1 - route.minutes / Math.max(1, query.travel * 1.5)),
+        ),
         time: 15,
         opening: opening.status === "unknown" ? 5 : 12,
-        intent:
-          query.intent === "any"
-            ? 10
-            : place.intents.includes(query.intent)
-              ? 26
-              : 0,
+        intent: !interests.length
+          ? 10
+          : interests.some((intent) => place.intents.includes(intent))
+            ? 36 +
+              Math.min(
+                6,
+                Math.max(
+                  0,
+                  interests.filter((intent) => place.intents.includes(intent))
+                    .length - 1,
+                ) * 3,
+              )
+            : 0,
+        // Only supplied quality evidence contributes. Unknown quality and photo coverage are neutral.
+        quality: Number.isFinite(place.quality)
+          ? Math.round(Math.max(0, Math.min(1, place.quality!)) * 6)
+          : 0,
+        impressions: -Math.min(
+          18,
+          (state.impressions ?? []).filter(
+            (impression) =>
+              impression.id === place.id &&
+              new Date(env.now).getTime() -
+                new Date(impression.date).getTime() >=
+                0 &&
+              new Date(env.now).getTime() -
+                new Date(impression.date).getTime() <
+                7 * 86400000,
+          ).length * 6,
+        ),
         budget: place.cost === null ? 4 : 9,
         company: 6,
         novelty: Math.round(
@@ -282,6 +313,79 @@ export function rankPlaces(
         a.travel - b.travel ||
         a.place.id.localeCompare(b.place.id),
     );
+  return diversifyRecommendations(ranked, query);
+}
+
+/** Reorder close relevance peers; never promote an unrelated result past an intent match. */
+export function diversifyRecommendations(
+  ranked: Recommendation[],
+  query: DiscoveryQuery,
+): Recommendation[] {
+  const remaining = ranked.filter(
+    (candidate, index) =>
+      !ranked.slice(0, index).some((other) => {
+        if (candidate.place.id === other.place.id) return true;
+        const a = candidate.place,
+          b = other.place;
+        if (
+          a.parentId === b.id ||
+          b.parentId === a.id ||
+          (a.parentId && a.parentId === b.parentId)
+        )
+          return true;
+        return (
+          a.name.trim().toLowerCase() === b.name.trim().toLowerCase() &&
+          a.category.toLowerCase() === b.category.toLowerCase() &&
+          JSON.stringify(a.ageRange) === JSON.stringify(b.ageRange) &&
+          JSON.stringify(a.familyFeatures) ===
+            JSON.stringify(b.familyFeatures) &&
+          distanceKm(a.coordinates, b.coordinates) < 0.15
+        );
+      }),
+  );
+  const result: Recommendation[] = [];
+  const natureRequested =
+    [query.intent, ...(query.interests ?? [])].some(
+      (intent) => intent === "walk" || intent === "scenic",
+    ) ||
+    query.activity === "walk" ||
+    query.activity === "gardens";
+  const kind = (item: Recommendation) => venueSuitability(item.place).kind;
+  while (remaining.length) {
+    const bestIntent = Math.max(
+      ...remaining.map((item) => item.components.intent ?? 0),
+    );
+    const peers = remaining.filter(
+      (item) => (item.components.intent ?? 0) === bestIntent,
+    );
+    const bestScore = Math.max(...peers.map((item) => item.score));
+    let pool = peers.filter((item) => item.score >= bestScore - 12);
+    const natureCount = result
+      .slice(0, 6)
+      .filter((item) => kind(item) === "nature").length;
+    if (
+      !natureRequested &&
+      result.length < 6 &&
+      natureCount >= 2 &&
+      pool.some((item) => kind(item) !== "nature")
+    )
+      pool = pool.filter((item) => kind(item) !== "nature");
+    const adjusted = (item: Recommendation) =>
+      item.score -
+      result.slice(-6).filter((previous) => kind(previous) === kind(item))
+        .length *
+        7;
+    pool.sort(
+      (a, b) =>
+        adjusted(b) - adjusted(a) ||
+        b.score - a.score ||
+        a.place.id.localeCompare(b.place.id),
+    );
+    const selected = pool[0];
+    result.push(selected);
+    remaining.splice(remaining.indexOf(selected), 1);
+  }
+  return result;
 }
 export function parseIntent(
   text: string,
@@ -289,23 +393,56 @@ export function parseIntent(
 ): DiscoveryQuery {
   const s = text.toLowerCase();
   const q = { ...base, text };
-  if (/indoors?|rain|museum|soft[ -]?play/.test(s)) q.environment = "indoor";
-  if (/outdoors?/.test(s)) q.environment = "outdoor";
-  if (/kids|children|family|toddlers?|soft[ -]?play/.test(s)) {
-    q.company = "family";
-    q.intent = "kids";
-  }
-  if (/date|romantic/.test(s)) {
-    q.company = "couple";
-    q.intent = "date";
-  }
-  if (/walk|woodland/.test(s)) q.intent = "walk";
-  if (/scenic|beautiful|lake|garden/.test(s)) q.intent = "scenic";
-  if (/weird|different|unusual|hidden/.test(s)) q.intent = "unusual";
-  if (/art|gallery|museum|culture/.test(s)) q.intent = "culture";
-  if (/coffee|food|eat/.test(s)) q.intent = "food";
-  if (/climb|active|move/.test(s)) q.intent = "active";
-  if (/kids|children|family|toddlers?|soft[ -]?play/.test(s)) {
+  const intentPatterns: [DiscoveryQuery["intent"], RegExp][] = [
+    [
+      "kids",
+      /\bkids?\b|\bchildren\b|\bfamily\b|\btoddlers?\b|\bsoft[ -]?play\b/,
+    ],
+    ["date", /\bdate\b|\bromantic\b/],
+    ["walk", /\bwalk(?:s|ing)?\b|\bwoodland\b/],
+    ["scenic", /\bscenic\b|\bbeautiful\b|\blakes?\b|\bgardens?\b/],
+    ["unusual", /\bweird\b|\bdifferent\b|\bunusual\b|\bhidden\b/],
+    ["culture", /\bart\b|\bgallery\b|\bmuseums?\b|\bculture\b/],
+    ["food", /\bcoffee\b|\bfood\b|\beat\b|\brestaurants?\b|\bcaf[eé]s?\b/],
+    ["active", /\bclimb(?:ing)?\b|\bactive\b|\bmove\b|\bfitness\b|\bgym\b/],
+    ["relax", /\brelax(?:ing)?\b|\bquiet\b/],
+  ];
+  const parsedInterests = intentPatterns
+    .filter(([, pattern]) => pattern.test(s))
+    .map(([intent]) => intent);
+  if (parsedInterests.length)
+    q.interests = [...new Set([...(base.interests ?? []), ...parsedInterests])];
+  const optionalPatterns = [
+    ["food", /\bfood\b|\bcoffee\b|\beat\b|\brestaurants?\b|\bcaf[eé]s?\b/],
+    ["pubs", /\bpubs?\b|\bbars?\b/],
+    ["fitness", /\bfitness\b|\bgyms?\b/],
+    ["shops", /\bshops?\b|\bshopping\b/],
+  ] as const;
+  const requestedCategories = optionalPatterns
+    .filter(([, pattern]) => pattern.test(s))
+    .map(([category]) => category);
+  if (requestedCategories.length)
+    q.includeCategories = [
+      ...new Set([...(base.includeCategories ?? []), ...requestedCategories]),
+    ];
+  if (/\bwheelchair\b/.test(s))
+    q.accessNeeds = { ...q.accessNeeds, wheelchair: true };
+  if (/\bstep[ -]?free\b/.test(s))
+    q.accessNeeds = { ...q.accessNeeds, stepFree: true };
+  if (/\bdog[ -]?friendly\b|\bwith (?:my |our )?dogs?\b/.test(s))
+    q.accessNeeds = { ...q.accessNeeds, dogs: true };
+  if (
+    /\bindoors?\b|\brain\b/.test(s) ||
+    (!parsedInterests.includes("walk") &&
+      !parsedInterests.includes("scenic") &&
+      /\bmuseums?\b|\bsoft[ -]?play\b/.test(s))
+  )
+    q.environment = "indoor";
+  if (/\boutdoors?\b/.test(s)) q.environment = "outdoor";
+  if (parsedInterests.length)
+    q.intent = parsedInterests[parsedInterests.length - 1];
+  if (parsedInterests.includes("date")) q.company = "couple";
+  if (parsedInterests.includes("kids")) {
     q.company = "family";
     q.intent = "kids";
   }
@@ -318,11 +455,17 @@ export function parseIntent(
     ["gardens", /\bgardens?\b/],
     ["climbing", /\bclimbing\b|\bbouldering\b/],
     ["swimming", /\bswimming\b|\bpool\b/],
-    ["food", /\bfood\b|\bcoffee\b/],
+    ["food", /\bfood\b|\bcoffee\b|\brestaurants?\b|\bcaf[eé]s?\b/],
+    ["pubs", /\bpubs?\b|\bbars?\b/],
+    ["fitness", /\bfitness\b|\bgyms?\b/],
+    ["shops", /\bshops?\b|\bshopping\b/],
     ["walk", /\bwalk(?:s|ing)?\b|\bwoodland\b/],
   ];
-  const activity = activities.find(([, pattern]) => pattern.test(s));
-  if (activity) q.activity = activity[0];
+  const requestedActivities = activities.filter(([, pattern]) =>
+    pattern.test(s),
+  );
+  if (requestedActivities.length === 1) q.activity = requestedActivities[0][0];
+  else if (requestedActivities.length > 1) q.activity = "any";
   const agePhrase = s.match(
     /(?:ages?|aged)\s+(\d{1,2}(?:\s*(?:,|and|&)\s*\d{1,2})*)\b/,
   );
@@ -341,7 +484,7 @@ export function parseIntent(
     q.company = "family";
     q.intent = "kids";
   }
-  if (/free/.test(s)) q.budget = 0;
+  if (/\bfree\b/.test(s) && !/\bstep[ -]?free\b/.test(s)) q.budget = 0;
   else if (/cheap/.test(s)) q.budget = 15;
   const budget = s.match(/£(\d+)/);
   if (budget) q.budget = Math.min(200, Number(budget[1]));

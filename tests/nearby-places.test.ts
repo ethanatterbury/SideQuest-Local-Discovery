@@ -87,7 +87,7 @@ describe("OSM place normalization", () => {
       cost: null,
     });
     expect(place.familyFeatures).toContain("Soft play");
-    expect(place.hours).toBeUndefined();
+    expect(place.hours).toEqual([{days:[1,2,3,4,5],open:540,close:1020}]);
     for (const tags of [
       { min_age: "6", max_age: "1" },
       { min_age: "2 years", max_age: "seven" },
@@ -295,15 +295,15 @@ describe("nearby discovery", () => {
       .mockResolvedValueOnce(new Response("", { status: 503 }))
       .mockResolvedValueOnce(
         Response.json({
-          elements: [element({}, { lat: 43, lng: 3, lon: 3, id: 333 })],
+          elements: [element({}, { lat: 56.5, lon: -4, id: 333 })],
         }),
       );
     vi.stubGlobal("fetch", fetcher);
-    const first = await getNearbyPlaces({ lat: 43, lng: 3 }, 10);
+    const first = await getNearbyPlaces({ lat: 56.5, lng: -4 }, 10);
     expect(first.source).toBe("live");
     expect(first.places).toHaveLength(1);
     expect(fetcher).toHaveBeenCalledTimes(2);
-    const second = await getNearbyPlaces({ lat: 43.001, lng: 3.001 }, 10);
+    const second = await getNearbyPlaces({ lat: 56.501, lng: -4.001 }, 10);
     expect(second.source).toBe("cached");
     expect(fetcher).toHaveBeenCalledTimes(2);
     expect(await getLivePlace("osm-node-333")).toEqual(first.places[0]);
@@ -311,10 +311,10 @@ describe("nearby discovery", () => {
   it("falls back honestly when both mirrors fail and does not repeatedly hammer them", async () => {
     const fetcher = vi.fn().mockRejectedValue(new Error("offline"));
     vi.stubGlobal("fetch", fetcher);
-    const result = await getNearbyPlaces({ lat: -33, lng: 151 }, 30);
+    const result = await getNearbyPlaces({ lat: 57.5, lng: -4.5 }, 30);
     expect(result).toMatchObject({ places: [], source: "fallback" });
     expect(result.message).toContain("unavailable");
-    await getNearbyPlaces({ lat: -33, lng: 151 }, 30);
+    await getNearbyPlaces({ lat: 57.5, lng: -4.5 }, 30);
     expect(fetcher).toHaveBeenCalledTimes(2);
   });
 });

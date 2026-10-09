@@ -7,20 +7,19 @@ import type {
   Place,
 } from "@/domain/models";
 import { PLACES } from "./places";
-import { indexedPhoto, placePhotoQuery } from "./photo-index";
+import { nearbyCells, cellId, inUK } from "@/domain/geo-cells";
+import { LOAD_BUDGET } from "@/domain/performance";
+import { readArea, writeArea } from "./area-storage";
 import { seedVenueImage, withSeedPhoto } from "./seed-venue-media";
 
 export type CatalogStatus = "loading" | "live" | "cached" | "fallback";
 const KEY = "sidequest:places:v1";
-const PHOTO_VERSION_KEY = "sidequest:place-photos:version";
-const PHOTO_VERSION = "stored-venue-media-4";
 export function revalidateStoredPhotos(stored: Place[]): Place[] {
   return stored.map((place) => ({
     ...place,
     image:
       PLACES.find((seed) => seed.id === place.id)?.image ||
       seedVenueImage({ ...place, image: undefined }) ||
-      indexedPhoto(placePhotoQuery(place))?.image ||
       undefined,
   }));
 }
@@ -120,34 +119,18 @@ export function usePlaceCatalog(
   }, [state]);
   useEffect(() => {
     if (!ready) return;
+    // One-time legacy migration; the area catalogue now persists asynchronously.
     try {
       const stored: unknown = JSON.parse(localStorage.getItem(KEY) || "[]");
-      if (Array.isArray(stored)) {
-        const valid = stored.filter(isPlace);
-        const restored =
-          localStorage.getItem(PHOTO_VERSION_KEY) === PHOTO_VERSION
-            ? valid
-            : revalidateStoredPhotos(valid);
-        setPlaces(mergeCatalog(PLACES, restored, pinned.current));
-      }
-    } catch {
-      /* The curated catalogue still works without storage. */
-    }
+      if (Array.isArray(stored)) setPlaces(mergeCatalog(PLACES, revalidateStoredPhotos(stored.filter(isPlace)), pinned.current));
+      localStorage.removeItem(KEY);
+    } catch { /* Storage is optional. */ }
     setCatalogReady(true);
   }, [ready]);
-  useEffect(() => {
-    if (!ready) return;
-    try {
-      localStorage.setItem(KEY, JSON.stringify(places));
-      localStorage.setItem(PHOTO_VERSION_KEY, PHOTO_VERSION);
-    } catch {
-      /* Storage is optional. */
-    }
-  }, [places, ready]);
   const blocked =
     env.failures.includes("places") || env.failures.includes("offline");
   const radius = Math.min(
-    50,
+    100,
     Math.max(3, query.travel * (query.travelMode === "walk" ? 0.065 : 0.6)),
   );
   const lat = env.location.lat,
@@ -162,42 +145,70 @@ export function usePlaceCatalog(
       return;
     }
     const controller = new AbortController();
+    const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(LOAD_BUDGET.maximum - 250)]);
+    const key = `${cellId({ lat, lng })}:${Math.ceil(radius / 5) * 5}`;
     setStatus("loading");
-    setMessage("Finding more places around you…");
-    fetch(`/api/places?lat=${lat}&lng=${lng}&radius=${radius}`, {
-      signal: controller.signal,
-    })
-      .then(async (response) => {
+    setMessage("Finding your kind of detour…");
+    async function discover() {
+      const archive = await readArea(key);
+      if (controller.signal.aborted) return;
+      if (archive?.places.some(isPlace)) {
+        setPlaces(previous => mergeCatalog(previous, revalidateStoredPhotos(archive.places.filter(isPlace)), pinned.current));
+        setStatus("cached"); setMessage("Your recent area · refreshing quietly.");
+      }
+      if (!inUK({lat,lng})) {
+        setStatus("fallback"); setMessage("Choose a UK starting point to find your next detour."); return;
+      }
+      const accept = (incoming: Place[], source: CatalogStatus, message: string) => {
+        if (controller.signal.aborted) return;
+        const valid = incoming.filter(isPlace);
+        setPlaces(previous => mergeCatalog(previous, valid, pinned.current));
+        setStatus(source); setMessage(message);
+        void writeArea(key, valid);
+      };
+      // Static geographic cells deliver candidates before any live enrichment.
+      try {
+        const areaSignal = AbortSignal.any([signal, AbortSignal.timeout(LOAD_BUDGET.area)]);
+        const response = await fetch("/data/venues/manifest.json", {signal: areaSignal});
+        const manifest = response.ok ? await response.json() : null;
+        const ids = nearbyCells({lat,lng}, radius).filter(id => manifest?.cells?.[id]);
+        let cursor = 0;
+        const chunks: Place[] = [];
+        await Promise.all(Array.from({length: Math.min(4, ids.length)}, async () => {
+          while (cursor < ids.length && !areaSignal.aborted) {
+            const id = ids[cursor++];
+            const result = await fetch(`/data/venues/${id}.json?v=${manifest.cells[id].hash}`, {signal: areaSignal});
+            if (result.ok) {
+              const body = await result.json();
+              if (Array.isArray(body.places)) {
+                chunks.push(...body.places);
+                accept(chunks, "cached", "Area ready · checking for fresh discoveries.");
+              }
+            }
+          }
+        }));
+      } catch { /* Continue with cached data and bounded live discovery. */ }
+      if (controller.signal.aborted) return;
+      try {
+        const response = await fetch(`/api/places?lat=${lat}&lng=${lng}&radius=${radius}&refresh=1`, {signal});
         if (!response.ok) throw Error("Discovery unavailable");
-        return response.json();
-      })
-      .then((data) => {
-        if (!Array.isArray(data.places))
-          throw Error("Invalid discovery response");
-        setPlaces((previous) =>
-          mergeCatalog(previous, data.places, pinned.current),
-        );
-        setStatus(
-          ["live", "cached", "fallback"].includes(data.source)
-            ? data.source
-            : "fallback",
-        );
-        setMessage(
-          data.message ||
-            (data.source === "live"
-              ? "Live places from OpenStreetMap · opening times and age limits need checking."
-              : "Previously fetched places · check details before heading out."),
-        );
-      })
-      .catch((error) => {
-        if (error.name !== "AbortError") {
-          setStatus("fallback");
-          setMessage(
-            "Live discovery is taking a breather. Showing curated and saved area data.",
-          );
+        const data = await response.json();
+        if (!Array.isArray(data.places)) throw Error("Invalid discovery response");
+        accept(data.places, ["live","cached","fallback"].includes(data.source) ? data.source : "fallback", data.message || "Fresh OpenStreetMap discoveries · check practical details.");
+      } catch {
+        if (!controller.signal.aborted) {
+          setStatus("fallback"); setMessage("Showing available area data. Live discovery is unavailable; try again when you’re ready.");
         }
-      });
-    return () => controller.abort();
+      }
+    }
+    void discover();
+    const timeout = setTimeout(() => {
+      if (!controller.signal.aborted) {
+        setStatus("fallback"); setMessage("Showing available area data. You can keep browsing or retry discovery.");
+        controller.abort();
+      }
+    }, LOAD_BUDGET.maximum);
+    return () => { clearTimeout(timeout); controller.abort(); };
   }, [lat, lng, radius, ready, blocked, revision]);
   const rememberPlace = useCallback(
     (place: Place) =>

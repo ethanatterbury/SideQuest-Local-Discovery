@@ -1,7 +1,6 @@
 import { getNearbyPlaces } from "@/providers/nearby-places";
-import { after } from "next/server";
 import { withStoredPhoto } from "@/providers/venue-media";
-export const maxDuration = 25;
+export const maxDuration = 10;
 export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
   const lat = params.get("lat"),
@@ -25,15 +24,13 @@ export async function GET(request: Request) {
       { error: "Invalid coordinates or radius." },
       { status: 400 },
     );
-  const result = await getNearbyPlaces(coords, radiusKm);
-  if (result.source === "cached" && result.message?.includes("area snapshot"))
-    after(async () => {
-      await getNearbyPlaces(coords, radiusKm, false);
-    });
+  // Canonical area centers/radii share cache entries without sharing preferences.
+  const canonical = { lat: Math.round(coords.lat * 50) / 50, lng: Math.round(coords.lng * 50) / 50 };
+  const result = await getNearbyPlaces(canonical, Math.ceil(Math.min(100, Math.max(3, radiusKm)) / 5) * 5, params.get("refresh") !== "1");
   return Response.json(
     { ...result, places: result.places.map(withStoredPhoto) },
     {
-      headers: { "Cache-Control": "private, max-age=60" },
+      headers: { "Cache-Control": "public, max-age=60, s-maxage=1800, stale-while-revalidate=86400" },
     },
   );
 }

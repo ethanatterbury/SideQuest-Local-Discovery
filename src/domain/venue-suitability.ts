@@ -1,4 +1,10 @@
-import type { Activity, Company, DiscoveryQuery, Place } from "./models";
+import type {
+  Activity,
+  Company,
+  DiscoveryQuery,
+  OptionalCategory,
+  Place,
+} from "./models";
 
 export type VenueSuitability = {
   kind:
@@ -108,9 +114,38 @@ export function venueSuitability(place: Place): VenueSuitability {
   return place.suitability ?? inferVenueSuitability(place);
 }
 
+/** Opt-in categories use mapped categories, never venue names. */
+export function optionalCategory(place: Place): OptionalCategory | undefined {
+  if (place.optionalCategory) return place.optionalCategory;
+  const category = place.category.toLowerCase().replace(/[-_]/g, " ");
+  if (/\bpubs?\b|\bbars?\b|\bnightclub\b/.test(category)) return "pubs";
+  if (venueSuitability(place).kind === "fitness") return "fitness";
+  if (/\bshops?\b|\bretail\b|\bshopping\b|\bsupermarket\b/.test(category))
+    return "shops";
+  if (
+    venueSuitability(place).kind === "food" ||
+    /\brestaurant\b|\bcaf[eé]\b|\btakeaway\b/.test(category)
+  )
+    return "food";
+  return undefined;
+}
+
+export function categoryRequested(
+  query: DiscoveryQuery,
+  category: OptionalCategory,
+): boolean {
+  return Boolean(
+    query.includeCategories?.includes(category) ||
+    query.activity === category ||
+    (category === "food" &&
+      (query.intent === "food" || query.interests?.includes("food"))),
+  );
+}
+
 export function childActivityRequested(query: DiscoveryQuery): boolean {
   return (
     query.intent === "kids" ||
+    query.interests?.includes("kids") ||
     query.activity === "soft-play" ||
     query.activity === "playground"
   );
@@ -142,8 +177,18 @@ export function isSuitableForQuery(
   const suitability = venueSuitability(place);
   const children = query.company === "family" || childActivityRequested(query);
   const ages = children ? (query.childrenAges ?? []) : [];
-  // Membership training is not a default outing, including for an "active" mood.
-  if (suitability.kind === "fitness") return false;
+  const optional = optionalCategory(place);
+  if (optional && !categoryRequested(query, optional)) return false;
+  if (place.access?.public === false) return false;
+  // Requested access needs require positive evidence; missing and limited are not confirmations.
+  for (const need of ["wheelchair", "stepFree", "dogs"] as const) {
+    if (query.accessNeeds?.[need] && place.access?.[need] !== "yes")
+      return false;
+  }
+  if (children && place.heightRange?.some((bound) => bound !== null))
+    return false;
+  if (children && query.strictSuitability && ages.length && !place.ageRange)
+    return false;
   if (suitability.audience === "children" && !children) return false;
   if (
     !effectiveCompany(place).includes(query.company) &&
@@ -183,6 +228,11 @@ export function changeCompany(
     ...query,
     company,
     childrenAges: company === "family" ? query.childrenAges : undefined,
+    interests: query.interests?.filter(
+      (interest) =>
+        (interest !== "kids" || company === "family") &&
+        (interest !== "date" || company === "couple"),
+    ),
     intent:
       (query.intent === "kids" && company !== "family") ||
       (query.intent === "date" && company !== "couple")

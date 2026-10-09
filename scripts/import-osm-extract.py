@@ -16,7 +16,7 @@ KEYS = {"name", "name:en", "leisure", "tourism", "amenity", "sport", "website",
         "contact:website", "addr:city", "addr:town", "addr:county", "addr:street",
         "addr:postcode", "fee", "access", "indoor", "lit", "opening_hours",
         "wikidata", "wikipedia", "image", "wikimedia_commons", "alt_name", "old_name",
-        "min_age", "max_age", "playground:toddler",
+        "min_age", "max_age", "playground:toddler", "wheelchair", "steps", "dog", "reservation", "booking", "shop",
         "attraction", "amusement_ride", "roller_coaster", "min_height", "max_height",
         "playground:indoor", "playground:soft_play"}
 LEISURE = {"playground", "indoor_play", "soft_play", "trampoline_park", "water_park",
@@ -24,7 +24,7 @@ LEISURE = {"playground", "indoor_play", "soft_play", "trampoline_park", "water_p
            "park", "garden", "nature_reserve", "sports_centre", "fitness_centre",
            "swimming_pool", "bowling_alley", "escape_game", "miniature_golf"}
 TOURISM = {"museum", "gallery", "attraction", "zoo", "theme_park", "aquarium", "viewpoint"}
-AMENITY = {"cafe", "restaurant", "ice_cream", "cinema", "theatre", "arts_centre"}
+AMENITY = {"cafe", "restaurant", "ice_cream", "pub", "bar", "cinema", "theatre", "arts_centre"}
 
 class Venues(osmium.SimpleHandler):
     def __init__(self, records):
@@ -36,7 +36,7 @@ class Venues(osmium.SimpleHandler):
         if not (t.get("name") or t.get("name:en")) or t.get("access") in {"private", "no"}:
             return None
         return t if (t.get("leisure") in LEISURE or t.get("tourism") in TOURISM or
-                     t.get("amenity") in AMENITY or t.get("sport") in {"climbing", "karting"} or
+                     t.get("amenity") in AMENITY or t.get("shop") or t.get("sport") in {"climbing", "karting"} or
                      any(t.get(key) not in {None, "", "no", "false", "0"}
                          for key in ("amusement_ride", "roller_coaster"))) else None
 
@@ -62,26 +62,42 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--work-dir", default="work/osm-import")
     parser.add_argument("--output", default="src/providers/data/regional-osm.json")
+    parser.add_argument("--regions", nargs="+", default=list(REGIONS), help="Geofabrik UK path(s), e.g. scotland wales england/greater-london")
+    parser.add_argument("--pbf", nargs="+", help="Existing local UK extracts; no download")
+    parser.add_argument("--max-download-mb", type=int, default=400, help="Hard per-file quota; no billable overflow")
     args = parser.parse_args()
     work = Path(args.work_dir)
     work.mkdir(parents=True, exist_ok=True)
     records = {}
     sources = []
-    for region in REGIONS:
-        url = f"https://download.geofabrik.de/europe/united-kingdom/england/{region}-latest.osm.pbf"
-        destination = work / f"{region}.osm.pbf"
-        if not destination.exists():
+    regions = args.pbf or args.regions
+    for region in regions:
+        if args.pbf:
+            destination = Path(region)
+            url = "local UK OSM extract: " + destination.name
+        else:
+            import re
+            if not re.fullmatch(r"(?:england/)?[a-z][a-z-]+|scotland|wales|northern-ireland|united-kingdom", region):
+                raise ValueError("Invalid Geofabrik region")
+            region_path = f"england/{region}" if region in REGIONS else region
+            url = ("https://download.geofabrik.de/europe/united-kingdom-latest.osm.pbf" if region == "united-kingdom" else f"https://download.geofabrik.de/europe/united-kingdom/{region_path}-latest.osm.pbf")
+            destination = work / f"{region.replace('/', '-')}.osm.pbf"
+        if not destination.exists() and not args.pbf:
             temporary = destination.with_suffix(".partial")
             request = urllib.request.Request(url, headers={"User-Agent": "SideQuest regional OSM importer/1.0"})
             with urllib.request.urlopen(request, timeout=120) as source, temporary.open("wb") as target:
+                total = 0
                 while chunk := source.read(1024 * 1024):
+                    total += len(chunk)
+                    if total > args.max_download_mb * 1024 * 1024:
+                        raise RuntimeError("Extract exceeds the configured free-processing quota")
                     target.write(chunk)
             temporary.replace(destination)
         venues = Venues(records)
         # Filter in C++ before Python callbacks; location caching still sees every node.
         processor = osmium.FileProcessor(str(destination)).with_locations("flex_mem")
         processor = processor.with_filter(osmium.filter.KeyFilter(
-            "leisure", "tourism", "amenity", "sport", "amusement_ride", "roller_coaster"))
+            "leisure", "tourism", "amenity", "sport", "amusement_ride", "roller_coaster", "shop"))
         for obj in processor:
             if obj.is_node():
                 venues.node(obj)

@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 const config: NextConfig = {
   poweredByHeader: false,
+  outputFileTracingIncludes: { "/api/places": ["./public/data/venues/**/*.json"], "/api/places/[id]": ["./public/data/venues/**/*.json"] },
   images: {
     remotePatterns: [
       {
@@ -30,6 +31,10 @@ const config: NextConfig = {
             value: "camera=(), microphone=(), geolocation=(self)",
           },
         ],
+      },
+      {
+        source: "/data/venues/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=86400" }],
       },
       {
         source: "/sw.js",

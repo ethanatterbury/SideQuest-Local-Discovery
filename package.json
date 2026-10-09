@@ -1,21 +1,22 @@
 {
   "name": "sidequest",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
-    "predev": "node scripts/materialize-venue-media.mjs",
+    "predev": "npm run prepare:data",
     "dev": "next dev --hostname 0.0.0.0",
-    "build": "node scripts/materialize-venue-media.mjs && next build",
+    "build": "npm run prepare:data && next build",
     "start": "next start --hostname 0.0.0.0",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "pretest": "node scripts/materialize-venue-media.mjs",
+    "pretest": "npm run prepare:data",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "check": "npm run lint && npm run typecheck && npm test && npm run build",
     "format": "prettier --write src tests scripts *.ts *.mjs *.json",
     "test:visual": "node scripts/visual-matrix.mjs",
-    "test:offline": "node scripts/offline-smoke.mjs"
+    "test:offline": "node scripts/offline-smoke.mjs",
+    "prepare:data": "node scripts/materialize-venue-media.mjs && node scripts/build-venue-cells.mjs"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.2.8",

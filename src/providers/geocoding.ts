@@ -1,3 +1,4 @@
+import { inUK } from "@/domain/geo-cells";
 import type { Location } from "@/domain/models";
 export const TOWNS: Location[] = [
   { name: "Sandhurst", lat: 51.347, lng: -0.8 },
@@ -15,6 +16,21 @@ export const TOWNS: Location[] = [
   { name: "Woking", lat: 51.319, lng: -0.558 },
   { name: "Basingstoke", lat: 51.266, lng: -1.087 },
   { name: "Farnham", lat: 51.214, lng: -0.799 },
+  {name:"London",lat:51.5074,lng:-0.1278},
+  {name:"Manchester",lat:53.4808,lng:-2.2426},
+  {name:"Birmingham",lat:52.4862,lng:-1.8904},
+  {name:"Bristol",lat:51.4545,lng:-2.5879},
+  {name:"Edinburgh",lat:55.9533,lng:-3.1883},
+  {name:"Glasgow",lat:55.8642,lng:-4.2518},
+  {name:"Cardiff",lat:51.4816,lng:-3.1791},
+  {name:"Belfast",lat:54.5973,lng:-5.9301},
+  {name:"Newcastle",lat:54.9783,lng:-1.6178},
+  {name:"York",lat:53.959,lng:-1.0815},
+  {name:"Leeds",lat:53.8008,lng:-1.5491},
+  {name:"Liverpool",lat:53.4084,lng:-2.9916},
+  {name:"Brighton",lat:50.8225,lng:-0.1372},
+  {name:"Inverness",lat:57.4778,lng:-4.2247},
+  {name:"Lerwick",lat:60.1551,lng:-1.145},
 ];
 export interface GeocodingProvider {
   search(text: string, signal?: AbortSignal): Promise<Location[]>;
@@ -31,14 +47,14 @@ export const geocoder: GeocodingProvider = {
     if (coordinates) {
       const lat = Number(coordinates[1]),
         lng = Number(coordinates[2]);
-      if (Math.abs(lat) <= 90 && Math.abs(lng) <= 180)
+      if (inUK({lat,lng}))
         return [{ name: "Selected coordinates", lat, lng }];
       return [];
     }
     if (text.length < 3) return [];
     const r = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(text)}&count=6&language=en&format=json`,
-      { signal: signal || AbortSignal.timeout(8000) },
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(text)}&count=8&countryCode=GB&language=en&format=json`,
+      { signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(4500)]) : AbortSignal.timeout(4500) },
     );
     if (!r.ok) throw Error("Location search unavailable");
     const d = await r.json();
@@ -47,7 +63,7 @@ export const geocoder: GeocodingProvider = {
         (p: Record<string, unknown>) =>
           typeof p.latitude === "number" &&
           typeof p.longitude === "number" &&
-          typeof p.name === "string",
+          typeof p.name === "string" && inUK({lat: p.latitude as number, lng: p.longitude as number}) && p.country_code === "GB",
       )
       .map(
         (p: {

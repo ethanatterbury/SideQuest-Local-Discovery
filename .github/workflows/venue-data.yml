@@ -1,0 +1,32 @@
+name: Prepare UK venue data
+on:
+  workflow_dispatch:
+    inputs:
+      region:
+        description: Geofabrik UK region path (e.g. england/greater-london, scotland, wales)
+        default: england/greater-london
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: venue-data
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install osmium
+      - name: Bounded region import
+        env:
+          REGION: ${{ inputs.region }}
+        run: python scripts/import-osm-extract.py --regions "$REGION" --max-download-mb 400 --output work/region.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: uk-venue-region
+          path: work/region.json
+          retention-days: 7

@@ -76,7 +76,7 @@ export function validatedPreferences(d: unknown): Partial<DiscoveryQuery> {
       "climbing",
       "swimming",
       "food",
-      "walk",
+      "walk", "pubs", "fitness", "shops",
     ],
     company: ["solo", "couple", "family", "friends"],
     intent: [
@@ -99,6 +99,13 @@ export function validatedPreferences(d: unknown): Partial<DiscoveryQuery> {
     if (typeof p[key] === "string" && enums[key].includes(p[key] as string))
       Object.assign(q, { [key]: p[key] });
   }
+  if (Array.isArray(p.includeCategories)) q.includeCategories = p.includeCategories.filter((v): v is "food" | "pubs" | "fitness" | "shops" => ["food","pubs","fitness","shops"].includes(String(v))).slice(0,4);
+  if (Array.isArray(p.interests)) q.interests = p.interests.filter((v): v is DiscoveryQuery["intent"] => enums.intent.includes(String(v))).slice(0,8);
+  if (typeof p.strictSuitability === "boolean") q.strictSuitability = p.strictSuitability;
+  if (p.accessNeeds && typeof p.accessNeeds === "object") {
+    const needs = p.accessNeeds as Record<string, unknown>;
+    q.accessNeeds = {wheelchair: needs.wheelchair === true, stepFree:needs.stepFree === true,dogs:needs.dogs === true};
+  }
   return q;
 }
 const strings = (v: unknown): string[] =>
@@ -119,6 +126,7 @@ export class LocalPersistence implements PreferenceStore {
       const state = emptyState();
       state.saved = strings(d.saved);
       state.recent = strings(d.recent);
+      state.impressions = Array.isArray(d.impressions) ? d.impressions.filter((v: Record<string,unknown>) => v && typeof v.id === "string" && typeof v.date === "string" && Number.isFinite(Date.parse(v.date))).slice(-200) : [];
       state.visits = Array.isArray(d.visits)
         ? d.visits
             .filter(

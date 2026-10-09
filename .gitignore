@@ -10,3 +10,5 @@ playwright-report/
 __pycache__/
 public/venue-images/
 *.pyc
+
+public/data/venues/

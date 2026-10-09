@@ -4,7 +4,12 @@ import {
   effectiveCompany,
   inferVenueSuitability,
 } from "@/domain/venue-suitability";
-import regionalSnapshot from "./data/regional-osm.json";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { nearbyCells, inUK } from "@/domain/geo-cells";
+import { weeklyHours } from "@/domain/opening-hours";
+import existingEvidence from "./data/venue-evidence.json";
+import { LOAD_BUDGET } from "@/domain/performance";
 
 export type NearbyResult = {
   places: Place[];
@@ -29,15 +34,6 @@ const cache = new Map<
 >();
 const pending = new Map<string, Promise<Place[]>>();
 const details = new Map<string, Place>();
-// OSM currently calls this flying-theatre ride a cinema. Keep official evidence
-// separate from upstream tags and never turn a height rule into an age range.
-const verifiedRideSources: Record<string, { url: string; checkedAt: string }> =
-  {
-    "osm-way-914244345": {
-      url: "https://www.legoland.co.uk/explore/theme-park/rides-attractions/flight-of-the-sky-lion/",
-      checkedAt: "2026-10-09",
-    },
-  };
 export function validCoordinates(coords: Coordinates): boolean {
   return (
     Number.isFinite(coords.lat) &&
@@ -166,6 +162,12 @@ function isAmusementRide(tags: Record<string, unknown>): boolean {
     )
   );
 }
+function parseHeight(value: unknown): number | null {
+  const match = /^(\d+(?:\.\d+)?)\s*(m|cm)?$/.exec(clean(value));
+  if (!match) return null;
+  const height = Number(match[1]) * (match[2] === "cm" ? 1 : 100);
+  return height > 20 && height < 250 ? height : null;
+}
 export function normalizeOsmElement(value: unknown): Place | null {
   if (!value || typeof value !== "object") return null;
   const e = value as Element;
@@ -199,12 +201,14 @@ export function normalizeOsmElement(value: unknown): Place | null {
     leisure === "soft_play" ||
     t["playground:indoor"] === "yes" ||
     t["playground:soft_play"] === "yes";
-  const verifiedRide = verifiedRideSources[`osm-${e.type}-${e.id}`];
+  // Retain previously verified source evidence through a generic adapter, not ID-specific rules.
+  const knownEvidence = existingEvidence.entries.find(record => record.id === `osm-${e.type}-${e.id}` && record.name === name && Date.now() - Date.parse(record.checkedAt) < 90 * 86400000);
+  const mappedRideWebsite = /\/(?:rides?|rides-attractions)\//i.test(clean(t.website) || clean(t["contact:website"]));
   let category = "Local attraction",
     environment: Place["environment"] = "mixed",
     intents: Place["intents"] = ["unusual"],
     duration: Place["duration"] = [45, 90];
-  if (verifiedRide || isAmusementRide(t)) {
+  if (knownEvidence?.classification === "amusement-ride" || mappedRideWebsite || isAmusementRide(t)) {
     category = "Amusement ride";
     environment =
       t.indoor === "yes" || amenity === "cinema"
@@ -263,6 +267,14 @@ export function normalizeOsmElement(value: unknown): Place | null {
     environment = "mixed";
     intents = ["food", "relax", "date"];
     duration = [30, 90];
+  } else if (["pub", "bar"].includes(amenity)) {
+    category = amenity === "pub" ? "Pub" : "Bar";
+    environment = "mixed";
+    intents = ["food", "date"];
+  } else if (clean(t.shop)) {
+    category = "Shop";
+    intents = ["relax"];
+    environment = "indoor";
   } else if (["cinema", "theatre", "arts_centre"].includes(amenity)) {
     category =
       amenity === "cinema"
@@ -312,10 +324,7 @@ export function normalizeOsmElement(value: unknown): Place | null {
     "Place information: © OpenStreetMap contributors (ODbL). Check venue details before leaving.",
     "Visit duration is a SideQuest estimate. Admission and availability have not been verified.",
   ];
-  if (verifiedRide)
-    notes.push(
-      `Ride classification verified against official venue information on ${verifiedRide.checkedAt}: ${verifiedRide.url}. The venue reports minimum height and accompaniment requirements; no minimum child age is inferred from height.`,
-    );
+  if (knownEvidence) notes.push(`Classification source checked ${knownEvidence.checkedAt}: ${knownEvidence.url}. Height and accompaniment requirements need checking; no age is inferred from height.`);
   if (ageRange) {
     notes.push(
       `Age limits reported by OpenStreetMap: ${min !== undefined ? `minimum ${min}` : "minimum unknown"}, ${max !== undefined ? `maximum ${max}` : "maximum unknown"}. Missing bounds in filters do not establish eligibility; confirm venue rules.`,
@@ -328,8 +337,8 @@ export function normalizeOsmElement(value: unknown): Place | null {
     );
   const description =
     clean(t.description) ||
-    (verifiedRide
-      ? "A flying theatre ride, classified using the official venue information. Check height, accompaniment, access and booking requirements with the venue."
+    (mappedRideWebsite
+      ? "An amusement ride within a larger attraction. Check height, accompaniment, access and booking requirements with the venue."
       : `${category} mapped by OpenStreetMap contributors. Check access, opening times and booking requirements with the venue.`);
   const place: Place = {
     id: `osm-${e.type}-${e.id}`,
@@ -345,6 +354,18 @@ export function normalizeOsmElement(value: unknown): Place | null {
         .join(", ") || "Nearby",
     coordinates: { lat, lng },
     category,
+    optionalCategory: ["pub", "bar"].includes(amenity) ? "pubs" : clean(t.shop) ? "shops" : leisure === "fitness_centre" ? "fitness" : ["cafe", "restaurant", "ice_cream", "fast_food"].includes(amenity) ? "food" : undefined,
+    access: {
+      wheelchair: ["yes", "limited", "no"].includes(clean(t.wheelchair)) ? clean(t.wheelchair) as "yes" | "limited" | "no" : undefined,
+      stepFree: t["wheelchair:description"] === "step-free" || t.steps === "no" ? "yes" : undefined,
+      dogs: ["yes", "no"].includes(clean(t.dog)) ? clean(t.dog) as "yes" | "no" : undefined,
+      public: !["private", "no", "customers", "permit"].includes(clean(t.access)),
+    },
+    evidence: { classification: knownEvidence ? {source:"official", url:knownEvidence.url, checkedAt:knownEvidence.checkedAt, confidence:"verified"} : { source: "osm", url: source, confidence: "reported" }, access: { source: "osm", url: source, confidence: t.wheelchair ? "reported" : "unknown" } },
+    openingHoursRaw: hours || undefined,
+    hours: weeklyHours(hours),
+    requiresBooking: t.reservation === "required" || t.booking === "required",
+    heightRange: t.min_height || t.max_height ? [parseHeight(t.min_height), parseHeight(t.max_height)] : undefined,
     environment,
     intents,
     company: intents.includes("kids")
@@ -362,7 +383,7 @@ export function normalizeOsmElement(value: unknown): Place | null {
     website:
       safeWebsite(t.website) ||
       safeWebsite(t["contact:website"]) ||
-      verifiedRide?.url ||
+      knownEvidence?.url ||
       source,
     source,
     tagline: `${category} near you`,
@@ -378,7 +399,7 @@ export function normalizeOsmElement(value: unknown): Place | null {
   };
   place.suitability = {
     ...inferVenueSuitability(place),
-    source: verifiedRide ? "official" : "osm",
+    source: knownEvidence ? "official" : "osm",
   };
   place.company = effectiveCompany(place);
   if (place.suitability.requiresAgeCheck)
@@ -420,9 +441,9 @@ export function selectNearbyPlaces(
         distanceKm(coords, a.coordinates) - distanceKm(coords, b.coordinates),
     );
   if (sorted.length <= 300) return sorted;
-  const selected = sorted.slice(0, 200);
+  const selected: Place[] = [];
   const groups = new Map<string, Place[]>();
-  for (const place of sorted.slice(200)) {
+  for (const place of sorted) {
     const group = groups.get(place.category) ?? [];
     group.push(place);
     groups.set(place.category, group);
@@ -444,11 +465,26 @@ export function selectNearbyPlaces(
       distanceKm(coords, a.coordinates) - distanceKm(coords, b.coordinates),
   );
 }
-const snapshotPlaces = normalizeOsmResponse(regionalSnapshot);
-const snapshotById = new Map(snapshotPlaces.map((place) => [place.id, place]));
-const snapshotMessage = `OpenStreetMap area snapshot · imported ${regionalSnapshot.generatedAt.slice(0, 10)} · check venue details before going.`;
+const snapshotMessage = "OpenStreetMap area snapshot · check venue details before going.";
+const cellCache = new Map<string, Place[]>();
+async function readCell(id: string): Promise<Place[]> {
+  if (!/^\d+_-?\d+$/.test(id)) return [];
+  if (cellCache.has(id)) return cellCache.get(id)!;
+  try {
+    const data = JSON.parse(await readFile(path.join(process.cwd(), "public/data/venues", id + ".json"), "utf8"));
+    const places = Array.isArray(data.places) ? data.places as Place[] : [];
+    cellCache.set(id, places);
+    if (cellCache.size > 80) cellCache.delete(cellCache.keys().next().value!);
+    return places;
+  } catch { return []; }
+}
+async function snapshotArea(coords: Coordinates, radius: number): Promise<Place[]> {
+  return (await Promise.all(nearbyCells(coords, radius).map(readCell))).flat();
+}
 async function queryOverpass(query: string): Promise<Place[]> {
+  const deadline = AbortSignal.timeout(LOAD_BUDGET.live);
   for (const endpoint of endpoints) {
+    if (deadline.aborted) break;
     try {
       const response = await fetch(endpoint, {
         method: "POST",
@@ -459,7 +495,7 @@ async function queryOverpass(query: string): Promise<Place[]> {
             "SideQuest/1.0 (https://sidequest-local-discovery.vercel.app)",
         },
         body: new URLSearchParams({ data: query }),
-        signal: AbortSignal.timeout(10500),
+        signal: AbortSignal.any([deadline, AbortSignal.timeout(2200)]),
         cache: "no-store",
       });
       if (!response.ok) continue;
@@ -483,7 +519,8 @@ export async function getNearbyPlaces(
 ): Promise<NearbyResult> {
   if (!validCoordinates(coords) || !Number.isFinite(radiusKm))
     throw new Error("Invalid location or radius");
-  const radius = Math.min(50, Math.max(3, radiusKm));
+  if (!inUK(coords)) return { places: [], source: "fallback", message: "SideQuest currently discovers experiences across the UK. Choose a UK starting point." };
+  const radius = Math.min(100, Math.max(3, radiusKm));
   const center = {
     lat: Math.round(coords.lat * 50) / 50,
     lng: Math.round(coords.lng * 50) / 50,
@@ -500,13 +537,13 @@ export async function getNearbyPlaces(
       source: entry.failed ? "fallback" : "cached",
       ...(entry.failed
         ? {
-            message: entry.places.some((place) => snapshotById.has(place.id))
+            message: entry.places.some((place) => place.id.startsWith("osm-"))
               ? snapshotMessage + " Live discovery is temporarily unavailable."
               : "Live discovery is unavailable. Showing curated places where available.",
           }
         : {}),
     };
-  const areaSnapshot = within(snapshotPlaces);
+  const areaSnapshot = within(await snapshotArea(coords, radius));
   if (preferSnapshot && areaSnapshot.length)
     return {
       places: within([...PLACES, ...areaSnapshot]),
@@ -518,11 +555,12 @@ export async function getNearbyPlaces(
     if (!request) {
       const around = `(around:${Math.round((bucket + 2) * 1000)},${center.lat},${center.lng})`;
       // Separate output budgets prevent cafés or large parks crowding out family activities.
-      const query = `[out:json][timeout:9];
+      const query = `[out:json][timeout:3];
         nwr${around}[name][leisure~"^(playground|indoor_play|soft_play|trampoline_park|water_park)$"];out center tags 350;
         nwr${around}[name][leisure~"^(park|garden|nature_reserve)$"];out center tags 350;
         nwr${around}[name][tourism~"^(museum|gallery|attraction|zoo|theme_park|aquarium|viewpoint)$"];out center tags 500;
-        nwr${around}[name][amenity~"^(cafe|restaurant|ice_cream)$"];out center tags 300;
+        nwr${around}[name][amenity~"^(cafe|restaurant|ice_cream|pub|bar)$"];out center tags 300;
+        nwr${around}[name][shop];out center tags 100;
         nwr${around}[name][amenity~"^(cinema|theatre|arts_centre)$"];out center tags 200;
         (nwr${around}[name][leisure~"^(sports_centre|fitness_centre|swimming_pool|bowling_alley|escape_game|miniature_golf)$"];nwr${around}[name][sport~"^(climbing|karting)$"];);out center tags 200;`;
       request = queryOverpass(query);
@@ -566,7 +604,13 @@ export async function getLivePlace(id: string): Promise<Place | null> {
   const match = /^osm-(node|way|relation)-([1-9]\d{0,15})$/.exec(id);
   if (!match || !Number.isSafeInteger(Number(match[2]))) return null;
   if (details.has(id)) return details.get(id)!;
-  if (snapshotById.has(id)) return snapshotById.get(id)!;
+  try {
+    const index = JSON.parse(await readFile(path.join(process.cwd(), "public/data/venues/id-index.json"), "utf8"));
+    if (typeof index[id] === "string") {
+      const found = (await readCell(index[id])).find((place) => place.id === id);
+      if (found) return found;
+    }
+  } catch { /* Missing data still permits a bounded live lookup. */ }
   const key = `detail:${id}`;
   try {
     let request = pending.get(key);
