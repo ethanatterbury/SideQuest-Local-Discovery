@@ -12,6 +12,7 @@ import Image from "next/image";
 import { useApp } from "@/components/providers";
 import { findPlacePhoto, photoRetryDelay } from "@/providers/photo-client";
 import type { Place } from "@/domain/models";
+import { seedVenueImage } from "@/providers/seed-venue-media";
 export function Mark() {
   return (
     <svg
@@ -41,7 +42,7 @@ export function PlaceImage({
   priority?: boolean;
 }) {
   const { places, rememberPhoto } = useApp();
-  const image = places.find((p) => p.id === place.id)?.image || place.image;
+  const image = seedVenueImage(places.find((p) => p.id === place.id) || place);
   const imageSource = image?.url.startsWith("https://upload.wikimedia.org/")
     ? image.url.split(/[?#]/)[0]
     : image?.url;
@@ -82,7 +83,7 @@ export function PlaceImage({
       observer.disconnect();
     };
   }, [place, image, rememberPhoto]);
-  useEffect(() => setFailed(false), [place.id]);
+  useEffect(() => setFailed(false), [place.id, imageSource]);
   const Icon =
     place.category.includes("lake") || place.id === "virginia-water"
       ? Waves
@@ -110,6 +111,8 @@ export function PlaceImage({
           loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? "high" : "auto"}
           decoding="async"
+          placeholder={image.blurDataURL ? "blur" : "empty"}
+          blurDataURL={image.blurDataURL}
           onError={() => setFailed(true)}
         />
       ) : (

@@ -10,6 +10,7 @@ import {
 import { useState } from "react";
 import { useApp } from "@/components/providers";
 import type { DiscoveryQuery } from "@/domain/models";
+import { changeActivity, changeCompany } from "@/domain/venue-suitability";
 export function Refinement({
   expanded = false,
   mapFood,
@@ -32,7 +33,12 @@ export function Refinement({
             aria-label="Who is coming"
             value={query.company}
             onChange={(e) =>
-              set({ company: e.target.value as DiscoveryQuery["company"] })
+              setQuery(
+                changeCompany(
+                  query,
+                  e.target.value as DiscoveryQuery["company"],
+                ),
+              )
             }
           >
             {[
@@ -95,9 +101,12 @@ export function Refinement({
                 : (query.activity ?? "any")
             }
             onChange={(event) =>
-              set({
-                activity: event.target.value as DiscoveryQuery["activity"],
-              })
+              setQuery(
+                changeActivity(
+                  query,
+                  event.target.value as NonNullable<DiscoveryQuery["activity"]>,
+                ),
+              )
             }
           >
             {[

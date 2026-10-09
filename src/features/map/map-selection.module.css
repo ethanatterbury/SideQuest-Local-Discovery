@@ -1,0 +1,380 @@
+.page.page.page {
+  height: var(--map-height, calc(100dvh - 141px));
+  min-height: 0;
+  grid-template-columns: 330px minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.sidebar.sidebar.sidebar {
+  min-height: 0;
+  padding: 25px 22px;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  border-right: 1px solid var(--line);
+}
+
+.sidebar :global(.map-sidebar-heading) h1 {
+  font-size: 31px;
+  line-height: 1.08;
+}
+
+.sidebar :global(.map-result-row) {
+  min-height: 67px;
+  padding: 12px 8px;
+}
+
+.sidebar :global(.map-result-row) strong {
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.sidebar :global(.map-result-row) small {
+  color: #53604d;
+  font-size: 11px;
+}
+
+.canvas.canvas {
+  min-width: 0;
+  min-height: 0;
+}
+
+.selectionStatus {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.selection {
+  position: absolute;
+  z-index: 5;
+  left: 24px;
+  bottom: 64px;
+  width: 340px;
+  max-width: calc(100% - 102px);
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid #fff;
+  border-radius: 15px;
+  box-shadow:
+    0 8px 34px #23332128,
+    0 2px 5px #23332112;
+  overflow: hidden;
+}
+
+.photo {
+  height: 143px;
+  overflow: hidden;
+  background: #e5e8db;
+}
+
+/* Keep map recovery controls accessible while retaining the selected venue actions. */
+:global(.map-canvas-wrap):has(:global(.geographic-fallback)) .photo {
+  display: none;
+}
+
+.photo :global(.place-image) {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+.photo :global(.place-image) img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.photo :global(.fallback-content) {
+  padding: 12px 45px;
+}
+
+.photo :global(.fallback-content) svg {
+  width: 32px;
+  height: 32px;
+}
+
+.photo :global(.fallback-content) > span {
+  font-size: 16px;
+}
+
+.close {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 1px 8px #23332121;
+}
+
+.details {
+  padding: 17px 18px 14px;
+}
+
+.category {
+  color: #53604d;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.details h2 {
+  margin-top: 5px;
+  font-size: 23px;
+  line-height: 1.13;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px 12px;
+  margin-top: 12px;
+  font-size: 11px;
+  color: #53604d;
+}
+
+.meta > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.meta .match {
+  color: #364923;
+  background: #e8eddb;
+  border-radius: 5px;
+  padding: 4px 6px;
+  font-weight: 650;
+}
+
+.notice {
+  margin-top: 10px;
+  color: #53604d;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  align-items: stretch;
+  gap: 7px;
+  margin-top: 15px;
+}
+
+.actions > a,
+.actions > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 42px;
+  border: 1px solid #d6dccb;
+  border-radius: 7px;
+  padding: 0 9px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.actions > a:first-of-type {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.actions > button[aria-pressed="true"] {
+  background: #e8eddb;
+  border-color: #aab991;
+}
+
+.close:hover,
+.actions > button:hover,
+.actions > a:last-child:hover {
+  background: #e8eddb;
+}
+
+.selection :is(button, a):focus-visible,
+.page :global(.map-result-row):focus-visible,
+.page :global(.sheet-handle):focus-visible {
+  outline: 3px solid #617740;
+  outline-offset: 3px;
+}
+
+.page :global(.map-place-marker):focus-visible {
+  outline: 3px solid #384d25;
+  outline-offset: 4px;
+  border-radius: 50%;
+}
+
+:global(.lab-preview) .page.page.page {
+  height: 100%;
+  min-height: 540px;
+  grid-template-columns: 290px minmax(0, 1fr);
+}
+
+@media (max-width: 900px) and (min-width: 701px) {
+  .page.page.page {
+    grid-template-columns: 290px minmax(0, 1fr);
+  }
+
+  .selection {
+    left: 14px;
+    width: 310px;
+    max-width: calc(100% - 28px);
+  }
+
+  .photo {
+    height: 115px;
+  }
+}
+
+@media (max-width: 700px) {
+  .page.page.page {
+    display: block;
+    position: relative;
+    height: var(--map-height, calc(100dvh - 183px));
+  }
+
+  .sidebar.sidebar.sidebar {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    height: 44px;
+    max-height: 44px;
+    padding: 0 14px;
+    border: 1px solid #d6dccb;
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 6;
+    box-shadow: 0 2px 12px #23332114;
+  }
+
+  .sidebar.expanded.expanded {
+    height: calc(100% - 24px);
+    max-height: calc(100% - 24px);
+    overflow: auto;
+  }
+
+  .sidebar :global(.sheet-handle) {
+    width: 100%;
+    height: 43px;
+    margin: 0;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .sidebar:not(.expanded) .browseContent {
+    display: none;
+  }
+
+  .selection {
+    left: 10px;
+    right: 10px;
+    bottom: 64px;
+    width: auto;
+    max-width: none;
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 0 12px;
+    padding: 14px 12px 11px;
+    border-radius: 13px;
+  }
+
+  .photo {
+    height: 95px;
+    align-self: start;
+    border-radius: 8px;
+  }
+
+  .photo :global(.fallback-content) {
+    padding: 6px;
+  }
+
+  .photo :global(.fallback-content) svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  .photo :global(.fallback-content) > span {
+    font-size: 10px;
+  }
+
+  .photo :global(.fallback-content) > small {
+    display: none;
+  }
+
+  .close {
+    top: 6px;
+    right: 6px;
+    width: 32px;
+    height: 32px;
+    box-shadow: none;
+  }
+
+  .details {
+    display: contents;
+  }
+
+  .category,
+  .details h2,
+  .meta {
+    grid-column: 2;
+  }
+
+  .category {
+    padding-right: 28px;
+    font-size: 9px;
+    align-self: start;
+  }
+
+  .details h2 {
+    margin-top: 4px;
+    padding-right: 17px;
+    font-size: 20px;
+    line-height: 1.15;
+  }
+
+  .photo {
+    grid-row: 1 / 4;
+  }
+
+  .meta {
+    gap: 5px 8px;
+    margin-top: 8px;
+    font-size: 10px;
+  }
+
+  .notice,
+  .actions {
+    grid-column: 1 / -1;
+  }
+
+  .actions {
+    margin-top: 12px;
+  }
+
+  .actions > a,
+  .actions > button {
+    min-height: 40px;
+  }
+
+  :global(.lab-preview) .page.page.page {
+    min-height: 540px;
+    display: block;
+  }
+}

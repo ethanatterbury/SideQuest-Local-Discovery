@@ -8,16 +8,18 @@ import type {
 } from "@/domain/models";
 import { PLACES } from "./places";
 import { indexedPhoto, placePhotoQuery } from "./photo-index";
+import { seedVenueImage, withSeedPhoto } from "./seed-venue-media";
 
 export type CatalogStatus = "loading" | "live" | "cached" | "fallback";
 const KEY = "sidequest:places:v1";
 const PHOTO_VERSION_KEY = "sidequest:place-photos:version";
-const PHOTO_VERSION = "verified-venue-media-3";
+const PHOTO_VERSION = "stored-venue-media-4";
 export function revalidateStoredPhotos(stored: Place[]): Place[] {
   return stored.map((place) => ({
     ...place,
     image:
       PLACES.find((seed) => seed.id === place.id)?.image ||
+      seedVenueImage({ ...place, image: undefined }) ||
       indexedPhoto(placePhotoQuery(place))?.image ||
       undefined,
   }));
@@ -53,8 +55,9 @@ export function mergeCatalog(
   pinned: ReadonlySet<string> = new Set(),
 ): Place[] {
   const merged = new Map(existing.map((p) => [p.id, p]));
-  for (const p of incoming) {
-    if (!isPlace(p)) continue;
+  for (const candidate of incoming) {
+    if (!isPlace(candidate)) continue;
+    const p = withSeedPhoto(candidate);
     const duplicate = [...merged.values()].find(
       (other) =>
         other.id !== p.id &&
@@ -97,7 +100,9 @@ export function usePlaceCatalog(
   ready: boolean,
   state: LocalState,
 ) {
-  const [places, setPlaces] = useState<Place[]>(PLACES);
+  const [places, setPlaces] = useState<Place[]>(() =>
+    PLACES.map(withSeedPhoto),
+  );
   const [catalogReady, setCatalogReady] = useState(false);
   const [placesStatus, setStatus] = useState<CatalogStatus>("loading");
   const [revision, setRevision] = useState(0);

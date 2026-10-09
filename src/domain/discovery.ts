@@ -8,6 +8,11 @@ import type {
 } from "./models";
 import { estimatedRouting } from "../providers/routing";
 import { addMinutes, isDark, londonParts } from "./time";
+import {
+  childActivityRequested,
+  isSuitableForQuery,
+  venueSuitability,
+} from "./venue-suitability";
 export function openingStatus(place: Place, now: string): OpeningStatus {
   if (!place.hours?.length)
     return { status: "unknown", label: "Check opening times" };
@@ -33,37 +38,36 @@ export function matchesActivity(
   place: Place,
   activity: DiscoveryQuery["activity"],
 ): boolean {
-  const category = place.category.toLowerCase().replace(/[-_]/g, " ");
-  const features = (place.familyFeatures ?? []).map((feature) =>
-    feature.toLowerCase().replace(/[-_]/g, " "),
+  return (
+    !activity ||
+    activity === "any" ||
+    venueSuitability(place).activities.includes(activity)
   );
-  const has = (pattern: RegExp) =>
-    pattern.test(category) || features.some((feature) => pattern.test(feature));
-  switch (activity) {
-    case "soft-play":
-      return has(/\bsoft\s*play\b/);
-    case "playground":
-      return has(/\bplayground\b/);
-    case "museum":
-      return has(/\bmuseum\b|\bgallery\b/);
-    case "cinema":
-      return has(/\bcinema\b/);
-    case "animals":
-      return has(/\bzoo\b|\baquarium\b|\banimal/);
-    case "gardens":
-      return has(/\bgardens?\b|\bpark\b/);
-    case "climbing":
-      return has(/\bclimb|\bbouldering\b/);
-    case "swimming":
-      return has(/\bswim|\bpool\b/);
-    case "food":
-      return place.intents.includes("food");
-    case "walk":
-      return place.intents.includes("walk");
-    default:
-      return true;
-  }
 }
+
+/** Exact mapped names are identities; other search text can describe outing preferences. */
+export function exactVenueSearch(
+  query: DiscoveryQuery,
+  places: Place[],
+): string | undefined {
+  const name = query.text.trim().toLowerCase();
+  return name &&
+    places.some((place) => place.name.trim().toLowerCase() === name)
+    ? name
+    : undefined;
+}
+
+export function effectiveDiscoveryQuery(
+  query: DiscoveryQuery,
+  places: Place[],
+): DiscoveryQuery {
+  // Consume semantic text in the derived query so a second ranking pass cannot
+  // undo a collection or itinerary override applied after interpretation.
+  return query.text && !exactVenueSearch(query, places)
+    ? { ...parseIntent(query.text, query), text: "" }
+    : query;
+}
+
 export function rankPlaces(
   places: Place[],
   query: DiscoveryQuery,
@@ -72,6 +76,8 @@ export function rankPlaces(
 ): Recommendation[] {
   if (env.failures.includes("empty") || env.failures.includes("places"))
     return [];
+  const searchedName = exactVenueSearch(query, places);
+  query = effectiveDiscoveryQuery(query, places);
   const rainy =
       ["light-rain", "heavy-rain", "snow", "thunderstorm"].includes(
         env.weather.kind,
@@ -86,36 +92,25 @@ export function rankPlaces(
     .map((v) => places.find((p) => p.id === v.id)?.category);
   return places
     .flatMap((place) => {
-      if (!matchesActivity(place, query.activity)) return [];
-      const family = query.company === "family" || query.intent === "kids";
-      const ages = query.childrenAges ?? [];
-      if (
-        family &&
-        ages.length &&
-        place.ageRange &&
-        ages.some((age) => age < place.ageRange![0] || age > place.ageRange![1])
-      )
+      if (searchedName && place.name.trim().toLowerCase() !== searchedName)
         return [];
-      const features = place.familyFeatures ?? [];
-      const familyText = `${place.category} ${place.name}`.toLowerCase();
-      const softPlay =
-        features.includes("soft-play") || /soft[ -]?play/.test(familyText);
-      const playground =
-        features.includes("playground") || /playground/.test(familyText);
-      const museum = features.includes("museum") || /museum/.test(familyText);
+      if (!matchesActivity(place, query.activity)) return [];
+      if (!isSuitableForQuery(place, query)) return [];
+      const family =
+        query.company === "family" || childActivityRequested(query);
+      const ages = family ? (query.childrenAges ?? []) : [];
+      const suitability = venueSuitability(place);
+      const softPlay = suitability.activities.includes("soft-play");
+      const playground = suitability.activities.includes("playground");
+      const museum = suitability.activities.includes("museum");
       const familyPoints = family
-        ? (softPlay || playground || museum || place.intents.includes("kids")
+        ? (softPlay || playground || museum || suitability.kind === "animals"
             ? 6
             : 0) +
-          (ages.some((age) => age <= 5) &&
-          (softPlay || features.includes("toddler-friendly"))
-            ? 8
-            : 0) +
-          (ages.some((age) => age >= 6) &&
-          (playground ||
-            museum ||
-            features.includes("hands-on") ||
-            features.includes("sports"))
+          (ages.some((age) => age <= 5) && softPlay ? 8 : 0) +
+          (ages.every((age) => age >= 6) &&
+          ages.length > 0 &&
+          (playground || museum)
             ? 5
             : 0)
         : 0;
@@ -203,10 +198,10 @@ export function rankPlaces(
           query.intent === "any"
             ? 10
             : place.intents.includes(query.intent)
-              ? 15
-              : 3,
+              ? 26
+              : 0,
         budget: place.cost === null ? 4 : 9,
-        company: place.company.includes(query.company) ? 6 : 2,
+        company: 6,
         novelty: Math.round(
           (query.mode === "surprise" ? 14 : 8) *
             (visited.length ? 0.15 : place.novelty),
@@ -230,7 +225,10 @@ export function rankPlaces(
           99,
           Math.round(
             (Object.values(components).reduce((a, b) => a + b, 0) /
-              (query.mode === "surprise" ? 115 : 109)) *
+              (120 +
+                (family ? 14 : 0) +
+                (query.mode === "surprise" ? 6 : 0) -
+                (query.intent === "any" ? 16 : 0))) *
               100,
           ),
         ),

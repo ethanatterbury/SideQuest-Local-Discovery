@@ -104,11 +104,13 @@ export type Place = {
     confidence?: number;
     strategy?: string;
     matched?: string[];
+    blurDataURL?: string;
   };
   season?: number[];
   /** Only populate from verified venue age guidance. */
   ageRange?: [number, number];
   familyFeatures?: string[];
+  suitability?: import("./venue-suitability").VenueSuitability;
   wikidata?: string;
   wikipedia?: string;
   /** OSM source hints only; licensing and subject identity still need verification. */

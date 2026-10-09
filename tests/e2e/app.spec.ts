@@ -203,8 +203,9 @@ test("saved map marker can select an ineligible place without fake score", async
   await page.goto("/map?place=virginia-water");
   await expect(page.locator(".map-selected")).toContainText("Virginia Water");
   await expect(page.locator(".map-selected")).toContainText(
-    "Saved for another day",
+    "This place doesn’t fit the current conditions or preferences.",
   );
+  await expect(page.locator(".map-selected")).not.toContainText(/\d+% match/);
 });
 
 test("street map connects selection and mobile sheet", async ({ page }) => {
@@ -222,7 +223,7 @@ test("street map connects selection and mobile sheet", async ({ page }) => {
   const row = page.locator(".map-result-row").nth(1);
   const name = await row.locator("strong").innerText();
   await row.click();
-  await expect(page.locator(".map-selected .place-title")).toContainText(name);
+  await expect(page.locator(".map-selected h2")).toHaveText(name);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole("button", { name: "Expand results" }).click();
   await expect(page.locator(".map-sidebar")).toHaveClass(/expanded/);

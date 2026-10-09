@@ -130,7 +130,7 @@ test("Lab weather selection clears unavailable state and paints moving rain abov
   await expect(
     page.getByLabel("Weather unavailable", { exact: true }),
   ).not.toBeChecked();
-  await expect(page.locator(".weather-particles i")).toHaveCount(24);
+  await expect(page.locator(".weather-particles i")).toHaveCount(97);
   await expectMoving(page.locator(".weather-particles i").first());
   await expect(page.locator(".weather-atmosphere")).toHaveAttribute(
     "aria-hidden",
@@ -146,8 +146,8 @@ test("Lab weather selection clears unavailable state and paints moving rain abov
       page,
       ".weather-particles, .rain-ripples",
     );
-    expect(rain.changed).toBeGreaterThan(50);
-    expect(rain.changed / rain.total).toBeLessThan(0.02);
+    expect(rain.changed / rain.total).toBeGreaterThan(0.006);
+    expect(rain.changed / rain.total).toBeLessThan(0.15);
     const marker = page
       .locator('.map-place-marker[aria-pressed="true"]')
       .first();
@@ -180,8 +180,9 @@ test("overcast has soft moving cloud shadows on desktop and mobile with readable
     await page.setViewportSize({ width, height: 900 });
     const clouds = await visibleWeatherPixels(page, ".cloud-shadows");
     expect(clouds.changed / clouds.total).toBeGreaterThan(0.15);
-    // The darkest cloud shadow remains a gentle tint on the street labels.
-    expect(clouds.maximum).toBeLessThan(60);
+    // Lit density contours and the cast shadow are visible, while remaining
+    // below a 40% channel shift so the decoded street geography stays readable.
+    expect(clouds.maximum).toBeLessThan(100);
     await expect(page.locator(".leaflet-tile-loaded").first()).toBeVisible();
     await expect(page.locator(".map-status")).toContainText("Street map");
   }
@@ -216,7 +217,7 @@ test("reduced motion keeps static atmosphere and hidden tabs stop weather work",
   await page.getByLabel("Motion", { exact: true }).selectOption("system");
   await expect(page.locator(".weather-particles i")).toHaveCount(0);
   await page.emulateMedia({ reducedMotion: "no-preference" });
-  await expect(page.locator(".weather-particles i")).toHaveCount(24);
+  await expect(page.locator(".weather-particles i")).toHaveCount(97);
   await page.evaluate(() => {
     Object.defineProperty(document, "hidden", {
       configurable: true,
@@ -237,6 +238,185 @@ test("reduced motion keeps static atmosphere and hidden tabs stop weather work",
     });
     document.dispatchEvent(new Event("visibilitychange"));
   });
-  await expect(page.locator(".weather-particles i")).toHaveCount(24);
+  await expect(page.locator(".weather-particles i")).toHaveCount(97);
   await expectMoving(page.locator(".cloud-shadow-near"));
+});
+
+test("numeric Lab controls change actual rendering and presets reset stale measurements", async ({
+  page,
+}) => {
+  await lab(page);
+  await page.getByLabel("Weather", { exact: true }).selectOption("clear");
+  const setRange = async (label: string, value: string) => {
+    const range = page.getByLabel(label, { exact: true });
+    await range.fill(value);
+    await range.dispatchEvent("input");
+  };
+  await setRange("Rain intensity", "0.5");
+  await expect(page.locator(".weather-particles i")).toHaveCount(41);
+  const lightSpeed = await page
+    .locator(".weather-particles i")
+    .first()
+    .evaluate((el) => parseFloat(getComputedStyle(el).animationDuration));
+  await setRange("Rain intensity", "15");
+  await expect(page.locator(".weather-particles i")).toHaveCount(136);
+  const heavySpeed = await page
+    .locator(".weather-particles i")
+    .first()
+    .evaluate((el) => parseFloat(getComputedStyle(el).animationDuration));
+  expect(heavySpeed).toBeLessThan(lightSpeed);
+  await setRange("Wind", "90");
+  await expect(page.locator(".wind-trails i")).toHaveCount(18);
+  const fastWind = await page
+    .locator(".wind-trails i")
+    .first()
+    .evaluate((el) => parseFloat(getComputedStyle(el).animationDuration));
+  await setRange("Wind", "20");
+  await expect(page.locator(".wind-trails i")).toHaveCount(7);
+  const slowWind = await page
+    .locator(".wind-trails i")
+    .first()
+    .evaluate((el) => parseFloat(getComputedStyle(el).animationDuration));
+  expect(fastWind).toBeLessThan(slowWind);
+  await page
+    .getByLabel("Weather", { exact: true })
+    .selectOption("thunderstorm");
+  await expect(page.getByLabel("Rain intensity", { exact: true })).toHaveValue(
+    "12",
+  );
+  await expect(page.getByLabel("Wind", { exact: true })).toHaveValue("48");
+  await expect(page.locator(".weather-particles i")).toHaveCount(116);
+  await expect(page.locator(".storm-light")).toHaveCount(1);
+});
+
+test("storm arrival glows early and wind waves cross the map over decoded organic cloud contours", async ({
+  page,
+}) => {
+  await lab(page);
+  await page
+    .getByLabel("Weather", { exact: true })
+    .selectOption("thunderstorm");
+  await expect(page.locator(".storm-light svg")).toHaveCount(1);
+  await expect
+    .poll(() =>
+      page
+        .locator(".storm-light")
+        .evaluate((element) => parseFloat(getComputedStyle(element).opacity)),
+    )
+    .toBeGreaterThan(0.04);
+  await expect(page.locator(".weather-particles i")).toHaveCount(116);
+  await page.locator(".cloud-shadow-near").evaluate(async (element) => {
+    const background = getComputedStyle(element).backgroundImage;
+    const url = background.match(/url\(["']?([^"')]+)/)?.[1];
+    if (!url) throw new Error("Cloud density texture missing");
+    const texture = new Image();
+    texture.src = url;
+    await texture.decode();
+    if (texture.naturalWidth < 512) throw new Error("Cloud field not decoded");
+  });
+  await page.getByLabel("Weather", { exact: true }).selectOption("high-wind");
+  await page.getByLabel("Wind", { exact: true }).fill("100");
+  const wave = page.locator(".wind-trails i").first();
+  const travel = await wave.evaluate((element) => {
+    const animation = element.getAnimations()[0];
+    animation.pause();
+    animation.currentTime = 100;
+    const start = new DOMMatrix(getComputedStyle(element).transform).m41;
+    animation.currentTime = 2100;
+    const end = new DOMMatrix(getComputedStyle(element).transform).m41;
+    const mapWidth = element
+      .closest(".map-canvas-wrap")!
+      .getBoundingClientRect().width;
+    return { distance: end - start, mapWidth };
+  });
+  expect(travel.distance).toBeGreaterThan(travel.mapWidth);
+});
+
+test("all weather and solar phases contribute visible pixels on desktop and mobile", async ({
+  page,
+}) => {
+  test.setTimeout(90000);
+  await lab(page);
+  await page.getByLabel("Motion", { exact: true }).selectOption("normal");
+  const kinds = [
+    "clear",
+    "sunny",
+    "partly-cloudy",
+    "overcast",
+    "light-rain",
+    "heavy-rain",
+    "thunderstorm",
+    "fog",
+    "snow",
+    "heat",
+    "high-wind",
+  ];
+  const phases = [
+    "sunrise",
+    "morning",
+    "midday",
+    "golden-hour",
+    "sunset",
+    "evening",
+    "midnight",
+  ];
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page
+      .getByLabel("Time of day", { exact: true })
+      .selectOption("midday");
+    for (const kind of kinds) {
+      await page.getByLabel("Weather", { exact: true }).selectOption(kind);
+      const contribution = await visibleWeatherPixels(
+        page,
+        ".weather-atmosphere",
+      );
+      expect(
+        contribution.changed / contribution.total,
+        `${kind} at ${width}px`,
+      ).toBeGreaterThan(0.08);
+      if (
+        [
+          "light-rain",
+          "heavy-rain",
+          "thunderstorm",
+          "snow",
+          "high-wind",
+          "fog",
+        ].includes(kind)
+      ) {
+        const layer =
+          kind === "high-wind"
+            ? ".wind-trails"
+            : kind === "fog"
+              ? ".mist-layer"
+              : ".weather-particles, .rain-ripples";
+        const effect = await visibleWeatherPixels(page, layer);
+        expect(
+          effect.changed / effect.total,
+          `${kind} effect at ${width}px`,
+        ).toBeGreaterThan(kind === "fog" ? 0.15 : 0.003);
+      }
+    }
+    await page.getByLabel("Weather", { exact: true }).selectOption("overcast");
+    for (const phase of phases) {
+      await page.getByLabel("Time of day", { exact: true }).selectOption(phase);
+      await expect(page.locator(".weather-atmosphere")).toHaveAttribute(
+        "data-time",
+        phase,
+      );
+      const contribution = await visibleWeatherPixels(
+        page,
+        ".weather-atmosphere > div:first-child",
+      );
+      expect(
+        contribution.changed / contribution.total,
+        `${phase} light at ${width}px`,
+      ).toBeGreaterThan(0.04);
+      expect(
+        contribution.maximum,
+        `${phase} contrast at ${width}px`,
+      ).toBeGreaterThan(8);
+    }
+  }
 });

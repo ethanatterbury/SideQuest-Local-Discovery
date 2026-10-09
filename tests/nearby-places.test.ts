@@ -80,7 +80,7 @@ describe("OSM place normalization", () => {
     expect(place).toMatchObject({
       environment: "indoor",
       intents: ["kids", "active"],
-      company: ["family", "friends"],
+      company: ["family"],
       duration: [60, 120],
       ageRange: [1, 6],
       cost: null,
@@ -92,6 +92,37 @@ describe("OSM place normalization", () => {
       { min_age: "2 years", max_age: "seven" },
     ])
       expect(normalizeOsmElement(element(tags))!.ageRange).toBeUndefined();
+  });
+  it("records audience taxonomy without turning general venues into child-only places", () => {
+    for (const tags of [
+      { leisure: "park" },
+      { leisure: "", tourism: "museum" },
+      { leisure: "", amenity: "cafe" },
+    ]) {
+      const place = normalizeOsmElement(element(tags))!;
+      expect(place.company).toEqual(["solo", "couple", "family", "friends"]);
+      expect(place.suitability).toMatchObject({
+        audience: "all",
+        ageGuidance: "unknown",
+        source: "osm",
+      });
+    }
+    const soft = normalizeOsmElement(element())!;
+    expect(soft.suitability).toMatchObject({
+      audience: "children",
+      kind: "child-play",
+      activities: ["soft-play"],
+    });
+    expect(soft.familyFeatures).not.toContain(
+      "Toddler-friendly play — check session rules",
+    );
+    const jump = normalizeOsmElement(element({ leisure: "trampoline_park" }))!;
+    expect(jump.suitability).toMatchObject({
+      kind: "adventure",
+      requiresAgeCheck: true,
+      ageGuidance: "unknown",
+    });
+    expect(jump.ageRange).toBeUndefined();
   });
   it("preserves one-sided age limits while marking the other bound unknown", () => {
     expect(normalizeOsmElement(element({ min_age: "8" }))).toMatchObject({

@@ -12,6 +12,7 @@ import {
 import { useApp } from "@/components/providers";
 import { TOWNS } from "@/providers/geocoding";
 import { rankPlaces } from "@/domain/discovery";
+import { formatTime } from "@/domain/time";
 import { Discover } from "@/features/discover/discover";
 import { PhotoDebug } from "./photo-debug";
 import { LazyMap } from "@/features/map/lazy-map";
@@ -97,6 +98,10 @@ export function EnvironmentLab() {
               value={overrides.weather || "live"}
               onChange={(e) =>
                 set({
+                  temperature: undefined,
+                  rain: undefined,
+                  wind: undefined,
+                  visibility: undefined,
                   weather:
                     e.target.value === "live"
                       ? undefined
@@ -122,6 +127,7 @@ export function EnvironmentLab() {
           </label>
           <label>
             Time of day
+            <output aria-label="Simulated clock">{formatTime(env.now)}</output>
             <select
               aria-label="Time of day"
               value={overrides.time || "live"}
@@ -147,7 +153,7 @@ export function EnvironmentLab() {
               label: "Rain intensity",
               min: 0,
               max: 15,
-              unit: "mm",
+              unit: "mm/h",
             },
             { key: "wind", label: "Wind", min: 0, max: 100, unit: "km/h" },
             {
@@ -172,7 +178,15 @@ export function EnvironmentLab() {
                   max={s.max}
                   step="0.1"
                   value={overrides[key] ?? env.weather[key]}
-                  onChange={(e) => set({ [key]: Number(e.target.value) })}
+                  onChange={(e) =>
+                    set({
+                      [key]: Number(e.target.value),
+                      failures: (overrides.failures ?? env.failures).filter(
+                        (failure) =>
+                          failure !== "weather" && failure !== "offline",
+                      ),
+                    })
+                  }
                 />
               </label>
             );

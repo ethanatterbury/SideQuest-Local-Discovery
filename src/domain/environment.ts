@@ -1,5 +1,5 @@
 import type { Environment, EnvironmentOverrides, Weather } from "./models";
-import { londonParts } from "./time";
+import { londonParts, solarPreset } from "./time";
 export function unavailableWeather(now = new Date().toISOString()): Weather {
   const date = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Europe/London",
@@ -22,6 +22,24 @@ export function unavailableWeather(now = new Date().toISOString()): Weather {
     source: "unavailable",
   };
 }
+/** Each selection starts from a coherent day; sliders can then vary it. */
+export const WEATHER_PRESETS = {
+  clear: { temperature: 17, rain: 0, wind: 5, visibility: 20 },
+  sunny: { temperature: 23, rain: 0, wind: 7, visibility: 20 },
+  "partly-cloudy": { temperature: 16, rain: 0, wind: 14, visibility: 15 },
+  overcast: { temperature: 12, rain: 0, wind: 18, visibility: 10 },
+  "light-rain": { temperature: 11, rain: 1.2, wind: 15, visibility: 8 },
+  "heavy-rain": { temperature: 9, rain: 9, wind: 32, visibility: 4 },
+  thunderstorm: { temperature: 18, rain: 12, wind: 48, visibility: 3 },
+  fog: { temperature: 7, rain: 0, wind: 3, visibility: 0.3 },
+  snow: { temperature: -2, rain: 0.8, wind: 12, visibility: 3 },
+  heat: { temperature: 35, rain: 0, wind: 4, visibility: 12 },
+  "high-wind": { temperature: 13, rain: 0, wind: 68, visibility: 12 },
+} satisfies Record<
+  import("./models").WeatherKind,
+  Pick<Weather, "temperature" | "rain" | "wind" | "visibility">
+>;
+
 export function applyOverrides(
   base: Environment,
   o: EnvironmentOverrides,
@@ -36,13 +54,7 @@ export function applyOverrides(
   if (o.weather) {
     result.weather.kind = o.weather;
     result.weather.source = "simulation";
-    result.weather.rain = o.weather.includes("rain")
-      ? o.weather === "heavy-rain"
-        ? 8
-        : 1
-      : 0;
-    result.weather.wind = o.weather === "high-wind" ? 60 : 8;
-    result.weather.visibility = o.weather === "fog" ? 0.3 : 10;
+    Object.assign(result.weather, WEATHER_PRESETS[o.weather]);
   }
   for (const key of ["temperature", "rain", "wind", "visibility"] as const)
     if (o[key] !== undefined) {
@@ -50,26 +62,12 @@ export function applyOverrides(
       result.weather.source = "simulation";
     }
   if (o.time && o.time !== "live") {
-    const hours = {
-      sunrise: 7,
-      morning: 9,
-      midday: 12,
-      "golden-hour": 17,
-      sunset: 18,
-      evening: 20,
-      midnight: 0,
-    };
-    const date = new Date(base.now);
-    const p = londonParts(base.now);
-    const delta = (hours[o.time] * 60 - p.minutes) * 60000;
-    result.now = new Date(date.getTime() + delta).toISOString();
-    const d = result.now.slice(0, 10);
-    const offset =
-      new Date(base.now).getUTCHours() === Math.floor(p.minutes / 60)
-        ? "+00:00"
-        : "+01:00";
-    result.weather.sunrise = `${d}T07:00:00${offset}`;
-    result.weather.sunset = `${d}T18:30:00${offset}`;
+    result.now = solarPreset(
+      o.time,
+      base.now,
+      base.weather.sunrise,
+      base.weather.sunset,
+    );
   }
   if (
     result.failures.includes("weather") ||

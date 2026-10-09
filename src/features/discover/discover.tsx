@@ -17,7 +17,7 @@ import {
 import { useApp } from "@/components/providers";
 import { PlaceImage, EmptyState } from "@/components/primitives";
 import { TOWNS } from "@/providers/geocoding";
-import { rankPlaces, parseIntent } from "@/domain/discovery";
+import { rankPlaces, effectiveDiscoveryQuery } from "@/domain/discovery";
 import { contextualHeadline } from "@/domain/environment";
 import type { Intent } from "@/domain/models";
 import { PlaceCard } from "./place-card";
@@ -71,15 +71,14 @@ export function Discover({ explore = false }: { explore?: boolean }) {
   const [visibleCount, setVisibleCount] = useState(12);
   useEffect(() => setVisibleCount(12), [query, collection]);
   const effective = useMemo(() => {
-    let q = query;
-    if (query.text) q = parseIntent(query.text, query);
+    let q = effectiveDiscoveryQuery(query, catalog);
     if (collection === "Actually free") q = { ...q, budget: 0 };
     if (collection === "Hidden nearby") q = { ...q, mode: "surprise" };
     if (collection === "Rain won’t ruin these")
       q = { ...q, environment: "indoor" };
     if (collection === "Worth the drive") q = { ...q, travel: 90 };
     return q;
-  }, [query, collection]);
+  }, [query, collection, catalog]);
   const ranked = useMemo(
     () => rankPlaces(catalog, effective, env, state),
     [catalog, effective, env, state],

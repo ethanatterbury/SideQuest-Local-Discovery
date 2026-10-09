@@ -1,5 +1,6 @@
 import { getNearbyPlaces } from "@/providers/nearby-places";
 import { after } from "next/server";
+import { withStoredPhoto } from "@/providers/venue-media";
 export const maxDuration = 25;
 export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
@@ -29,7 +30,10 @@ export async function GET(request: Request) {
     after(async () => {
       await getNearbyPlaces(coords, radiusKm, false);
     });
-  return Response.json(result, {
-    headers: { "Cache-Control": "private, max-age=60" },
-  });
+  return Response.json(
+    { ...result, places: result.places.map(withStoredPhoto) },
+    {
+      headers: { "Cache-Control": "private, max-age=60" },
+    },
+  );
 }

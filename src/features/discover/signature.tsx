@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Modal, PlaceImage, EmptyState } from "@/components/primitives";
 import { useApp } from "@/components/providers";
-import { rankPlaces } from "@/domain/discovery";
+import { effectiveDiscoveryQuery, rankPlaces } from "@/domain/discovery";
 import { track } from "@/providers/analytics";
 export function Signature({
   surprise,
@@ -26,7 +26,10 @@ export function Signature({
     [revealing, setRevealing] = useState(true);
   const options = rankPlaces(
     catalog,
-    { ...query, mode: surprise ? "surprise" : "normal" },
+    {
+      ...effectiveDiscoveryQuery(query, catalog),
+      mode: surprise ? "surprise" : "normal",
+    },
     env,
     state,
   );
@@ -66,6 +69,11 @@ export function Signature({
             <span className="place-category">{item.place.category}</span>
             <h2>{item.place.name}</h2>
             <p>{item.explanation}</p>
+            <ul className="fine-print">
+              {item.reasons.slice(3).map((reason) => (
+                <li key={reason}>{reason}</li>
+              ))}
+            </ul>
             <div className="signature-facts">
               <span>
                 <Car size={17} />~{item.travel} min journey

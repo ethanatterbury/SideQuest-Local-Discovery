@@ -10,20 +10,34 @@ import {
   ChevronUp,
   ChevronDown,
   Map as MapIcon,
+  Bookmark,
+  Car,
+  Footprints,
+  X,
 } from "lucide-react";
 import { useApp } from "@/components/providers";
 import { matchesActivity, rankPlaces } from "@/domain/discovery";
-import { PlaceCard } from "@/features/discover/place-card";
+import { isChildOuting } from "@/domain/venue-suitability";
 import { PlaceImage } from "@/components/primitives";
 import { Refinement } from "@/features/discover/refinement";
 import { WeatherAtmosphere } from "./weather-atmosphere";
 import { isMapFoodPlace } from "./map-food";
 import { isDark } from "@/domain/time";
-import { directionsUrl } from "@/providers/routing";
+import { directionsUrl, estimatedRouting } from "@/providers/routing";
+import { track } from "@/providers/analytics";
 import type { Coordinates, Itinerary, Place } from "@/domain/models";
 import { RasterMap, type RasterHandle, type RasterStatus } from "./raster-map";
+import styles from "./map-selection.module.css";
 export function MapView({ itinerary }: { itinerary?: Itinerary }) {
-  const { places: catalog, env, query, state, setLocation } = useApp();
+  const {
+    places: catalog,
+    env,
+    query,
+    state,
+    setLocation,
+    update,
+    toast,
+  } = useApp();
   const [includeFood, setIncludeFood] = useState(false);
   const ranked = useMemo(
     () =>
@@ -31,7 +45,8 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
         ({ place }) =>
           isMapFoodPlace(place)
             ? includeFood
-            : matchesActivity(
+            : (query.intent !== "kids" || isChildOuting(place)) &&
+              matchesActivity(
                 place,
                 query.activity === "food" ? "any" : query.activity,
               ),
@@ -41,9 +56,12 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
   const [selectedId, setSelectedId] = useState(""),
     [rasterStatus, setRasterStatus] = useState<RasterStatus>("loading"),
     [moved, setMoved] = useState(false),
-    [sheetOpen, setSheetOpen] = useState(false);
+    [sheetOpen, setSheetOpen] = useState(false),
+    [selectionCleared, setSelectionCleared] = useState(false);
   const [center, setCenter] = useState<Coordinates>(env.location);
   const raster = useRef<RasterHandle>(null);
+  const page = useRef<HTMLDivElement>(null);
+  const selectionTrigger = useRef<HTMLElement | null>(null);
   const [linkedPlaceId, setLinkedPlaceId] = useState("");
   const selectedPlace = catalog.find((place) => place.id === selectedId);
   const selectionAllowed =
@@ -51,12 +69,64 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
     !isMapFoodPlace(selectedPlace) ||
     includeFood ||
     linkedPlaceId === selectedId;
-  const selected =
-    selectedId && selectionAllowed
+  const selected = selectionCleared
+    ? undefined
+    : selectedId && selectionAllowed
       ? ranked.find((r) => r.place.id === selectedId)
       : ranked[0];
-  const activePlace =
-    (selectionAllowed ? selectedPlace : undefined) || selected?.place;
+  const activePlace = !selectionCleared
+    ? (selectionAllowed ? selectedPlace : undefined) || selected?.place
+    : undefined;
+  function selectPlace(id: string) {
+    const focused = document.activeElement;
+    selectionTrigger.current =
+      focused instanceof HTMLElement && focused.matches("button, a, [tabindex]")
+        ? focused
+        : null;
+    setSelectionCleared(false);
+    setSelectedId(id);
+    setSheetOpen(false);
+  }
+  function clearSelection() {
+    setSelectionCleared(true);
+    setSelectedId("");
+    setLinkedPlaceId("");
+    const trigger = selectionTrigger.current;
+    requestAnimationFrame(() => {
+      if (trigger?.isConnected && trigger.getClientRects().length)
+        trigger.focus({ preventScroll: true });
+      else
+        page.current
+          ?.querySelector<HTMLElement>(
+            '[data-map-engine="leaflet"], .sheet-handle',
+          )
+          ?.focus({ preventScroll: true });
+    });
+  }
+  useEffect(() => {
+    const root = page.current;
+    if (!root || root.closest(".lab-preview")) return;
+    const fit = () => {
+      const top = root.getBoundingClientRect().top + window.scrollY;
+      const navigation = window.matchMedia("(max-width: 700px)").matches
+        ? 68
+        : 0;
+      root.style.setProperty(
+        "--map-height",
+        `${Math.max(300, window.innerHeight - top - navigation)}px`,
+      );
+    };
+    fit();
+    const observer = new ResizeObserver(fit);
+    document
+      .querySelectorAll(".header, .context-bar, .connection-notice")
+      .forEach((element) => observer.observe(element));
+    window.addEventListener("resize", fit);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", fit);
+    };
+  }, []);
   const urlSelectionHandled = useRef(false);
   useEffect(() => {
     if (urlSelectionHandled.current) return;
@@ -93,100 +163,89 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
   }, [catalog, ranked, state, includeFood, selectedId, linkedPlaceId]);
   const night = isDark(env.now, env.weather.sunrise, env.weather.sunset);
   const unavailable = failure || rasterStatus === "unavailable";
-  const startTouch = useRef(0);
-  function swipe(end: number) {
-    const delta = end - startTouch.current;
-    if (Math.abs(delta) < 40) return;
-    const index = ranked.findIndex((r) => r.place.id === selected?.place.id);
-    setSelectedId(
-      ranked[(index + (delta < 0 ? 1 : -1) + ranked.length) % ranked.length]
-        ?.place.id || "",
+  const saved = !!activePlace && state.saved.includes(activePlace.id);
+  const travel = activePlace
+    ? (selected?.travel ??
+      estimatedRouting.estimate(
+        env.location,
+        activePlace.coordinates,
+        query.travelMode,
+      ).minutes)
+    : 0;
+  function savePlace() {
+    if (!activePlace) return;
+    update((current) => ({
+      ...current,
+      saved: saved
+        ? current.saved.filter((id) => id !== activePlace.id)
+        : [...current.saved, activePlace.id],
+    }));
+    if (!saved) track("place_saved", { id: activePlace.id });
+    toast(
+      saved ? "Taken off your list." : "Saved for a day that needs a plan.",
     );
   }
   return (
-    <div className="map-page">
-      <aside className={`map-sidebar ${sheetOpen ? "expanded" : ""}`}>
+    <div ref={page} className={`map-page ${styles.page}`}>
+      <aside
+        className={`map-sidebar ${styles.sidebar} ${sheetOpen ? `expanded ${styles.expanded}` : ""}`}
+        aria-label="Nearby places"
+      >
         <button
           className="sheet-handle"
           aria-label={sheetOpen ? "Collapse results" : "Expand results"}
+          aria-expanded={sheetOpen}
+          aria-controls="map-browse-content"
           onClick={() => setSheetOpen(!sheetOpen)}
         >
           {sheetOpen ? <ChevronDown size={18} /> : <ChevronUp size={18} />}
+          <span>
+            {sheetOpen ? "Back to map" : `Browse nearby · ${ranked.length}`}
+          </span>
         </button>
-        <div className="map-sidebar-heading">
-          <h1>
-            Your kind
-            <br />
-            of nearby.
-          </h1>
-          <p>One good place beats a hundred pins.</p>
-          <Refinement
-            mapFood={{ included: includeFood, onChange: setIncludeFood }}
-          />
-        </div>
-        <div className="map-results">
-          {ranked.slice(0, 5).map((r) => (
-            <button
-              key={r.place.id}
-              className={`map-result-row ${selected?.place.id === r.place.id ? "selected" : ""}`}
-              onClick={() => setSelectedId(r.place.id)}
-            >
-              <span className="map-result-score">{r.score}</span>
-              <span>
-                <strong>{r.place.name}</strong>
-                <small>
-                  ~{r.travel} min ·{" "}
-                  {r.place.cost === 0 ? "Free entry" : "Check admission"}
-                </small>
-              </span>
-              <ArrowUpRight size={17} />
-            </button>
-          ))}
-          {!ranked.length && (
-            <p className="notice">
-              No suitable results. Try more time or a wider travel range.
-            </p>
-          )}
-        </div>
-        {activePlace && (
-          <div
-            className="map-selected"
-            onTouchStart={(e) => {
-              startTouch.current = e.touches[0].clientX;
-            }}
-            onTouchEnd={(e) => swipe(e.changedTouches[0].clientX)}
-          >
-            {selected ? (
-              <PlaceCard item={selected} compact />
-            ) : (
-              <div className="map-ineligible">
-                <PlaceImage place={activePlace} />
-                <div>
-                  <h2>{activePlace.name}</h2>
-                  <p>
-                    {!includeFood && isMapFoodPlace(activePlace)
-                      ? "Food & coffee is hidden from map results. Enable it to include this place."
-                      : "Saved for another day. This place doesn’t fit the current conditions or preferences."}
-                  </p>
-                </div>
-              </div>
-            )}
-            <div className="map-selected-actions">
-              <Link href={`/place/${activePlace.id}`}>
-                See the plan <ArrowUpRight size={16} />
-              </Link>
-              <a
-                href={directionsUrl(activePlace.coordinates)}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Directions
-              </a>
-            </div>
+        <div id="map-browse-content" className={styles.browseContent}>
+          <div className="map-sidebar-heading">
+            <h1>
+              Your kind
+              <br />
+              of nearby.
+            </h1>
+            <p>One good place beats a hundred pins.</p>
+            <Refinement
+              mapFood={{ included: includeFood, onChange: setIncludeFood }}
+            />
           </div>
-        )}
+          <div className="map-results">
+            {ranked.slice(0, 5).map((r) => (
+              <button
+                key={r.place.id}
+                className={`map-result-row ${selected?.place.id === r.place.id ? "selected" : ""}`}
+                aria-pressed={activePlace?.id === r.place.id}
+                onClick={() => selectPlace(r.place.id)}
+              >
+                <span className="map-result-score">{r.score}</span>
+                <span>
+                  <strong>{r.place.name}</strong>
+                  <small>
+                    ~{r.travel} min ·{" "}
+                    {r.place.cost === 0 ? "Free entry" : "Check admission"}
+                  </small>
+                </span>
+                <ArrowUpRight size={17} />
+              </button>
+            ))}
+            {!ranked.length && (
+              <p className="notice">
+                No suitable results. Try more time or a wider travel range.
+              </p>
+            )}
+          </div>
+        </div>
       </aside>
-      <div className="map-canvas-wrap">
+      <div className={`map-canvas-wrap ${styles.canvas}`}>
+        <span className={styles.selectionStatus} role="status">
+          {activePlace ? `Selected ${activePlace.name}` : "No place selected"}
+        </span>
         {!failure && (
           <RasterMap
             ref={raster}
@@ -202,7 +261,7 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
             night={night}
             unavailable={rasterStatus === "unavailable"}
             reducedMotion={env.reducedMotion}
-            onSelect={setSelectedId}
+            onSelect={selectPlace}
             onMove={(c) => {
               setCenter(c);
               setMoved(true);
@@ -218,11 +277,87 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
             }))}
             origin={env.location}
             selected={activePlace}
-            onSelect={setSelectedId}
+            onSelect={selectPlace}
             onRetry={failure ? undefined : () => raster.current?.retry()}
           />
         )}
         <WeatherAtmosphere />
+        {activePlace && (
+          <article
+            className={`map-selected ${styles.selection}`}
+            aria-label={`Selected place: ${activePlace.name}`}
+            onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                event.preventDefault();
+                clearSelection();
+              }
+            }}
+          >
+            <div className={styles.photo}>
+              <PlaceImage key={activePlace.id} place={activePlace} priority />
+            </div>
+            <button
+              className={styles.close}
+              aria-label="Close selected place"
+              onClick={clearSelection}
+            >
+              <X size={18} />
+            </button>
+            <div className={styles.details}>
+              <p className={styles.category}>{activePlace.category}</p>
+              <h2>{activePlace.name}</h2>
+              <div className={styles.meta}>
+                {selected && (
+                  <span className={styles.match}>{selected.score}% match</span>
+                )}
+                <span>
+                  {query.travelMode === "walk" ? (
+                    <Footprints size={14} />
+                  ) : (
+                    <Car size={14} />
+                  )}{" "}
+                  ~{travel} min {query.travelMode === "walk" ? "walk" : "drive"}
+                </span>
+                <span>
+                  {activePlace.cost === 0
+                    ? "Free entry"
+                    : activePlace.costLabel}
+                </span>
+              </div>
+              {!selected && (
+                <p className={styles.notice}>
+                  {!includeFood && isMapFoodPlace(activePlace)
+                    ? "Food & coffee is hidden from map results. Enable it to include this place."
+                    : "This place doesn’t fit the current conditions or preferences."}
+                </p>
+              )}
+              <div className={styles.actions}>
+                <button
+                  onClick={savePlace}
+                  aria-label={
+                    saved
+                      ? `Unsave ${activePlace.name}`
+                      : `Save ${activePlace.name}`
+                  }
+                  aria-pressed={saved}
+                >
+                  <Bookmark size={17} fill={saved ? "currentColor" : "none"} />
+                  <span>{saved ? "Saved" : "Save"}</span>
+                </button>
+                <Link href={`/place/${activePlace.id}`}>
+                  See the plan <ArrowUpRight size={16} />
+                </Link>
+                <a
+                  href={directionsUrl(activePlace.coordinates)}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Directions <ArrowUpRight size={14} />
+                </a>
+              </div>
+            </div>
+          </article>
+        )}
         <div className="map-status" role="status">
           <Layers size={15} />
           {unavailable

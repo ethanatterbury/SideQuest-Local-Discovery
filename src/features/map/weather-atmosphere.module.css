@@ -1,0 +1,304 @@
+/* Authored fractal-density textures are pre-rendered once; only their transform
+   and opacity animate. Geographic controls stay above the atmosphere. */
+.root {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  isolation: isolate;
+}
+.root > div {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.root .light {
+  opacity: 1;
+}
+.sunrise {
+  background: linear-gradient(125deg, #efb08847, #ecd6bb16 48%, #9caabe28);
+}
+.morning {
+  background:
+    radial-gradient(ellipse at 15% 12%, #ffedbc44, transparent 75%),
+    linear-gradient(135deg, #b8dce214, transparent);
+}
+.midday {
+  background: radial-gradient(ellipse at 52% 0%, #fffadc30, transparent 80%);
+}
+.golden-hour {
+  background: linear-gradient(110deg, #e9a64752, #ecc67724 58%, #9e818c14);
+}
+.sunset {
+  background: linear-gradient(110deg, #e17a624a, #bb779437 60%, #72779c35);
+}
+.evening {
+  background: linear-gradient(135deg, #697b994f, #5a698936);
+}
+.midnight {
+  background: linear-gradient(145deg, #182f5366, #283f614b);
+}
+.root .temperature {
+  background: linear-gradient(
+    135deg,
+    rgba(var(--temperature-color), 0.85),
+    transparent 90%
+  );
+  opacity: var(--temperature-opacity);
+}
+.root .clouds {
+  overflow: hidden;
+}
+.root .clouds .cloud {
+  position: absolute;
+  inset: -18%;
+  opacity: var(--cloud-opacity);
+  border-radius: 0;
+  will-change: transform;
+  background: url("/weather/cloud-density.webp") center / 100% 100% no-repeat;
+  animation: nearDrift var(--cloud-duration) ease-in-out infinite alternate;
+}
+.root .clouds .far {
+  inset: -25%;
+  opacity: calc(var(--cloud-opacity) * 0.56);
+  background: url("/weather/cloud-shadow.webp") 30% 65% / 100% 100% no-repeat;
+  animation: farDrift calc(var(--cloud-duration) * 1.4) ease-in-out -17s
+    infinite alternate;
+}
+.root .cloudVeil {
+  position: absolute;
+  inset: -45% -25% 32%;
+  background: url("/weather/cloud-density.webp") 70% 0 / 100% 100% no-repeat;
+  opacity: calc(var(--cloud-opacity) * 0.7);
+  animation: farDrift calc(var(--cloud-duration) * 1.8) ease-in-out -9s infinite
+    alternate;
+}
+.root[data-weather="thunderstorm"] .clouds .cloud {
+  filter: brightness(0.7) saturate(0.75);
+}
+.root .mist {
+  inset: -15%;
+  background: linear-gradient(
+    105deg,
+    #ecf1eb30,
+    #f1f5eebb 27%,
+    #edf2e94a 55%,
+    #f2f4ecbb 82%,
+    #eff3ee40
+  );
+  opacity: var(--fog-opacity);
+  animation: mistDrift 26s ease-in-out infinite alternate;
+}
+.root .sunlight {
+  background: radial-gradient(
+    ellipse 54% 70% at 5% 0%,
+    #fff2bd40,
+    transparent 75%
+  );
+}
+.root .heat {
+  background: radial-gradient(ellipse at 15% 95%, #ecc05b9c, transparent 66%);
+  opacity: var(--heat-opacity);
+  animation: heatBreath 9s ease-in-out infinite alternate;
+}
+.root .particles {
+  overflow: hidden;
+}
+.root .particles .drop {
+  position: absolute;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, #416e8900, #416e89aa 35%, #204f78e0);
+  box-shadow: 1px 0 0 #ffffffb8;
+  transform: rotate(-12deg);
+  animation: rainfall 1s linear infinite;
+}
+.root[data-time="midnight"] .particles .drop,
+.root[data-time="evening"] .particles .drop {
+  background: linear-gradient(to bottom, #c6e3f400, #c6e3f4dd);
+  box-shadow: 1px 0 0 #315e8455;
+}
+.root .particles .flake {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 2px 1px #617b965c;
+  animation: snowfall 9s linear infinite;
+}
+.root .ripples .ripple {
+  position: absolute;
+  width: 22px;
+  height: 7px;
+  border: 1px solid #426e88;
+  border-top-color: #f2fcff;
+  box-shadow: 0 1px 1px #2e526b25;
+  border-radius: 50%;
+  opacity: 0;
+  animation: impact 2s ease-out infinite;
+}
+.root .wind .windTrail {
+  position: absolute;
+  left: -85%;
+  height: 42px;
+  mask-image: linear-gradient(90deg, transparent, #000 20% 72%, transparent);
+  opacity: 0;
+  animation: windTravel var(--wind-duration) linear infinite;
+}
+.windTrail svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke: #527784;
+  stroke-width: 1.8;
+}
+.windTrail path + path {
+  stroke: #f9fcf4;
+  stroke-width: 1.2;
+}
+.root .lightning {
+  background: radial-gradient(ellipse at 66% 0%, #e3ecffb0, #e7efff00 62%);
+  opacity: 0;
+  animation: distantLightning 17s ease-in-out -0.25s infinite;
+}
+.lightning svg {
+  width: 100%;
+  height: 70%;
+  fill: none;
+  stroke: #ecf5ff;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3;
+  filter: drop-shadow(0 3px 7px #bad6f7);
+}
+.root .stillWeather {
+  opacity: 0.22;
+}
+.stillRain {
+  background: repeating-linear-gradient(
+    104deg,
+    transparent 0 29px,
+    #365f795c 30px 31px,
+    transparent 32px 67px
+  );
+  mask-image: linear-gradient(transparent 4%, #0007 40%, #000 95%);
+}
+.stillSnow {
+  background-image:
+    radial-gradient(circle, #fff 1.6px, transparent 2.6px),
+    radial-gradient(circle, #fff 2.5px, transparent 3.5px);
+  background-size:
+    41px 61px,
+    91px 83px;
+  background-position:
+    7px 9px,
+    23px 47px;
+}
+.stillWind {
+  background: repeating-linear-gradient(
+    173deg,
+    transparent 0 60px,
+    #61848b70 61px 62px,
+    transparent 63px 115px
+  );
+  mask-image: radial-gradient(ellipse, #000, transparent 70%);
+}
+.root[data-motion="reduced"] *,
+.root[data-motion="reduced"] *::before {
+  animation: none !important;
+}
+.root:global(.paused) * {
+  animation-play-state: paused !important;
+}
+@keyframes nearDrift {
+  from {
+    transform: translate(-5%, -2%) scale(1);
+  }
+  to {
+    transform: translate(7%, 4%) scale(1.05);
+  }
+}
+@keyframes farDrift {
+  from {
+    transform: translate(5%, -3%);
+  }
+  to {
+    transform: translate(-6%, 4%);
+  }
+}
+@keyframes mistDrift {
+  from {
+    transform: translate(-3%, 1%);
+  }
+  to {
+    transform: translate(3%, -1%);
+  }
+}
+@keyframes rainfall {
+  from {
+    transform: translate(0, calc(var(--fall) * -0.5)) rotate(-12deg);
+  }
+  to {
+    transform: translate(var(--drift), calc(var(--fall) * 0.5)) rotate(-12deg);
+  }
+}
+@keyframes snowfall {
+  0% {
+    transform: translate(0, calc(var(--fall) * -0.5));
+  }
+  50% {
+    transform: translate(calc(var(--drift) * 0.4 - 14px), 0);
+  }
+  100% {
+    transform: translate(var(--drift), calc(var(--fall) * 0.5));
+  }
+}
+@keyframes impact {
+  0%,
+  12% {
+    opacity: 0;
+    transform: scale(0.25);
+  }
+  18% {
+    opacity: var(--rain-opacity);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+@keyframes windTravel {
+  0% {
+    opacity: 0;
+    transform: translateX(0) translateY(8px);
+  }
+  15%,
+  65% {
+    opacity: var(--wind-opacity);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(330%) translateY(-22px);
+  }
+}
+/* One gentle early glow establishes the storm; repeats are 17 seconds apart.
+   The fade lasts over a second, with no rapid or alternating flashes. */
+@keyframes distantLightning {
+  0%,
+  10%,
+  100% {
+    opacity: 0;
+  }
+  2% {
+    opacity: 0.42;
+  }
+}
+@keyframes heatBreath {
+  from {
+    transform: translateY(2%);
+  }
+  to {
+    transform: translateY(-2%);
+  }
+}

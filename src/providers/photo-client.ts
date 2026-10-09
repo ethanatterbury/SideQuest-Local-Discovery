@@ -19,7 +19,8 @@ function next() {
 export function findPlacePhoto(place: Place): Promise<Image | null> {
   const query = placePhotoQuery(place);
   const indexed = indexedPhoto(query);
-  if (indexed) return Promise.resolve(indexed.image);
+  // A Commons miss does not mean the venue has no website photograph.
+  if (indexed?.image) return Promise.resolve(indexed.image);
   const key = photoIdentity(query);
   const cached = cache.get(key);
   if (cached && cached.until > Date.now()) return Promise.resolve(cached.image);
@@ -69,6 +70,17 @@ export function findPlacePhoto(place: Place): Promise<Image | null> {
               safeArchivePhotoUrl(value.source, true) &&
               archive?.source === value.source;
             if (
+              (url.protocol === "https:" &&
+                !url.username &&
+                !url.password &&
+                !url.port &&
+                value.strategy === "official-website" &&
+                source.protocol === "https:" &&
+                !source.username &&
+                !source.password &&
+                !source.port &&
+                source.hostname.replace(/^www\./, "") ===
+                  new URL(place.website).hostname.replace(/^www\./, "")) ||
               trustedArchive ||
               (url.protocol === "https:" &&
                 !url.username &&

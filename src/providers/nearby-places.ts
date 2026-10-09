@@ -1,5 +1,9 @@
 import type { Coordinates, Place } from "@/domain/models";
 import { PLACES } from "@/providers/places";
+import {
+  effectiveCompany,
+  inferVenueSuitability,
+} from "@/domain/venue-suitability";
 import regionalSnapshot from "./data/regional-osm.json";
 
 export type NearbyResult = {
@@ -256,11 +260,7 @@ export function normalizeOsmElement(value: unknown): Place | null {
   }
   const source = `https://www.openstreetmap.org/${e.type}/${e.id}`;
   const familyFeatures: string[] = [];
-  if (soft)
-    familyFeatures.push(
-      "Soft play",
-      "Toddler-friendly play — check session rules",
-    );
+  if (soft) familyFeatures.push("Soft play");
   if (leisure === "playground") familyFeatures.push("Playground");
   if (t.changing_table === "yes" || t["changing_table:available"] === "yes")
     familyFeatures.push("Changing table");
@@ -290,7 +290,7 @@ export function normalizeOsmElement(value: unknown): Place | null {
   const description =
     clean(t.description) ||
     `${category} mapped by OpenStreetMap contributors. Check access, opening times and booking requirements with the venue.`;
-  return {
+  const place: Place = {
     id: `osm-${e.type}-${e.id}`,
     name,
     area:
@@ -332,6 +332,13 @@ export function normalizeOsmElement(value: unknown): Place | null {
     commons: commonsReference(t.wikimedia_commons),
     aliases: osmAliases(t, name),
   };
+  place.suitability = { ...inferVenueSuitability(place), source: "osm" };
+  place.company = effectiveCompany(place);
+  if (place.suitability.requiresAgeCheck)
+    place.notes.push(
+      "This activity may have minimum age, height, swimming or supervision rules. Unknown restrictions do not establish suitability for children.",
+    );
+  return place;
 }
 export function normalizeOsmResponse(value: unknown): Place[] {
   if (
