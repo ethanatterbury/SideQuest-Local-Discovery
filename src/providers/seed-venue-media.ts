@@ -1,6 +1,7 @@
 import type { Place } from "@/domain/models";
 import seedMedia from "./data/seed-venue-media.json";
 import { approvedPhoto } from "./photo-policy";
+import { selectPreparedPhoto } from "./photo-selection";
 // Only the small offline seed is bundled. Regional media arrives in the catalogue response.
 const entries = new Map(
   (
@@ -9,9 +10,7 @@ const entries = new Map(
 );
 export function seedVenueImage(place: Place): Place["image"] {
   const supplied = approvedPhoto(place.image);
-  return supplied?.url.startsWith("/images/")
-    ? supplied
-    : approvedPhoto(entries.get(place.id)) || supplied;
+  return selectPreparedPhoto([supplied, approvedPhoto(entries.get(place.id))]);
 }
 export function withSeedPhoto(place: Place): Place {
   const image = seedVenueImage(place);

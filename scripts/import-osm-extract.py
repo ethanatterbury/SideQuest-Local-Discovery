@@ -12,7 +12,7 @@ import urllib.request
 import osmium
 
 REGIONS = ("berkshire", "surrey", "hampshire")
-KEYS = {"name", "name:en", "leisure", "tourism", "amenity", "sport", "website",
+KEYS = {"name", "name:en", "description", "operator", "brand", "leisure", "tourism", "amenity", "sport", "website",
         "contact:website", "addr:city", "addr:town", "addr:county", "addr:street",
         "addr:postcode", "fee", "access", "indoor", "lit", "opening_hours",
         "wikidata", "wikipedia", "image", "wikimedia_commons", "alt_name", "old_name",
@@ -58,6 +58,21 @@ class Venues(osmium.SimpleHandler):
                 "lat": round((min(lat) + max(lat)) / 2, 7),
                 "lon": round((min(lng) + max(lng)) / 2, 7), "tags": tags}
 
+    def area(self, obj):
+        # Closed ways are handled above. Preserve separately mapped multipolygon venues.
+        if obj.from_way():
+            return
+        tags = self.tags(obj)
+        if not tags:
+            return
+        points = [(node.lon, node.lat) for ring in obj.outer_rings()
+                  for node in ring if node.location.valid()]
+        if points:
+            lng, lat = zip(*points)
+            self.records[f"relation-{obj.orig_id()}"] = {"type": "relation", "id": obj.orig_id(),
+                "lat": round((min(lat) + max(lat)) / 2, 7),
+                "lon": round((min(lng) + max(lng)) / 2, 7), "tags": tags}
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--work-dir", default="work/osm-import")
@@ -65,6 +80,7 @@ def main():
     parser.add_argument("--regions", nargs="+", default=list(REGIONS), help="Geofabrik UK path(s), e.g. scotland wales england/greater-london")
     parser.add_argument("--pbf", nargs="+", help="Existing local UK extracts; no download")
     parser.add_argument("--max-download-mb", type=int, default=400, help="Hard per-file quota; no billable overflow")
+    parser.add_argument("--location-storage", default="flex_mem", help="Pyosmium location cache; use a file-backed index for national extracts")
     args = parser.parse_args()
     work = Path(args.work_dir)
     work.mkdir(parents=True, exist_ok=True)
@@ -95,7 +111,7 @@ def main():
             temporary.replace(destination)
         venues = Venues(records)
         # Filter in C++ before Python callbacks; location caching still sees every node.
-        processor = osmium.FileProcessor(str(destination)).with_locations("flex_mem")
+        processor = osmium.FileProcessor(str(destination)).with_locations(args.location_storage).with_areas()
         processor = processor.with_filter(osmium.filter.KeyFilter(
             "leisure", "tourism", "amenity", "sport", "amusement_ride", "roller_coaster", "shop"))
         for obj in processor:
@@ -103,6 +119,8 @@ def main():
                 venues.node(obj)
             elif obj.is_way():
                 venues.way(obj)
+            elif obj.is_area():
+                venues.area(obj)
         sources.append(url)
         print(f"{region}: {len(records)} named venues imported", flush=True)
     output = Path(args.output)

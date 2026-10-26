@@ -3,6 +3,8 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
+    "prepare:england": "node scripts/prepare-england.mjs",
+    "audit:catalog": "node scripts/audit-catalog.mjs",
     "predev": "npm run prepare:data",
     "dev": "next dev --hostname 0.0.0.0",
     "build": "npm run prepare:data && next build",

@@ -30,7 +30,11 @@ export type VenueSuitability = {
 export function inferVenueSuitability(
   place: Pick<Place, "category" | "intents" | "familyFeatures" | "ageRange">,
 ): VenueSuitability {
-  const category = place.category.toLowerCase().replace(/[-_]/g, " ");
+  const category = place.category
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .replace(/[-_]/g, " ");
   const features = (place.familyFeatures ?? []).map((feature) =>
     feature.toLowerCase().replace(/[-_]/g, " "),
   );
@@ -87,7 +91,11 @@ export function inferVenueSuitability(
     audience = "all";
     activities.push("gardens");
     if (place.intents.includes("walk")) activities.push("walk");
-  } else if (place.intents.includes("food")) {
+  } else if (
+    has(
+      /\brestaurant\b|\bcaf[eé]\b|\bcoffee\b|\bice cream\b|\bfood\b|\bpub\b|\bbar\b/,
+    )
+  ) {
     kind = "food";
     audience = "all";
     activities.push("food");
@@ -110,23 +118,91 @@ export function inferVenueSuitability(
   };
 }
 
-export function venueSuitability(place: Place): VenueSuitability {
-  return place.suitability ?? inferVenueSuitability(place);
+type Classification = Pick<Place, "category"> &
+  Partial<
+    Pick<
+      Place,
+      | "intents"
+      | "familyFeatures"
+      | "ageRange"
+      | "suitability"
+      | "optionalCategory"
+      | "experiences"
+    >
+  >;
+const experienceLabels: Partial<Record<Activity, string>> = {
+  "soft-play": "Indoor soft play",
+  playground: "Playground",
+  museum: "Museum",
+  cinema: "Cinema",
+  animals: "Zoo",
+  gardens: "Gardens",
+  climbing: "Climbing",
+  swimming: "Swimming",
+  walk: "Walk",
+};
+export function primaryExperienceActivities(
+  place: Pick<Classification, "experiences">,
+): Activity[] {
+  return [
+    ...new Set(
+      (place.experiences ?? []).flatMap((record) => {
+        const e = record.evidence;
+        if (
+          !record.primary ||
+          !["official", "osm", "wikidata"].includes(e.source) ||
+          !["reported", "verified"].includes(e.confidence) ||
+          !e.url?.startsWith("https://")
+        )
+          return [];
+        return record.activities.filter(
+          (activity) => experienceLabels[activity],
+        );
+      }),
+    ),
+  ];
+}
+export function venueSuitability(place: Classification): VenueSuitability {
+  const primary = primaryExperienceActivities(place);
+  if (primary.length) {
+    const derived = inferVenueSuitability({
+      category: primary.map((a) => experienceLabels[a]).join(" / "),
+      intents: place.intents ?? [],
+      ageRange: place.ageRange,
+    });
+    return {
+      ...derived,
+      activities: [...new Set([...derived.activities, ...primary])],
+    };
+  }
+  return (
+    place.suitability ??
+    inferVenueSuitability({ ...place, intents: place.intents ?? [] })
+  );
 }
 
 /** Opt-in categories use mapped categories, never venue names. */
-export function optionalCategory(place: Place): OptionalCategory | undefined {
+export function optionalCategory(
+  place: Classification,
+): OptionalCategory | undefined {
+  if (primaryExperienceActivities(place).length) return undefined;
   if (place.optionalCategory) return place.optionalCategory;
-  const category = place.category.toLowerCase().replace(/[-_]/g, " ");
+  const category = place.category
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .replace(/[-_]/g, " ");
   if (/\bpubs?\b|\bbars?\b|\bnightclub\b/.test(category)) return "pubs";
   if (venueSuitability(place).kind === "fitness") return "fitness";
-  if (/\bshops?\b|\bretail\b|\bshopping\b|\bsupermarket\b/.test(category))
-    return "shops";
   if (
     venueSuitability(place).kind === "food" ||
-    /\brestaurant\b|\bcaf[eé]\b|\btakeaway\b/.test(category)
+    /\b(?:restaurants?|caf[eé]s?|coffee|ice cream|bakery|bakeries|bistro|brasserie|deli|diner|tea\s?rooms?|food|pizzeria|takeaway)\b/.test(
+      category,
+    )
   )
     return "food";
+  if (/\bshops?\b|\bretail\b|\bshopping\b|\bsupermarket\b/.test(category))
+    return "shops";
   return undefined;
 }
 

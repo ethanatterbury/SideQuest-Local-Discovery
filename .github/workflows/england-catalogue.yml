@@ -1,0 +1,37 @@
+name: Prepare England catalogue
+on: workflow_dispatch
+permissions:
+  contents: read
+concurrency:
+  group: england-catalogue
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: pip install osmium==4.3.2
+      - run: python -m unittest discover -s tests -p test_import_osm_extract.py
+      - run: npm run prepare:england
+      - run: npm run audit:catalog -- src/providers/data/regions/england.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: england-catalogue
+          path: |
+            public/data/venues/
+            public/venue-images/
+            public/data/photos/
+            docs/image-credits.md
+            work/england/coverage.json
+            work/england/catalog-audit.json
+            src/providers/data/regions/england.json
+          retention-days: 7
