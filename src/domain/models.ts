@@ -1,9 +1,23 @@
 export type Coordinates = { lat: number; lng: number };
 export type Location = Coordinates & { name: string };
 export type OptionalCategory = "food" | "pubs" | "fitness" | "shops";
-export type Evidence = { source: "osm" | "official" | "wikidata" | "inferred"; url?: string; checkedAt?: string; confidence: "reported" | "verified" | "unknown" };
-export type AccessNeeds = { wheelchair?: boolean; stepFree?: boolean; dogs?: boolean };
-export type PlaceAccess = { wheelchair?: "yes" | "limited" | "no"; stepFree?: "yes" | "no"; dogs?: "yes" | "no"; public?: boolean };
+export type Evidence = {
+  source: "osm" | "official" | "wikidata" | "inferred";
+  url?: string;
+  checkedAt?: string;
+  confidence: "reported" | "verified" | "unknown";
+};
+export type AccessNeeds = {
+  wheelchair?: boolean;
+  stepFree?: boolean;
+  dogs?: boolean;
+};
+export type PlaceAccess = {
+  wheelchair?: "yes" | "limited" | "no";
+  stepFree?: "yes" | "no";
+  dogs?: "yes" | "no";
+  public?: boolean;
+};
 
 export type WeatherKind =
   | "clear"
@@ -94,6 +108,12 @@ export type Place = {
   coordinates: Coordinates;
   category: string;
   optionalCategory?: OptionalCategory;
+  /** Primary experiences need mapped/official evidence; a venue name is not evidence. */
+  experiences?: {
+    activities: Activity[];
+    primary: boolean;
+    evidence: Evidence;
+  }[];
   access?: PlaceAccess;
   evidence?: Record<string, Evidence>;
   parentId?: string;

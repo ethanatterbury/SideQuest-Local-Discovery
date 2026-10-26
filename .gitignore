@@ -12,3 +12,4 @@ public/venue-images/
 *.pyc
 
 public/data/venues/
+src/providers/data/regions/england.json

@@ -464,6 +464,22 @@ export function normalizeOsmElement(value: unknown): Place | null {
       knownEvidence?.url ||
       source,
     source,
+    ...(category === "Indoor soft play" &&
+    ["indoor_play", "soft_play"].includes(leisure)
+      ? {
+          experiences: [
+            {
+              activities: ["soft-play" as const],
+              primary: true,
+              evidence: {
+                source: "osm" as const,
+                confidence: "reported" as const,
+                url: source,
+              },
+            },
+          ],
+        }
+      : {}),
     tagline: `${category} near you`,
     description,
     notes,
