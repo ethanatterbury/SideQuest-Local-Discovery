@@ -3,7 +3,7 @@ import type { MapCamera } from "./map-camera";
 export const WEATHER_FRAGMENT = `
 precision highp float;
 uniform vec2 resolution;
-uniform float time,rain,snow,wind,direction,gust,cloud,fog,night,golden,motion,storm,cameraX,cameraY,cameraScale,viewportWidth,viewportHeight;
+uniform float time,rain,snow,wind,direction,gust,cloud,fog,night,golden,motion,storm;
 uniform sampler2D waterMask;
 float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}
@@ -12,22 +12,33 @@ void main(){
  vec2 uv=gl_FragCoord.xy/resolution;vec2 aspect=vec2(resolution.x/resolution.y,1.);
  float t=time*motion; vec2 breeze=vec2(sin(direction),cos(direction));
  float turbulence=sin(t*.7)*gust*.12;vec2 p=uv*aspect;
- vec2 world=(vec2(cameraX,cameraY)+(uv-vec2(.5))*vec2(viewportWidth,-viewportHeight)/max(cameraScale,1.))*1800.;
- float clouds=fbm(world+breeze*t*(.006+wind*.028));
- float shadow=smoothstep(.35,.78,clouds)*cloud*.19;
+ // Atmospheric coordinates are screen-space. Map pan/zoom never moves or scales clouds.
+ // Unbounded procedural density has no texture edges, even at the widest map zoom.
+ vec2 drift=breeze*t*(.026+wind*.045);
+ vec2 cloudPoint=p*3.4+drift;
+ float clouds=fbm(cloudPoint);
+ float density=smoothstep(.39,.76,clouds);
+ float litDensity=smoothstep(.39,.76,fbm(cloudPoint+vec2(-.08,.10)));
+ float rim=max(0.,density-litDensity);
+ float shadow=density*cloud*.26;
  float mist=fbm(p*2.2+vec2(t*.012,0.));float haze=fog*(.13+mist*.35);
  vec3 tint=mix(vec3(.18,.27,.34),vec3(.95,.65,.31),golden);
- float shade=night*.30+shadow;vec3 color=mix(tint,vec3(.83,.87,.83),haze/(shade+haze+.001));float alpha=shade+haze;
+ float shade=night*.27;vec3 color=tint;float alpha=shade;
+ vec3 cloudColor=mix(vec3(.48,.57,.64),vec3(.96,.98,1.),clamp(.55+rim*3.2,0.,1.));
+ cloudColor=mix(cloudColor,vec3(.25,.33,.46),night*.65);
+ color=mix(color,cloudColor,shadow/(alpha+shadow+.001));alpha+=shadow;
+ color=mix(color,vec3(.87,.92,.95),haze/(alpha+haze+.001));alpha+=haze;
  float solar=pow(max(0.,1.-length((uv-vec2(.1,.88))*vec2(.7,1.))),3.)*(1.-cloud)*(1.-night)*.08;
  color=mix(color,vec3(1.,.84,.52),solar/(alpha+solar+.001));alpha+=solar;
  float drops=0.,flakes=0.;
+ float rainDensity=step(.0001,rain)*(.14+.60*sqrt(rain));
  for(int i=0;i<3;i++){
-  float depth=float(i)+1.;vec2 q=p*vec2(85.,15.)/depth;
-  q.x+=(breeze.x*wind*.6+turbulence)*q.y;
-  q.y+=t*(12.+rain*15.)/depth;
+  float depth=float(i)+1.;vec2 q=p*vec2(110.,52.)/depth;
+  q.x+=(breeze.x*(.45+wind*.75)+turbulence)*q.y;
+  q.y+=t*(16.+rain*28.+depth*3.5)/sqrt(depth);
   vec2 cell=floor(q),f=fract(q);float seed=hash(cell);
-  float streak=(1.-smoothstep(.025,.07,abs(f.x-.5)))*(1.-smoothstep(.2,.8,abs(f.y-.5)));
-  drops+=streak*step(1.-rain*.24,seed)*(.24+depth*.08);
+  float streak=(1.-smoothstep(.025,.07,abs(f.x-.5)))*(1.-smoothstep(.08,.40,abs(f.y-.5)));
+  drops+=streak*step(1.-rainDensity*.30,seed)*(.36+depth*.10);
   vec2 s=p*(65./depth);s+=breeze*t*wind*.6;s.y+=t*(.6+depth*.22);s.x+=sin(s.y*.3+t)*(.15+wind*.5);
   vec2 sc=floor(s),sf=fract(s)-.5;float radius=.045+depth*.018;
   flakes+=(1.-smoothstep(radius*.5,radius,length(sf)))*step(1.-snow*.35,hash(sc))*.55;
@@ -38,7 +49,10 @@ void main(){
  float rippleAge=fract(t*.55+hash(rippleFloor));
  float ring=(1.-smoothstep(.015,.045,abs(length(ripplePoint*vec2(1.,1.6))-rippleAge*.48)))*(1.-rippleAge);
  float ripples=water*rain*ring*.22*motion;
- float precipitation=clamp(drops+flakes+ripples,0.,.7);
+ float rainAlpha=clamp(drops,0.,.52);
+ vec3 rainColor=mix(vec3(.22,.37,.47),vec3(.80,.90,1.),night);
+ color=mix(color,rainColor,rainAlpha/(alpha+rainAlpha+.001));alpha+=rainAlpha;
+ float precipitation=clamp(flakes+ripples,0.,.65);
  color=mix(color,vec3(.93,.97,1.),precipitation/(alpha+precipitation+.001));alpha+=precipitation;
  // Broad, infrequent storm illumination with a soft 1.8s envelope; never rapid flashing.
  float cycle=mod(t,29.);float illumination=exp(-pow((cycle-18.)/0.9,2.))*storm*motion*.14;

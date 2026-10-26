@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/manrope";
 import "@fontsource-variable/dm-sans";
 import "./globals.css";
+import "./discovery-refresh.css";
 import { AppProviders } from "@/components/providers";
 import { Shell } from "@/components/shell";
 export const metadata: Metadata = {

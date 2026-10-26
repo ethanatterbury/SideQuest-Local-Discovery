@@ -38,6 +38,10 @@ const fixtureImage = sharp(
   .toBuffer();
 
 async function fixtures(page: Page, delayedPhoto = false) {
+  // These journeys exercise live delivery; geographic delivery has its own fixture suite.
+  await page.route("**/data/venues/manifest.json", (route) =>
+    route.fulfill({ json: { cells: {} } }),
+  );
   await localMapFixture(page);
   await page.addInitScript(() => {
     sessionStorage.setItem(
@@ -82,7 +86,8 @@ async function fixtures(page: Page, delayedPhoto = false) {
             source:
               "https://commons.wikimedia.org/wiki/File:Selection_fixture.png",
             credit: "Fixture",
-            license: "Fixture",
+            license: "CC0",
+            checkedAt: "2026-10-26T12:00:00Z",
           },
           source: "live",
         },
@@ -284,4 +289,37 @@ test("changing company clears child ages, child activity and a stale child searc
   await expect(page.locator(".map-results")).not.toContainText(
     "Test Child Play",
   );
+});
+
+test("prepared area data arriving after live discovery preserves fresh venue details", async ({
+  page,
+}) => {
+  await fixtures(page);
+  await page.route("**/api/places?**", (route) =>
+    route.fulfill({
+      json: { places: [{ ...venue, name: "Fresh Museum" }], source: "live" },
+    }),
+  );
+  await page.route("**/data/venues/manifest.json", (route) =>
+    route.fulfill({ json: { cells: { "205_-3": { hash: "fixture" } } } }),
+  );
+  let release!: () => void;
+  const ready = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route("**/data/venues/205_-3.json?**", async (route) => {
+    await ready;
+    await route.fulfill({
+      json: { places: [{ ...venue, name: "Old Museum" }] },
+    });
+  });
+  await page.goto(`/map?place=${venue.id}`);
+  await expect(page.locator(".map-selected h2")).toHaveText("Fresh Museum");
+  const response = page.waitForResponse((url) =>
+    url.url().includes("205_-3.json"),
+  );
+  release();
+  expect(await (await response).finished()).toBeNull();
+  await page.getByLabel("Search map outings").fill("Fresh Museum");
+  await expect(page.locator(".map-selected h2")).toHaveText("Fresh Museum");
 });

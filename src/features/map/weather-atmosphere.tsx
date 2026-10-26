@@ -10,9 +10,19 @@ export function WeatherAtmosphere() {
   const { env, overrides } = useApp();
   const canvas = useRef<HTMLCanvasElement>(null);
   const latest = useRef({ env, overrides });
+  const wake = useRef<(() => void) | null>(null);
   useEffect(() => {
     latest.current = { env, overrides };
   }, [env, overrides]);
+  const renderingKey = JSON.stringify([
+    env.weather,
+    env.reducedMotion,
+    overrides.atmosphereQuality,
+    solarPhase(env.now, env.weather.sunrise, env.weather.sunset),
+  ]);
+  useEffect(() => {
+    wake.current?.();
+  }, [renderingKey]);
   const [fallback, setFallback] = useState(false);
   useEffect(() => {
     const element = canvas.current;
@@ -57,7 +67,7 @@ export function WeatherAtmosphere() {
         low =
           overrides.atmosphereQuality === "low" ||
           (overrides.atmosphereQuality !== "high" && (mobile || adaptive));
-      const interval = low ? 1000 / 30 : 1000 / 60;
+      const interval = low ? 1000 / 24 : 1000 / 30;
       if (at - last >= interval - 1) {
         if (last && at - last > 60) slow++;
         else slow = Math.max(0, slow - 1);
@@ -88,7 +98,7 @@ export function WeatherAtmosphere() {
             golden: phase === "golden-hour" ? 1 : phase === "sunset" ? 0.6 : 0,
             motion: env.reducedMotion ? 0 : 1,
           },
-          low ? 0.75 : Math.min(window.devicePixelRatio, 1.5),
+          low ? 0.65 : Math.min(window.devicePixelRatio, 1.25),
         );
       }
       // Reduced motion draws a static density field, including precipitation.
@@ -117,18 +127,13 @@ export function WeatherAtmosphere() {
     const resize = new ResizeObserver(restart);
     resize.observe(element);
     restart();
-    // Read changing Lab values without allocating a new context; also wake static reduced-motion previews.
-    let previousMotion = latest.current.env.reducedMotion;
-    const refresh = setInterval(() => {
-      const reduced = latest.current.env.reducedMotion;
-      if (reduced || previousMotion !== reduced) restart();
-      previousMotion = reduced;
-    }, 350);
+    // A static preview draws only when its weather or dimensions change.
+    wake.current = restart;
     return () => {
       wrapper?.removeEventListener("sq-camera", updateCamera);
       disposed = true;
       cancelAnimationFrame(frame);
-      clearInterval(refresh);
+      wake.current = null;
       resize.disconnect();
       document.removeEventListener("visibilitychange", restart);
       element.removeEventListener("webglcontextlost", lost);

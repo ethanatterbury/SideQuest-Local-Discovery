@@ -38,6 +38,10 @@ const costly: Place = {
   cost: 250,
 };
 async function fixtures(page: Page) {
+  // These journeys exercise live delivery; geographic delivery has its own fixture suite.
+  await page.route("**/data/venues/manifest.json", (route) =>
+    route.fulfill({ json: { cells: {} } }),
+  );
   await page.addInitScript(() => {
     sessionStorage.setItem(
       "sidequest:environment",
@@ -115,7 +119,10 @@ test("Map excludes food by default and adds coffee alongside the chosen outing",
   await expect(
     page.getByRole("button", { name: /Select Unaffordable Café/ }),
   ).toHaveCount(0);
-  await page.getByRole("button", { name: /Select Test Café/ }).click();
+  await page
+    .locator(".map-results")
+    .getByRole("button", { name: /Test Café/ })
+    .click();
   await expect(page.locator(".map-selected")).toContainText("Test Café");
   await includeFood.uncheck();
   await expect(

@@ -5,12 +5,14 @@ import type {
   Environment,
   LocalState,
   Place,
+  Coordinates,
 } from "@/domain/models";
 import { PLACES } from "./places";
 import { nearbyCells, cellId, inUK } from "@/domain/geo-cells";
 import { LOAD_BUDGET } from "@/domain/performance";
 import { readArea, writeArea } from "./area-storage";
 import { seedVenueImage, withSeedPhoto } from "./seed-venue-media";
+import { distanceKm } from "./routing";
 
 export type CatalogStatus = "loading" | "live" | "cached" | "fallback";
 const KEY = "sidequest:places:v1";
@@ -52,18 +54,28 @@ export function mergeCatalog(
   existing: Place[],
   incoming: Place[],
   pinned: ReadonlySet<string> = new Set(),
+  origin?: Coordinates,
 ): Place[] {
   const merged = new Map(existing.map((p) => [p.id, p]));
+  const byName = new Map<string, Set<string>>();
+  const index = (place: Place) => {
+    const key = normalized(place.name);
+    const group = byName.get(key);
+    if (group) group.add(place.id);
+    else byName.set(key, new Set([place.id]));
+  };
+  existing.forEach(index);
   for (const candidate of incoming) {
     if (!isPlace(candidate)) continue;
     const p = withSeedPhoto(candidate);
-    const duplicate = [...merged.values()].find(
-      (other) =>
-        other.id !== p.id &&
-        normalized(other.name) === normalized(p.name) &&
-        Math.abs(other.coordinates.lat - p.coordinates.lat) < 0.002 &&
-        Math.abs(other.coordinates.lng - p.coordinates.lng) < 0.003,
-    );
+    const duplicate = [...(byName.get(normalized(p.name)) ?? [])]
+      .map((id) => merged.get(id)!)
+      .find(
+        (other) =>
+          other.id !== p.id &&
+          Math.abs(other.coordinates.lat - p.coordinates.lat) < 0.002 &&
+          Math.abs(other.coordinates.lng - p.coordinates.lng) < 0.003,
+      );
     if (duplicate) {
       merged.set(duplicate.id, {
         ...duplicate,
@@ -79,18 +91,28 @@ export function mergeCatalog(
       continue;
     }
     const previous = merged.get(p.id);
-    merged.set(p.id, {
+    const next = {
       ...(previous && !p.id.startsWith("osm-") ? previous : p),
       image: p.image || previous?.image,
-    });
+    };
+    merged.set(p.id, next);
+    if (previous && normalized(previous.name) !== normalized(next.name))
+      byName.get(normalized(previous.name))?.delete(previous.id);
+    index(next);
   }
   // Curated records remain available for offline use; archive recent areas too.
   const seedIds = new Set(PLACES.map((p) => p.id));
   const all = [...merged.values()];
+  const recent = all.filter((p) => !seedIds.has(p.id) && !pinned.has(p.id));
+  if (origin)
+    recent.sort(
+      (a, b) =>
+        distanceKm(origin, a.coordinates) - distanceKm(origin, b.coordinates),
+    );
   return [
     ...all.filter((p) => seedIds.has(p.id)),
     ...all.filter((p) => !seedIds.has(p.id) && pinned.has(p.id)),
-    ...all.filter((p) => !seedIds.has(p.id) && !pinned.has(p.id)).slice(-570),
+    ...(origin ? recent.slice(0, 570) : recent.slice(-570)),
   ];
 }
 export function usePlaceCatalog(
@@ -180,18 +202,60 @@ export function usePlaceCatalog(
         setMessage("Choose a UK starting point to find your next detour.");
         return;
       }
+      let liveCompleted = false;
+      const liveIds = new Set<string>();
+      const accepted = new Map<string, Place>();
       const accept = (
         incoming: Place[],
         source: CatalogStatus,
         message: string,
+        status = true,
+        kind: "live" | "static" = "live",
       ) => {
         if (controller.signal.aborted) return;
-        const valid = incoming.filter(isPlace);
-        setPlaces((previous) => mergeCatalog(previous, valid, pinned.current));
-        setStatus(source);
-        setMessage(message);
-        void writeArea(key, valid);
+        const valid = incoming
+          .filter(isPlace)
+          .filter((place) => kind !== "static" || !liveIds.has(place.id));
+        if (kind === "live") valid.forEach((place) => liveIds.add(place.id));
+        setPlaces((previous) =>
+          mergeCatalog(previous, valid, pinned.current, { lat, lng }),
+        );
+        valid.forEach((place) => accepted.set(place.id, place));
+        if (status) {
+          setStatus(source);
+          setMessage(message);
+        }
       };
+      // Live discovery starts alongside cells; a large or slow cell never consumes its deadline.
+      const liveTask = (async () => {
+        try {
+          const response = await fetch(
+            `/api/places?lat=${lat}&lng=${lng}&radius=${radius}&refresh=1`,
+            { signal },
+          );
+          if (!response.ok) throw Error("Discovery unavailable");
+          const data = await response.json();
+          if (!Array.isArray(data.places))
+            throw Error("Invalid discovery response");
+          accept(
+            data.places,
+            ["live", "cached", "fallback"].includes(data.source)
+              ? data.source
+              : "fallback",
+            data.message ||
+              "Fresh OpenStreetMap discoveries · check practical details.",
+          );
+        } catch {
+          if (!controller.signal.aborted) {
+            setStatus("fallback");
+            setMessage(
+              "Showing available area data. Live discovery is unavailable; try again when you’re ready.",
+            );
+          }
+        } finally {
+          liveCompleted = true;
+        }
+      })();
       // Static geographic cells deliver candidates before any live enrichment.
       try {
         const areaSignal = AbortSignal.any([
@@ -223,6 +287,8 @@ export function usePlaceCatalog(
                     chunks,
                     "cached",
                     "Area ready · checking for fresh discoveries.",
+                    !liveCompleted,
+                    "static",
                   );
                 }
               }
@@ -233,33 +299,17 @@ export function usePlaceCatalog(
         /* Continue with cached data and bounded live discovery. */
       }
       if (controller.signal.aborted) return;
-      try {
-        const response = await fetch(
-          `/api/places?lat=${lat}&lng=${lng}&radius=${radius}&refresh=1`,
-          { signal },
+      await liveTask;
+      if (!controller.signal.aborted)
+        void writeArea(
+          key,
+          mergeCatalog([], [...accepted.values()], pinned.current, {
+            lat,
+            lng,
+          }),
         );
-        if (!response.ok) throw Error("Discovery unavailable");
-        const data = await response.json();
-        if (!Array.isArray(data.places))
-          throw Error("Invalid discovery response");
-        accept(
-          data.places,
-          ["live", "cached", "fallback"].includes(data.source)
-            ? data.source
-            : "fallback",
-          data.message ||
-            "Fresh OpenStreetMap discoveries · check practical details.",
-        );
-      } catch {
-        if (!controller.signal.aborted) {
-          setStatus("fallback");
-          setMessage(
-            "Showing available area data. Live discovery is unavailable; try again when you’re ready.",
-          );
-        }
-      }
     }
-    void discover();
+    void discover().finally(() => clearTimeout(timeout));
     const timeout = setTimeout(() => {
       if (!controller.signal.aborted) {
         setStatus("fallback");

@@ -36,6 +36,8 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
   function VectorMap(props, ref) {
     const root = useRef<HTMLDivElement>(null),
       map = useRef<maplibregl.Map | null>(null);
+    const markerCache = useRef(new Map<string, maplibregl.Marker>());
+    const sourceSignature = useRef("");
     const latest = useRef(props);
     latest.current = props;
     const [revision, setRevision] = useState(0),
@@ -57,6 +59,7 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
     );
     useEffect(() => {
       if (!root.current) return;
+      const cachedMarkers = markerCache.current;
       const abort = new AbortController();
       let disposed = false;
       let instance: maplibregl.Map | undefined;
@@ -138,8 +141,17 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
             const center = maplibregl.MercatorCoordinate.fromLngLat(
               m.getCenter(),
             );
-            const water = m
-              .queryRenderedFeatures()
+            const waterLayers = m
+              .getStyle()
+              .layers.filter(
+                (layer) => layer.type === "fill" && /water/.test(layer.id),
+              )
+              .map((layer) => layer.id);
+            const water = (
+              waterLayers.length
+                ? m.queryRenderedFeatures({ layers: waterLayers })
+                : []
+            )
               .filter(
                 (f) =>
                   /water/.test(f.layer.id) &&
@@ -175,7 +187,7 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
               new CustomEvent("sq-camera", { detail }),
             );
           };
-          m.on("move", camera);
+          m.on("moveend", camera);
           m.on("idle", camera);
           m.on("idle", settle);
           m.on("sourcedata", settle);
@@ -257,6 +269,9 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
         disposed = true;
         abort.abort();
         clearTimeout(deadline);
+        cachedMarkers.forEach((marker) => marker.remove());
+        cachedMarkers.clear();
+        sourceSignature.current = "";
         instance?.remove();
         map.current = null;
       };
@@ -265,19 +280,32 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
       const m = map.current,
         source = m?.getSource("sidequest") as GeoJSONSource | undefined;
       if (!m || !source) return;
-      source.setData({
-        type: "FeatureCollection",
-        features: props.places.map((p) => ({
-          type: "Feature",
-          id: p.id,
-          properties: { id: p.id },
-          geometry: {
-            type: "Point",
-            coordinates: [p.coordinates.lng, p.coordinates.lat],
-          },
-        })),
-      });
-      const markers = new Map<string, maplibregl.Marker>();
+      const signature =
+        `${loaded}:` +
+        props.places
+          .map((p) => `${p.id}:${p.coordinates.lat}:${p.coordinates.lng}`)
+          .join("|");
+      if (signature !== sourceSignature.current) {
+        sourceSignature.current = signature;
+        for (const [id, marker] of markerCache.current)
+          if (id.startsWith("cluster-")) {
+            marker.remove();
+            markerCache.current.delete(id);
+          }
+        source.setData({
+          type: "FeatureCollection",
+          features: props.places.map((p) => ({
+            type: "Feature",
+            id: p.id,
+            properties: { id: p.id },
+            geometry: {
+              type: "Point",
+              coordinates: [p.coordinates.lng, p.coordinates.lat],
+            },
+          })),
+        });
+      }
+      const markers = markerCache.current;
       function sync() {
         if (!m) return;
         const features = m.querySourceFeatures("sidequest");
@@ -297,8 +325,9 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
           }
         for (const cluster of clusters) {
           const id = `cluster-${cluster.properties?.cluster_id}`;
-          if (markers.has(id)) continue;
-          const button = document.createElement("button");
+          const existingCluster = markers.get(id);
+          const button =
+            existingCluster?.getElement() || document.createElement("button");
           button.className = styles.cluster;
           button.textContent = String(
             cluster.properties?.point_count_abbreviated,
@@ -325,6 +354,15 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
               /* A removed source cannot be expanded. */
             }
           };
+          if (existingCluster) {
+            existingCluster.setLngLat(
+              (cluster.geometry as GeoJSON.Point).coordinates as [
+                number,
+                number,
+              ],
+            );
+            continue;
+          }
           markers.set(
             id,
             new maplibregl.Marker({ element: button })
@@ -338,8 +376,10 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
           );
         }
         for (const p of props.places) {
-          if (!visible.has(p.id) || markers.has(p.id)) continue;
-          const button = document.createElement("button");
+          if (!visible.has(p.id)) continue;
+          const existingMarker = markers.get(p.id);
+          const button =
+            existingMarker?.getElement() || document.createElement("button");
           const selected = props.selected?.id === p.id,
             saved = props.saved.includes(p.id),
             visited = props.visited.includes(p.id);
@@ -349,7 +389,8 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
             saved ? styles.saved : "",
             visited ? styles.visited : "",
           ].join(" ");
-          button.innerHTML = markerGlyph(p.category, saved, visited);
+          const glyph = markerGlyph(p.category, saved, visited);
+          if (button.innerHTML !== glyph) button.innerHTML = glyph;
           button.setAttribute(
             "aria-label",
             `Select ${p.name}${saved ? ", saved" : ""}${visited ? ", visited" : ""}`,
@@ -357,6 +398,10 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
           button.setAttribute("aria-pressed", String(selected));
           button.title = p.name;
           button.onclick = () => latest.current.onSelect(p.id);
+          if (existingMarker) {
+            existingMarker.setLngLat([p.coordinates.lng, p.coordinates.lat]);
+            continue;
+          }
           markers.set(
             p.id,
             new maplibregl.Marker({ element: button })
@@ -371,7 +416,6 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
       return () => {
         m.off("idle", sync);
         m.off("moveend", sync);
-        markers.forEach((marker) => marker.remove());
       };
     }, [props.places, props.selected, props.saved, props.visited, loaded]);
     useEffect(() => {
@@ -382,17 +426,23 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
         duration: props.reducedMotion ? 0 : 500,
       });
     }, [props.origin.lat, props.origin.lng, props.reducedMotion, loaded]);
+    const selectedId = props.selected?.id,
+      selectedLat = props.selected?.coordinates.lat,
+      selectedLng = props.selected?.coordinates.lng;
     useEffect(() => {
       const m = map.current;
-      if (!m || !props.selected) return;
+      if (
+        !m ||
+        !selectedId ||
+        selectedLat === undefined ||
+        selectedLng === undefined
+      )
+        return;
       m.easeTo({
-        center: [
-          props.selected.coordinates.lng,
-          props.selected.coordinates.lat,
-        ],
+        center: [selectedLng, selectedLat],
         duration: props.reducedMotion ? 0 : 500,
       });
-    }, [props.selected, props.reducedMotion, loaded]);
+    }, [selectedId, selectedLat, selectedLng, props.reducedMotion, loaded]);
     useEffect(() => {
       const m = map.current;
       if (!m?.getSource("sidequest")) return;

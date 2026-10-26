@@ -13,12 +13,13 @@ import {
   Clock,
   ChevronRight,
   SlidersHorizontal,
+  Search,
+  Map as MapIcon,
 } from "lucide-react";
 import { useApp } from "@/components/providers";
 import { PlaceImage, EmptyState } from "@/components/primitives";
 import { TOWNS } from "@/providers/geocoding";
 import { rankPlaces, effectiveDiscoveryQuery } from "@/domain/discovery";
-import { contextualHeadline } from "@/domain/environment";
 import type { Intent } from "@/domain/models";
 import { PlaceCard } from "./place-card";
 import { Refinement } from "./refinement";
@@ -110,7 +111,7 @@ export function Discover({ explore = false }: { explore?: boolean }) {
   const impressions = useRef<string[]>([]);
   useEffect(() => {
     impressions.current = results
-      .slice(0, explore ? visibleCount : 3)
+      .slice(0, explore ? visibleCount : 6)
       .map((r) => r.place.id);
     const record = () => {
       const ids = impressions.current.filter((id) => !shown.current.has(id));
@@ -127,7 +128,6 @@ export function Discover({ explore = false }: { explore?: boolean }) {
     const timer = setTimeout(record, 1800);
     return () => clearTimeout(timer);
   }, [results, explore, visibleCount, update]);
-  const headline = contextualHeadline(env);
   const wet = env.weather.source !== "unavailable" && env.weather.rain > 0;
   useEffect(() => {
     if (!ready || !query.text) return;
@@ -152,14 +152,39 @@ export function Discover({ explore = false }: { explore?: boolean }) {
             <section className="home-hero">
               <div className="hero-copy">
                 <h1>
-                  {headline[0]}
+                  A day worth
                   <br />
-                  <span>{headline[1]}</span>
+                  <span>going out for.</span>
                 </h1>
                 <p className="hero-description">
-                  The places that make an ordinary day feel different. Chosen
-                  for you, wherever you start.
+                  Something to do, somewhere new. Find an outing that fits your
+                  time, your people and the weather.
                 </p>
+                <form
+                  className="discovery-search"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    document
+                      .getElementById("your-options")
+                      ?.scrollIntoView({
+                        behavior: env.reducedMotion ? "instant" : "smooth",
+                        block: "start",
+                      });
+                  }}
+                >
+                  <Search size={19} aria-hidden="true" />
+                  <input
+                    aria-label="Find something to do"
+                    placeholder="A place, an activity, a little inspiration…"
+                    value={query.text}
+                    onChange={(event) =>
+                      setQuery({ ...query, text: event.target.value })
+                    }
+                  />
+                  <button aria-label="Find outings" type="submit">
+                    <ArrowRight size={20} />
+                  </button>
+                </form>
                 <Refinement />
                 <button
                   className="button escape-button"
@@ -172,14 +197,17 @@ export function Discover({ explore = false }: { explore?: boolean }) {
                     <Shuffle size={17} />
                     Surprise me
                   </button>
-                  <span />
+                  <Link href="/map">
+                    <MapIcon size={17} />
+                    Explore the map
+                  </Link>
                   <button onClick={() => setPlan(true)}>
                     <Route size={18} />
-                    Build my afternoon
+                    Plan my day
                   </button>
                 </div>
                 <p className="hero-footnote">
-                  <span className="tiny-dot" /> No big plans required.
+                  <MapPin size={13} /> Starting from {env.location.name}
                 </p>
               </div>
               {featured ? (
@@ -265,7 +293,7 @@ export function Discover({ explore = false }: { explore?: boolean }) {
                 className="text-link undecided"
                 onClick={() => setSignature("escape")}
               >
-                Genuinely don’t know? Pick for me
+                Can’t decide? Pick for me
                 <ArrowUpRight size={16} />
               </button>
             </section>
@@ -359,7 +387,7 @@ export function Discover({ explore = false }: { explore?: boolean }) {
                 {results.length
                   ? explore
                     ? `${results.length} ideas that fit your preferences.`
-                    : "A few strong ideas. Browse more whenever you like."
+                    : "Outings matched to your time, company and preferences."
                   : "Your preferences are doing the filtering."}
               </p>
             </div>
@@ -389,7 +417,7 @@ export function Discover({ explore = false }: { explore?: boolean }) {
           </div>
           {results.length ? (
             <div className="results-grid">
-              {results.slice(0, explore ? visibleCount : 3).map((r) => (
+              {results.slice(0, explore ? visibleCount : 6).map((r) => (
                 <PlaceCard key={r.place.id} item={r} />
               ))}
             </div>
@@ -423,7 +451,7 @@ export function Discover({ explore = false }: { explore?: boolean }) {
             ~ Journey times are estimates · Opening times and admission need
             checking
           </p>
-          {results.length > (explore ? visibleCount : 3) &&
+          {results.length > (explore ? visibleCount : 6) &&
             (explore ? (
               <button
                 className="button secondary browse-more"
@@ -451,7 +479,7 @@ export function Discover({ explore = false }: { explore?: boolean }) {
             and a sensible time to be back.
           </p>
           <button className="button" onClick={() => setPlan(true)}>
-            Build my afternoon
+            Plan my day
             <ChevronRight size={18} />
           </button>
         </section>

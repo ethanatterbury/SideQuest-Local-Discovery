@@ -14,9 +14,9 @@ import {
   Car,
   Footprints,
   X,
+  Search,
 } from "lucide-react";
 import { useApp } from "@/components/providers";
-import { rankPlaces } from "@/domain/discovery";
 import {
   categoryRequested,
   optionalCategory,
@@ -24,7 +24,7 @@ import {
 import { PlaceImage } from "@/components/primitives";
 import { Refinement } from "@/features/discover/refinement";
 import { WeatherAtmosphere } from "./weather-atmosphere";
-import { isMapFoodPlace } from "./map-food";
+import { isMapFoodPlace, rankMapPlaces } from "./map-food";
 import { isDark } from "@/domain/time";
 import { directionsUrl, estimatedRouting } from "@/providers/routing";
 import { track } from "@/providers/analytics";
@@ -72,7 +72,7 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
     });
   };
   const ranked = useMemo(
-    () => rankPlaces(catalog, query, env, state),
+    () => rankMapPlaces(catalog, query, env, state),
     [catalog, query, env, state],
   );
   const [selectedId, setSelectedId] = useState(""),
@@ -223,18 +223,25 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
         </button>
         <div id="map-browse-content" className={styles.browseContent}>
           <div className="map-sidebar-heading">
-            <h1>
-              Your kind
-              <br />
-              of nearby.
-            </h1>
-            <p>One good place beats a hundred pins.</p>
+            <h1>Go somewhere good.</h1>
+            <p>Find your next outing around {env.location.name}.</p>
+            <label className="map-search">
+              <Search size={17} />
+              <input
+                aria-label="Search map outings"
+                placeholder="Search places or activities"
+                value={query.text}
+                onChange={(event) =>
+                  setQuery({ ...query, text: event.target.value })
+                }
+              />
+            </label>
             <Refinement
               mapFood={{ included: includeFood, onChange: setIncludeFood }}
             />
           </div>
           <div className="map-results">
-            {ranked.slice(0, 5).map((r, index) => (
+            {ranked.slice(0, 12).map((r, index) => (
               <button
                 key={r.place.id}
                 className={`map-result-row ${selected?.place.id === r.place.id ? "selected" : ""}`}
@@ -242,10 +249,10 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
                 onClick={() => selectPlace(r.place.id)}
               >
                 <span
-                  className="map-result-score"
+                  className="map-result-photo"
                   aria-label={`Suggestion ${index + 1}`}
                 >
-                  {index + 1}
+                  <PlaceImage place={r.place} />
                 </span>
                 <span>
                   <strong>{r.place.name}</strong>
@@ -505,21 +512,27 @@ function GeographicFallback({
         >
           You
         </span>
-        {items.slice(0, 10).map((r) => {
-          const p = xy(r.place.coordinates);
-          return (
-            <button
-              key={r.place.id}
-              className={`plot-place ${selected?.id === r.place.id ? "selected" : ""}`}
-              style={{ left: `${p.x}%`, top: `${p.y}%` }}
-              onClick={() => onSelect(r.place.id)}
-              aria-label={`Select ${r.place.name}`}
-            >
-              <span>{r.score ?? <MapIcon size={12} />}</span>
-              <strong>{r.place.name}</strong>
-            </button>
-          );
-        })}
+        {[
+          ...items.filter((item) => item.place.id === selected?.id),
+          ...items.filter((item) => item.place.id !== selected?.id),
+        ]
+          .slice(0, 10)
+          .map((r) => {
+            const p = xy(r.place.coordinates);
+            return (
+              <button
+                key={r.place.id}
+                className={`plot-place ${selected?.id === r.place.id ? "selected" : ""}`}
+                style={{ left: `${p.x}%`, top: `${p.y}%` }}
+                onClick={() => onSelect(r.place.id)}
+                aria-label={`Select ${r.place.name}`}
+                aria-pressed={selected?.id === r.place.id}
+              >
+                <span>{r.score ?? <MapIcon size={12} />}</span>
+                <strong>{r.place.name}</strong>
+              </button>
+            );
+          })}
         <span className="plot-axis">{latMax.toFixed(2)}° N</span>
         <span className="plot-axis bottom">
           {lngMin.toFixed(2)}° → {lngMax.toFixed(2)}°

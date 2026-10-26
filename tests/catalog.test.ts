@@ -57,3 +57,50 @@ it("rejects malformed cached records and retains current curated names", () => {
   ).toBe(p.name);
   expect(mergeCatalog([p], [{ id: "bad" } as Place])).toHaveLength(1);
 });
+it("merges a large geographic cell without scanning unrelated venue names", () => {
+  let nameReads = 0;
+  const incoming = Array.from({ length: 7000 }, (_, i) => {
+    const place = live(i + 100);
+    Object.defineProperty(place, "name", {
+      enumerable: true,
+      get() {
+        nameReads++;
+        return `Test live ${i + 100}`;
+      },
+    });
+    return place;
+  });
+  expect(mergeCatalog([], incoming)).toHaveLength(570);
+  // Linear name access is deterministic; a wall-clock threshold would depend on CI hardware.
+  expect(nameReads).toBeLessThan(7000 * 12);
+});
+it("keeps nearby candidates when the area cap is reached regardless of cell arrival order", () => {
+  const near = { ...live(100), coordinates: { lat: 51.347, lng: -0.8 } };
+  const distant = Array.from({ length: 650 }, (_, i) => ({
+    ...live(i + 101),
+    coordinates: { lat: 52 + i * 0.0001, lng: -1 },
+  }));
+  const merged = mergeCatalog(
+    [],
+    [near, ...distant],
+    new Set(),
+    near.coordinates,
+  );
+  expect(merged.some((p) => p.id === near.id)).toBe(true);
+});
+it("keeps replacement metadata when a duplicate node/way follows it", () => {
+  const old = { ...live(77), description: "Old description" };
+  const fresh = {
+    ...old,
+    name: "Renamed Museum",
+    description: "Fresh description",
+  };
+  const duplicate = {
+    ...fresh,
+    id: "osm-way-78",
+    description: "Duplicate description",
+  };
+  const merged = mergeCatalog([old], [fresh, duplicate]);
+  expect(merged).toHaveLength(1);
+  expect(merged[0].description).toBe("Fresh description");
+});

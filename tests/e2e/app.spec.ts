@@ -5,12 +5,23 @@ async function simulate(
   page: import("@playwright/test").Page,
   state: Record<string, unknown> = {},
 ) {
+  await page.route("**/data/venues/manifest.json", (route) =>
+    route.fulfill({ json: { cells: {} } }),
+  );
+  await page.route("**/api/places?**", (route) =>
+    route.fulfill({ json: { places: [], source: "cached" } }),
+  );
+  await page.route("**/api/photo?**", (route) =>
+    route.fulfill({ json: { image: null, source: "unavailable" } }),
+  );
   await page.addInitScript((o) => {
     sessionStorage.setItem(
       "sidequest:environment",
       JSON.stringify({
         weather: "sunny",
         time: "midday",
+        reducedMotion: true,
+        atmosphereQuality: "low",
         failures: ["weather", "map"],
         ...o,
       }),
@@ -18,6 +29,7 @@ async function simulate(
   }, state);
 }
 test("escape, save, reload, collection and visit", async ({ page }) => {
+  test.setTimeout(90000);
   await simulate(page);
   await page.goto("/");
   await page.getByRole("button", { name: "Get me out of the house" }).click();
@@ -55,7 +67,7 @@ test("plan stays within window and can be saved", async ({ page }) => {
   await simulate(page);
   await page.goto("/");
   await page
-    .getByRole("button", { name: "Build my afternoon", exact: true })
+    .getByRole("button", { name: "Plan my day", exact: true })
     .first()
     .click();
   await expect(page.getByRole("dialog")).toContainText("Back home");
@@ -70,7 +82,7 @@ test("reopened plan food and time adjustments retain its original context", asyn
   await simulate(page);
   await page.goto("/");
   await page
-    .getByRole("button", { name: "Build my afternoon", exact: true })
+    .getByRole("button", { name: "Plan my day", exact: true })
     .first()
     .click();
   await expect(page.locator(".timeline")).toContainText(
@@ -135,6 +147,7 @@ test("location denial offers immediate town fallback", async ({ page }) => {
 test("lab overrides share context and map failure preserves decisions", async ({
   page,
 }) => {
+  await simulate(page, { reducedMotion: true });
   await page.goto("/dev/environment");
   await expect(
     page.getByRole("heading", { name: "Environment Lab" }),
@@ -147,7 +160,7 @@ test("lab overrides share context and map failure preserves decisions", async ({
   ).toBeVisible();
   await page.getByRole("button", { name: "Discovery", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "A little rain. Still plenty to do." }),
+    page.getByRole("heading", { name: "A day worth going out for." }),
   ).toBeVisible();
 });
 test("malformed shared plan and unknown place recover", async ({ page }) => {

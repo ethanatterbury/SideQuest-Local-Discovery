@@ -9,3 +9,28 @@ export function isMapFoodPlace(
   const category = optionalCategory(place);
   return category === "food" || category === "pubs";
 }
+
+import type { DiscoveryQuery, Environment, LocalState } from "@/domain/models";
+import { categoryRequested } from "@/domain/venue-suitability";
+import { effectiveDiscoveryQuery, rankPlaces } from "@/domain/discovery";
+
+export function rankMapPlaces(
+  places: Place[],
+  query: DiscoveryQuery,
+  env: Environment,
+  state: LocalState,
+) {
+  const effective = effectiveDiscoveryQuery(query, places);
+  const primary = rankPlaces(places, effective, env, state);
+  const extras = rankPlaces(
+    places,
+    { ...effective, activity: "any", intent: "any", text: "", interests: [] },
+    env,
+    state,
+  ).filter(({ place }) => {
+    const category = optionalCategory(place);
+    return category && categoryRequested(query, category);
+  });
+  const seen = new Set(primary.map((item) => item.place.id));
+  return [...primary, ...extras.filter((item) => !seen.has(item.place.id))];
+}

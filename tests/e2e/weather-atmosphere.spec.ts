@@ -3,6 +3,8 @@ import { mapFixture as fixture, gpuLaunchOptions } from "./fixtures/map";
 
 // Actual GPU execution over a local GeoJSON fixture; no hosted geography claim.
 test.use({ launchOptions: gpuLaunchOptions });
+// Software WebGL runs several full-size GPU captures per case on CI.
+test.describe.configure({ timeout: 90000 });
 async function lab(page: Page) {
   page.on("pageerror", (error) =>
     console.error("Browser error:", error.message),
@@ -38,18 +40,25 @@ async function lab(page: Page) {
         weather: "overcast",
         time: "midday",
         failures: ["weather"],
+        atmosphereQuality: "low",
       }),
     );
   }, fixture);
   await page.goto("/dev/environment");
   await expect(page.locator(".map-status")).toHaveText(
     /Landscape map · your next detour/,
-    { timeout: 15000 },
+    { timeout: 30000 },
   );
   await expect(page.locator(".weather-atmosphere")).toHaveAttribute(
     "data-renderer",
     "webgl",
   );
+  // Isolate GPU pixels from changing map tiles, marker cards and photographs.
+  // Element screenshots otherwise composite these through the transparent canvas.
+  await page.addStyleTag({
+    content:
+      ".weather-atmosphere { background: #829381; z-index: 999 !important; }",
+  });
 }
 async function pixels(page: Page) {
   return page.locator(".weather-atmosphere canvas").screenshot();
@@ -58,6 +67,32 @@ async function settled(page: Page) {
   // The static preview refreshes at 350ms. Wait two frames of that bounded timer.
   await page.waitForTimeout(750);
 }
+
+test("cloud density is independent of map panning and zooming", async ({
+  page,
+}) => {
+  await lab(page);
+  await page.getByLabel("Weather", { exact: true }).selectOption("overcast");
+  await page.getByLabel("Motion", { exact: true }).selectOption("reduced");
+  await settled(page);
+  const before = await pixels(page);
+  await page.evaluate(() => {
+    document.querySelector(".map-canvas-wrap")!.dispatchEvent(
+      new CustomEvent("sq-camera", {
+        detail: {
+          x: 0.7,
+          y: 0.3,
+          scale: 512 * 32,
+          width: 1000,
+          height: 700,
+          water: [],
+        },
+      }),
+    );
+  });
+  await settled(page);
+  expect((await pixels(page)).equals(before)).toBe(true);
+});
 
 test("Lab weather updates actual GPU pixels on desktop and mobile without recreating geography", async ({
   page,

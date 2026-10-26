@@ -236,7 +236,7 @@ The signature pairs a photograph, match badge, name, explanation, practical fact
 
 ### Map Atmosphere
 
-Atmosphere is pointer-free and hidden from assistive technology. One GPU pass combines map-anchored cloud fields, wind-driven layered rain/snow, fog, solar colour and water-masked ripples. Storm illumination is broad and infrequent. Hidden tabs suspend rendering; reduced motion leaves a static field. Quality adapts on narrow/slow devices and has explicit Lab overrides. Labels, marker interaction and map controls stay readable above the atmosphere. The signature delay becomes zero when reduced motion is enabled.
+Atmosphere is pointer-free and hidden from assistive technology. One GPU pass combines screen-space, time-driven cloud fields, wind-driven layered rain/snow, fog, solar colour and water-masked ripples. Storm illumination is broad and infrequent. Hidden tabs suspend rendering; reduced motion leaves a static field. Quality adapts on narrow/slow devices and has explicit Lab overrides. Labels, marker interaction and map controls stay readable above the atmosphere. The signature delay becomes zero when reduced motion is enabled.
 
 ## Do's and Don'ts
 
@@ -260,4 +260,8 @@ Atmosphere is pointer-free and hidden from assistive technology. One GPU pass co
 
 Warm paper, deep forest, genuine landscape photography and retained Manrope/DM Sans. Larger editorial heroes; quiet native preferences; explicit optional venue categories and access requirements; useful fit explanations rather than percentage certainty. Location changes use a small non-blocking animated line. Mobile grids allow preference fields to shrink without horizontal overflow.
 
-MapLibre uses British landscape colours, SVG category markers, native accessible cluster counts and UK camera limits. The Environment Lab and map share a GPU atmosphere: layered precipitation, wind, world-anchored cloud shadows, fog, solar lighting and water-masked rain ripples. Reduced motion uses a static field; unavailable WebGL has a restrained static fallback. Deterministic visual fixtures prove renderer behaviour, not live cartographic accuracy or provider uptime.
+MapLibre uses British landscape colours, SVG category markers, native accessible cluster counts and UK camera limits. The Environment Lab and map share a GPU atmosphere: layered precipitation, wind, screen-space cloud volumes, fog, solar lighting and water-masked rain ripples. Reduced motion uses a static field; unavailable WebGL has a restrained static fallback. Deterministic visual fixtures prove renderer behaviour, not live cartographic accuracy or provider uptime.
+
+## October discovery revision
+
+Operate mode: visitors should find an outing, inspect it on the map, or plan their day from the first viewport. The discovery page now leads with direct activity search, practical preferences, explicit map access and Plan my day. Use a near-white canvas (#fafaf7), forest ink (#183b34), subdued sage, genuine venue photography and compact native controls. Missing photographs have a quiet tonal treatment; never substitute unrelated landscapes. Map results pair thumbnails with practical facts. Cloud coordinates are independent of map position and zoom; animation is driven only by elapsed time and wind.

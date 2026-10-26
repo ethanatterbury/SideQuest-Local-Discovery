@@ -33,6 +33,10 @@ function fixture(index: number, patch: Partial<Place> = {}): Place {
   };
 }
 async function source(page: import("@playwright/test").Page, places: Place[]) {
+  // These journeys exercise live delivery; geographic delivery has its own fixture suite.
+  await page.route("**/data/venues/manifest.json", (route) =>
+    route.fulfill({ json: { cells: {} } }),
+  );
   await page.addInitScript(() =>
     sessionStorage.setItem(
       "sidequest:environment",
@@ -40,6 +44,8 @@ async function source(page: import("@playwright/test").Page, places: Place[]) {
         weather: "sunny",
         time: "midday",
         failures: ["weather"],
+        atmosphereQuality: "low",
+        reducedMotion: true,
       }),
     ),
   );
@@ -59,6 +65,7 @@ test("a live Archive photo reaches the optimized image and credited place detail
     source: "https://archive.org/details/test-venue/Folder/DSCN1.JPG",
     credit: "Test Photographer",
     license: "CC BY-SA 4.0",
+    checkedAt: "2026-10-26T12:00:00Z",
     width: 4608,
     height: 3456,
   };
@@ -73,6 +80,7 @@ test("a live Archive photo reaches the optimized image and credited place detail
   const card = page
     .locator(".results-grid > article")
     .filter({ has: page.getByRole("link", { name: place.name, exact: true }) });
+  await card.scrollIntoViewIfNeeded();
   const photo = card.getByRole("img", { name: place.name, exact: true });
   await expect(photo).toBeVisible();
   await expect(photo).toHaveAttribute(
@@ -97,7 +105,7 @@ test("live discovery provides more pages of ideas and preserves saved live place
   const places = Array.from({ length: 40 }, (_, i) => fixture(i));
   await source(page, places);
   await page.goto("/explore");
-  await expect(page.getByText(/Live places from OpenStreetMap/)).toBeVisible();
+  await expect(page.getByText(/Fresh OpenStreetMap discoveries/)).toBeVisible();
   await expect(page.locator(".results-grid > article")).toHaveCount(12);
   await page.getByRole("button", { name: "Show 12 more ideas" }).click();
   await expect(page.locator(".results-grid > article")).toHaveCount(24);
@@ -210,7 +218,7 @@ test("a browser without WebGL keeps accessible geographic fallback and static we
   ).toBe(true);
 });
 
-test("visible live places resolve a photo automatically and retain it across reload", async ({
+test("visible live places resolve a photo and revalidate it across reload", async ({
   page,
 }) => {
   await source(page, [fixture(0)]);
@@ -228,6 +236,7 @@ test("visible live places resolve a photo automatically and retain it across rel
                   "https://commons.wikimedia.org/wiki/File:Test_fixture.jpg",
                 credit: "Test photographer",
                 license: "CC BY-SA 4.0",
+                checkedAt: "2026-10-26T12:00:00Z",
               }
             : null,
         source: "live",
@@ -238,6 +247,12 @@ test("visible live places resolve a photo automatically and retain it across rel
     route.fulfill({ contentType: "image/png", body: icon }),
   );
   await page.goto("/explore");
+  await page
+    .locator(".place-card")
+    .filter({
+      has: page.getByRole("link", { name: "Test Museum 0", exact: true }),
+    })
+    .scrollIntoViewIfNeeded();
   const photo = page.locator('img[alt="Test Museum 0"]').first();
   await expect(photo).toBeVisible();
   await expect
@@ -253,7 +268,7 @@ test("visible live places resolve a photo automatically and retain it across rel
     .click();
   await page.reload();
   await expect(page.locator('img[alt="Test Museum 0"]').first()).toBeVisible();
-  expect(lookups).toBe(1);
+  expect(lookups).toBe(2);
 });
 
 test("a shared live afternoon loads the sender's area before building", async ({
@@ -311,11 +326,6 @@ test("a photo update preserves the chosen map place and camera", async ({
   page,
 }) => {
   await source(page, [fixture(0), fixture(1)]);
-  await page.addInitScript(() =>
-    Object.defineProperty(HTMLCanvasElement.prototype, "getContext", {
-      value: () => null,
-    }),
-  );
   await localMapFixture(page);
   let started = false;
   let release!: () => void;
@@ -337,6 +347,7 @@ test("a photo update preserves the chosen map place and camera", async ({
           source: "https://commons.wikimedia.org/wiki/File:Test_fixture.jpg",
           credit: "Test photographer",
           license: "CC BY-SA 4.0",
+          checkedAt: "2026-10-26T12:00:00Z",
         },
         source: "live",
       },
@@ -346,6 +357,9 @@ test("a photo update preserves the chosen map place and camera", async ({
     route.fulfill({ contentType: "image/png", body: icon }),
   );
   await page.goto("/map?place=osm-node-900000");
+  await expect(page.locator(".map-status")).toContainText("Landscape map", {
+    timeout: 15000,
+  });
   const chosen = page
     .locator(".map-result-row")
     .filter({ hasText: "Test Museum 1" });
@@ -383,6 +397,7 @@ test("home hero keeps the top recommendation when only a lower-ranked place has 
     fixture(0, {
       name: "Best venue without media",
       novelty: 1,
+      quality: 1,
       intents: ["walk", "scenic", "kids", "culture", "relax", "active"],
       image: undefined,
     }),
@@ -393,6 +408,7 @@ test("home hero keeps the top recommendation when only a lower-ranked place has 
         url: "/icons/icon-192.png",
         credit: "Test",
         license: "CC0",
+        checkedAt: "2026-10-26T12:00:00Z",
         source: "https://example.com",
       },
     }),
