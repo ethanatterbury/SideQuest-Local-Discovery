@@ -1,6 +1,6 @@
 import { getDiscoveryPlaces } from "@/providers/geoapify-places";
 import { withStoredPhoto } from "@/providers/venue-media";
-export const maxDuration = 10;
+export const maxDuration = 15;
 export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
   const lat = params.get("lat"),

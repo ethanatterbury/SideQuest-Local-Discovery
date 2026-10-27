@@ -45,6 +45,48 @@ afterEach(() => {
 });
 
 describe("configured national discovery", () => {
+  it("accepts a successful activity search after the former 2.5 second cutoff", async () => {
+    const nativeTimeout = AbortSignal.timeout.bind(AbortSignal);
+    // Scale provider time while retaining its relative deadline: a 3-second
+    // provider response must survive, without slowing this regression test.
+    vi.spyOn(AbortSignal, "timeout").mockImplementation((milliseconds) =>
+      nativeTimeout(milliseconds / 100),
+    );
+    vi.stubGlobal("fetch", async (input: string | URL, init?: RequestInit) => {
+      if (new URL(input).hostname !== "api.geoapify.com")
+        return Response.json({ elements: [] });
+      await new Promise<void>((resolve, reject) => {
+        const timer = setTimeout(resolve, 30);
+        init?.signal?.addEventListener(
+          "abort",
+          () => {
+            clearTimeout(timer);
+            reject(init.signal?.reason);
+          },
+          { once: true },
+        );
+      });
+      return Response.json(
+        collection(
+          feature({
+            amenity: undefined,
+            leisure: undefined,
+            tourism: "museum",
+          }),
+        ),
+      );
+    });
+    const { getDiscoveryPlaces } = await import("@/providers/geoapify-places");
+    const result = await getDiscoveryPlaces(
+      { lat: 53.48, lng: -2.24 },
+      10,
+      false,
+    );
+    expect(result.source).toBe("live");
+    expect(result.incomplete).toBeUndefined();
+    expect(result.places.map((place) => place.category)).toContain("Museum");
+  });
+
   it("uses separate bounded activity and catering searches and preserves direct detail identity", async () => {
     const urls: URL[] = [];
     vi.stubGlobal("fetch", async (input: string | URL) => {
@@ -156,7 +198,7 @@ describe("configured national discovery", () => {
       if (failure === "timeout") {
         const timeout = AbortSignal.timeout.bind(AbortSignal);
         vi.spyOn(AbortSignal, "timeout").mockImplementation((milliseconds) =>
-          milliseconds === 2500
+          milliseconds === 5500
             ? AbortSignal.abort(new DOMException("Timed out", "TimeoutError"))
             : timeout(milliseconds),
         );

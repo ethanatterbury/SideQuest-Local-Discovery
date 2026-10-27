@@ -17,7 +17,9 @@ const attribution =
   "Places by Geoapify · © OpenStreetMap contributors. Check venue details before going.";
 const ttl = 30 * 60_000;
 const failureTtl = 60_000;
-const requestBudget = 2500;
+// Live production activity/food queries exceed 2.5s. Leave room for the existing
+// 4s fallback within the client's 10s overall discovery budget.
+const requestBudget = 5500;
 type ProviderResult = {
   places: Place[];
   partial: boolean;
