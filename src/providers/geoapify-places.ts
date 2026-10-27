@@ -160,9 +160,10 @@ async function requestPlaces(url: URL, signal: AbortSignal): Promise<Place[]> {
     if (!response.ok) throw new Error("Place provider unavailable");
     const body = await response.json();
     const places = normalizeGeoapifyResponse(body);
-    if (!places.length)
+    if (places.length < Math.max(1, body.features.length / 2))
       console.warn("sidequest:places-empty", {
         categories: url.searchParams.get("categories"),
+        acceptedCount: places.length,
         featureCount: Array.isArray(body.features) ? body.features.length : 0,
         rawFields: Array.isArray(body.features)
           ? body.features.slice(0, 3).map((feature: unknown) => {
@@ -172,6 +173,18 @@ async function requestPlaces(url: URL, signal: AbortSignal): Promise<Place[]> {
               );
             })
           : [],
+        classifications: body.features.slice(0, 3).map((feature: unknown) => {
+          const properties = object(object(feature)?.properties);
+          const raw = object(object(properties?.datasource)?.raw);
+          return {
+            categories: properties?.categories,
+            amenity: raw?.amenity,
+            leisure: raw?.leisure,
+            tourism: raw?.tourism,
+            osm_key: raw?.osm_key,
+            osm_value: raw?.osm_value,
+          };
+        }),
       });
     return places;
   } catch (error) {
