@@ -1,5 +1,7 @@
 # SideQuest: places, photos and product replacement
 
+**Superseded setup recommendation:** The owner subsequently ruled out billing and added `GEOAPIFY_API_KEY`. Geoapify is now integrated; the Google signup instructions below are historical and must not be followed for the current release. See [the no-billing assessment](apple-and-free-provider-assessment-2026-10-27.md) and [current setup](geoapify-setup.md). Local-venue photo coverage remains unresolved.
+
 Decision recorded 27 October 2026. England is the first coverage target. The owner has authorised publication to main and production, but has not authorised enabling paid third-party billing. This document distinguishes the immediate bug fix from the replacement product.
 
 ## What the production checks established

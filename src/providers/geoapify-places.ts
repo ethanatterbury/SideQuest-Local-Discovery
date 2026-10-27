@@ -144,15 +144,44 @@ function sourceMessage(partial: boolean) {
 }
 
 async function requestPlaces(url: URL, signal: AbortSignal): Promise<Place[]> {
-  const response = await fetch(url.href, {
-    headers: { Accept: "application/json" },
-    signal,
-    cache: "no-store",
-  });
-  if ([401, 403, 429].includes(response.status))
-    unavailableUntil = Date.now() + failureTtl;
-  if (!response.ok) throw new Error("Place provider unavailable");
-  return normalizeGeoapifyResponse(await response.json());
+  const started = Date.now();
+  let status: number | null = null;
+  try {
+    const response = await fetch(url.href, {
+      headers: { Accept: "application/json" },
+      signal,
+      cache: "no-store",
+    });
+    status = response.status;
+    if ([401, 403, 429].includes(status))
+      unavailableUntil = Date.now() + failureTtl;
+    if (!response.ok) throw new Error("Place provider unavailable");
+    const body = await response.json();
+    const places = normalizeGeoapifyResponse(body);
+    if (!places.length)
+      console.warn("sidequest:places-empty", {
+        categories: url.searchParams.get("categories"),
+        featureCount: Array.isArray(body.features) ? body.features.length : 0,
+        rawFields: Array.isArray(body.features)
+          ? body.features.slice(0, 3).map((feature: unknown) => {
+              const properties = object(object(feature)?.properties);
+              return Object.keys(
+                object(object(properties?.datasource)?.raw) || {},
+              );
+            })
+          : [],
+      });
+    return places;
+  } catch (error) {
+    // Never log the request URL, API key, response body or arbitrary fetch error.
+    console.warn("sidequest:places-failed", {
+      categories: url.searchParams.get("categories"),
+      status,
+      timeout: signal.aborted,
+      elapsedMs: Date.now() - started,
+    });
+    throw error;
+  }
 }
 
 export async function getDiscoveryPlaces(
