@@ -107,7 +107,11 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
             minZoom: 4,
             maxZoom: 18,
             maxBounds: UK_MAP_BOUNDS,
-            attributionControl: { compact: true },
+            attributionControl: {
+              compact: true,
+              customAttribution:
+                'Places: <a href="https://www.geoapify.com/" target="_blank" rel="noreferrer">Geoapify</a>',
+            },
             canvasContextAttributes: { antialias: false },
           });
           instance = m;

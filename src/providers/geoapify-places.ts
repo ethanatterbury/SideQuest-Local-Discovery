@@ -160,6 +160,12 @@ async function requestPlaces(url: URL, signal: AbortSignal): Promise<Place[]> {
     if (!response.ok) throw new Error("Place provider unavailable");
     const body = await response.json();
     const places = normalizeGeoapifyResponse(body);
+    console.info("sidequest:places-batch", {
+      categories: url.searchParams.get("categories"),
+      featureCount: body.features.length,
+      acceptedCount: places.length,
+      elapsedMs: Date.now() - started,
+    });
     if (places.length < Math.max(1, body.features.length / 2))
       console.warn("sidequest:places-empty", {
         categories: url.searchParams.get("categories"),
@@ -239,10 +245,16 @@ export async function getDiscoveryPlaces(
         request = Promise.allSettled(
           [
             {
-              // Keep actual activity venues independent of land-use polygons,
-              // pitches and tourism infrastructure that exhaust broad searches.
-              categories: "entertainment",
-              limit: 200,
+              // The broad entertainment request also timed out in production.
+              // Keep culture and activities independently selectable/observable.
+              categories:
+                "entertainment.museum,entertainment.culture,entertainment.cinema",
+              limit: 100,
+            },
+            {
+              categories:
+                "entertainment.activity_park,entertainment.escape_game,entertainment.bowling_alley,entertainment.aquarium,entertainment.zoo,entertainment.theme_park,entertainment.water_park,entertainment.miniature_golf",
+              limit: 100,
             },
             {
               categories:
@@ -255,6 +267,7 @@ export async function getDiscoveryPlaces(
             const url = new URL("https://api.geoapify.com/v2/places");
             url.search = new URLSearchParams({
               categories,
+              conditions: "named",
               limit: String(limit),
               filter: `circle:${center.lng},${center.lat},${(bucket + 2) * 1000}`,
               bias: `proximity:${center.lng},${center.lat}`,
@@ -275,7 +288,7 @@ export async function getDiscoveryPlaces(
           if (!selectNearbyPlaces(places, coords, radius).length)
             throw new Error("No usable provider places");
           const hasOutings = groups
-            .slice(0, 2)
+            .slice(0, 3)
             .some(
               (group) =>
                 group.status === "fulfilled" &&
@@ -286,7 +299,10 @@ export async function getDiscoveryPlaces(
           let partial = groups.some((group) => group.status === "rejected");
           let source: NearbyResult["source"] = "live";
           let message = sourceMessage(partial);
-          if (!hasOutings) {
+          if (
+            !hasOutings ||
+            groups.slice(0, 3).some((group) => group.status === "rejected")
+          ) {
             // Optional food/shop results must not mask the ordinary outing fallback.
             const fallback = await getNearbyPlaces(
               coords,

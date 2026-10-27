@@ -45,6 +45,54 @@ afterEach(() => {
 });
 
 describe("configured national discovery", () => {
+  it("retrieves named culture and activity venues independently when the broad entertainment query stalls", async () => {
+    vi.stubGlobal("fetch", async (input: string | URL) => {
+      const url = new URL(input);
+      if (url.hostname !== "api.geoapify.com")
+        return Response.json({ elements: [] });
+      const categories = url.searchParams.get("categories") || "";
+      if (categories === "entertainment")
+        throw new DOMException("Timed out", "TimeoutError");
+      if (url.searchParams.get("conditions") !== "named")
+        return Response.json(collection());
+      if (categories.includes("entertainment.museum"))
+        return Response.json(
+          collection(
+            feature(
+              {
+                osm_id: 10001,
+                leisure: undefined,
+                amenity: undefined,
+                tourism: "museum",
+              },
+              { name: "Fixture museum" },
+            ),
+          ),
+        );
+      if (categories.includes("entertainment.bowling_alley"))
+        return Response.json(
+          collection(
+            feature(
+              { osm_id: 10002, leisure: "bowling_alley", amenity: undefined },
+              { name: "Fixture bowling" },
+            ),
+          ),
+        );
+      return Response.json(collection());
+    });
+    const { getDiscoveryPlaces } = await import("@/providers/geoapify-places");
+    const result = await getDiscoveryPlaces(
+      { lat: 53.48, lng: -2.24 },
+      10,
+      false,
+    );
+    expect(result.source).toBe("live");
+    expect(result.incomplete).toBeUndefined();
+    expect(result.places.map((place) => place.category)).toEqual(
+      expect.arrayContaining(["Museum", "bowling alley"]),
+    );
+  });
+
   it("protects museum and indoor-activity capacity from broad land-use results", async () => {
     const urls: URL[] = [];
     vi.stubGlobal("fetch", async (input: string | URL) => {
@@ -161,7 +209,7 @@ describe("configured national discovery", () => {
       category: "Indoor soft play",
     });
     expect(JSON.stringify(body)).not.toContain("server-only-test-secret");
-    expect(urls).toHaveLength(4);
+    expect(urls).toHaveLength(5);
     expect(urls.every((url) => url.hostname === "api.geoapify.com")).toBe(true);
     const activities = urls.find((url) =>
       url.searchParams.get("categories")?.includes("entertainment"),
@@ -187,7 +235,7 @@ describe("configured national discovery", () => {
       },
     );
     expect((await detailResponse.json()).id).toBe("osm-way-987654321");
-    expect(urls).toHaveLength(4);
+    expect(urls).toHaveLength(5);
   });
 
   it("serves direct links after a cold start through the documented OSM-ID detail lookup", async () => {
@@ -238,7 +286,7 @@ describe("configured national discovery", () => {
     expect(
       (await getDiscoveryPlaces({ lat: 53.48, lng: -2.24 }, 10, false)).source,
     ).toBe("cached");
-    expect(urls).toHaveLength(4);
+    expect(urls).toHaveLength(5);
   });
 
   it.each(["rate limit", "invalid", "empty", "timeout"])(
