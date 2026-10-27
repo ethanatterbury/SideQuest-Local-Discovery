@@ -239,8 +239,15 @@ export async function getDiscoveryPlaces(
         request = Promise.allSettled(
           [
             {
-              categories: "entertainment,leisure,natural,sport,tourism",
-              limit: 300,
+              // Keep actual activity venues independent of land-use polygons,
+              // pitches and tourism infrastructure that exhaust broad searches.
+              categories: "entertainment",
+              limit: 200,
+            },
+            {
+              categories:
+                "leisure.park,leisure.playground,natural.forest,natural.heath_moor,sport.sports_centre,sport.fitness.fitness_centre,sport.swimming_pool,tourism.attraction",
+              limit: 100,
             },
             { categories: "catering", limit: 100 },
             { categories: "commercial", limit: 100 },
@@ -267,11 +274,14 @@ export async function getDiscoveryPlaces(
           ];
           if (!selectNearbyPlaces(places, coords, radius).length)
             throw new Error("No usable provider places");
-          const activity = groups[0];
-          const hasOutings =
-            activity.status === "fulfilled" &&
-            selectNearbyPlaces(activity.value, coords, radius).some(
-              (place) => !optionalCategory(place),
+          const hasOutings = groups
+            .slice(0, 2)
+            .some(
+              (group) =>
+                group.status === "fulfilled" &&
+                selectNearbyPlaces(group.value, coords, radius).some(
+                  (place) => !optionalCategory(place),
+                ),
             );
           let partial = groups.some((group) => group.status === "rejected");
           let source: NearbyResult["source"] = "live";
