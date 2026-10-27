@@ -249,6 +249,11 @@ export function normalizeOsmElement(value: unknown): Place | null {
           ? "outdoor"
           : "mixed";
     intents = ["active", "unusual"];
+  } else if (knownEvidence?.classification === "play-cafe") {
+    category = "Play café";
+    environment = "indoor";
+    intents = ["kids", "active"];
+    duration = [60, 120];
   } else if (soft) {
     category = "Indoor soft play";
     environment = "indoor";
@@ -366,7 +371,8 @@ export function normalizeOsmElement(value: unknown): Place | null {
   ];
   if (knownEvidence)
     notes.push(
-      `Classification source checked ${knownEvidence.checkedAt}: ${knownEvidence.url}. Height and accompaniment requirements need checking; no age is inferred from height.`,
+      `Classification source checked ${knownEvidence.checkedAt}: ${knownEvidence.url}. Check venue-specific admission and session rules.`,
+      ...(knownEvidence.notes || []),
     );
   if (ageRange) {
     notes.push(
@@ -482,18 +488,27 @@ export function normalizeOsmElement(value: unknown): Place | null {
       knownEvidence?.url ||
       source,
     source,
-    ...(category === "Indoor soft play" &&
-    ["indoor_play", "soft_play"].includes(leisure)
+    ...(category === "Play café" ||
+    (category === "Indoor soft play" &&
+      ["indoor_play", "soft_play"].includes(leisure))
       ? {
           experiences: [
             {
               activities: ["soft-play" as const],
               primary: true,
-              evidence: {
-                source: "osm" as const,
-                confidence: "reported" as const,
-                url: source,
-              },
+              evidence:
+                category === "Play café"
+                  ? {
+                      source: "official" as const,
+                      confidence: "verified" as const,
+                      url: knownEvidence!.url,
+                      checkedAt: knownEvidence!.checkedAt,
+                    }
+                  : {
+                      source: "osm" as const,
+                      confidence: "reported" as const,
+                      url: source,
+                    },
             },
           ],
         }

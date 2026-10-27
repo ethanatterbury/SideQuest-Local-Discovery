@@ -116,7 +116,7 @@ export function Refinement({
           >
             {[
               ["any", "All outings"],
-              ["soft-play", "Soft play"],
+              ["soft-play", "Soft play & play cafés"],
               ["playground", "Playgrounds"],
               ["museum", "Museums & galleries"],
               ["cinema", "Cinema"],

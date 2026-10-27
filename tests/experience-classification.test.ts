@@ -33,6 +33,28 @@ const family = {
   childrenAges: [3],
 };
 describe("experience-led classification", () => {
+  it("uses verified primary play for a real play cafe without claiming blanket infant suitability", () => {
+    const p = normalizeOsmElement({
+      type: "node",
+      id: 11278417015,
+      lat: 51.340175,
+      lon: -0.7763774,
+      tags: {
+        name: "Ruby's Play Cafe",
+        amenity: "cafe",
+        website: "https://www.therubyplaycafe.co.uk/",
+      },
+    })!;
+    expect(p.category).toBe("Play café");
+    expect(optionalCategory(p)).toBeUndefined();
+    expect(isMapFoodPlace(p)).toBe(false);
+    expect(isSuitableForQuery(p, family)).toBe(true);
+    expect(p.experiences?.[0].evidence.source).toBe("official");
+    expect(p.evidence?.infantSuitability).toBeUndefined();
+    expect(isSuitableForQuery(p, { ...family, childrenAges: [0] })).toBe(false);
+    expect(p.notes.join(" ")).toContain("full-paying sibling");
+  });
+
   it.each(["playground:indoor", "playground:soft_play"])(
     "does not promote a pub's incidental %s facility to its primary experience",
     (tag) => {

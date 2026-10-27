@@ -1,11 +1,26 @@
 {
   "version": 1,
-  "entries": [{
-    "id": "osm-way-914244345",
-    "name": "Flight of the Sky Lion",
-    "classification": "amusement-ride",
-    "url": "https://www.legoland.co.uk/explore/theme-park/rides-attractions/flight-of-the-sky-lion/",
-    "checkedAt": "2026-10-09",
-    "source": "official"
-  }]
+  "entries": [
+    {
+      "id": "osm-way-914244345",
+      "name": "Flight of the Sky Lion",
+      "classification": "amusement-ride",
+      "url": "https://www.legoland.co.uk/explore/theme-park/rides-attractions/flight-of-the-sky-lion/",
+      "checkedAt": "2026-10-09",
+      "source": "official"
+    },
+    {
+      "id": "osm-node-11278417015",
+      "name": "Ruby's Play Cafe",
+      "classification": "play-cafe",
+      "url": "https://www.therubyplaycafe.co.uk/",
+      "checkedAt": "2026-10-27",
+      "source": "official",
+      "notes": [
+        "Primary play-café experience verified from the official venue website; food is an additional facility.",
+        "Official booking options list 6–12-month entry; under-6-month entry requires a full-paying sibling. Confirm current admission/session conditions: https://www.therubyplaycafe.co.uk/products/book-a-session",
+        "The venue says its café/play areas are upstairs and pushchairs must stay in the downstairs buggy park."
+      ]
+    }
+  ]
 }
