@@ -104,10 +104,12 @@ export async function localMapFixture(page: Page) {
     ).__SIDEQUEST_MAP_STYLE__ = style;
   }, mapFixture);
   await page.route("https://tiles.openfreemap.org/**", (route) =>
-    route.fulfill({
-      status: 503,
-      body: "Local renderer fixture; hosted map disabled",
-    }),
+    route.request().url().includes("/styles/")
+      ? route.fulfill({ json: mapFixture })
+      : route.fulfill({
+          status: 503,
+          body: "Local renderer fixture; hosted map disabled",
+        }),
   );
 }
 export async function observeCamera(page: Page) {

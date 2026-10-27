@@ -84,15 +84,13 @@ export function ItineraryDialog({
     );
   }
   return (
-    <Modal title="Build my afternoon" onClose={onClose} wide>
+    <Modal title="Plan my day" onClose={onClose} wide>
       <div className="itinerary-header">
         <Route size={28} />
         <h2>
-          A little plan.
-          <br />
-          <span>No overthinking.</span>
+          Make a plan for your day.
         </h2>
-        <p>Built around your time, your starting point, and what’s nearby.</p>
+        <p>Choose your limits and we’ll suggest a route.</p>
       </div>
       <div className="itinerary-controls">
         <label>

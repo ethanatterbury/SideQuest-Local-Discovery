@@ -5,6 +5,7 @@ import { mapFixture as fixture, gpuLaunchOptions } from "./fixtures/map";
 // and interaction, not hosted OpenFreeMap connectivity or factual geography.
 
 test.use({ launchOptions: gpuLaunchOptions });
+test.describe.configure({ timeout: 90000 });
 
 async function environment(page: Page, empty = false) {
   page.on("pageerror", (error) =>
@@ -12,6 +13,25 @@ async function environment(page: Page, empty = false) {
   );
   await page.route("**/*", (route) => {
     const url = new URL(route.request().url());
+    if (
+      url.hostname === "tiles.openfreemap.org" &&
+      url.pathname.includes("/styles/")
+    )
+      return route.fulfill({
+        json: empty
+          ? {
+              version: 8,
+              sources: {},
+              layers: [
+                {
+                  id: "background",
+                  type: "background",
+                  paint: { "background-color": "#f5f3eb" },
+                },
+              ],
+            }
+          : fixture,
+      });
     if (!["localhost", "127.0.0.1"].includes(url.hostname))
       return route.fulfill({
         status: 503,
@@ -64,10 +84,10 @@ async function environment(page: Page, empty = false) {
 async function ready(page: Page) {
   await expect(
     page.locator('[data-map-engine="maplibre"] .maplibregl-canvas'),
-  ).toBeVisible({ timeout: 15000 });
+  ).toBeVisible({ timeout: 30000 });
   await expect(page.locator(".map-status")).toHaveText(
     /Landscape map · your next detour/,
-    { timeout: 15000 },
+    { timeout: 30000 },
   );
 }
 
@@ -77,7 +97,7 @@ test("MapLibre renders local geography and style load alone fails with a recover
   await environment(page, true);
   await page.goto("/map");
   await expect(page.locator(".maplibregl-canvas")).toBeVisible({
-    timeout: 15000,
+    timeout: 30000,
   });
   await expect(page.locator(".map-status")).toHaveText(
     /Location overview · map unavailable/,
@@ -92,6 +112,9 @@ test("MapLibre renders local geography and style load alone fails with a recover
       window as Window & { __SIDEQUEST_MAP_STYLE__?: unknown }
     ).__SIDEQUEST_MAP_STYLE__ = style;
   }, fixture);
+  await page.route("https://tiles.openfreemap.org/styles/**", (route) =>
+    route.fulfill({ json: fixture }),
+  );
   await page.getByRole("button", { name: "Retry street map" }).click();
   await ready(page);
   await expect(page.locator(".geographic-fallback")).toHaveCount(0);

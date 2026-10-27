@@ -1,24 +1,25 @@
-/** Authored 24px symbols; only static path literals enter marker HTML. */
+/** Static Lucide-style symbols; no place data enters marker HTML. */
 export function markerGlyph(
   category: string,
   saved: boolean,
   visited: boolean,
 ) {
   const value = category.toLowerCase();
-  const path = /museum|gallery|arts|heritage|castle/.test(value)
-    ? "M4 9h16M5 20h14M7 10v7m5-7v7m5-7v7M3 7l9-4 9 4"
+  // Lucide's standard category glyphs, expressed as static SVG for MapLibre markers.
+  const shapes = /museum|gallery|arts|heritage|castle/.test(value)
+    ? '<path d="M10 18v-7M14 18v-7M18 18v-7M6 18v-7M3 22h18M3 7h18L12 2z"/>'
     : /garden|park|walk|wood|nature/.test(value)
-      ? "M12 21v-8m0 3C3 17 3 7 5 5c4 0 7 4 7 8 0-6 4-9 7-9 2 7-1 12-7 12"
+      ? '<path d="M10 10v.2A3 3 0 0 1 8.9 16H5a3 3 0 0 1-1-5.8V10a3 3 0 0 1 6 0ZM7 16v6M13 19v3M12 19h8.3a1 1 0 0 0 .7-1.7L18 14h.3a1 1 0 0 0 .7-1.7L16 9h.2a1 1 0 0 0 .8-1.7L13 3l-1.4 1.5"/>'
       : /food|caf|coffee|restaurant|pub|bar/.test(value)
-        ? "M5 5v5m3-5v5m-3-2h3m-1.5 2v10M16 5v15m0-15c-4 3-4 7 0 7"
+        ? '<path d="M10 2v2M14 2v2M4 7h16v3a8 8 0 0 1-16 0V7ZM4 22h16M20 7h1a2 2 0 0 1 0 4h-1"/>'
         : /play|kids|soft/.test(value)
-          ? "M4 19h16M6 19V6h7v4l6 9M6 10h7M6 14h7"
+          ? '<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>'
           : /fitness|climb|swim/.test(value)
-            ? "M3 9v6m3-8v10m0-5h12m0-5v10m3-8v6"
+            ? '<path d="m6.5 6.5 11 11M21 21l-1-1M3 3l1 1M18 22l4-4M2 6l4-4M3 10l7-7M14 21l7-7"/>'
             : /shop|market/.test(value)
-              ? "M5 9h14v11H5V9zm3 0V6a4 4 0 0 1 8 0v3"
-              : "M5 20v-8c0-4 3-6 7-6m0 0 4-3m-4 3 4 3M12 6v8l7 6";
-  const symbol = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${path}"/></svg>`;
+              ? '<path d="M16 10a4 4 0 0 1-8 0M3.1 6h17.8l1 13a2 2 0 0 1-2 2H4.1a2 2 0 0 1-2-2l1-13ZM7 6l1-4h8l1 4"/>'
+              : '<path d="M20 10c0 5-5.5 10.2-7.4 11.8a1 1 0 0 1-1.2 0C9.5 20.2 4 15 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>';
+  const symbol = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${shapes}</svg>`;
   const badge = saved
     ? '<svg class="sq-marker-badge" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M3 1h6v10L6 8l-3 3z"/></svg>'
     : visited

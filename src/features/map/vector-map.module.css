@@ -1,7 +1,7 @@
 .map {
   position: absolute;
   inset: 0;
-  background: #f3f1e7;
+  background: #e9edf2;
 }
 .map :global(.maplibregl-ctrl-attrib) {
   font-size: 10px;
@@ -11,14 +11,14 @@
 .marker {
   position: relative;
   z-index: 2;
-  border: 2px solid #fffef5;
+  border: 2px solid #ffffff;
   border-radius: 50%;
   width: 29px;
   height: 29px;
   padding: 0;
-  background: #36543f;
-  color: #fffef5;
-  box-shadow: 0 2px 7px #243b3033;
+  background: #315eaa;
+  color: #ffffff;
+  box-shadow: 0 2px 7px #1b386b33;
   font: 600 13px sans-serif;
   cursor: pointer;
 }
@@ -26,20 +26,20 @@
   transform: scale(1.1);
 }
 .saved {
-  background: #d9eb84;
-  color: #243b30;
+  background: #d8e8ff;
+  color: #1b386b;
 }
 .visited {
-  background: #788674;
+  background: #77879c;
 }
 .selected {
   width: 36px;
   height: 36px;
-  background: #243b30;
-  outline: 3px solid #d9eb84;
+  background: #1b386b;
+  outline: 3px solid #d8e8ff;
 }
 .marker:focus-visible {
-  outline: 3px solid #537a3c;
+  outline: 3px solid #245fd2;
   outline-offset: 4px;
 }
 
@@ -59,8 +59,8 @@
   height: 13px;
   padding: 2px;
   border-radius: 3px;
-  background: #d9eb84;
-  color: #243b30;
+  background: #d8e8ff;
+  color: #1b386b;
   box-shadow: 0 0 0 1px #f6f6ef;
 }
 
@@ -68,17 +68,17 @@
   border-radius: 50%;
   width: 42px;
   height: 42px;
-  background: #36543f;
-  color: #fffef5;
+  background: #315eaa;
+  color: #ffffff;
   border: 2px solid #f5f3eb;
   font:
     550 13px "DM Sans Variable",
     sans-serif;
-  box-shadow: 0 3px 10px #243b3024;
+  box-shadow: 0 3px 10px #1b386b24;
   cursor: pointer;
 }
 .cluster:focus-visible {
-  outline: 3px solid #d9eb84;
+  outline: 3px solid #d8e8ff;
   outline-offset: 3px;
 }
 .marker {

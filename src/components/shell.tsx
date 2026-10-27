@@ -14,7 +14,6 @@ import {
   Bookmark,
   Footprints,
   Sparkles,
-  Compass,
   FlaskConical,
 } from "lucide-react";
 import { LocationTransition } from "./location-transition";
@@ -24,7 +23,6 @@ import { useApp, LAB_ENABLED } from "./providers";
 import { isDark } from "@/domain/time";
 const nav = [
   { href: "/", label: "Discover", Icon: Sparkles },
-  { href: "/explore", label: "Explore", Icon: Compass },
   { href: "/map", label: "Map", Icon: Map },
   { href: "/saved", label: "Saved", Icon: Bookmark },
   { href: "/history", label: "Been there", Icon: Footprints },
@@ -81,7 +79,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <Link
               href={href}
               key={href}
-              className={path === href ? "active" : ""}
+              className={path === href || (href === "/" && path === "/explore") ? "active" : ""}
             >
               {label}
               {href === "/saved" && state.saved.length > 0 && (
@@ -202,7 +200,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <Link
             key={href}
             href={href}
-            className={path === href ? "active" : ""}
+            className={path === href || (href === "/" && path === "/explore") ? "active" : ""}
           >
             <Icon size={21} />
             <span>{label}</span>

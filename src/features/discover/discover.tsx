@@ -2,55 +2,20 @@
 import Link from "next/link";
 import { useMemo, useState, useEffect, useRef } from "react";
 import {
-  ArrowUpRight,
   ArrowRight,
   Shuffle,
   Route,
-  Sun,
-  CloudRain,
-  MapPin,
-  Car,
-  Clock,
-  ChevronRight,
-  SlidersHorizontal,
   Search,
   Map as MapIcon,
 } from "lucide-react";
 import { useApp } from "@/components/providers";
-import { PlaceImage, EmptyState } from "@/components/primitives";
+import { EmptyState } from "@/components/primitives";
 import { TOWNS } from "@/providers/geocoding";
 import { rankPlaces, effectiveDiscoveryQuery } from "@/domain/discovery";
-import type { Intent } from "@/domain/models";
 import { PlaceCard } from "./place-card";
 import { Refinement } from "./refinement";
 import { Signature } from "./signature";
 import { ItineraryDialog } from "@/features/itinerary/itinerary";
-const moods: { label: string; sub: string; intent: Intent; place: string }[] = [
-  {
-    label: "Somewhere beautiful",
-    sub: "A change of scenery",
-    intent: "scenic",
-    place: "virginia-water",
-  },
-  {
-    label: "Something different",
-    sub: "Break the usual routine",
-    intent: "unusual",
-    place: "watts-gallery",
-  },
-  {
-    label: "A proper little walk",
-    sub: "Clear your head",
-    intent: "walk",
-    place: "swinley-forest",
-  },
-  {
-    label: "Just the two of us",
-    sub: "Make some time for each other",
-    intent: "date",
-    place: "savill",
-  },
-];
 export function Discover({ explore = false }: { explore?: boolean }) {
   const {
     places: catalog,
@@ -106,13 +71,10 @@ export function Discover({ explore = false }: { explore?: boolean }) {
       )
     : [];
   const results = nameMatches.length ? nameMatches : ranked;
-  const featured = ranked[0];
   const shown = useRef(new Set<string>());
   const impressions = useRef<string[]>([]);
   useEffect(() => {
-    impressions.current = results
-      .slice(0, explore ? visibleCount : 6)
-      .map((r) => r.place.id);
+    impressions.current = results.slice(0, visibleCount).map((r) => r.place.id);
     const record = () => {
       const ids = impressions.current.filter((id) => !shown.current.has(id));
       if (!ids.length) return;
@@ -128,7 +90,6 @@ export function Discover({ explore = false }: { explore?: boolean }) {
     const timer = setTimeout(record, 1800);
     return () => clearTimeout(timer);
   }, [results, explore, visibleCount, update]);
-  const wet = env.weather.source !== "unavailable" && env.weather.rain > 0;
   useEffect(() => {
     if (!ready || !query.text) return;
     const town = TOWNS.find(
@@ -136,273 +97,94 @@ export function Discover({ explore = false }: { explore?: boolean }) {
     );
     if (town) setLocation(town);
   }, [query.text, ready, setLocation]);
-  function choose(intent: Intent) {
-    setQuery({ ...query, intent });
-    setCollection("Good right now");
-    document.getElementById("your-options")?.scrollIntoView({
-      behavior: env.reducedMotion ? "instant" : "smooth",
-      block: "start",
-    });
-  }
   return (
-    <div className="discovery-page">
+    <div className="discovery-page workspace-page">
       <div className="page-container">
-        {!explore ? (
-          <>
-            <section className="home-hero">
-              <div className="hero-copy">
-                <h1>
-                  A day worth
-                  <br />
-                  <span>going out for.</span>
-                </h1>
-                <p className="hero-description">
-                  Something to do, somewhere new. Find an outing that fits your
-                  time, your people and the weather.
-                </p>
-                <form
-                  className="discovery-search"
-                  onSubmit={(event) => {
-                    event.preventDefault();
-                    document
-                      .getElementById("your-options")
-                      ?.scrollIntoView({
-                        behavior: env.reducedMotion ? "instant" : "smooth",
-                        block: "start",
-                      });
-                  }}
-                >
-                  <Search size={19} aria-hidden="true" />
-                  <input
-                    aria-label="Find something to do"
-                    placeholder="A place, an activity, a little inspiration…"
-                    value={query.text}
-                    onChange={(event) =>
-                      setQuery({ ...query, text: event.target.value })
-                    }
-                  />
-                  <button aria-label="Find outings" type="submit">
-                    <ArrowRight size={20} />
-                  </button>
-                </form>
-                <Refinement />
-                <button
-                  className="button escape-button"
-                  onClick={() => setSignature("escape")}
-                >
-                  Get me out of the house <ArrowUpRight size={22} />
-                </button>
-                <div className="hero-secondary">
-                  <button onClick={() => setSignature("surprise")}>
-                    <Shuffle size={17} />
-                    Surprise me
-                  </button>
-                  <Link href="/map">
-                    <MapIcon size={17} />
-                    Explore the map
-                  </Link>
-                  <button onClick={() => setPlan(true)}>
-                    <Route size={18} />
-                    Plan my day
-                  </button>
-                </div>
-                <p className="hero-footnote">
-                  <MapPin size={13} /> Starting from {env.location.name}
-                </p>
-              </div>
-              {featured ? (
-                <Link
-                  className="hero-pick"
-                  href={`/place/${featured.place.id}`}
-                >
-                  <PlaceImage place={featured.place} priority />
-                  <div className="hero-image-shade" />
-                  <div className="hero-image-top">
-                    <span>
-                      <Sun size={15} />A good place to start
-                    </span>
-                    <span className="hero-match">Picked for your plans</span>
-                  </div>
-                  <div className="hero-image-bottom">
-                    <p>
-                      <MapPin size={14} />
-                      {featured.place.area}
-                    </p>
-                    <h2>{featured.place.name}</h2>
-                    <p className="hero-pick-tagline">
-                      {featured.place.tagline}
-                    </p>
-                    <div className="hero-pick-meta">
-                      <span>
-                        <Car size={15} />~{featured.travel} min
-                      </span>
-                      <span>
-                        {featured.place.cost === 0
-                          ? "Free entry"
-                          : "Check admission"}
-                      </span>
-                      <span>
-                        <Clock size={15} />
-                        {featured.place.duration[0]}+ min
-                      </span>
-                      <span className="hero-open">
-                        <ArrowUpRight size={22} />
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              ) : (
-                <div className="hero-pick empty-hero">
-                  <EmptyState
-                    title="A little further might be worth it."
-                    text="Nothing suitable within your current limits. Widen your search below."
-                    action={() =>
-                      setQuery({ ...query, travel: 60, minutes: 240 })
-                    }
-                  />
-                </div>
-              )}
-            </section>
-            <section className="mood-section">
-              <div className="section-heading">
-                <h2>What’s the mood?</h2>
-                <span>Go with your first instinct.</span>
-              </div>
-              <div className="mood-grid">
-                {moods.map((m) => {
-                  const p = catalog.find((p) => p.id === m.place)!;
-                  return (
-                    <button
-                      key={m.intent}
-                      className={`mood ${query.intent === m.intent ? "active" : ""}`}
-                      onClick={() => choose(m.intent)}
-                      aria-pressed={query.intent === m.intent}
-                    >
-                      <PlaceImage place={p} />
-                      <span className="mood-shade" />
-                      <span className="mood-copy">
-                        <strong>{m.label}</strong>
-                        <span>{m.sub}</span>
-                      </span>
-                      <ArrowUpRight size={20} />
-                    </button>
-                  );
-                })}
-              </div>
+        <section className="workspace-intro">
+          <div>
+            <h1>Find somewhere worth going.</h1>
+            <p>Good ideas near {env.location.name}, shaped around your day.</p>
+          </div>
+          <div className="workspace-actions">
+            <Link className="button secondary" href="/map">
+              <MapIcon size={18} /> View map
+            </Link>
+            <button className="button" onClick={() => setPlan(true)}>
+              <Route size={18} /> Plan my day
+            </button>
+          </div>
+        </section>
+        <section className="workspace-filters" aria-label="Find outings">
+          <form
+            className="discovery-search"
+            onSubmit={(event) => {
+              event.preventDefault();
+              document
+                .getElementById("your-options")
+                ?.scrollIntoView({
+                  behavior: env.reducedMotion ? "instant" : "smooth",
+                  block: "start",
+                });
+            }}
+          >
+            <Search size={19} aria-hidden="true" />
+            <input
+              aria-label="Find something to do"
+              placeholder="Search places or activities"
+              value={query.text}
+              onChange={(event) =>
+                setQuery({ ...query, text: event.target.value })
+              }
+            />
+            <button aria-label="Find outings" type="submit">
+              <ArrowRight size={20} />
+            </button>
+          </form>
+          <Refinement />
+          {query.intent !== "any" && (
+            <div className="active-intent">
+              <span>
+                Active preference: <strong>{query.intent}</strong>
+              </span>
               <button
-                className="text-link undecided"
+                type="button"
+                onClick={() => setQuery({ ...query, intent: "any" })}
+              >
+                Clear preference
+              </button>
+            </div>
+          )}
+        </section>
+        <section className="results-section" id="your-options">
+          <div className="section-heading">
+            <div>
+              <h2>{query.text ? "Search results" : "Places for your day"}</h2>
+              <p>
+                {results.length} {results.length === 1 ? "idea" : "ideas"} near{" "}
+                {env.location.name} · Journey times are estimates
+              </p>
+            </div>
+            <div className="result-actions">
+              <button
+                className="text-link"
                 onClick={() => setSignature("escape")}
               >
-                Can’t decide? Pick for me
-                <ArrowUpRight size={16} />
+                Pick for me
               </button>
-            </section>
-            <div className="weather-note">
-              <span className="weather-note-icon">
-                {wet ? <CloudRain size={23} /> : <Sun size={23} />}
-              </span>
-              <div>
-                <strong>
-                  {env.weather.source === "unavailable"
-                    ? "The sky’s a question mark. Your afternoon isn’t."
-                    : wet
-                      ? "Bit wet. These still work."
-                      : "A little fresh air goes a long way."}
-                </strong>
-                <span>
-                  {env.weather.source === "unavailable"
-                    ? "We’ll keep finding good options. Check the forecast before you head out."
-                    : wet
-                      ? "Sheltered ideas move up the list. The forecast does some of the thinking."
-                      : `Ideas shaped around ${env.location.name}, your time, and the conditions.`}
-                </span>
-              </div>
-              <Link href="/map">
-                See what’s nearby
-                <ArrowRight size={18} />
-              </Link>
+              <button
+                className="text-link"
+                onClick={() => setSignature("surprise")}
+              >
+                <Shuffle size={17} /> Surprise me
+              </button>
             </div>
-          </>
-        ) : (
-          <section className="explore-heading">
-            <h1>
-              Your next
-              <br />
-              <span>good story.</span>
-            </h1>
-            <p>Good places. A little context. Find your kind of detour.</p>
-            <form
-              className="explore-search"
-              onSubmit={(e) => {
-                e.preventDefault();
-              }}
-            >
-              <input
-                aria-label="Search places, town or intent"
-                placeholder="A place, a town, or a little inspiration…"
-                value={query.text}
-                onChange={(e) => setQuery({ ...query, text: e.target.value })}
-              />
-              <SlidersHorizontal size={20} />
-            </form>
-            <Refinement />
-            <div className="collection-tabs" aria-label="Editorial collections">
-              {[
-                "Good right now",
-                "Hidden nearby",
-                "Actually free",
-                "Rain won’t ruin these",
-                "Worth the drive",
-              ].map((c) => (
-                <button
-                  key={c}
-                  onClick={() => setCollection(c)}
-                  aria-pressed={collection === c}
-                  className={collection === c ? "active" : ""}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
-          </section>
-        )}
-        <section className="results-section" id="your-options">
+          </div>
           {query.text && (
             <p className="search-interpretation">
               {nameMatches.length
                 ? `Places matching “${query.text}”.`
-                : `Ideas for “${query.text}” · ${effective.environment === "any" ? "indoors or outdoors" : effective.environment} · ${effective.minutes / 60} hours · within ${effective.travel} min. Interests, your company and practical preferences shape these ideas.`}
+                : `Ideas for “${query.text}” · ${effective.environment === "any" ? "indoors or outdoors" : effective.environment === "indoor" ? "indoors" : "outdoors"} · based on your preferences.`}
             </p>
-          )}
-          <div className="section-heading">
-            <div>
-              <h2>
-                {explore
-                  ? collection
-                  : query.intent === "any"
-                    ? "Your next good idea"
-                    : `A few ${query.intent === "walk" ? "walks" : query.intent === "scenic" ? "beautiful places" : "good ideas"} worth going out for`}
-              </h2>
-              <p>
-                {results.length
-                  ? explore
-                    ? `${results.length} ideas that fit your preferences.`
-                    : "Outings matched to your time, company and preferences."
-                  : "Your preferences are doing the filtering."}
-              </p>
-            </div>
-            <Link href="/map" className="text-link">
-              Put them on the map
-              <ArrowUpRight size={17} />
-            </Link>
-          </div>
-          {query.intent !== "any" && !explore && (
-            <button
-              className="clear-mood"
-              onClick={() => setQuery({ ...query, intent: "any" })}
-            >
-              Clear mood: {query.intent} ×
-            </button>
           )}
           <div className="discovery-source" role="status">
             <span
@@ -417,22 +199,14 @@ export function Discover({ explore = false }: { explore?: boolean }) {
           </div>
           {results.length ? (
             <div className="results-grid">
-              {results.slice(0, explore ? visibleCount : 6).map((r) => (
+              {results.slice(0, visibleCount).map((r) => (
                 <PlaceCard key={r.place.id} item={r} />
               ))}
             </div>
           ) : (
             <EmptyState
-              title={
-                env.failures.includes("places")
-                  ? "Places are taking a breather."
-                  : "Nothing brilliant within these limits."
-              }
-              text={
-                env.failures.includes("places")
-                  ? "Your saved places are still available. Reset the simulated failure in the Environment Lab."
-                  : "Try a little longer, a little further, or a different mood."
-              }
+              title="No outings fit these preferences yet."
+              text="Try more time, a wider travel range, or another activity."
               action={() => {
                 setQuery({
                   ...query,
@@ -448,40 +222,16 @@ export function Discover({ explore = false }: { explore?: boolean }) {
             />
           )}
           <p className="results-footnote">
-            ~ Journey times are estimates · Opening times and admission need
-            checking
+            Opening times and admission need checking before you go.
           </p>
-          {results.length > (explore ? visibleCount : 6) &&
-            (explore ? (
-              <button
-                className="button secondary browse-more"
-                onClick={() => setVisibleCount((n) => n + 12)}
-              >
-                Show 12 more ideas <ArrowRight size={17} />
-              </button>
-            ) : (
-              <Link className="text-link browse-more" href="/explore">
-                Browse all {results.length} ideas <ArrowRight size={17} />
-              </Link>
-            ))}
-        </section>
-        <section className="plan-strip">
-          <div>
-            <Route size={30} strokeWidth={1.5} />
-            <h2>
-              A little plan.
-              <br />A much better afternoon.
-            </h2>
-          </div>
-          <p>
-            A good first stop, a bit of breathing room,
-            <br />
-            and a sensible time to be back.
-          </p>
-          <button className="button" onClick={() => setPlan(true)}>
-            Plan my day
-            <ChevronRight size={18} />
-          </button>
+          {results.length > visibleCount && (
+            <button
+              className="button secondary browse-more"
+              onClick={() => setVisibleCount((n) => n + 12)}
+            >
+              Show more ideas <ArrowRight size={17} />
+            </button>
+          )}
         </section>
       </div>
       {signature && (
@@ -489,7 +239,7 @@ export function Discover({ explore = false }: { explore?: boolean }) {
           surprise={signature === "surprise"}
           onClose={() => setSignature(null)}
         />
-      )}{" "}
+      )}
       {plan && <ItineraryDialog onClose={() => setPlan(false)} />}
     </div>
   );

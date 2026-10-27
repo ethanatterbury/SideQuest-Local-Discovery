@@ -14,6 +14,9 @@ const cache = new Map<
 >();
 const pending = new Map<string, Promise<Image | null>>();
 const queue: (() => void)[] = [];
+// Browsing may reveal a dozen cards at once; queued cards need their own network window.
+const QUEUE_WAIT_MS = 30_000;
+const MAX_QUEUED = 60;
 let active = 0;
 function next() {
   if (active < 3 && queue.length) {
@@ -30,7 +33,14 @@ export function findPlacePhoto(place: Place): Promise<Image | null> {
   if (cached && cached.until > Date.now()) return Promise.resolve(cached.image);
   const request = pending.get(key);
   if (request) return request;
-  const enqueuedAt = Date.now();
+  if (queue.length >= MAX_QUEUED) {
+    cache.set(key, {
+      image: null,
+      retryable: true,
+      until: Date.now() + PHOTO_TRANSIENT_TTL_MS,
+    });
+    return Promise.resolve(null);
+  }
   const promise = new Promise<Image | null>((resolve) => {
     let settled = false;
     let running = false;
@@ -60,16 +70,15 @@ export function findPlacePhoto(place: Place): Promise<Image | null> {
       resolve(image);
       next();
     };
-    const deadline = setTimeout(() => {
+    const expire = () => {
       controller.abort();
       finish(null, true);
-    }, PHOTO_DEADLINE_MS);
+    };
+    let deadline = setTimeout(expire, QUEUE_WAIT_MS);
     const job = async () => {
       running = true;
-      if (Date.now() - enqueuedAt >= PHOTO_DEADLINE_MS) {
-        finish(null, true);
-        return;
-      }
+      clearTimeout(deadline);
+      deadline = setTimeout(expire, PHOTO_DEADLINE_MS);
       let image: Image | null = null;
       let retryable = false;
       try {
@@ -117,6 +126,10 @@ export function findPlacePhoto(place: Place): Promise<Image | null> {
     next();
   });
   pending.set(key, promise);
+  // A synchronously failed transport can finish before the pending entry is installed.
+  void promise.then(() => {
+    if (pending.get(key) === promise) pending.delete(key);
+  });
   return promise;
 }
 

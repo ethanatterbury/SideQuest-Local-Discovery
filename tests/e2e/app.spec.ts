@@ -32,7 +32,7 @@ test("escape, save, reload, collection and visit", async ({ page }) => {
   test.setTimeout(90000);
   await simulate(page);
   await page.goto("/");
-  await page.getByRole("button", { name: "Get me out of the house" }).click();
+  await page.getByRole("button", { name: "Pick for me" }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await page
     .getByRole("dialog")
@@ -160,7 +160,7 @@ test("lab overrides share context and map failure preserves decisions", async ({
   ).toBeVisible();
   await page.getByRole("button", { name: "Discovery", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "A day worth going out for." }),
+    page.getByRole("heading", { name: "Find somewhere worth going." }),
   ).toBeVisible();
 });
 test("malformed shared plan and unknown place recover", async ({ page }) => {
@@ -195,13 +195,13 @@ test("320px phone fits with keyboard-accessible primary action", async ({
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
     320,
   );
-  await page.getByRole("button", { name: "Get me out of the house" }).focus();
+  await page.getByRole("button", { name: "Pick for me" }).focus();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).not.toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Get me out of the house" }),
+    page.getByRole("button", { name: "Pick for me" }),
   ).toBeFocused();
 });
 test("saved map marker can select an ineligible place without fake score", async ({

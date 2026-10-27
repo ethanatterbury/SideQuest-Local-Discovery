@@ -103,17 +103,66 @@ it("accepts a canonical Archive photo only with its matching exact-file source",
   }
 });
 
-it("expires queued work from enqueue and never starts more than three network requests", async () => {
+it("gives later visible photos their own request window instead of expiring them in the queue", async () => {
   vi.useFakeTimers();
-  const fetcher = vi.fn(() => new Promise<Response>(() => {}));
+  const image = {
+    url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Venue.jpg",
+    source: "https://commons.wikimedia.org/wiki/File:Venue.jpg",
+    credit: "Author",
+    rights: "open",
+    checkedAt: "2026-10-27T00:00:00Z",
+    license: "CC0",
+  };
+  let active = 0;
+  let peak = 0;
+  const fetcher = vi.fn(async () => {
+    active++;
+    peak = Math.max(peak, active);
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+    active--;
+    return Response.json({ image });
+  });
   vi.stubGlobal("fetch", fetcher);
   const promises = Array.from({ length: 12 }, (_, i) =>
     findPlacePhoto({ ...PLACES[0], id: `deadline-${i}`, image: undefined }),
   );
   expect(fetcher).toHaveBeenCalledTimes(3);
-  await vi.advanceTimersByTimeAsync(4500);
-  expect(await Promise.all(promises)).toEqual(Array(12).fill(null));
+  await vi.advanceTimersByTimeAsync(17000);
+  expect(await Promise.all(promises)).toEqual(Array(12).fill(image));
+  expect(fetcher).toHaveBeenCalledTimes(12);
+  expect(peak).toBe(3);
+});
+
+it("bounds active requests and queue waits even when upstream ignores abort", async () => {
+  vi.useFakeTimers();
+  const fetcher = vi.fn(() => new Promise<Response>(() => {}));
+  vi.stubGlobal("fetch", fetcher);
+  const places = Array.from({ length: 70 }, (_, i) => ({
+    ...PLACES[0],
+    id: `bounded-queue-${i}`,
+    image: undefined,
+  }));
+  const promises = places.map(findPlacePhoto);
   expect(fetcher).toHaveBeenCalledTimes(3);
+  await vi.advanceTimersByTimeAsync(35000);
+  expect(await Promise.all(promises)).toEqual(Array(70).fill(null));
+  expect(fetcher.mock.calls.length).toBeLessThan(70);
+  const image = {
+    url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Venue.jpg",
+    source: "https://commons.wikimedia.org/wiki/File:Venue.jpg",
+    credit: "Author",
+    license: "CC0",
+    rights: "open",
+    checkedAt: "2026-10-27",
+  };
+  fetcher.mockImplementation(async () => Response.json({ image }));
+  expect(
+    await findPlacePhoto({
+      ...PLACES[0],
+      id: "queue-recovered",
+      image: undefined,
+    }),
+  ).toEqual(image);
 });
 
 it("caches a definitive miss for a week", async () => {

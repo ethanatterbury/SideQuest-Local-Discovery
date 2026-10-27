@@ -1,16 +1,22 @@
 import { expect, test, type Page } from "@playwright/test";
+import sharp from "sharp";
 import { mapFixture as fixture, gpuLaunchOptions } from "./fixtures/map";
 
 // Actual GPU execution over a local GeoJSON fixture; no hosted geography claim.
 test.use({ launchOptions: gpuLaunchOptions });
 // Software WebGL runs several full-size GPU captures per case on CI.
-test.describe.configure({ timeout: 90000 });
+test.describe.configure({ timeout: 240000 });
 async function lab(page: Page) {
   page.on("pageerror", (error) =>
     console.error("Browser error:", error.message),
   );
   await page.route("**/*", (route) => {
     const url = new URL(route.request().url());
+    if (
+      url.hostname === "tiles.openfreemap.org" &&
+      url.pathname.includes("/styles/")
+    )
+      return route.fulfill({ json: fixture });
     if (!["localhost", "127.0.0.1"].includes(url.hostname))
       return route.fulfill({
         status: 503,
@@ -41,13 +47,14 @@ async function lab(page: Page) {
         time: "midday",
         failures: ["weather"],
         atmosphereQuality: "low",
+        reducedMotion: true,
       }),
     );
   }, fixture);
   await page.goto("/dev/environment");
   await expect(page.locator(".map-status")).toHaveText(
     /Landscape map · your next detour/,
-    { timeout: 30000 },
+    { timeout: 60000 },
   );
   await expect(page.locator(".weather-atmosphere")).toHaveAttribute(
     "data-renderer",
@@ -61,10 +68,27 @@ async function lab(page: Page) {
   });
 }
 async function pixels(page: Page) {
+  await page.locator(".weather-atmosphere canvas").scrollIntoViewIfNeeded();
   return page.locator(".weather-atmosphere canvas").screenshot();
 }
+async function samePixels(first: Buffer, second: Buffer) {
+  const [a, b] = await Promise.all([
+    sharp(first).raw().toBuffer({ resolveWithObject: true }),
+    sharp(second).raw().toBuffer({ resolveWithObject: true }),
+  ]);
+  if (a.info.width !== b.info.width || a.info.height !== b.info.height)
+    return false;
+  // Compositor rounding can change a channel by 1/255 even with zero GPU draws.
+  return a.data.every((value, index) => Math.abs(value - b.data[index]) <= 1);
+}
+async function select(page: Page, name: string, value: string) {
+  const control = page.getByLabel(name, { exact: true });
+  // The lab has a scrollable controls panel, especially on narrow screens.
+  await control.scrollIntoViewIfNeeded();
+  await control.selectOption(value);
+}
 async function settled(page: Page) {
-  // The static preview refreshes at 350ms. Wait two frames of that bounded timer.
+  // Let the event-driven GPU draw and browser compositing settle.
   await page.waitForTimeout(750);
 }
 
@@ -72,8 +96,8 @@ test("cloud density is independent of map panning and zooming", async ({
   page,
 }) => {
   await lab(page);
-  await page.getByLabel("Weather", { exact: true }).selectOption("overcast");
-  await page.getByLabel("Motion", { exact: true }).selectOption("reduced");
+  await select(page, "Weather", "overcast");
+  await select(page, "Motion", "reduced");
   await settled(page);
   const before = await pixels(page);
   await page.evaluate(() => {
@@ -91,7 +115,7 @@ test("cloud density is independent of map panning and zooming", async ({
     );
   });
   await settled(page);
-  expect((await pixels(page)).equals(before)).toBe(true);
+  expect(await samePixels(await pixels(page), before)).toBe(true);
 });
 
 test("Lab weather updates actual GPU pixels on desktop and mobile without recreating geography", async ({
@@ -107,13 +131,11 @@ test("Lab weather updates actual GPU pixels on desktop and mobile without recrea
     .evaluate((element) =>
       element.setAttribute("data-test-identity", "original"),
     );
-  await page.getByLabel("Motion", { exact: true }).selectOption("reduced");
+  await select(page, "Motion", "reduced");
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 900 });
-    await page.getByLabel("Weather", { exact: true }).selectOption("clear");
-    await page
-      .getByLabel("Time of day", { exact: true })
-      .selectOption("midday");
+    await select(page, "Weather", "clear");
+    await select(page, "Time of day", "midday");
     await settled(page);
     const clear = await pixels(page);
     for (const [weather, time] of [
@@ -121,8 +143,8 @@ test("Lab weather updates actual GPU pixels on desktop and mobile without recrea
       ["snow", "evening"],
       ["thunderstorm", "midnight"],
     ]) {
-      await page.getByLabel("Weather", { exact: true }).selectOption(weather);
-      await page.getByLabel("Time of day", { exact: true }).selectOption(time);
+      await select(page, "Weather", weather);
+      await select(page, "Time of day", time);
       await expect(
         page.getByLabel("Weather unavailable", { exact: true }),
       ).not.toBeChecked();
@@ -132,7 +154,7 @@ test("Lab weather updates actual GPU pixels on desktop and mobile without recrea
       );
       await settled(page);
       expect(
-        (await pixels(page)).equals(clear),
+        await samePixels(await pixels(page), clear),
         `${weather} contributes visible GPU pixels at ${width}px`,
       ).toBe(false);
       await expect(page.locator(".maplibregl-canvas")).toHaveAttribute(
@@ -160,7 +182,7 @@ test("reduced motion and hidden tabs stop GPU animation; Normal resumes it", asy
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await lab(page);
-  await page.getByLabel("Weather", { exact: true }).selectOption("heavy-rain");
+  await select(page, "Weather", "heavy-rain");
   await expect(page.locator(".weather-atmosphere")).toHaveAttribute(
     "data-motion",
     "reduced",
@@ -168,8 +190,8 @@ test("reduced motion and hidden tabs stop GPU animation; Normal resumes it", asy
   await settled(page);
   const staticFrame = await pixels(page);
   await settled(page);
-  expect((await pixels(page)).equals(staticFrame)).toBe(true);
-  await page.getByLabel("Motion", { exact: true }).selectOption("normal");
+  expect(await samePixels(await pixels(page), staticFrame)).toBe(true);
+  await select(page, "Motion", "normal");
   await expect(page.locator(".weather-atmosphere")).toHaveAttribute(
     "data-motion",
     "normal",
@@ -177,7 +199,7 @@ test("reduced motion and hidden tabs stop GPU animation; Normal resumes it", asy
   await settled(page);
   const movingFrame = await pixels(page);
   await settled(page);
-  expect((await pixels(page)).equals(movingFrame)).toBe(false);
+  expect(await samePixels(await pixels(page), movingFrame)).toBe(false);
   await page.evaluate(() => {
     Object.defineProperty(document, "hidden", {
       configurable: true,
@@ -188,7 +210,7 @@ test("reduced motion and hidden tabs stop GPU animation; Normal resumes it", asy
   await settled(page);
   const pausedFrame = await pixels(page);
   await settled(page);
-  expect((await pixels(page)).equals(pausedFrame)).toBe(true);
+  expect(await samePixels(await pixels(page), pausedFrame)).toBe(true);
   await page.evaluate(() => {
     Object.defineProperty(document, "hidden", {
       configurable: true,
@@ -197,17 +219,15 @@ test("reduced motion and hidden tabs stop GPU animation; Normal resumes it", asy
     document.dispatchEvent(new Event("visibilitychange"));
   });
   await settled(page);
-  expect((await pixels(page)).equals(pausedFrame)).toBe(false);
-  await page
-    .getByLabel("Weather", { exact: true })
-    .selectOption("thunderstorm");
+  expect(await samePixels(await pixels(page), pausedFrame)).toBe(false);
+  await select(page, "Weather", "thunderstorm");
   await expect(page.getByLabel("Rain intensity", { exact: true })).toHaveValue(
     "12",
   );
   await expect(page.getByLabel("Wind", { exact: true })).toHaveValue("48");
-  await page.getByLabel("Motion", { exact: true }).selectOption("reduced");
+  await select(page, "Motion", "reduced");
   await settled(page);
   const staticStorm = await pixels(page);
   await settled(page);
-  expect((await pixels(page)).equals(staticStorm)).toBe(true);
+  expect(await samePixels(await pixels(page), staticStorm)).toBe(true);
 });

@@ -14,6 +14,7 @@ import { LOAD_BUDGET } from "@/domain/performance";
 export type NearbyResult = {
   places: Place[];
   source: "live" | "cached" | "fallback";
+  incomplete?: boolean;
   message?: string;
 };
 type Element = {
@@ -199,8 +200,13 @@ export function normalizeOsmElement(value: unknown): Place | null {
     ) ||
     /\b(?:changing (?:facilit(?:y|ies)|rooms?)|locker rooms?)\b/i.test(name) ||
     ["yes", "construction"].includes(clean(t.construction)) ||
-    t.disused === "yes" ||
-    t.abandoned === "yes"
+    ["disused", "abandoned", "demolished", "removed", "razed", "closed"].some(
+      (state) =>
+        t[state] === "yes" ||
+        ["leisure", "amenity", "tourism", "sport"].some(
+          (kind) => !!clean(t[`${state}:${kind}`]),
+        ),
+    )
   )
     return null;
   const leisure = clean(t.leisure),
@@ -279,6 +285,14 @@ export function normalizeOsmElement(value: unknown): Place | null {
     environment = "outdoor";
     intents = ["scenic", "walk", "date"];
     duration = [20, 60];
+  } else if (
+    ["wood", "heath"].includes(clean(t.natural)) ||
+    t.landuse === "forest"
+  ) {
+    category = t.natural === "heath" ? "Heathland" : "Woodland";
+    environment = "outdoor";
+    intents = ["walk", "scenic", "relax"];
+    duration = [45, 120];
   } else if (["cafe", "restaurant", "ice_cream"].includes(amenity)) {
     category =
       amenity === "cafe"
@@ -611,7 +625,10 @@ async function queryOverpass(query: string): Promise<Place[]> {
   }
   throw new Error("Nearby discovery is temporarily unavailable");
 }
-function remember(places: Place[]) {
+export function getRememberedLivePlace(id: string): Place | undefined {
+  return details.get(id);
+}
+export function rememberLivePlaces(places: Place[]) {
   for (const place of places) {
     details.set(place.id, place);
     if (details.size > 3000) details.delete(details.keys().next().value!);
@@ -678,12 +695,13 @@ export async function getNearbyPlaces(
       pending.set(key, request);
     }
     const livePlaces = await request;
+    if (!livePlaces.length) throw new Error("No usable live places");
     const places = [
       ...new Map(
         [...areaSnapshot, ...livePlaces].map((place) => [place.id, place]),
       ).values(),
     ];
-    remember(places);
+    rememberLivePlaces(places);
     cache.set(key, { places, at: Date.now() });
     if (cache.size > 64) cache.delete(cache.keys().next().value!);
     return { places: within(places), source: "live" };
@@ -741,7 +759,7 @@ export async function getLivePlace(id: string): Promise<Place | null> {
       pending.set(key, request);
     }
     const places = await request;
-    remember(places);
+    rememberLivePlaces(places);
     return places.find((p) => p.id === id) || null;
   } catch {
     return null;

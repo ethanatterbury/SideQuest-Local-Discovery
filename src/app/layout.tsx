@@ -3,6 +3,7 @@ import "@fontsource-variable/manrope";
 import "@fontsource-variable/dm-sans";
 import "./globals.css";
 import "./discovery-refresh.css";
+import "./workspace-redesign.css";
 import { AppProviders } from "@/components/providers";
 import { Shell } from "@/components/shell";
 export const metadata: Metadata = {
@@ -30,7 +31,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#f6f6ef",
+  themeColor: "#f8f9fb",
 };
 export default function RootLayout({
   children,

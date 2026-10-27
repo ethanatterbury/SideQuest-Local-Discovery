@@ -56,6 +56,29 @@ async function source(page: import("@playwright/test").Page, places: Place[]) {
     route.fulfill({ json: { image: null, source: "unavailable" } }),
   );
 }
+test("an inherited food preference can be cleared", async ({ page }) => {
+  const cafe = fixture(101, {
+    name: "Ordinary cafe",
+    category: "Cafe",
+    optionalCategory: "food",
+    intents: ["food"],
+  });
+  const museum = fixture(102);
+  await source(page, [cafe, museum]);
+  await page.goto("/?intent=food");
+  await expect(page.getByText("Active preference:")).toContainText("food");
+  await expect(
+    page.getByRole("link", { name: cafe.name, exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Clear preference" }).click();
+  await expect(page.getByText("Active preference:")).toHaveCount(0);
+  await expect(
+    page.getByRole("link", { name: cafe.name, exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("link", { name: museum.name, exact: true }),
+  ).toBeVisible();
+});
 test("a live Archive photo reaches the optimized image and credited place detail", async ({
   page,
 }) => {
@@ -107,7 +130,7 @@ test("live discovery provides more pages of ideas and preserves saved live place
   await page.goto("/explore");
   await expect(page.getByText(/Fresh OpenStreetMap discoveries/)).toBeVisible();
   await expect(page.locator(".results-grid > article")).toHaveCount(12);
-  await page.getByRole("button", { name: "Show 12 more ideas" }).click();
+  await page.getByRole("button", { name: "Show more ideas" }).click();
   await expect(page.locator(".results-grid > article")).toHaveCount(24);
   await page.getByRole("link", { name: "Test Museum 0", exact: true }).click();
   await expect(
@@ -488,10 +511,10 @@ test("home hero keeps the top recommendation when only a lower-ranked place has 
     }),
   ]);
   await page.goto("/");
-  await expect(page.locator(".hero-pick h2")).toHaveText(
-    "Best venue without media",
-  );
-  await page.getByRole("button", { name: "Get me out of the house" }).click();
+  await expect(
+    page.locator(".results-grid .place-title h3").first(),
+  ).toHaveText("Best venue without media");
+  await page.getByRole("button", { name: "Pick for me" }).click();
   await expect(page.locator(".signature-body h2")).toHaveText(
     "Best venue without media",
   );

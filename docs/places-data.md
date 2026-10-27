@@ -1,5 +1,7 @@
 # Free place data
 
+An optional server-only `GEOAPIFY_API_KEY` enables on-demand national place listings ahead of the existing fallback chain. See [Geoapify setup and limits](geoapify-setup.md). Its results use the same OSM normalization, mapped restrictions and shared age gates; it supplies no venue photo library. A missing key leaves the existing regional/Overpass discovery available.
+
 `src/providers/data/regional-osm.json` contains an automatically filtered snapshot of 7,182 named OpenStreetMap nodes and ways in Berkshire, Surrey and Hampshire. Imported 8 October 2026 from the Geofabrik latest regional PBF extracts listed in its `sources` field. The snapshot is a fallback, not a claim that venue details have been verified or are current.
 
 © OpenStreetMap contributors. The database is available under the [Open Database Licence 1.0](https://opendatacommons.org/licenses/odbl/1-0/). Source and attribution: [OpenStreetMap copyright](https://www.openstreetmap.org/copyright), [Geofabrik England extracts](https://download.geofabrik.de/europe/united-kingdom/england.html). The source snapshot remains available in the repository; returned place records preserve attribution in their notes.

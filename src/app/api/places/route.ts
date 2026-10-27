@@ -1,4 +1,4 @@
-import { getNearbyPlaces } from "@/providers/nearby-places";
+import { getDiscoveryPlaces } from "@/providers/geoapify-places";
 import { withStoredPhoto } from "@/providers/venue-media";
 export const maxDuration = 10;
 export async function GET(request: Request) {
@@ -25,12 +25,24 @@ export async function GET(request: Request) {
       { status: 400 },
     );
   // Canonical area centers/radii share cache entries without sharing preferences.
-  const canonical = { lat: Math.round(coords.lat * 50) / 50, lng: Math.round(coords.lng * 50) / 50 };
-  const result = await getNearbyPlaces(canonical, Math.ceil(Math.min(100, Math.max(3, radiusKm)) / 5) * 5, params.get("refresh") !== "1");
+  const canonical = {
+    lat: Math.round(coords.lat * 50) / 50,
+    lng: Math.round(coords.lng * 50) / 50,
+  };
+  const result = await getDiscoveryPlaces(
+    canonical,
+    Math.ceil(Math.min(100, Math.max(3, radiusKm)) / 5) * 5,
+    params.get("refresh") !== "1",
+  );
   return Response.json(
     { ...result, places: result.places.map(withStoredPhoto) },
     {
-      headers: { "Cache-Control": "public, max-age=60, s-maxage=1800, stale-while-revalidate=86400" },
+      headers: {
+        "Cache-Control":
+          result.source === "fallback" || result.incomplete
+            ? "public, max-age=30, s-maxage=60, stale-while-revalidate=60"
+            : "public, max-age=60, s-maxage=1800, stale-while-revalidate=86400",
+      },
     },
   );
 }

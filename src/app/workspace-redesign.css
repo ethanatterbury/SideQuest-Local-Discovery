@@ -1,0 +1,421 @@
+/* A practical discovery workspace shared across SideQuest. */
+:root {
+  --paper: #f8f9fb;
+  --surface: #fff;
+  --ink: #202733;
+  --muted: #626d7b;
+  --line: #e0e5eb;
+  --accent: #dceaff;
+  --panel: #eef3fa;
+  --focus: #2862d7;
+  --ink-hover: #184db7;
+  --accent-hover: #cfe0ff;
+  --secondary-line: #d7e0ec;
+  --secondary-hover: #eff4fa;
+  --elevation: 0 10px 28px #17243a0c;
+}
+body {
+  background: var(--paper);
+}
+::selection {
+  background: #cfe1ff;
+  color: #15233a;
+}
+.header {
+  background: #fff;
+  border-color: var(--line);
+  height: 76px;
+}
+.brand-dot {
+  color: #2862d7;
+}
+.location-dot {
+  background-color: #2862d7;
+}
+.desktop-nav a.active {
+  color: #245cc5;
+  border-color: #245cc5;
+}
+.context-bar {
+  background: #f1f4f8;
+  color: #5e6a79;
+  border-bottom: 1px solid var(--line);
+}
+.button {
+  background: #245fd2;
+  color: white;
+  border-radius: 9px;
+}
+.button:hover {
+  background: #184db7;
+}
+.button.secondary {
+  background: white;
+  color: #263448;
+  box-shadow: inset 0 0 0 1px #d4dce6;
+}
+.button.secondary:hover {
+  background: #f0f5fc;
+}
+:focus-visible {
+  outline-color: #2862d7;
+}
+.workspace-intro {
+  padding: 32px 0 22px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+}
+.workspace-intro h1 {
+  font-size: clamp(32px, 3.2vw, 44px);
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+}
+.workspace-intro p {
+  color: var(--muted);
+  font-size: 15px;
+  margin-top: 10px;
+}
+.workspace-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.workspace-actions .button {
+  gap: 9px;
+}
+.workspace-filters {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 4px 18px #17243a08;
+}
+.workspace-filters .discovery-search {
+  margin: 0 0 14px;
+  border-color: #d7dfe9;
+}
+.discovery-search:focus-within,
+.map-search:focus-within {
+  outline-color: #2862d7;
+}
+.discovery-search button {
+  background: #245fd2;
+}
+.discovery-search button:hover {
+  background: #184db7;
+}
+.workspace-filters .quick-controls {
+  width: 100%;
+  background: #fff;
+  border-color: #d7dfe9;
+}
+.workspace-filters .quick-controls > label {
+  flex: 1;
+  min-width: 0;
+}
+.workspace-filters .quick-controls select {
+  min-width: 0;
+  width: 100%;
+}
+.workspace-filters .activity-filter {
+  margin-top: 12px;
+}
+.active-intent {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.active-intent strong {
+  color: var(--ink);
+  text-transform: capitalize;
+}
+.active-intent button {
+  min-height: 36px;
+  color: #245cc5;
+  font-weight: 600;
+}
+.workspace-filters .preference-panel {
+  border-top: 1px solid var(--line);
+  margin-top: 14px;
+}
+.refinement select:focus-visible {
+  outline-color: #2862d7;
+}
+.interest-choices button[aria-pressed="true"] {
+  background: #245fd2;
+  border-color: #245fd2;
+  color: #fff;
+}
+.workspace-page .results-section {
+  padding: 38px 0 70px;
+}
+.workspace-page .section-heading {
+  align-items: end;
+  margin-bottom: 16px;
+}
+.workspace-page .section-heading h2 {
+  font-size: 24px;
+}
+.workspace-page .section-heading p {
+  font-size: 14px;
+  margin-top: 5px;
+}
+.result-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.workspace-page .text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #245cc5;
+}
+.discovery-source {
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+.results-grid {
+  align-items: start;
+  gap: 20px;
+}
+.place-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  overflow: hidden;
+}
+.card-visual {
+  border-radius: 0;
+  background: #eef2f6;
+}
+.card-content {
+  padding: 16px;
+}
+.place-category {
+  font-size: 12px;
+}
+.place-title h3 {
+  font-size: 19px;
+}
+.place-title:hover {
+  color: #245cc5;
+}
+.place-meta,
+.card-bottom,
+.card-dismiss,
+.reported-access {
+  font-size: 12px;
+}
+.card-reason {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 12px;
+}
+.match-badge {
+  background: #fff;
+  color: #25354a;
+}
+.match-badge > span {
+  background: #3573d9;
+}
+.save-button.saved {
+  background: #dceaff;
+  color: #245cc5;
+}
+.save-button:hover {
+  background: #e7f0ff;
+}
+.card-bottom {
+  border-color: var(--line);
+}
+.image-fallback {
+  background: #eff3f7 !important;
+  background-image: none;
+}
+.fallback-content {
+  color: #67788c;
+  background: #eff3f7;
+}
+/* A missing image remains observable for later photo lookup, but never dominates the result. */
+.workspace-page .card-visual:has(.image-fallback) {
+  aspect-ratio: auto;
+  height: 76px;
+}
+.workspace-page .card-visual:has(.image-fallback) .fallback-content {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 0 16px;
+}
+.workspace-page .card-visual:has(.image-fallback) .fallback-content svg {
+  width: 22px;
+  height: 22px;
+}
+.workspace-page .card-visual:has(.image-fallback) .fallback-content span {
+  font: 500 13px var(--body);
+}
+.workspace-page .card-visual:has(.image-fallback) .fallback-content small {
+  display: none;
+}
+.workspace-page
+  .card-visual
+  [data-photo-state="unavailable"]
+  .fallback-content::after,
+.workspace-page
+  .card-visual
+  [data-photo-state="loading"]
+  .fallback-content::after {
+  font-size: 12px;
+  color: #687789;
+}
+.workspace-page
+  .card-visual
+  [data-photo-state="unavailable"]
+  .fallback-content::after {
+  content: "Photo unavailable";
+}
+.workspace-page
+  .card-visual
+  [data-photo-state="loading"]
+  .fallback-content::after {
+  content: "Loading photo…";
+}
+.workspace-page .card-visual:has(.image-fallback) .match-badge {
+  display: none;
+}
+.workspace-page .card-visual:has(.image-fallback) .save-button {
+  top: 20px;
+}
+.workspace-page .card-visual:has(.image-fallback) .visited-badge {
+  left: auto;
+  right: 58px;
+  bottom: 22px;
+}
+.results-footnote {
+  font-size: 12px;
+}
+.map-sidebar,
+.modal {
+  background: #fff;
+}
+.map-result-row.selected {
+  background: #eaf2ff;
+}
+.map-search {
+  border-color: #d7dfe9;
+}
+.itinerary-header {
+  padding: 0 0 20px;
+}
+.itinerary-header > svg {
+  color: #245fd2;
+  margin-bottom: 8px;
+}
+.itinerary-header h2 {
+  font-size: 26px;
+}
+.itinerary-header h2 span {
+  color: var(--ink);
+}
+.itinerary-header p,
+.itinerary-controls label,
+.itinerary-controls select,
+.itinerary-summary,
+.timeline-content p,
+.plan-adjustments button {
+  font-size: 13px;
+}
+.itinerary-controls {
+  background: #f5f7fa;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px;
+}
+.itinerary-controls select {
+  border-color: #d5dde7;
+  border-radius: 7px;
+}
+.timeline-point {
+  background: #e5efff;
+  color: #245cc5;
+}
+.mobile-nav {
+  background: #fff;
+  border-color: var(--line);
+}
+.mobile-nav a.active {
+  color: #245cc5;
+}
+@media (max-width: 700px) {
+  .header {
+    height: 66px;
+  }
+  .workspace-intro {
+    padding: 20px 0 16px;
+    display: block;
+  }
+  .workspace-intro h1 {
+    font-size: 28px;
+  }
+  .workspace-intro p {
+    display: none;
+  }
+  .workspace-actions {
+    margin-top: 14px;
+  }
+  .workspace-actions .button {
+    flex: 1;
+    justify-content: center;
+    padding: 10px 12px;
+  }
+  .workspace-filters {
+    padding: 12px;
+  }
+  .workspace-filters .quick-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .workspace-filters .quick-controls > label {
+    padding: 0 10px;
+  }
+  .workspace-filters .quick-controls > button {
+    width: 100%;
+    min-height: 46px;
+  }
+  .workspace-filters .quick-controls select {
+    font-size: 13px;
+  }
+  .workspace-page .results-section {
+    padding-top: 22px;
+  }
+  .workspace-page .section-heading {
+    align-items: stretch;
+    gap: 8px;
+  }
+  .workspace-page .section-heading h2 {
+    font-size: 22px;
+  }
+  .workspace-page .section-heading .text-link {
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .result-actions {
+    gap: 10px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .workspace-page .card-visual:has(.image-fallback) .fallback-content span {
+    display: none;
+  }
+  .itinerary-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

@@ -175,7 +175,7 @@ export function usePlaceCatalog(
     ]);
     const key = `${cellId({ lat, lng })}:${Math.ceil(radius / 5) * 5}`;
     setStatus("loading");
-    setMessage("Finding your kind of detour…");
+    setMessage("Finding mapped places near your starting point…");
     async function discover() {
       const archive = await readArea(key);
       if (controller.signal.aborted) return;
@@ -188,7 +188,19 @@ export function usePlaceCatalog(
           ),
         );
         setStatus("cached");
-        setMessage("Your recent area · refreshing quietly.");
+        setMessage(
+          archive.places.some(
+            (place) =>
+              isPlace(place) &&
+              place.notes.some(
+                (note) =>
+                  typeof note === "string" &&
+                  note.includes("https://www.geoapify.com/"),
+              ),
+          )
+            ? "Your recent area · Geoapify / OpenStreetMap · refreshing."
+            : "Your recent OpenStreetMap area · refreshing.",
+        );
       }
       if (blocked) {
         setStatus("fallback");
@@ -242,8 +254,13 @@ export function usePlaceCatalog(
             ["live", "cached", "fallback"].includes(data.source)
               ? data.source
               : "fallback",
-            data.message ||
-              "Fresh OpenStreetMap discoveries · check practical details.",
+            typeof data.message === "string" && data.message.trim()
+              ? data.message
+              : data.source === "live"
+                ? "Fresh OpenStreetMap discoveries · check practical details."
+                : data.source === "cached"
+                  ? "Previously fetched OpenStreetMap places · check practical details."
+                  : "Live discovery is unavailable. Showing available area data.",
           );
         } catch {
           if (!controller.signal.aborted) {
@@ -286,7 +303,7 @@ export function usePlaceCatalog(
                   accept(
                     chunks,
                     "cached",
-                    "Area ready · checking for fresh discoveries.",
+                    "OpenStreetMap area snapshot · checking for fresh places.",
                     !liveCompleted,
                     "static",
                   );

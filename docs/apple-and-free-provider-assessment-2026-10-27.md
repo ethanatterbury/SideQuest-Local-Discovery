@@ -1,0 +1,40 @@
+# Apple Maps and the no-billing requirement
+
+The owner rules out usage billing and a national photo warehouse, and reiterates that the entire website needs replacement. Google production billing is therefore not the chosen integration. The Google demo key has not been supplied or tested; its lack of user-submitted photos makes it unsuitable for validating full photo coverage.
+
+## Apple findings
+
+- The supplied Reddit posts describe native Swift/SwiftUI MapKit applications. Their native graphics and local SwiftData storage are not drop-in website components. The hobby-app post explicitly describes building a separate place identity/classification layer; the screenshot does not establish recommendation quality or venue-photo access.
+- Apple's web product is MapKit JS. It works across desktop/mobile platforms, including Android. Apple publishes 250,000 map views and 25,000 service calls **per day per Developer Program membership**. It asks developers to contact Apple for additional capacity, rather than publishing a Google-style per-call overage price. This is a published allowance, not a tested SideQuest account quota or a guaranteed absence of all charges.
+- Apple's Developer Program is $99 USD per year, with local pricing shown during enrollment. Token provisioning uses Certificates, Identifiers & Profiles and an Account Holder/Admin role. These sources do not establish a universally free production MapKit JS account; do not recommend paying for membership as a prerequisite to proving SideQuest's photo use case.
+- MapKit JS exposes search, place lookup, place-detail/selection views and Look Around. Apple's own map website has photos, but that does not establish a general public photo-URL API usable in SideQuest's custom photo grid. This review has not verified such an API or representative England image coverage. Some documentation pages could only be read through indexed content/transcripts because their Markdown responses were unavailable to the research connector.
+
+Primary sources: [web maps and allowances](https://developer.apple.com/maps/web/), [MapKit JS](https://developer.apple.com/documentation/mapkitjs), [Maps tokens](https://developer.apple.com/help/account/service-configurations/maps-tokens), [program fee](https://developer.apple.com/programs/enroll/), [place cards and embeds](https://developer.apple.com/videos/play/wwdc2024/10097/), [2025 web features](https://developer.apple.com/videos/play/wwdc2025/204/).
+
+## Implemented route and its limits
+
+Keep the free MapLibre/OpenFreeMap basemap. Add Geoapify Free as a server-side discovery source when `GEOAPIFY_API_KEY` is set. The owner confirmed storing that variable in Vercel Production. Geoapify is an OSM-derived listings source, not an independent visitor-rating or comprehensive photo library. It can repair reliance on unavailable Overpass mirrors and the starter-area snapshot; quality still depends on classification, evidence and ranking.
+
+Geoapify publishes 3,000 free credits/day without a card; Places retrieval costs one credit per twenty returned records. A request that returns 300 activity candidates, 100 food candidates and 100 commercial candidates uses up to twenty-five credits, before other services/details. Caches and request deduplication reduce repeated upstream work, but process-local caches are not a durable whole-deployment quota counter. No paid plan is activated. [Pricing](https://www.geoapify.com/pricing/), [Places contract and credit calculation](https://apidocs.geoapify.com/docs/places/), [OSM-identity detail lookup](https://apidocs.geoapify.com/how-to/place-discovery/place-details-by-id-or-coordinates).
+
+Use the existing rights/identity-checked external photo resolver and repair its queue/retry behavior. New image binaries are not downloaded into a national catalogue. Local prepared assets already in the project remain; normal image optimization may use its normal delivery cache. On 27 October production `/api/photo` checks returned a British Museum image through its declared Wikidata entity in 255ms and a Stonehenge image in 183ms, both external Wikimedia URLs with CC BY-SA credits. These two known landmarks are evidence of a working external path, not a measured nationwide hit rate. Independent play venues and small businesses remain much harder to cover.
+
+The replacement UI must keep unknown imagery honest and compact. No claim that every venue now has a photograph, that supplier categories establish infant suitability, or that national coverage is complete follows from the integration. Verify live provider results in multiple England areas after deployment and report actual counts and failures.
+
+## Local businesses are the photo acceptance test
+
+The owner's examples—Jake's/Trilakes, The Ruby Play Cafe and Pirates Landing—expose why the landmark checks above are insufficient. They are examples of a class of venues, not a three-place whitelist to patch while leaving other businesses uncovered. A comprehensive venue-photo feed has not been verified under the combined no-billing/no-image-storage requirements. Wikimedia is a supplementary source, not the solution for this class.
+
+The following official sites were checked through the web research connector on 27 October:
+
+| Representative venue | Official source | Finding |
+| --- | --- | --- |
+| The Ruby Play Cafe | https://www.therubyplaycafe.co.uk/ | Official page confirms play is the primary offer. Its image links include templated Shopify `{width}` URLs; the unexpanded link returned 404. Testimony avatars are placeholders, not venue photos. |
+| Jake's/Trilakes | https://trilakes.co.uk/ and https://jakesplayworld.com/ | Official pages establish indoor play/farm activities. The first image exposed by the Trilakes research page is a close-popup graphic, illustrating why blindly choosing the first image is wrong. |
+| Pirates Landing | https://pirateslanding.co.uk/pirates-landing-camberley/ | Branch-specific official page establishes the Camberley address. Generic chain homepage artwork is insufficient evidence of a photograph of this exact branch. |
+
+These checks establish source discovery and candidate pitfalls, not an approved image. They must not be represented as fixed photo coverage. The existing official-photo parser can assess candidate identity/subject, but a public homepage or `og:image` tag is not evidence of a reuse license. No new external-site permission or broader photo rights were inferred. Where a venue supplies a usable image and permission for external delivery, store its URL, identity and permission evidence only; no photo warehouse is required. That route needs participating venues and is not an immediate automated England-wide feed. This release does not activate permissioned-photo delivery without those records.
+
+A direct production `/api/photo` diagnostic for Jake's Playbarn at 51.3457786, -0.8138701, with its official website supplied, returned `image:null` on 27 October. The existing Commons pipeline considered 30 candidates and rejected all 30 for insufficient subject evidence, after four requests in 3,133ms. This representative local failure is more relevant to the owner's complaint than the two successful landmarks. It is a source/identity gap, not a photo successfully found but hidden by the browser queue.
+
+Other photo APIs were checked against the same requirements: [Yelp's evaluation allowance](https://docs.developer.yelp.com/docs/places-faq) is not a free production entitlement; [Tripadvisor Content API](https://www.tripadvisor.com/business/solutions/hotels/content-api) requires a card and bills overages; [Foursquare's current pricing changes](https://docs.foursquare.com/developer/reference/upcoming-changes) describe paid usage after its small free allowance. Foursquare's [marketing pricing page](https://foursquare.com/pricing/) still advertises a different free-call figure, so do not present either figure as a verified no-billing photo plan. No account or paid integration was activated for these services.

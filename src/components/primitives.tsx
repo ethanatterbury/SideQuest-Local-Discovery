@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useApp } from "@/components/providers";
-import { findPlacePhoto } from "@/providers/photo-client";
+import { findPlacePhoto, photoRetryDelay } from "@/providers/photo-client";
 import type { Place } from "@/domain/models";
 import { seedVenueImage } from "@/providers/seed-venue-media";
 export function Mark() {
@@ -53,14 +53,26 @@ export function PlaceImage({
   const container = useRef<HTMLDivElement>(null);
   const [looking, setLooking] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [attempted, setAttempted] = useState(false);
   useEffect(() => {
     if (image || !container.current) return;
     let cancelled = false;
+    let retries = 0;
+    let retryTimer: ReturnType<typeof setTimeout> | undefined;
     async function resolvePhoto() {
+      if (cancelled) return;
       setLooking(true);
       const photo = await findPlacePhoto(place);
       if (cancelled) return;
       if (photo) rememberPhoto(place.id, photo);
+      else {
+        const delay = photoRetryDelay(place);
+        if (delay !== null && retries < 2) {
+          retries++;
+          retryTimer = setTimeout(() => void resolvePhoto(), delay);
+        }
+      }
+      setAttempted(true);
       setLooking(false);
     }
     const observer = new IntersectionObserver(
@@ -74,10 +86,14 @@ export function PlaceImage({
     observer.observe(container.current);
     return () => {
       cancelled = true;
+      clearTimeout(retryTimer);
       observer.disconnect();
     };
   }, [place, image, rememberPhoto, priority]);
-  useEffect(() => setFailed(false), [place.id, imageSource]);
+  useEffect(() => {
+    setFailed(false);
+    setAttempted(false);
+  }, [place.id, imageSource]);
   const Icon =
     place.category.includes("lake") || place.id === "virginia-water"
       ? Waves
@@ -89,6 +105,13 @@ export function PlaceImage({
   return (
     <div
       ref={container}
+      data-photo-state={
+        image && !failed
+          ? "available"
+          : !failed && (looking || !attempted)
+            ? "loading"
+            : "unavailable"
+      }
       className={`place-image ${className} ${!image || failed ? "image-fallback" : ""}`}
       style={{
         backgroundColor: place.environment === "indoor" ? "#dad5c2" : "#ccd3b4",

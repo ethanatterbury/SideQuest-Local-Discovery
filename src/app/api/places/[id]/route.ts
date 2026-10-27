@@ -1,4 +1,4 @@
-import { getLivePlace } from "@/providers/nearby-places";
+import { getDiscoveryPlace } from "@/providers/geoapify-places";
 import { withStoredPhoto } from "@/providers/venue-media";
 import { PLACES } from "@/providers/places";
 export const maxDuration = 25;
@@ -8,7 +8,7 @@ export async function GET(
 ) {
   const { id } = await context.params;
   const place =
-    PLACES.find((place) => place.id === id) || (await getLivePlace(id));
+    PLACES.find((place) => place.id === id) || (await getDiscoveryPlace(id));
   return place
     ? Response.json(withStoredPhoto(place), {
         headers: { "Cache-Control": "public, max-age=1800" },
