@@ -115,6 +115,7 @@ export type Place = {
     evidence: Evidence;
   }[];
   access?: PlaceAccess;
+  /** infantSuitability is positive official evidence for an infant-specific experience, never generic family admission. */
   evidence?: Record<string, Evidence>;
   parentId?: string;
   requiresBooking?: boolean;

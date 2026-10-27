@@ -18,7 +18,7 @@ export function Refinement({
   expanded?: boolean;
   mapFood?: { included: boolean; onChange(value: boolean): void };
 }) {
-  const { query, setQuery } = useApp();
+  const { query, setQuery, ready } = useApp();
   const [open, setOpen] = useState(expanded);
   const [addingChild, setAddingChild] = useState(false);
   const ages = query.childrenAges ?? [];
@@ -30,6 +30,7 @@ export function Refinement({
         <label>
           <Users size={16} />
           <select
+            disabled={!ready}
             aria-label="Who is coming"
             value={query.company}
             onChange={(e) =>
@@ -56,6 +57,7 @@ export function Refinement({
         <label>
           <Clock size={16} />
           <select
+            disabled={!ready}
             aria-label="Time available"
             value={query.minutes}
             onChange={(e) => set({ minutes: Number(e.target.value) })}
@@ -70,6 +72,7 @@ export function Refinement({
         <label>
           <Car size={16} />
           <select
+            disabled={!ready}
             aria-label="Maximum travel time"
             value={query.travel}
             onChange={(e) => set({ travel: Number(e.target.value) })}
@@ -82,6 +85,7 @@ export function Refinement({
           </select>
         </label>
         <button
+          disabled={!ready}
           className={open ? "selected" : ""}
           aria-label="More preferences"
           aria-expanded={open}
@@ -94,6 +98,7 @@ export function Refinement({
         <label>
           Type of outing
           <select
+            disabled={!ready}
             aria-label="Type of outing"
             value={
               mapFood && query.activity === "food"
@@ -136,6 +141,7 @@ export function Refinement({
         {mapFood && (
           <label className="map-food-filter">
             <input
+              disabled={!ready}
               type="checkbox"
               checked={mapFood.included}
               onChange={(event) => mapFood.onChange(event.target.checked)}
@@ -156,6 +162,7 @@ export function Refinement({
               <label>
                 Child {index + 1} age
                 <select
+                  disabled={!ready}
                   aria-label={`Child ${index + 1} age`}
                   value={age}
                   onChange={(event) =>
@@ -174,6 +181,7 @@ export function Refinement({
                 </select>
               </label>
               <button
+                disabled={!ready}
                 className="button secondary"
                 aria-label={`Remove child ${index + 1}`}
                 onClick={() =>
@@ -189,6 +197,7 @@ export function Refinement({
               <label>
                 Child {ages.length + 1} age
                 <select
+                  disabled={!ready}
                   aria-label={`Child ${ages.length + 1} age`}
                   value=""
                   onChange={(event) => {
@@ -210,6 +219,7 @@ export function Refinement({
               </label>
               {ages.length > 0 && (
                 <button
+                  disabled={!ready}
                   className="button secondary"
                   onClick={() => setAddingChild(false)}
                 >
@@ -221,6 +231,7 @@ export function Refinement({
           <div className="family-age-actions">
             {ages.length > 0 && ages.length < 8 && !addingChild && (
               <button
+                disabled={!ready}
                 className="button secondary"
                 onClick={() => setAddingChild(true)}
               >
@@ -246,6 +257,7 @@ export function Refinement({
                 ] as [Intent, string][]
               ).map(([interest, label]) => (
                 <button
+                  disabled={!ready}
                   key={interest}
                   type="button"
                   aria-pressed={query.interests?.includes(interest) ?? false}
@@ -267,6 +279,7 @@ export function Refinement({
               <Wallet size={16} />
               Spend per person
               <select
+                disabled={!ready}
                 value={query.budget}
                 onChange={(e) => set({ budget: Number(e.target.value) })}
               >
@@ -284,6 +297,7 @@ export function Refinement({
             <label>
               Inside or outside?
               <select
+                disabled={!ready}
                 value={query.environment}
                 onChange={(e) =>
                   set({
@@ -301,6 +315,7 @@ export function Refinement({
               <Footprints size={16} />
               Getting there
               <select
+                disabled={!ready}
                 value={query.travelMode}
                 onChange={(e) =>
                   set({
@@ -327,6 +342,7 @@ export function Refinement({
               ).map(([category, label]) => (
                 <label key={category}>
                   <input
+                    disabled={!ready}
                     type="checkbox"
                     checked={
                       query.includeCategories?.includes(category) ?? false
@@ -363,6 +379,7 @@ export function Refinement({
               ).map(([need, label]) => (
                 <label key={need}>
                   <input
+                    disabled={!ready}
                     type="checkbox"
                     checked={query.accessNeeds?.[need] ?? false}
                     onChange={(e) =>
@@ -385,6 +402,7 @@ export function Refinement({
             {query.company === "family" && (
               <label>
                 <input
+                  disabled={!ready}
                   type="checkbox"
                   checked={query.strictSuitability ?? false}
                   onChange={(e) => set({ strictSuitability: e.target.checked })}

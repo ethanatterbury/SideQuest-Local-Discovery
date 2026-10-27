@@ -1,5 +1,7 @@
 # England catalogue rebuild — 26 October 2026
 
+Update, 27 October: the later [provider and product decision](provider-and-product-decision-2026-10-27.md) compares a Google-backed live places/photo pilot with the strict-free catalogue route, includes current Mapbox photo support, and gives account setup instructions. The open-data path below remains available; its earlier source preference is not evidence that it solved national coverage or photo availability.
+
 The user authorised autonomous research and implementation, narrowed geographic priority to England, and made place quality, photographs, filtering and recommendations the priority. Preserve Discover, Map and Plan my day; the rejected visual concepts are not an approved replacement design.
 
 ## Source decision

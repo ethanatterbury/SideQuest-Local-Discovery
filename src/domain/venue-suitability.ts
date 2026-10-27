@@ -106,7 +106,9 @@ export function inferVenueSuitability(
   ) {
     kind = "leisure";
     audience = "all";
-    requiresAgeCheck = has(/\bescape game\b|\bsports centre\b/);
+    requiresAgeCheck = has(
+      /\bbowling\b|\bminiature golf\b|\bescape game\b|\bsports centre\b/,
+    );
   }
   return {
     kind,
@@ -175,10 +177,18 @@ export function venueSuitability(place: Classification): VenueSuitability {
       activities: [...new Set([...derived.activities, ...primary])],
     };
   }
-  return (
-    place.suitability ??
-    inferVenueSuitability({ ...place, intents: place.intents ?? [] })
-  );
+  const inferred = inferVenueSuitability({
+    ...place,
+    intents: place.intents ?? [],
+  });
+  // Cached/provider classifications cannot remove a restriction required by the current category rules.
+  return place.suitability
+    ? {
+        ...place.suitability,
+        requiresAgeCheck:
+          place.suitability.requiresAgeCheck || inferred.requiresAgeCheck,
+      }
+    : inferred;
 }
 
 /** Opt-in categories use mapped categories, never venue names. */
@@ -263,6 +273,33 @@ export function isSuitableForQuery(
   }
   if (children && place.heightRange?.some((bound) => bound !== null))
     return false;
+  if (ages.includes(0)) {
+    const evidence = place.evidence?.infantSuitability;
+    const infantExperience =
+      evidence?.source === "official" &&
+      evidence.confidence === "verified" &&
+      /^https:\/\//.test(evidence.url ?? "") &&
+      Number.isFinite(Date.parse(evidence.checkedAt ?? ""));
+    // An infant accompanying a family visit differs from participating in an activity.
+    // Generic play, all-ages labels, names and maximum-age sentinels do not establish infant suitability.
+    // An incidental playground does not turn a museum or park visit into infant play.
+    // Respect primary experience evidence, but ignore ancillary facilities for this decision.
+    const visitKind = venueSuitability({
+      ...place,
+      familyFeatures: undefined,
+      suitability: undefined,
+    }).kind;
+    const participating = ["soft-play", "playground", "cinema"].includes(
+      query.activity ?? "any",
+    );
+    const familyVisit =
+      !participating &&
+      ["nature", "culture", "animals", "food"].includes(visitKind);
+    const verifiedInfantActivity =
+      ["child-play", "cinema", "general"].includes(suitability.kind) &&
+      infantExperience;
+    if (!familyVisit && !verifiedInfantActivity) return false;
+  }
   if (children && query.strictSuitability && ages.length && !place.ageRange)
     return false;
   if (suitability.audience === "children" && !children) return false;

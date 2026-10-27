@@ -172,6 +172,80 @@ test("child ages and soft play filter update recommendations and survive reload"
     ),
   ).toBe(true);
 });
+test("under-one selection removes bowling across discovery, reload, map and a new day plan", async ({
+  page,
+}) => {
+  const bowling = fixture(1, {
+    name: "Age Test Bowling",
+    category: "Bowling alley",
+    ageRange: [4, 17],
+  });
+  const museum = fixture(2, {
+    name: "Age Test Museum",
+    familyFeatures: ["Playground"],
+  });
+  const babyPlay = fixture(3, {
+    name: "Age Test Baby Session",
+    category: "Indoor soft play",
+    ageRange: [0, 2],
+    evidence: {
+      infantSuitability: {
+        source: "official",
+        confidence: "verified",
+        url: "https://example.org/baby-sessions",
+        checkedAt: "2026-10-26",
+      },
+    },
+  });
+  await source(page, [bowling, museum, babyPlay]);
+  await page.addInitScript(() => {
+    const environment = JSON.parse(
+      sessionStorage.getItem("sidequest:environment")!,
+    );
+    environment.failures = ["weather", "map"];
+    sessionStorage.setItem(
+      "sidequest:environment",
+      JSON.stringify(environment),
+    );
+  });
+  await page.goto("/explore");
+  await page
+    .getByRole("combobox", { name: "Who is coming" })
+    .selectOption("family");
+  const age = page.getByRole("combobox", { name: "Child 1 age", exact: true });
+  await age.selectOption("8");
+  await expect(
+    page.getByRole("link", { name: bowling.name, exact: true }),
+  ).toBeVisible();
+  await age.selectOption("0");
+  await expect(
+    page.getByRole("link", { name: bowling.name, exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("link", { name: museum.name, exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: babyPlay.name, exact: true }),
+  ).toBeVisible();
+  await page.reload();
+  await expect(age).toHaveValue("0");
+  await expect(
+    page.getByRole("link", { name: bowling.name, exact: true }),
+  ).toHaveCount(0);
+  await page.goto("/map");
+  await expect(page.locator(".map-results")).toContainText(babyPlay.name);
+  await expect(page.locator(".map-results")).toContainText(museum.name);
+  await expect(page.locator(".map-results")).not.toContainText(bowling.name);
+  await page.goto("/");
+  await page
+    .getByRole("button", { name: "Plan my day", exact: true })
+    .first()
+    .click();
+  await expect(page.getByRole("dialog").locator(".timeline")).toContainText(
+    /Age Test (Baby Session|Museum)/,
+  );
+  await expect(page.getByRole("dialog")).not.toContainText(bowling.name);
+});
 test("a browser without WebGL keeps accessible geographic fallback and static weather in the Lab", async ({
   page,
 }) => {
