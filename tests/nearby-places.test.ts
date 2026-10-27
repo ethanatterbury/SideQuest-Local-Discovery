@@ -22,6 +22,38 @@ const element = (
 });
 afterEach(() => vi.unstubAllGlobals());
 describe("OSM place normalization", () => {
+  it("excludes explicitly adult cinemas while retaining ordinary cinemas and adult swimming sessions", () => {
+    expect(
+      normalizeOsmElement(
+        element({ name: "Adult World Cinema", leisure: "", amenity: "cinema" }),
+      ),
+    ).toBeNull();
+    expect(
+      normalizeOsmElement(
+        element({
+          name: "Fixture venue",
+          leisure: "",
+          amenity: "cinema",
+          "cinema:erotic": "yes",
+        }),
+      ),
+    ).toBeNull();
+    expect(
+      normalizeOsmElement(
+        element({ name: "Community Cinema", leisure: "", amenity: "cinema" }),
+      ),
+    ).not.toBeNull();
+    expect(
+      normalizeOsmElement(
+        element({
+          name: "Adults-only swimming",
+          leisure: "swimming_pool",
+          min_age: "18",
+        }),
+      ),
+    ).not.toBeNull();
+  });
+
   it("rejects malformed coordinates, IDs and missing names", () => {
     for (const extra of [
       { lat: NaN },

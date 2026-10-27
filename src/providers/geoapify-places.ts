@@ -78,6 +78,12 @@ export function normalizeGeoapifyResponse(value: unknown): Place[] {
       !properties ||
       !raw ||
       datasource?.sourcename !== "openstreetmap" ||
+      (Array.isArray(properties.categories) &&
+        properties.categories.some(
+          (category) =>
+            typeof category === "string" &&
+            (category === "adult" || category.startsWith("adult.")),
+        )) ||
       (properties.country_code !== undefined &&
         (typeof properties.country_code !== "string" ||
           properties.country_code.toLowerCase() !== "gb"))

@@ -45,6 +45,24 @@ afterEach(() => {
 });
 
 describe("configured national discovery", () => {
+  it("does not convert a supplier-marked adult venue into an ordinary cinema", async () => {
+    const { normalizeGeoapifyResponse } =
+      await import("@/providers/geoapify-places");
+    expect(
+      normalizeGeoapifyResponse(
+        collection(
+          feature(
+            { leisure: undefined, amenity: "cinema" },
+            {
+              name: "Fixture cinema",
+              categories: ["entertainment.cinema", "adult"],
+            },
+          ),
+        ),
+      ),
+    ).toEqual([]);
+  });
+
   it("retrieves named culture and activity venues independently when the broad entertainment query stalls", async () => {
     vi.stubGlobal("fetch", async (input: string | URL) => {
       const url = new URL(input);

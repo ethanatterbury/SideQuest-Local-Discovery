@@ -6,6 +6,17 @@ import type {
   Place,
 } from "./models";
 
+/** Explicit adult-entertainment venues are outside ordinary outing discovery.
+ * This exclusion does not infer an age rating for any other venue/session. */
+export function isExplicitAdultVenue(
+  place: Pick<Place, "name" | "category">,
+): boolean {
+  const label = `${place.name} ${place.category}`.replace(/[-_]/g, " ");
+  return /\b(?:adult(?:\s+world)?\s+cinema|(?:erotic|porn(?:ographic)?)\s+(?:cinema|theatre|shop)|sex\s+(?:cinema|shop|club)|strip\s*club)\b/i.test(
+    label,
+  );
+}
+
 export type VenueSuitability = {
   kind:
     | "child-play"
@@ -260,6 +271,7 @@ export function isSuitableForQuery(
   place: Place,
   query: DiscoveryQuery,
 ): boolean {
+  if (isExplicitAdultVenue(place)) return false;
   const suitability = venueSuitability(place);
   const children = query.company === "family" || childActivityRequested(query);
   const ages = children ? (query.childrenAges ?? []) : [];

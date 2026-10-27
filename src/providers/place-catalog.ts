@@ -49,7 +49,10 @@ function isPlace(value: unknown): value is Place {
   );
 }
 const normalized = (s: string) =>
-  s.toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
+  s
+    .toLowerCase()
+    .replaceAll("&", "and")
+    .replace(/[^\p{L}\p{N}]/gu, "");
 export function mergeCatalog(
   existing: Place[],
   incoming: Place[],

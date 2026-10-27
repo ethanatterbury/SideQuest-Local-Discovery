@@ -3,6 +3,7 @@ import { PLACES } from "@/providers/places";
 import {
   effectiveCompany,
   inferVenueSuitability,
+  isExplicitAdultVenue,
 } from "@/domain/venue-suitability";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -190,7 +191,10 @@ export function normalizeOsmElement(value: unknown): Place | null {
     typeof lng !== "number" ||
     !validCoordinates({ lat, lng }) ||
     t.access === "private" ||
-    t.access === "no"
+    t.access === "no" ||
+    isExplicitAdultVenue({ name, category: clean(t.amenity) }) ||
+    (t.amenity === "cinema" && t["cinema:erotic"] === "yes") ||
+    t.shop === "erotic"
   )
     return null;
   // Ancillary infrastructure is not an outing, even when inherited leisure tags are present.

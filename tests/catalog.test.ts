@@ -12,6 +12,26 @@ const live = (i: number): Place => ({
   coordinates: { lat: 51.4 + i * 0.00001, lng: -0.59 },
   image: undefined,
 });
+it("merges ampersand/and spellings of one venue without losing separate branches", () => {
+  const museum = {
+    ...live(1),
+    name: "Birmingham Museum & Art Gallery",
+    category: "Museum",
+  };
+  const duplicate = {
+    ...museum,
+    id: "osm-way-2",
+    name: "Birmingham Museum and Art Gallery",
+  };
+  const branch = {
+    ...duplicate,
+    id: "osm-way-3",
+    coordinates: { lat: 52, lng: -1 },
+  };
+  expect(
+    mergeCatalog([museum], [duplicate, branch]).map((place) => place.id),
+  ).toEqual([museum.id, branch.id]);
+});
 it("revalidates old photographs without removing saved area records or overriding curated photos", () => {
   const stale = {
     ...live(999998),

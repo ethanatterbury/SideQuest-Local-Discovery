@@ -9,6 +9,26 @@ import { PLACES } from "../src/providers/places";
 import { venueSuitability } from "../src/domain/venue-suitability";
 import { emptyState } from "../src/providers/persistence";
 
+it.each(["family", "couple"] as const)(
+  "does not recommend a cached explicit adult cinema to %s outings",
+  (company) => {
+    const recommendations = rankPlaces(
+      [
+        venue("explicit", "Cinema", { name: "Adult World Cinema" }),
+        venue("ordinary", "Cinema", { name: "Community Cinema" }),
+      ],
+      {
+        ...DEFAULT_QUERY,
+        company,
+        childrenAges: company === "family" ? [8] : undefined,
+      },
+      env,
+      emptyState(),
+    );
+    expect(recommendations.map((item) => item.place.id)).toEqual(["ordinary"]);
+  },
+);
+
 const env: Environment = {
   location: { name: "Home", lat: 51.3, lng: -0.8 },
   now: "2026-10-09T11:00:00Z",
