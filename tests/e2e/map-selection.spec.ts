@@ -214,6 +214,82 @@ test("a photo arriving for the selected venue preserves the panned map camera", 
   await inViewport(page);
 });
 
+for (const viewport of [
+  { width: 1366, height: 768 },
+  { width: 900, height: 900 },
+  { width: 390, height: 667 },
+  { width: 360, height: 740 },
+]) {
+  test(`area search stays at the map edge with a selected venue at ${viewport.width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    await fixtures(page);
+    await page.goto(`/map?place=${venue.id}`);
+    await expect(page.locator(".map-status")).toContainText("Landscape map");
+    const canvas = page.locator(".maplibregl-canvas");
+    await canvas.focus();
+    await canvas.press("ArrowRight");
+    const search = page.getByRole("button", { name: "Search this area" });
+    await expect(search).toBeVisible();
+    await inViewport(page);
+    const button = (await search.boundingBox())!;
+    const map = (await page.locator(".map-canvas-wrap").boundingBox())!;
+    expect(button.height).toBeGreaterThanOrEqual(44);
+    expect(button.width).toBeLessThanOrEqual(180);
+    expect(button.x - map.x).toBeLessThanOrEqual(24);
+    expect(button.x).toBeGreaterThanOrEqual(map.x);
+    expect(button.y).toBeGreaterThanOrEqual(map.y);
+    expect(button.x + button.width).toBeLessThan(map.x + map.width);
+    expect(button.y + button.height).toBeLessThan(map.y + map.height);
+    for (const selector of [
+      ".map-status",
+      ".map-controls",
+      ".map-legend",
+      ".map-selected",
+      ...(viewport.width <= 700 ? [".sheet-handle", ".mobile-nav"] : []),
+    ]) {
+      const other = (await page.locator(selector).boundingBox())!;
+      const overlaps =
+        button.x < other.x + other.width &&
+        button.x + button.width > other.x &&
+        button.y < other.y + other.height &&
+        button.y + button.height > other.y;
+      expect(overlaps, `${selector} overlaps area search`).toBe(false);
+    }
+    // The map's central pan surface stays directly reachable.
+    expect(
+      await canvas.evaluate((element) => {
+        const bounds = element.getBoundingClientRect();
+        const target = document.elementFromPoint(
+          bounds.x + bounds.width * 0.65,
+          bounds.y + bounds.height * 0.3,
+        );
+        // A venue pin is a legitimate map target and can cross this point during a pan.
+        return target === element || !!target?.closest(".maplibregl-marker");
+      }),
+    ).toBe(true);
+    if (process.env.CAPTURE_MAP_SELECTION)
+      await page.screenshot({
+        path: `work/map-area-search-${viewport.width}.png`,
+      });
+    if (viewport.width <= 700) {
+      await page.getByRole("button", { name: "Expand results" }).click();
+      await expect(
+        page.getByRole("button", { name: "Collapse results" }),
+      ).toBeVisible();
+      await page.getByRole("button", { name: "Collapse results" }).click();
+      await expect(search).toBeVisible();
+    }
+    await search.focus();
+    await expect(search).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(search).toHaveCount(0);
+    await expect(page.locator(".header")).toContainText("Map area");
+    await inViewport(page);
+  });
+}
+
 test("changing company clears child ages, child activity and a stale child search", async ({
   page,
 }) => {

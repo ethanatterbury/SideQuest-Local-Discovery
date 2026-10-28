@@ -5,7 +5,7 @@ import { Readable } from "node:stream";
 import type { PhotoQuery, PlacePhoto } from "./place-photo";
 
 /** This adapter runs on the server. Website images retain their owner's rights. */
-export type OfficialPhotoQuery = PhotoQuery & { address?: string };
+export type OfficialPhotoQuery = PhotoQuery;
 export interface OfficialPhotoCandidate extends PlacePhoto {
   rank: number;
   evidence: string[];
@@ -48,6 +48,9 @@ export interface OfficialPhotoOptions {
   signal?: AbortSignal;
   timeoutMs?: number;
   maxCandidates?: number;
+  /** Only publisher-selected OG/Twitter link previews, never arbitrary gallery assets. */
+  socialPreviewOnly?: boolean;
+  refresh?: boolean;
 }
 export interface OfficialPhotoDownload {
   buffer: Buffer;
@@ -344,6 +347,7 @@ export function parseOfficialPhotoHtml(
   html: string,
   pageUrl: string,
   query: OfficialPhotoQuery,
+  options: { socialPreviewOnly?: boolean } = {},
 ): OfficialPhotoParseResult {
   html = html.slice(0, HTML_LIMIT);
   const rejected: Record<string, number> = {};
@@ -446,7 +450,21 @@ export function parseOfficialPhotoHtml(
       return false;
     }
   });
-  const businessText = matchedBusiness
+  const scopedBusinesses =
+    matchedBusiness.length <= 1
+      ? matchedBusiness
+      : matchedBusiness.filter((business) => {
+          try {
+            return (
+              typeof business.url === "string" &&
+              new URL(business.url, pageUrl).href.replace(/\/$/, "") ===
+                pageUrl.replace(/\/$/, "")
+            );
+          } catch {
+            return false;
+          }
+        });
+  const businessText = scopedBusinesses
     .map((business) => JSON.stringify(business.address ?? ""))
     .join(" ");
   const matchedName =
@@ -454,8 +472,6 @@ export function parseOfficialPhotoHtml(
   const matchedArea =
     !!query.area &&
     (contains(primary, query.area) || contains(businessText, query.area));
-  const matchedAddress =
-    !!query.address && contains(`${primary} ${businessText}`, query.address);
   const visible = plain(
     html
       .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
@@ -467,6 +483,14 @@ export function parseOfficialPhotoHtml(
       visible,
     ) ||
     matchedBusiness.length > 1;
+  const localIdentityText = `${headings} ${metas["og:title"] ?? ""} ${metas["og:description"] ?? ""} ${metas.description ?? ""} ${businessText}`;
+  const matchedAddress =
+    (!!query.address && contains(localIdentityText, query.address)) ||
+    (!!query.postcode &&
+      contains(
+        `${localIdentityText} ${multiBranch ? "" : visible}`,
+        query.postcode,
+      ));
   const branchSpecific =
     matchedName && (!multiBranch || matchedArea || matchedAddress);
   const identity: OfficialPhotoIdentity = {
@@ -629,6 +653,45 @@ export function parseOfficialPhotoHtml(
       ),
     });
 
+  // Explicit finer-grained location contradictions override a matching town/name.
+  const postcodeKey = (value: string) => value.toUpperCase().replace(/\s/g, "");
+  const conflictingLocation = scopedBusinesses.some((business) => {
+    const address = object(business.address);
+    const postcode = address?.postalCode;
+    if (
+      query.postcode &&
+      typeof postcode === "string" &&
+      postcodeKey(postcode) !== postcodeKey(query.postcode)
+    )
+      return true;
+    const geo = object(business.geo);
+    const lat = Number(geo?.latitude),
+      lng = Number(geo?.longitude);
+    if (
+      geo &&
+      Number.isFinite(lat) &&
+      Number.isFinite(lng) &&
+      Math.abs(lat) <= 90 &&
+      Math.abs(lng) <= 180
+    ) {
+      const toRad = Math.PI / 180;
+      const dLat = (lat - query.lat) * toRad;
+      const dLng = (lng - query.lng) * toRad;
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat * toRad) *
+          Math.cos(query.lat * toRad) *
+          Math.sin(dLng / 2) ** 2;
+      return (
+        6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(Math.max(0, 1 - a))) > 0.5
+      );
+    }
+    return false;
+  });
+  if (options.socialPreviewOnly && conflictingLocation) {
+    reject("conflicting-preview-location");
+    return { candidates: [], identity, rejected };
+  }
   const photos = new Map<string, OfficialPhotoCandidate>();
   const bodyUrls = new Set(
     raw
@@ -637,6 +700,23 @@ export function parseOfficialPhotoHtml(
       .filter(Boolean),
   );
   for (const item of raw.slice(0, 1200)) {
+    if (
+      options.socialPreviewOnly &&
+      !["open-graph", "twitter"].includes(item.kind)
+    )
+      continue;
+    // Multi-branch footers and URL paths cannot prove the image's local branch.
+    const localContent = `${headings} ${metas["og:title"] ?? ""} ${metas["og:description"] ?? ""} ${metas.description ?? ""} ${businessText}`;
+    const locationMatched =
+      matchedAddress ||
+      !!(
+        query.area &&
+        contains(`${localContent} ${multiBranch ? "" : visible}`, query.area)
+      );
+    if (options.socialPreviewOnly && !locationMatched) {
+      reject("unconfirmed-preview-location");
+      continue;
+    }
     const url = imageUrl(item.raw, pageUrl);
     if (!url) {
       reject("unsafe-or-unsupported-image");
@@ -692,7 +772,20 @@ export function parseOfficialPhotoHtml(
     const assessment = assessOfficialPhotoSubject(
       {
         url,
-        context: item.context,
+        // Some publishers omit og:image:alt but caption that exact image in the body.
+        // Never borrow a description from a different image on the same page.
+        context: options.socialPreviewOnly
+          ? [
+              item.context,
+              ...raw
+                .filter(
+                  (other) =>
+                    other.kind === "body" &&
+                    imageUrl(other.raw, pageUrl) === url,
+                )
+                .map((other) => other.context),
+            ].join(" ")
+          : item.context,
         kind: item.kind,
         width: item.width,
         height: item.height,
@@ -726,6 +819,17 @@ export function parseOfficialPhotoHtml(
       height: item.height,
       confidence: Math.min(0.95, 0.6 + assessment.photoScore / 300),
       strategy: "official-website",
+      ...(options.socialPreviewOnly
+        ? {
+            preview: {
+              kind: item.kind as "open-graph" | "twitter",
+              pageUrl,
+              publisher: query.name,
+              identityEvidence: identity.evidence,
+              subjectEvidence: assessment.subjectEvidence,
+            },
+          }
+        : {}),
       matched: evidence,
       rank,
       evidence,
@@ -869,6 +973,108 @@ async function readHtml(
   return new TextDecoder().decode(body);
 }
 
+async function readOfficialWebsitePage(
+  websiteValue: string,
+  options: OfficialPhotoOptions,
+  signal: AbortSignal,
+  lookup: OfficialPhotoLookup,
+  onRequest: () => void,
+): Promise<{ html: string; pageUrl: string }> {
+  if (!websiteValue) throw new OfficialPhotoError("missing-website");
+  // Historic OSM websites often use http; request only their HTTPS endpoint.
+  const website = websiteValue.replace(/^http:\/\//i, "https://");
+  if (!safeOfficialPhotoUrl(website))
+    throw new OfficialPhotoError("unsafe-url");
+  let url = new URL(website);
+  url.hash = "";
+  let response: Response;
+  for (let redirects = 0; ; redirects++) {
+    const addresses = await publicAddresses(url, lookup, signal);
+    onRequest();
+    const operation = options.fetch
+      ? options.fetch(url.href, {
+          signal,
+          redirect: "manual",
+          cache: "no-store",
+          headers: { Accept: "text/html,application/xhtml+xml" },
+        })
+      : pinnedRequest(url, addresses, signal);
+    void operation.then(
+      (res) => {
+        if (signal.aborted) cancel(res);
+      },
+      () => {},
+    );
+    response = await bounded(operation, signal);
+    if (response.url && response.url !== url.href) {
+      cancel(response);
+      throw new OfficialPhotoError("unexpected-redirect");
+    }
+    if (response.status >= 300 && response.status < 400) {
+      const location = response.headers.get("location");
+      cancel(response);
+      if (
+        !location ||
+        redirects >= MAX_REDIRECTS ||
+        /[\\\x00-\x20\x7f]/.test(location)
+      )
+        throw new OfficialPhotoError("unsafe-redirect");
+      url = new URL(location, url);
+      if (!safeOfficialPhotoUrl(url.href))
+        throw new OfficialPhotoError("unsafe-redirect");
+      continue;
+    }
+    break;
+  }
+  const pageUrl = url.href;
+  if (!response.ok) {
+    cancel(response);
+    throw new OfficialPhotoError(
+      `website-http-${response.status}`,
+      response.status === 429 || response.status >= 500,
+    );
+  }
+  if (
+    !/^(?:text\/html|application\/xhtml\+xml)(?:\s*;|$)/i.test(
+      response.headers.get("content-type") ?? "",
+    )
+  ) {
+    cancel(response);
+    throw new OfficialPhotoError("website-content-type");
+  }
+  return { html: await readHtml(response, signal), pageUrl };
+}
+
+/** Bounded server-only HTML reader shared by official venue evidence adapters. */
+export async function readOfficialWebsite(
+  website: string,
+  options: OfficialPhotoOptions = {},
+): Promise<{ html: string; pageUrl: string; requestCount: number }> {
+  const controller = new AbortController();
+  const onAbort = () => controller.abort();
+  options.signal?.addEventListener("abort", onAbort, { once: true });
+  if (options.signal?.aborted) controller.abort();
+  const timer = setTimeout(
+    onAbort,
+    Math.min(30_000, Math.max(1, options.timeoutMs ?? 2500)),
+  );
+  let requestCount = 0;
+  try {
+    const page = await readOfficialWebsitePage(
+      website,
+      options,
+      controller.signal,
+      options.lookup ??
+        ((host) => dnsLookup(host, { all: true, verbatim: true })),
+      () => requestCount++,
+    );
+    return { ...page, requestCount };
+  } finally {
+    clearTimeout(timer);
+    options.signal?.removeEventListener("abort", onAbort);
+  }
+}
+
 export async function resolveOfficialPhotos(
   query: OfficialPhotoQuery,
   options: OfficialPhotoOptions = {},
@@ -899,73 +1105,15 @@ export async function resolveOfficialPhotos(
     },
   };
   try {
-    if (!query.website) throw new OfficialPhotoError("missing-website");
-    // Historic OSM websites often use http; request only their HTTPS endpoint.
-    const website = query.website.replace(/^http:\/\//i, "https://");
-    if (!safeOfficialPhotoUrl(website))
-      throw new OfficialPhotoError("unsafe-url");
-    let url = new URL(website);
-    url.hash = "";
-    let response: Response;
-    for (let redirects = 0; ; redirects++) {
-      const addresses = await publicAddresses(url, lookup, signal);
-      requestCount++;
-      const operation = options.fetch
-        ? options.fetch(url.href, {
-            signal,
-            redirect: "manual",
-            cache: "no-store",
-            headers: { Accept: "text/html,application/xhtml+xml" },
-          })
-        : pinnedRequest(url, addresses, signal);
-      void operation.then(
-        (res) => {
-          if (signal.aborted) cancel(res);
-        },
-        () => {},
-      );
-      response = await bounded(operation, signal);
-      if (response.url && response.url !== url.href) {
-        cancel(response);
-        throw new OfficialPhotoError("unexpected-redirect");
-      }
-      if (response.status >= 300 && response.status < 400) {
-        const location = response.headers.get("location");
-        cancel(response);
-        if (
-          !location ||
-          redirects >= MAX_REDIRECTS ||
-          /[\\\x00-\x20\x7f]/.test(location)
-        )
-          throw new OfficialPhotoError("unsafe-redirect");
-        url = new URL(location, url);
-        if (!safeOfficialPhotoUrl(url.href))
-          throw new OfficialPhotoError("unsafe-redirect");
-        continue;
-      }
-      break;
-    }
-    pageUrl = url.href;
-    if (!response.ok) {
-      cancel(response);
-      throw new OfficialPhotoError(
-        `website-http-${response.status}`,
-        response.status === 429 || response.status >= 500,
-      );
-    }
-    if (
-      !/^(?:text\/html|application\/xhtml\+xml)(?:\s*;|$)/i.test(
-        response.headers.get("content-type") ?? "",
-      )
-    ) {
-      cancel(response);
-      throw new OfficialPhotoError("website-content-type");
-    }
-    const parsed = parseOfficialPhotoHtml(
-      await readHtml(response, signal),
-      pageUrl,
-      query,
+    const page = await readOfficialWebsitePage(
+      query.website ?? "",
+      options,
+      signal,
+      lookup,
+      () => requestCount++,
     );
+    pageUrl = page.pageUrl;
+    const parsed = parseOfficialPhotoHtml(page.html, pageUrl, query, options);
     // Check public DNS for candidate CDNs too; no arbitrary private image URLs escape.
     const verified: OfficialPhotoCandidate[] = [];
     const guards = new Map<string, Promise<boolean>>();
@@ -1121,4 +1269,91 @@ export async function downloadOfficialPhoto(
     clearTimeout(timer);
     options.signal?.removeEventListener("abort", onAbort);
   }
+}
+
+/** An externally hosted link preview is not a reusable or permissioned photograph. */
+async function resolveWebsitePreview(
+  query: OfficialPhotoQuery,
+  options: OfficialPhotoOptions = {},
+): Promise<{
+  image: PlacePhoto | null;
+  retryable: boolean;
+  result: OfficialPhotoResult;
+}> {
+  const result = await resolveOfficialPhotos(query, {
+    ...options,
+    socialPreviewOnly: true,
+    maxCandidates: 1,
+  });
+  const candidate = result.candidates[0];
+  const image: PlacePhoto | null = candidate?.preview
+    ? {
+        url: candidate.url,
+        source: candidate.source,
+        credit: query.name,
+        license: "Website preview — rights reserved",
+        rights: "website-preview",
+        strategy: "official-website-preview",
+        checkedAt: new Date().toISOString(),
+        width: candidate.width,
+        height: candidate.height,
+        confidence: candidate.confidence,
+        matched: candidate.matched,
+        preview: candidate.preview,
+      }
+    : null;
+  return { image, retryable: result.retryable, result };
+}
+
+type WebsitePreviewResult = Awaited<ReturnType<typeof resolveWebsitePreview>>;
+// Metadata only: source HTML and image bytes never enter this cache.
+const websitePreviewCache = new Map<
+  string,
+  { until: number; result: WebsitePreviewResult }
+>();
+const pendingWebsitePreviews = new Map<string, Promise<WebsitePreviewResult>>();
+export async function resolveOfficialWebsitePreview(
+  query: OfficialPhotoQuery,
+  options: OfficialPhotoOptions = {},
+): Promise<WebsitePreviewResult> {
+  // Injected transports remain isolated and deterministic for importers/tests.
+  if (options.fetch || options.lookup)
+    return resolveWebsitePreview(query, options);
+  const key = JSON.stringify([
+    query.name,
+    query.lat,
+    query.lng,
+    query.area,
+    query.address,
+    query.postcode,
+    query.website,
+    query.aliases,
+  ]);
+  const cached = websitePreviewCache.get(key);
+  if (!options.refresh && cached && cached.until > Date.now())
+    return structuredClone(cached.result);
+  const pending = pendingWebsitePreviews.get(key);
+  if (pending) return structuredClone(await pending);
+  if (pendingWebsitePreviews.size >= 3)
+    return resolveWebsitePreview(query, {
+      ...options,
+      signal: AbortSignal.abort(),
+    });
+  const task = resolveWebsitePreview(query, options)
+    .then((result) => {
+      websitePreviewCache.set(key, {
+        result,
+        until:
+          Date.now() +
+          (result.image ? 6 * 3600000 : result.retryable ? 30000 : 3600000),
+      });
+      if (websitePreviewCache.size > 300)
+        websitePreviewCache.delete(websitePreviewCache.keys().next().value!);
+      return result;
+    })
+    .finally(() => {
+      pendingWebsitePreviews.delete(key);
+    });
+  pendingWebsitePreviews.set(key, task);
+  return structuredClone(await task);
 }

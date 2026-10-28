@@ -182,7 +182,9 @@ export function PlaceDetail({ place: initialPlace }: { place: Place }) {
             )}
             {place.image && (
               <p className="image-credit">
-                Photo:{" "}
+                {place.image.rights === "website-preview"
+                  ? "Website preview: "
+                  : "Photo: "}
                 <a href={place.image.source} target="_blank" rel="noreferrer">
                   {place.image.credit} · {place.image.license}
                 </a>

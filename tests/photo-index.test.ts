@@ -67,3 +67,17 @@ it("never persists a temporary provider failure as a missing venue photo", () =>
     indexedPhoto(query, [{ query, image, checkedAt: "2020-01-01T00:00:00Z" }]),
   ).toBeNull();
 });
+
+it("keeps verified prepared photos when new website or address metadata is discovered", () => {
+  const entry = { query, image, checkedAt: new Date().toISOString() };
+  const enriched = {
+    ...query,
+    website: "https://branchpark.co.uk/",
+    area: "Fleet",
+    address: "High Street",
+    postcode: "GU51 1AA",
+  };
+  expect(indexedPhoto(enriched, [entry])?.image?.url).toBe(image.url);
+  expect(indexedPhoto(enriched, [{ ...entry, image: null }])).toBeNull();
+  expect(photoIdentity(enriched)).not.toBe(photoIdentity(query));
+});

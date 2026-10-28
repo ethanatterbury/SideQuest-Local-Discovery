@@ -7,6 +7,8 @@ export function placePhotoQuery(place: Place): PhotoQuery {
     lat: place.coordinates.lat,
     lng: place.coordinates.lng,
     area: place.area,
+    address: place.street,
+    postcode: place.postcode,
     category: place.category,
     aliases: place.aliases,
     wikidata: place.wikidata,
@@ -16,7 +18,7 @@ export function placePhotoQuery(place: Place): PhotoQuery {
     website: place.website,
   };
 }
-export function photoIdentity(query: PhotoQuery): string {
+export function photoVenueIdentity(query: PhotoQuery): string {
   return JSON.stringify([
     query.id,
     query.name.toLowerCase().trim(),
@@ -27,5 +29,15 @@ export function photoIdentity(query: PhotoQuery): string {
     query.osmImage,
     query.commons,
     query.aliases || [],
+  ]);
+}
+/** New source information must invalidate cached absences without discarding verified photos. */
+export function photoIdentity(query: PhotoQuery): string {
+  return JSON.stringify([
+    photoVenueIdentity(query),
+    query.website,
+    query.area,
+    query.address,
+    query.postcode,
   ]);
 }

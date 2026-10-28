@@ -105,6 +105,9 @@ export type Place = {
   id: string;
   name: string;
   area: string;
+  /** Mapped address fields support branch identity checks; missing values remain unknown. */
+  postcode?: string;
+  street?: string;
   coordinates: Coordinates;
   category: string;
   optionalCategory?: OptionalCategory;
@@ -148,7 +151,15 @@ export type Place = {
     strategy?: string;
     matched?: string[];
     blurDataURL?: string;
-    rights?: "open" | "permissioned" | "unverified";
+    rights?: "open" | "permissioned" | "unverified" | "website-preview";
+    /** Publisher-selected external link preview; no reuse licence is asserted. */
+    preview?: {
+      pageUrl: string;
+      publisher: string;
+      kind: "open-graph" | "twitter";
+      identityEvidence: string[];
+      subjectEvidence: string[];
+    };
     checkedAt?: string;
   };
   season?: number[];

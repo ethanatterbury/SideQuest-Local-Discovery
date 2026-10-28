@@ -111,6 +111,8 @@ export function normalizeGeoapifyResponse(value: unknown): Place[] {
       opening_hours: properties.opening_hours,
       "addr:city": properties.city || properties.town || properties.village,
       "addr:suburb": properties.suburb,
+      "addr:postcode": properties.postcode,
+      "addr:street": properties.street,
       wikidata: wiki?.wikidata,
       wikipedia: wiki?.wikipedia,
       image: wiki?.image,
@@ -366,11 +368,14 @@ export async function getDiscoveryPlaces(
 }
 
 /** OSM identity survives browser reloads, saved plans, and server cold starts. */
-export async function getDiscoveryPlace(id: string): Promise<Place | null> {
+export async function getDiscoveryPlace(
+  id: string,
+  options: { refreshDetails?: boolean } = {},
+): Promise<Place | null> {
   const match = /^osm-(node|way|relation)-([1-9]\d{0,15})$/.exec(id);
   if (!match || !Number.isSafeInteger(Number(match[2]))) return null;
   const remembered = getRememberedLivePlace(id);
-  if (remembered) return remembered;
+  if (remembered && !options.refreshDetails) return remembered;
   const apiKey = process.env.GEOAPIFY_API_KEY?.trim();
   const key = `detail:${id}`;
   const entry = cache.get(key);

@@ -124,3 +124,29 @@ it("keeps replacement metadata when a duplicate node/way follows it", () => {
   expect(merged).toHaveLength(1);
   expect(merged[0].description).toBe("Fresh description");
 });
+it("keeps fresh verified primary play when a later plain café response refreshes the same venue", () => {
+  const plain: Place = {
+    ...live(444),
+    category: "Café",
+    optionalCategory: "food",
+    experiences: undefined,
+  };
+  const evidence = {
+    source: "official" as const,
+    confidence: "verified" as const,
+    url: "https://acorn-oak.co.uk/play",
+    checkedAt: new Date().toISOString(),
+  };
+  const verified: Place = {
+    ...plain,
+    category: "Play café",
+    optionalCategory: undefined,
+    website: evidence.url,
+    experiences: [{ primary: true, activities: ["soft-play"], evidence }],
+    evidence: { classification: evidence },
+  };
+  const merged = mergeCatalog([verified], [plain])[0];
+  expect(merged.category).toBe("Play café");
+  expect(merged.experiences?.[0].evidence).toEqual(evidence);
+  expect(merged.website).toBe(evidence.url);
+});

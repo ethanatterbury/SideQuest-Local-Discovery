@@ -145,6 +145,14 @@ export function PlaceImage({
           </small>
         </div>
       )}
+      {image?.rights === "website-preview" && !failed && (
+        <span
+          className="photo-source"
+          title={`Published by ${image.credit}. Image rights retained by its owner.`}
+        >
+          From {image.credit}
+        </span>
+      )}
     </div>
   );
 }

@@ -1,5 +1,13 @@
 # Actual free-photo coverage audit
 
+## Runtime website previews — 28 October 2026
+
+The runtime now tries a venue’s publisher-selected Open Graph/Twitter preview before Commons when no prepared photo is available. The image stays on the publisher’s host; SideQuest caches metadata only. Preview records retain reserved rights, the source page, publisher, and identity/subject evidence. This is a separate link-preview contract, not a reusable-photo licence. Cards show a publisher credit and place details link to the source. Logos, food-only images, known stock hosts, weak identity/location matches, and unconfirmed branches are rejected. Descriptions can be borrowed only from an on-page image with the exact same URL, never an unrelated photograph.
+
+Mapped official websites need no new API key. Missing website links can be searched using optional server-only `TAVILY_API_KEY`; configure the provider’s free plan, monthly key limit, and keep pay-as-you-go off. Provider quotas are enforced by the provider: in-memory server caches are not a global monthly spending cap. Search returns candidates only; the website still has to pass venue and location checks. Disabled search, upstream errors, and deadline exhaustion must not be recorded as proof that no photo exists.
+
+There is no guaranteed free photo source for every local business. A publisher may provide no photograph, publish only a logo, block external loading, or omit enough identity evidence to verify its image. The historical counts below measure reusable sources only and have **not** been updated or presented as coverage measurements of the new preview adapter.
+
 The fixed 200 catalogue entries were all attempted. The published index accepts **35/200 (17.5%)** venue photos, records **164 unresolved** queries and **1 retryable** query. Villa Bianca remains retryable after two bounded retries because Commons reported `cirrussearch-too-busy-error`; it is not counted as a completed absence.
 
 The initial run returned 40 matches,147 unresolved and13 transient failures. All 13 transient rows were retried once; a second bounded pass covered the two remaining transient rows. All 40 positive queries were then checked on production `373da70` (resolver SHA256643fec990111c4ddf8e79d56ea199d84a28b730887d68964207a5642a7c91f02). The checkpoint retains all 255 actual attempts, public queries, timestamps and diagnostics.

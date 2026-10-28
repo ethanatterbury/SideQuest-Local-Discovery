@@ -1923,10 +1923,19 @@ textarea {
   opacity: 0;
   pointer-events: none;
 }
-.map-status {
+.map-edge-controls {
   position: absolute;
   left: 24px;
   top: 22px;
+  right: 83px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  z-index: 2;
+  pointer-events: none;
+}
+.map-status {
   background: var(--paper);
   padding: 12px 16px;
   border-radius: 6px;
@@ -1935,7 +1944,6 @@ textarea {
   display: flex;
   align-items: center;
   gap: 8px;
-  z-index: 2;
 }
 .map-controls {
   position: absolute;
@@ -2005,13 +2013,23 @@ textarea {
   box-shadow: 0 0 0 5px #54799a25;
 }
 .search-area {
-  position: absolute;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 4;
-  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 0 12px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid #b9c2ae;
+  border-radius: 6px;
+  box-shadow: var(--elevation);
   font-size: 12px;
+  font-weight: 600;
+  pointer-events: auto;
+}
+.search-area:hover {
+  background: #e1e9d1;
 }
 .sheet-handle {
   display: none;
@@ -3641,9 +3659,12 @@ textarea {
     padding-top: 6px;
     font-size: 11px;
   }
-  .map-status {
+  .map-edge-controls {
     top: 14px;
     left: 14px;
+    right: 71px;
+  }
+  .map-status {
     font-size: 10px;
     padding: 10px 12px;
   }
@@ -3658,6 +3679,9 @@ textarea {
     font-size: 8px;
     padding: 8px;
     gap: 5px;
+  }
+  .map-canvas-wrap:has(.search-area) .map-legend {
+    top: 112px;
   }
   .map-legend .origin-dot,
   .map-legend .place-dot {
@@ -3982,9 +4006,11 @@ textarea {
     max-width: 85px;
     white-space: normal;
   }
-  .lab-preview .map-status {
+  .lab-preview .map-edge-controls {
     left: 14px;
     top: 14px;
+  }
+  .lab-preview .map-status {
     font-size: 10px;
   }
 }
@@ -4800,4 +4826,22 @@ input[type="checkbox"] {
   .quick-controls > button {
     flex-shrink: 0;
   }
+}
+
+/* Keep the source visible when a venue publishes its own external preview. */
+.photo-source {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  max-width: calc(100% - 20px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-radius: 5px;
+  padding: 4px 7px;
+  background: rgb(15 23 18 / 80%);
+  color: #fff;
+  font-size: 10px;
+  line-height: 1.4;
+  pointer-events: none;
 }

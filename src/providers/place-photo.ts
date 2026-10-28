@@ -14,6 +14,8 @@ export interface PhotoQuery {
   wikipedia?: string;
   id?: string;
   area?: string;
+  address?: string;
+  postcode?: string;
   category?: string;
   aliases?: string[];
   osmImage?: string;
@@ -30,7 +32,8 @@ export interface PlacePhoto {
   confidence?: number;
   strategy?: string;
   matched?: string[];
-  rights?: "open" | "permissioned" | "unverified";
+  rights?: "open" | "permissioned" | "unverified" | "website-preview";
+  preview?: NonNullable<import("@/domain/models").Place["image"]>["preview"];
   checkedAt?: string;
 }
 export interface PhotoDiagnostics {
@@ -137,6 +140,8 @@ export function parsePhotoQuery(params: URLSearchParams): PhotoQuery | null {
   for (const key of [
     "id",
     "area",
+    "address",
+    "postcode",
     "category",
     "osmImage",
     "commons",

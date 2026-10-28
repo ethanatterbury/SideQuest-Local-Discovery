@@ -170,7 +170,19 @@ function parseHeight(value: unknown): number | null {
   const height = Number(match[1]) * (match[2] === "cm" ? 1 : 100);
   return height > 20 && height < 250 ? height : null;
 }
-export function normalizeOsmElement(value: unknown): Place | null {
+export type VenueClassificationEvidence = {
+  id: string;
+  name: string;
+  classification: string;
+  url: string;
+  checkedAt: string;
+  source: string;
+  notes?: string[];
+};
+export function normalizeOsmElementWithEvidence(
+  value: unknown,
+  evidence: readonly VenueClassificationEvidence[] = existingEvidence.entries,
+): Place | null {
   if (!value || typeof value !== "object") return null;
   const e = value as Element;
   if (
@@ -223,12 +235,19 @@ export function normalizeOsmElement(value: unknown): Place | null {
     t["playground:indoor"] === "yes" ||
     t["playground:soft_play"] === "yes";
   // Retain previously verified source evidence through a generic adapter, not ID-specific rules.
-  const knownEvidence = existingEvidence.entries.find(
-    (record) =>
+  const now = Date.now();
+  const knownEvidence = evidence.find((record) => {
+    const age = now - Date.parse(record.checkedAt);
+    return (
       record.id === `osm-${e.type}-${e.id}` &&
       record.name === name &&
-      Date.now() - Date.parse(record.checkedAt) < 90 * 86400000,
-  );
+      record.source === "official" &&
+      ["play-cafe", "amusement-ride"].includes(record.classification) &&
+      safeWebsite(record.url).startsWith("https://") &&
+      age >= 0 &&
+      age < 90 * 86400000
+    );
+  });
   const mappedRideWebsite = /\/(?:rides?|rides-attractions)\//i.test(
     clean(t.website) || clean(t["contact:website"]),
   );
@@ -392,6 +411,8 @@ export function normalizeOsmElement(value: unknown): Place | null {
   const place: Place = {
     id: `osm-${e.type}-${e.id}`,
     name,
+    postcode: clean(t["addr:postcode"]) || undefined,
+    street: clean(t["addr:street"]) || undefined,
     area:
       [
         clean(t["addr:city"]) ||
@@ -534,6 +555,9 @@ export function normalizeOsmElement(value: unknown): Place | null {
       "This activity may have minimum age, height, swimming or supervision rules. Unknown restrictions do not establish suitability for children.",
     );
   return place;
+}
+export function normalizeOsmElement(value: unknown): Place | null {
+  return normalizeOsmElementWithEvidence(value, existingEvidence.entries);
 }
 export function normalizeOsmResponse(value: unknown): Place[] {
   if (

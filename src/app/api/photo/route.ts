@@ -2,13 +2,19 @@ import {
   lookupPlacePhoto,
   parsePhotoQuery,
   type PhotoResult,
+  type PhotoQuery,
 } from "@/providers/place-photo";
 import { indexedPhoto } from "@/providers/photo-index";
 import { storedQueryImage, storedVenueImage } from "@/providers/venue-media";
-import { PHOTO_DEADLINE_MS, approvedPhoto } from "@/providers/photo-policy";
+import {
+  PHOTO_REQUEST_DEADLINE_MS,
+  approvedPhoto,
+} from "@/providers/photo-policy";
+import { resolveOfficialWebsitePreview } from "@/providers/official-photo";
+import { discoverOfficialWebsite } from "@/providers/official-website-discovery";
 import { PLACES } from "@/providers/places";
 export const runtime = "nodejs";
-export const maxDuration = 5;
+export const maxDuration = 10;
 export async function GET(request: Request) {
   let deadline: ReturnType<typeof setTimeout> | undefined;
   try {
@@ -23,7 +29,7 @@ export async function GET(request: Request) {
                 { headers: { "Cache-Control": "private, no-store" } },
               ),
             ),
-          PHOTO_DEADLINE_MS,
+          PHOTO_REQUEST_DEADLINE_MS,
         );
       }),
     ]);
@@ -81,22 +87,38 @@ async function resolveRequest(request: Request, started: number) {
         headers: { "Cache-Control": "public, max-age=3600, s-maxage=86400" },
       },
     );
-  // Website attribution is not permission. Official-site scraping is excluded by
-  // default; permissioned prepared assets need explicit evidence and policy opt-in.
-  const result: PhotoResult = entry
-    ? {
-        image: entry.image,
-        source: "cached",
-        ...(debug && entry.diagnostics
-          ? { diagnostics: { ...entry.diagnostics, cacheHit: true } }
-          : {}),
-      }
-    : await lookupPlacePhoto(query, {
-        debug,
-        refresh,
-        timeoutMs: Math.max(1, PHOTO_DEADLINE_MS - (Date.now() - started) - 50),
-      });
+  // Publisher-selected external previews have a separate rights contract from reusable photos.
+  // An indexed Commons absence says nothing about a venue's own published link preview.
+  let result: PhotoResult | undefined;
+  if (!entry?.image)
+    result = await officialPreview(
+      query,
+      started,
+      request.signal,
+      debug,
+      refresh,
+    );
+  const previewRetryable = result?.retryable;
+  if (!result?.image)
+    result = entry
+      ? {
+          image: entry.image,
+          source: "cached",
+          ...(result?.retryable ? { retryable: true } : {}),
+          ...(debug && entry.diagnostics
+            ? { diagnostics: { ...entry.diagnostics, cacheHit: true } }
+            : {}),
+        }
+      : await lookupPlacePhoto(query, {
+          debug,
+          refresh,
+          timeoutMs: Math.max(
+            1,
+            PHOTO_REQUEST_DEADLINE_MS - (Date.now() - started) - 50,
+          ),
+        });
   if (result.image) result.image = approvedPhoto(result.image) || null;
+  if (!result.image && previewRetryable) result.retryable = true;
   return Response.json(result, {
     headers: {
       "Cache-Control":
@@ -105,4 +127,87 @@ async function resolveRequest(request: Request, started: number) {
           : `public, max-age=3600, s-maxage=${result.image ? 86400 : 604800}, stale-while-revalidate=3600`,
     },
   });
+}
+
+async function officialPreview(
+  query: PhotoQuery,
+  started: number,
+  signal: AbortSignal,
+  debug: boolean,
+  refresh: boolean,
+): Promise<PhotoResult | undefined> {
+  const budget = Math.min(
+    4000,
+    PHOTO_REQUEST_DEADLINE_MS - (Date.now() - started) - 100,
+  );
+  if (budget <= 0) return;
+  const controller = new AbortController();
+  const abort = () => controller.abort();
+  signal.addEventListener("abort", abort, { once: true });
+  if (signal.aborted) abort();
+  const timer = setTimeout(abort, budget);
+  const previewStarted = Date.now();
+  let retryable = false;
+  try {
+    let urls: string[] = [];
+    try {
+      const website = new URL(query.website || "");
+      if (
+        !/(?:^|\.)(?:openstreetmap\.org|wikipedia\.org|facebook\.com|instagram\.com|google\.com|google\.co\.uk|tripadvisor\.com|yell\.com)$/.test(
+          website.hostname,
+        )
+      )
+        urls = [query.website!];
+    } catch {
+      /* A missing mapped website may be found by optional configured discovery. */
+    }
+    if (!urls.length) {
+      const discovery = await discoverOfficialWebsite(query, {
+        signal: controller.signal,
+        timeoutMs: Math.min(2200, budget),
+      });
+      urls = discovery.urls.slice(0, 2);
+      retryable = ["unavailable", "disabled"].includes(discovery.status);
+    }
+    for (const website of urls) {
+      const remaining = budget - (Date.now() - previewStarted);
+      if (remaining <= 0 || controller.signal.aborted) {
+        retryable = true;
+        break;
+      }
+      const preview = await resolveOfficialWebsitePreview(
+        { ...query, website },
+        { signal: controller.signal, timeoutMs: remaining, refresh },
+      );
+      retryable ||= preview.retryable;
+      const image = approvedPhoto(preview.image);
+      if (image)
+        return {
+          image,
+          source: "live",
+          ...(debug
+            ? {
+                diagnostics: {
+                  strategy: image.strategy ?? null,
+                  sourcesAttempted: [website],
+                  candidateCount: preview.result.candidates.length,
+                  rejected: preview.result.rejected,
+                  requestCount: preview.result.requestCount,
+                  elapsedMs: Date.now() - started,
+                },
+              }
+            : {}),
+        };
+    }
+    return {
+      image: null,
+      source: "unavailable",
+      ...(retryable ? { retryable: true } : {}),
+    };
+  } catch {
+    return { image: null, source: "unavailable", retryable: true };
+  } finally {
+    clearTimeout(timer);
+    signal.removeEventListener("abort", abort);
+  }
 }

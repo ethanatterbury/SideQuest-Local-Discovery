@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 const config: NextConfig = {
   poweredByHeader: false,
-  outputFileTracingIncludes: { "/api/places": ["./public/data/venues/**/*.json"], "/api/places/[id]": ["./public/data/venues/**/*.json"] },
+  outputFileTracingIncludes: {
+    "/api/places": ["./public/data/venues/**/*.json"],
+    "/api/places/[id]": ["./public/data/venues/**/*.json"],
+    "/api/venue-evidence": ["./public/data/venues/**/*.json"],
+  },
   images: {
     remotePatterns: [
       {
@@ -34,7 +38,12 @@ const config: NextConfig = {
       },
       {
         source: "/data/venues/:path*",
-        headers: [{ key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=86400" }],
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=3600, stale-while-revalidate=86400",
+          },
+        ],
       },
       {
         source: "/sw.js",

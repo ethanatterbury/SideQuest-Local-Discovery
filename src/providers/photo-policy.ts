@@ -8,7 +8,9 @@ export type PhotoPermission = {
   allowsRedistribution: true;
 };
 type Candidate = Image & { permission?: PhotoPermission };
+// Commons/archive keep their existing lookup budget; official discovery gets a larger route window.
 export const PHOTO_DEADLINE_MS = 4500;
+export const PHOTO_REQUEST_DEADLINE_MS = 6500;
 export const PHOTO_NEGATIVE_TTL_MS = 7 * 86400000;
 export const PHOTO_TRANSIENT_TTL_MS = 30000;
 
@@ -19,6 +21,60 @@ export function openPhotoLicense(license: string): boolean {
   );
 }
 
+/** Validate the separate publisher-selected link-preview contract without granting reuse. */
+function approvedWebsitePreview(
+  image: Candidate,
+  checkedAt?: string,
+): Image | undefined {
+  const preview = image.preview;
+  const timestamp = image.checkedAt || checkedAt;
+  if (
+    image.strategy !== "official-website-preview" ||
+    image.license !== "Website preview — rights reserved" ||
+    !preview ||
+    preview.pageUrl !== image.source ||
+    preview.publisher !== image.credit ||
+    !["open-graph", "twitter"].includes(preview.kind) ||
+    !timestamp ||
+    !Number.isFinite(Date.parse(timestamp))
+  )
+    return;
+  const evidence = (values: unknown): boolean =>
+    Array.isArray(values) &&
+    values.length > 0 &&
+    values.length <= 20 &&
+    values.every(
+      (value) =>
+        typeof value === "string" && value.length > 0 && value.length <= 300,
+    );
+  if (!evidence(preview.identityEvidence) || !evidence(preview.subjectEvidence))
+    return;
+  for (const value of [image.url, image.source]) {
+    try {
+      const url = new URL(value);
+      if (
+        url.protocol !== "https:" ||
+        url.username ||
+        url.password ||
+        url.port ||
+        !url.hostname.includes(".") ||
+        /^[\d.]+$/.test(url.hostname) ||
+        url.hostname.includes(":") ||
+        /(?:^|\.)(?:localhost|local|internal|test|invalid|example|onion)$/.test(
+          url.hostname,
+        ) ||
+        /(?:^|\.)(?:unsplash\.com|pexels\.com|pixabay\.com|shutterstock\.com|istockphoto\.com|gettyimages\.com|freepik\.com)$/.test(
+          url.hostname,
+        )
+      )
+        return;
+    } catch {
+      return;
+    }
+  }
+  return { ...image, rights: "website-preview", checkedAt: timestamp };
+}
+
 /** Preserve prepared evidence; never upgrade a rights-reserved photo through attribution. */
 export function approvedPhoto(
   image: Candidate | null | undefined,
@@ -27,6 +83,8 @@ export function approvedPhoto(
 ): Image | undefined {
   if (!image || !image.credit?.trim() || !image.source?.startsWith("https://"))
     return;
+  if (image.rights === "website-preview")
+    return approvedWebsitePreview(image, checkedAt);
   const open = openPhotoLicense(image.license);
   try {
     const source = new URL(image.source);

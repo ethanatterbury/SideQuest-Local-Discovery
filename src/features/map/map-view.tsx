@@ -389,15 +389,29 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
             </div>
           </article>
         )}
-        <div className="map-status" role="status">
-          <Layers size={15} />
-          {unavailable
-            ? "Location overview · map unavailable"
-            : rasterStatus === "ready"
-              ? "Landscape map · your next detour"
-              : rasterStatus === "partial"
-                ? "Street map · some tiles unavailable"
-                : "Opening the map…"}
+        <div className="map-edge-controls">
+          <div className="map-status" role="status">
+            <Layers size={15} />
+            {unavailable
+              ? "Location overview · map unavailable"
+              : rasterStatus === "ready"
+                ? "Landscape map · your next detour"
+                : rasterStatus === "partial"
+                  ? "Street map · some tiles unavailable"
+                  : "Opening the map…"}
+          </div>
+          {moved && !unavailable && (
+            <button
+              className="search-area"
+              onClick={() => {
+                setLocation({ ...center, name: "Map area" });
+                setMoved(false);
+              }}
+            >
+              <Search size={15} aria-hidden="true" />
+              Search this area
+            </button>
+          )}
         </div>
         <div className="map-controls">
           <button
@@ -425,17 +439,6 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
             <LocateFixed size={19} />
           </button>
         </div>
-        {moved && !unavailable && (
-          <button
-            className="button search-area"
-            onClick={() => {
-              setLocation({ ...center, name: "Map area" });
-              setMoved(false);
-            }}
-          >
-            Search this area
-          </button>
-        )}
         <div className="map-legend">
           <span className="origin-dot" />
           Starting point

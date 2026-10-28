@@ -13,6 +13,8 @@ import { LOAD_BUDGET } from "@/domain/performance";
 import { readArea, writeArea } from "./area-storage";
 import { seedVenueImage, withSeedPhoto } from "./seed-venue-media";
 import { distanceKm } from "./routing";
+import { selectVenueEnrichmentCandidates } from "./venue-enrichment-candidates";
+import { createVenueEnrichmentQueue } from "./venue-enrichment-client";
 
 export type CatalogStatus = "loading" | "live" | "cached" | "fallback";
 const KEY = "sidequest:places:v1";
@@ -94,8 +96,44 @@ export function mergeCatalog(
       continue;
     }
     const previous = merged.get(p.id);
+    const keepVerifiedPlay =
+      previous &&
+      normalized(previous.name) === normalized(p.name) &&
+      distanceKm(previous.coordinates, p.coordinates) <= 0.2 &&
+      previous.experiences?.some((record) => {
+        const age = Date.now() - Date.parse(record.evidence.checkedAt || "");
+        return (
+          record.primary &&
+          record.activities.includes("soft-play") &&
+          record.evidence.source === "official" &&
+          record.evidence.confidence === "verified" &&
+          record.evidence.url?.startsWith("https://") &&
+          age >= 0 &&
+          age < 90 * 86400000
+        );
+      }) &&
+      !p.experiences?.some(
+        (record) => record.primary && record.evidence.source === "official",
+      );
     const next = {
       ...(previous && !p.id.startsWith("osm-") ? previous : p),
+      ...(keepVerifiedPlay
+        ? {
+            category: previous.category,
+            optionalCategory: undefined,
+            environment: previous.environment,
+            intents: previous.intents,
+            company: previous.company,
+            experiences: previous.experiences,
+            suitability: previous.suitability,
+            evidence: {
+              ...p.evidence,
+              ...previous.evidence,
+            },
+            website: previous.website,
+            notes: [...new Set([...p.notes, ...previous.notes])],
+          }
+        : {}),
       image: p.image || previous?.image,
     };
     merged.set(p.id, next);
@@ -169,6 +207,34 @@ export function usePlaceCatalog(
   );
   const lat = env.location.lat,
     lng = env.location.lng;
+  const enrichmentQueue = useRef<ReturnType<
+    typeof createVenueEnrichmentQueue
+  > | null>(null);
+  const enrichmentIds = selectVenueEnrichmentCandidates(
+    places,
+    query,
+    { lat, lng },
+    radius,
+  )
+    .map((place) => place.id)
+    .join(",");
+  useEffect(() => {
+    if (!ready || blocked) return;
+    const queue = createVenueEnrichmentQueue();
+    enrichmentQueue.current = queue;
+    return () => {
+      queue.dispose();
+      enrichmentQueue.current = null;
+    };
+  }, [ready, blocked]);
+  useEffect(() => {
+    if (!ready || blocked || !enrichmentIds) return;
+    void enrichmentQueue.current?.enqueue(enrichmentIds.split(","), (place) => {
+      setPlaces((previous) =>
+        mergeCatalog(previous, [place], pinned.current, { lat, lng }),
+      );
+    });
+  }, [enrichmentIds, ready, blocked, lat, lng, revision]);
   useEffect(() => {
     if (!ready) return;
     const controller = new AbortController();

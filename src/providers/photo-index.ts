@@ -1,6 +1,6 @@
 import generated from "./data/place-photo-index.json";
 import type { PhotoQuery, PhotoResult } from "./place-photo";
-import { photoIdentity } from "./photo-query";
+import { photoIdentity, photoVenueIdentity } from "./photo-query";
 import { approvedPhoto } from "./photo-policy";
 export type PhotoIndexEntry = {
   query: PhotoQuery;
@@ -32,8 +32,10 @@ export function indexedPhoto(
   query: PhotoQuery,
   entries: PhotoIndexEntry[] = photoIndex.entries,
 ): PhotoIndexEntry | null {
-  const entry = entries.find(
-    (e) => photoIdentity(e.query) === photoIdentity(query),
+  const entry = entries.find((e) =>
+    e.image
+      ? photoVenueIdentity(e.query) === photoVenueIdentity(query)
+      : photoIdentity(e.query) === photoIdentity(query),
   );
   if (!entry || entry.retryable) return null;
   const age = Date.now() - Date.parse(entry.checkedAt);

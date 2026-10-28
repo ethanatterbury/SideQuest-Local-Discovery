@@ -144,8 +144,8 @@ it("allows transport time after the server's photo lookup budget", async () => {
     checkedAt: "2026-10-28T00:00:00Z",
   };
   vi.stubGlobal("fetch", async () => {
-    // A valid 4.4s server lookup plus 600ms of request/response transport.
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    // A valid 6.4s server lookup plus 600ms of request/response transport.
+    await new Promise((resolve) => setTimeout(resolve, 7000));
     return Response.json({ image });
   });
   const result = findPlacePhoto({
@@ -153,7 +153,7 @@ it("allows transport time after the server's photo lookup budget", async () => {
     id: "server-budget-plus-transport",
     image: undefined,
   });
-  await vi.advanceTimersByTimeAsync(5000);
+  await vi.advanceTimersByTimeAsync(7000);
   expect(await result).toEqual(image);
 });
 
@@ -168,7 +168,7 @@ it("bounds active requests and queue waits even when upstream ignores abort", as
   }));
   const promises = places.map(findPlacePhoto);
   expect(fetcher).toHaveBeenCalledTimes(3);
-  await vi.advanceTimersByTimeAsync(35000);
+  await vi.advanceTimersByTimeAsync(39000);
   expect(await Promise.all(promises)).toEqual(Array(70).fill(null));
   expect(fetcher.mock.calls.length).toBeLessThan(70);
   const image = {

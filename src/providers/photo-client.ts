@@ -3,7 +3,7 @@ import type { Place } from "@/domain/models";
 import { placePhotoQuery, photoIdentity } from "./photo-query";
 import {
   approvedPhoto,
-  PHOTO_DEADLINE_MS,
+  PHOTO_REQUEST_DEADLINE_MS,
   PHOTO_NEGATIVE_TTL_MS,
   PHOTO_TRANSIENT_TTL_MS,
 } from "./photo-policy";
@@ -19,7 +19,7 @@ const QUEUE_WAIT_MS = 30_000;
 const MAX_QUEUED = 60;
 // The server may spend its whole lookup budget before sending a response.
 // Leave time for request/response transport rather than cancelling that result.
-const REQUEST_DEADLINE_MS = PHOTO_DEADLINE_MS + 2000;
+const REQUEST_DEADLINE_MS = PHOTO_REQUEST_DEADLINE_MS + 2000;
 let active = 0;
 function next() {
   if (active < 3 && queue.length) {
