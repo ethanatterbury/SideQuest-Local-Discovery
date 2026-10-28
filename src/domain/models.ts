@@ -152,11 +152,11 @@ export type Place = {
     matched?: string[];
     blurDataURL?: string;
     rights?: "open" | "permissioned" | "unverified" | "website-preview";
-    /** Publisher-selected external link preview; no reuse licence is asserted. */
+    /** External image published by the venue; no reuse licence is asserted. */
     preview?: {
       pageUrl: string;
       publisher: string;
-      kind: "open-graph" | "twitter";
+      kind: "open-graph" | "twitter" | "venue-image";
       identityEvidence: string[];
       subjectEvidence: string[];
     };

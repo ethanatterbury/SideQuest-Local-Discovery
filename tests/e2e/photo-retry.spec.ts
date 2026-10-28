@@ -84,9 +84,9 @@ test("a venue website preview loads on its card with source credit and a detail 
     preview: {
       pageUrl: source,
       publisher: place.name,
-      kind: "open-graph",
+      kind: "venue-image",
       identityEvidence: ["venue name and location matched"],
-      subjectEvidence: ["physical venue scene"],
+      subjectEvidence: ["physical venue scene in image metadata"],
     },
   };
   await page.route("**/data/venues/manifest.json", (route) =>

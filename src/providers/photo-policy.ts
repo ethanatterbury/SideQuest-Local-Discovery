@@ -21,7 +21,7 @@ export function openPhotoLicense(license: string): boolean {
   );
 }
 
-/** Validate the separate publisher-selected link-preview contract without granting reuse. */
+/** Validate the separate externally hosted website-preview contract without granting reuse. */
 function approvedWebsitePreview(
   image: Candidate,
   checkedAt?: string,
@@ -34,7 +34,7 @@ function approvedWebsitePreview(
     !preview ||
     preview.pageUrl !== image.source ||
     preview.publisher !== image.credit ||
-    !["open-graph", "twitter"].includes(preview.kind) ||
+    !["open-graph", "twitter", "venue-image"].includes(preview.kind) ||
     !timestamp ||
     !Number.isFinite(Date.parse(timestamp))
   )
@@ -48,6 +48,15 @@ function approvedWebsitePreview(
         typeof value === "string" && value.length > 0 && value.length <= 300,
     );
   if (!evidence(preview.identityEvidence) || !evidence(preview.subjectEvidence))
+    return;
+  if (
+    preview.kind === "venue-image" &&
+    !preview.subjectEvidence.some(
+      (value) =>
+        value === "physical venue scene in image metadata" ||
+        value === "named outdoor attraction photograph",
+    )
+  )
     return;
   for (const value of [image.url, image.source]) {
     try {

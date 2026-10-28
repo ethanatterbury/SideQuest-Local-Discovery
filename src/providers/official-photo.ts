@@ -48,8 +48,10 @@ export interface OfficialPhotoOptions {
   signal?: AbortSignal;
   timeoutMs?: number;
   maxCandidates?: number;
-  /** Only publisher-selected OG/Twitter link previews, never arbitrary gallery assets. */
+  /** Restrict extraction to publisher-selected OG/Twitter images. */
   socialPreviewOnly?: boolean;
+  /** Runtime external previews also allow explicitly identified physical venue scenes. */
+  websitePreview?: boolean;
   refresh?: boolean;
 }
 export interface OfficialPhotoDownload {
@@ -347,9 +349,10 @@ export function parseOfficialPhotoHtml(
   html: string,
   pageUrl: string,
   query: OfficialPhotoQuery,
-  options: { socialPreviewOnly?: boolean } = {},
+  options: { socialPreviewOnly?: boolean; websitePreview?: boolean } = {},
 ): OfficialPhotoParseResult {
   html = html.slice(0, HTML_LIMIT);
+  const websitePreview = options.websitePreview || options.socialPreviewOnly;
   const rejected: Record<string, number> = {};
   const reject = (reason: string) => {
     rejected[reason] = (rejected[reason] ?? 0) + 1;
@@ -545,7 +548,7 @@ export function parseOfficialPhotoHtml(
       !!(attr.srcset || attr["data-srcset"]);
     const parentAttr = attributes(parent);
     const parentContext = `${parentAttr.class ?? ""} ${parentAttr.id ?? ""} ${parentAttr["aria-label"] ?? ""}`;
-    const context = `${attr.alt ?? ""} ${attr.title ?? ""} ${attr.class ?? ""} ${attr.id ?? ""} ${parentContext} ${wordpressGallery ? "WordPress gallery" : ""}`;
+    const context = `${attr.alt ?? ""} ${attr.title ?? ""} ${attr.class ?? ""} ${attr.id ?? ""} ${websitePreview ? "" : parentContext} ${wordpressGallery ? "WordPress gallery" : ""}`;
     const width = dimension(attr.width),
       height = dimension(attr.height);
     for (const key of [
@@ -688,7 +691,7 @@ export function parseOfficialPhotoHtml(
     }
     return false;
   });
-  if (options.socialPreviewOnly && conflictingLocation) {
+  if (websitePreview && conflictingLocation) {
     reject("conflicting-preview-location");
     return { candidates: [], identity, rejected };
   }
@@ -699,7 +702,20 @@ export function parseOfficialPhotoHtml(
       .map((item) => imageUrl(item.raw, pageUrl))
       .filter(Boolean),
   );
+  const otherBusinessUrls = new Set(
+    raw
+      .filter(
+        (item) => item.business && !scopedBusinesses.includes(item.business),
+      )
+      .map((item) => imageUrl(item.raw, pageUrl))
+      .filter(Boolean),
+  );
   for (const item of raw.slice(0, 1200)) {
+    if (websitePreview && ["gallery-data", "schema"].includes(item.kind)) {
+      // Nearby hydration captions and Organization art have no image-specific venue ownership.
+      reject("unscoped-image-context");
+      continue;
+    }
     if (
       options.socialPreviewOnly &&
       !["open-graph", "twitter"].includes(item.kind)
@@ -713,13 +729,17 @@ export function parseOfficialPhotoHtml(
         query.area &&
         contains(`${localContent} ${multiBranch ? "" : visible}`, query.area)
       );
-    if (options.socialPreviewOnly && !locationMatched) {
+    if (websitePreview && !locationMatched) {
       reject("unconfirmed-preview-location");
       continue;
     }
     const url = imageUrl(item.raw, pageUrl);
     if (!url) {
       reject("unsafe-or-unsupported-image");
+      continue;
+    }
+    if (websitePreview && otherBusinessUrls.has(url)) {
+      reject("different-schema-venue");
       continue;
     }
     if (
@@ -763,7 +783,12 @@ export function parseOfficialPhotoHtml(
       reject(matchedName ? "unconfirmed-branch" : "unconfirmed-venue");
       continue;
     }
-    if (item.business && !matchedBusiness.includes(item.business)) {
+    if (
+      item.business &&
+      !(websitePreview ? scopedBusinesses : matchedBusiness).includes(
+        item.business,
+      )
+    ) {
       reject("different-schema-venue");
       continue;
     }
@@ -774,7 +799,7 @@ export function parseOfficialPhotoHtml(
         url,
         // Some publishers omit og:image:alt but caption that exact image in the body.
         // Never borrow a description from a different image on the same page.
-        context: options.socialPreviewOnly
+        context: websitePreview
           ? [
               item.context,
               ...raw
@@ -796,11 +821,24 @@ export function parseOfficialPhotoHtml(
       reject(assessment.rejection ?? "unconfirmed-photo-subject");
       continue;
     }
+    if (
+      websitePreview &&
+      !["open-graph", "twitter"].includes(item.kind) &&
+      assessment.photoScore < 75
+    ) {
+      // A 'gallery' class alone cannot establish a physical scene rather than food/artwork.
+      reject("unconfirmed-venue-scene");
+      continue;
+    }
     const rank =
       assessment.photoScore * 10 +
       (schemaVenue ? 5 : 0) +
       (onPage ? 8 : 0) +
-      (["open-graph", "twitter"].includes(item.kind) ? 3 : 0) +
+      (["open-graph", "twitter"].includes(item.kind)
+        ? websitePreview
+          ? 20
+          : 3
+        : 0) +
       (matchedArea || matchedAddress ? 5 : 0) +
       Math.min(5, (item.width ?? 800) / 400);
     const evidence = [
@@ -819,10 +857,12 @@ export function parseOfficialPhotoHtml(
       height: item.height,
       confidence: Math.min(0.95, 0.6 + assessment.photoScore / 300),
       strategy: "official-website",
-      ...(options.socialPreviewOnly
+      ...(websitePreview
         ? {
             preview: {
-              kind: item.kind as "open-graph" | "twitter",
+              kind: ["open-graph", "twitter"].includes(item.kind)
+                ? (item.kind as "open-graph" | "twitter")
+                : "venue-image",
               pageUrl,
               publisher: query.name,
               identityEvidence: identity.evidence,
@@ -1282,7 +1322,7 @@ async function resolveWebsitePreview(
 }> {
   const result = await resolveOfficialPhotos(query, {
     ...options,
-    socialPreviewOnly: true,
+    websitePreview: true,
     maxCandidates: 1,
   });
   const candidate = result.candidates[0];

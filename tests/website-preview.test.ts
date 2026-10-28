@@ -65,11 +65,11 @@ it.each([
   ["wrong branch", html.replaceAll("Fleet", "Reading")],
 ])("rejects a %s preview", async (_label, page) => {
   const result = await official.resolveOfficialWebsitePreview(query, {
-    fetch: vi
-      .fn<typeof fetch>()
-      .mockResolvedValue(
-        new Response(page, { headers: { "content-type": "text/html" } }),
-      ),
+    fetch: vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(page.replace(/<img[^>]*>/g, ""), {
+        headers: { "content-type": "text/html" },
+      }),
+    ),
     lookup,
   });
   expect(result.image).toBeNull();
@@ -124,7 +124,8 @@ it("does not use an unrelated page image caption to approve an unknown preview",
       ),
     lookup,
   });
-  expect(result.image).toBeNull();
+  expect(result.image?.url).toBe("https://littlelantern.co.uk/gallery.jpg");
+  expect(result.image?.preview?.kind).toBe("venue-image");
 });
 
 it("does not accept another branch just because the footer lists the requested town", async () => {
@@ -188,3 +189,134 @@ it.each([
     expect(result.image).toBeNull();
   },
 );
+
+it("finds a physical venue image when the publisher supplies no social sharing image", async () => {
+  const page =
+    '<title>Little Lantern Play, Fleet</title><img src="/play-room.jpg" alt="The indoor play area interior" width="1600" height="1000">';
+  const result = await official.resolveOfficialWebsitePreview(query, {
+    fetch: vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(
+        new Response(page, { headers: { "content-type": "text/html" } }),
+      ),
+    lookup,
+  });
+  expect(result.image).toMatchObject({
+    url: "https://littlelantern.co.uk/play-room.jpg",
+    rights: "website-preview",
+    preview: { kind: "venue-image" },
+  });
+  expect(approvedPhoto(result.image)?.rights).toBe("website-preview");
+});
+
+it("does not infer a physical venue scene from an opaque gallery asset alone", async () => {
+  const page =
+    '<title>Little Lantern Play, Fleet</title><section class="gallery"><img src="/a123.jpg" alt="Gallery photo" width="1600" height="1000"></section>';
+  const result = await official.resolveOfficialWebsitePreview(query, {
+    fetch: vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(
+        new Response(page, { headers: { "content-type": "text/html" } }),
+      ),
+    lookup,
+  });
+  expect(result.image).toBeNull();
+});
+
+it("rejects a venue-image record that only claims to be a photographic gallery", () => {
+  expect(
+    approvedPhoto({
+      url: "https://littlelantern.co.uk/a123.jpg",
+      source: query.website,
+      credit: query.name,
+      license: "Website preview — rights reserved",
+      rights: "website-preview",
+      strategy: "official-website-preview",
+      checkedAt: new Date().toISOString(),
+      preview: {
+        kind: "venue-image",
+        pageUrl: query.website,
+        publisher: query.name,
+        identityEvidence: ["venue and location matched"],
+        subjectEvidence: ["photographic venue gallery asset"],
+      },
+    }),
+  ).toBeUndefined();
+});
+
+it.each([false, true])(
+  "rejects another named branch's schema image even when repeated in body: %s",
+  async (inBody) => {
+    const page =
+      '<title>Little Lantern Play Fleet</title><script type="application/ld+json">' +
+      JSON.stringify([
+        {
+          "@type": "LocalBusiness",
+          name: query.name,
+          url: query.website,
+          address: { postalCode: "GU51 3LA", addressLocality: "Fleet" },
+        },
+        {
+          "@type": "LocalBusiness",
+          name: query.name,
+          url: "https://littlelantern.co.uk/reading/",
+          address: { postalCode: "RG1 1AA", addressLocality: "Reading" },
+          image: { url: "/reading-interior.jpg", caption: "Reading interior" },
+        },
+      ]) +
+      "</script>" +
+      (inBody
+        ? '<img src="/reading-interior.jpg" alt="Reading interior">'
+        : "");
+    const result = await official.resolveOfficialWebsitePreview(
+      { ...query, postcode: "GU51 3LA" },
+      {
+        fetch: vi
+          .fn<typeof fetch>()
+          .mockResolvedValue(
+            new Response(page, { headers: { "content-type": "text/html" } }),
+          ),
+        lookup,
+      },
+    );
+    expect(result.image).toBeNull();
+  },
+);
+
+it("does not borrow a neighboring hydration image's physical-scene caption", async () => {
+  const page =
+    "<title>Little Lantern Play Fleet</title><script>window.gallery=" +
+    JSON.stringify({
+      items: [
+        { imageUrl: "https://littlelantern.co.uk/a123.jpg", caption: "Latte" },
+        {
+          imageUrl: "https://littlelantern.co.uk/room.jpg",
+          caption: "Play area interior",
+        },
+      ],
+    }) +
+    "</script>";
+  const result = await official.resolveOfficialWebsitePreview(query, {
+    fetch: vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(
+        new Response(page, { headers: { "content-type": "text/html" } }),
+      ),
+    lookup,
+  });
+  expect(result.image).toBeNull();
+});
+
+it("does not borrow a closed parent element's scene description for another image", async () => {
+  const page =
+    '<title>Little Lantern Play Fleet</title><section class="interior"></section><img src="/a123.jpg" alt="Photo">';
+  const result = await official.resolveOfficialWebsitePreview(query, {
+    fetch: vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(
+        new Response(page, { headers: { "content-type": "text/html" } }),
+      ),
+    lookup,
+  });
+  expect(result.image).toBeNull();
+});
