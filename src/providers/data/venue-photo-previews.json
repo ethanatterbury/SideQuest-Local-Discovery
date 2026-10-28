@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-28T20:06:57.543456Z",
+  "generatedAt": "2026-10-28T20:19:19.885Z",
   "entries": [
     {
       "query": {
@@ -14,7 +14,9 @@
       },
       "checkedAt": "2026-10-28T15:39:48.754Z",
       "website": {
-        "urls": ["https://pirateslanding.co.uk/pirates-landing-farnham/"],
+        "urls": [
+          "https://pirateslanding.co.uk/pirates-landing-farnham/"
+        ],
         "status": "found",
         "source": "mapped"
       },
@@ -22,7 +24,7 @@
         "url": "https://pirateslanding.co.uk/wp-content/uploads/2025/03/IMG_0959.jpeg",
         "source": "https://pirateslanding.co.uk/pirates-landing-farnham/",
         "credit": "Pirates Landing",
-        "license": "Website preview \u2014 rights reserved",
+        "license": "Website preview — rights reserved",
         "rights": "website-preview",
         "strategy": "official-website-preview",
         "checkedAt": "2026-10-28T15:39:48.754Z",
@@ -40,7 +42,9 @@
           "identityEvidence": [
             "2026-10-28: Official Farnham branch page names Pirates Landing Farnham at Brightwells Yard, Farnham."
           ],
-          "subjectEvidence": ["physical venue scene verified by visual review"],
+          "subjectEvidence": [
+            "physical venue scene verified by visual review"
+          ],
           "review": {
             "method": "visual-review",
             "imageUrl": "https://pirateslanding.co.uk/wp-content/uploads/2025/03/IMG_0959.jpeg",
@@ -73,6 +77,14 @@
           "finding": "Dedicated web open/click returned image content marker for the exact publisher URL. MCP exposed only a text marker, so actual visual review used the existing local rendition."
         },
         "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
+      },
+      "deliveryFailure": {
+        "checkedAt": "2026-10-28T20:21:50.919Z",
+        "imageUrl": "https://pirateslanding.co.uk/wp-content/uploads/2025/03/IMG_0959.jpeg",
+        "testStatus": "timedOut",
+        "reason": "publisher-image-delivery-failed",
+        "elapsedMs": 37867,
+        "failures": []
       }
     },
     {
@@ -98,7 +110,7 @@
         "url": "https://www.placesleisure.org/media/u5gdme24/gallery-wokingham-gym.webp?width=1200&height=600&v=1dbf013075c5ca0",
         "source": "https://www.placesleisure.org/centres/wokingham-leisure-centre/",
         "credit": "Wokingham Leisure Centre",
-        "license": "Website preview \u2014 rights reserved",
+        "license": "Website preview — rights reserved",
         "rights": "website-preview",
         "strategy": "official-website-preview",
         "checkedAt": "2026-10-28T15:39:48.754Z",
@@ -116,7 +128,9 @@
           "identityEvidence": [
             "2026-10-28: Official Wokingham Leisure Centre page confirms Wellington Road, Wokingham, Berkshire RG40 2AF."
           ],
-          "subjectEvidence": ["physical venue scene verified by visual review"],
+          "subjectEvidence": [
+            "physical venue scene verified by visual review"
+          ],
           "review": {
             "method": "visual-review",
             "imageUrl": "https://www.placesleisure.org/media/u5gdme24/gallery-wokingham-gym.webp?width=1200&height=600&v=1dbf013075c5ca0",
@@ -164,7 +178,9 @@
       },
       "checkedAt": "2026-10-28T15:39:48.754Z",
       "website": {
-        "urls": ["https://thelounges.co.uk/pineto"],
+        "urls": [
+          "https://thelounges.co.uk/pineto"
+        ],
         "status": "found",
         "source": "mapped"
       },
@@ -172,7 +188,7 @@
         "url": "https://bunny-wp-pullzone-lgrcnjwfpd.b-cdn.net/wp-content/uploads/2024/02/Pineto-Lounge-Bracknell-Highlights_BMS3717_.jpg",
         "source": "https://thelounges.co.uk/pineto",
         "credit": "Pineto Lounge",
-        "license": "Website preview \u2014 rights reserved",
+        "license": "Website preview — rights reserved",
         "rights": "website-preview",
         "strategy": "official-website-preview",
         "checkedAt": "2026-10-28T15:39:48.754Z",
@@ -190,7 +206,9 @@
           "identityEvidence": [
             "2026-10-28: Official Pineto branch page confirms 8 Eagle Lane, Braccan Walk, Bracknell RG12 1BG."
           ],
-          "subjectEvidence": ["physical venue scene verified by visual review"],
+          "subjectEvidence": [
+            "physical venue scene verified by visual review"
+          ],
           "review": {
             "method": "visual-review",
             "imageUrl": "https://bunny-wp-pullzone-lgrcnjwfpd.b-cdn.net/wp-content/uploads/2024/02/Pineto-Lounge-Bracknell-Highlights_BMS3717_.jpg",
@@ -248,7 +266,7 @@
         "url": "https://www.mcmullens.co.uk/app/uploads/2024/05/McMullens_Kingfisher-On-The-Quay-Camberley_Web-Res_04-2048x1072.jpg",
         "source": "https://www.mcmullens.co.uk/local-pub/kingfisher-on-the-quay/",
         "credit": "Kingfisher on the Quay",
-        "license": "Website preview \u2014 rights reserved",
+        "license": "Website preview — rights reserved",
         "rights": "website-preview",
         "strategy": "official-website-preview",
         "checkedAt": "2026-10-28T15:39:48.754Z",
@@ -266,7 +284,9 @@
           "identityEvidence": [
             "2026-10-28: Official Kingfisher on the Quay branch page confirms Coleford Bridge Road, Mytchett, Camberley, Surrey GU16 6DS."
           ],
-          "subjectEvidence": ["physical venue scene verified by visual review"],
+          "subjectEvidence": [
+            "physical venue scene verified by visual review"
+          ],
           "review": {
             "method": "visual-review",
             "imageUrl": "https://www.mcmullens.co.uk/app/uploads/2024/05/McMullens_Kingfisher-On-The-Quay-Camberley_Web-Res_04-2048x1072.jpg",
@@ -314,7 +334,9 @@
       },
       "checkedAt": "2026-10-28T15:40:39.732Z",
       "website": {
-        "urls": ["https://www.therubyplaycafe.co.uk/"],
+        "urls": [
+          "https://www.therubyplaycafe.co.uk/"
+        ],
         "status": "found",
         "source": "mapped"
       },
@@ -322,7 +344,7 @@
         "url": "https://www.therubyplaycafe.co.uk/cdn/shop/files/Untitled_600_x_600mm_600_x_200mm_600_x_300mm_450_x_300mm_450_x_450mm_450_x_325mm_1_4320x.png?v=1675848798",
         "source": "https://www.therubyplaycafe.co.uk/",
         "credit": "The Ruby Play Cafe",
-        "license": "Website preview \u2014 rights reserved",
+        "license": "Website preview — rights reserved",
         "rights": "website-preview",
         "strategy": "official-website-preview",
         "checkedAt": "2026-10-28T15:40:39.732Z",
@@ -377,7 +399,9 @@
       },
       "checkedAt": "2026-10-28T15:40:39.732Z",
       "website": {
-        "urls": ["https://www.minitownroleplay.co.uk/"],
+        "urls": [
+          "https://www.minitownroleplay.co.uk/"
+        ],
         "status": "found",
         "source": "mapped"
       },
@@ -415,7 +439,9 @@
       },
       "checkedAt": "2026-10-28T20:06:57.543456Z",
       "website": {
-        "urls": ["https://www.rushmoor.gov.uk/southwoodcountrypark"],
+        "urls": [
+          "https://www.rushmoor.gov.uk/southwoodcountrypark"
+        ],
         "status": "found",
         "source": "mapped"
       },
@@ -423,7 +449,7 @@
         "url": "https://www.rushmoor.gov.uk/media/x44jixll/southwood-country-park-cafe-and-field-centre.jpg?width=800&height=533&v=1d96e119ee557b0",
         "source": "https://www.rushmoor.gov.uk/southwoodcountrypark",
         "credit": "Rushmoor Borough Council",
-        "license": "Website preview \u2014 rights reserved",
+        "license": "Website preview — rights reserved",
         "rights": "website-preview",
         "strategy": "official-website-preview",
         "checkedAt": "2026-10-28T20:06:57.543456Z",
@@ -441,7 +467,9 @@
           "identityEvidence": [
             "2026-10-28: Official Rushmoor Borough Council page identifies Southwood Country Park as 57 hectares of green space in Farnborough and locates its field centre and east car park on Ively Road, Farnborough."
           ],
-          "subjectEvidence": ["physical venue scene verified by visual review"],
+          "subjectEvidence": [
+            "physical venue scene verified by visual review"
+          ],
           "review": {
             "method": "visual-review",
             "imageUrl": "https://www.rushmoor.gov.uk/media/x44jixll/southwood-country-park-cafe-and-field-centre.jpg?width=800&height=533&v=1d96e119ee557b0",
@@ -498,7 +526,7 @@
         "url": "https://assets.tbhpartnership.org.uk/uploads/2019/08/IMG_3221-scaled-1024x768.jpg",
         "source": "https://tbhpartnership.org.uk/greenspace/whitewater-meadows/",
         "credit": "Thames Basin Heaths Partnership",
-        "license": "Website preview \u2014 rights reserved",
+        "license": "Website preview — rights reserved",
         "rights": "website-preview",
         "strategy": "official-website-preview",
         "checkedAt": "2026-10-28T20:06:57.543456Z",
@@ -516,7 +544,9 @@
           "identityEvidence": [
             "2026-10-28: Thames Basin Heaths Partnership page identifies Whitewater Meadows beside the River Whitewater, with its car park at Papermill Avenue, Hook RG27 9QU."
           ],
-          "subjectEvidence": ["physical venue scene verified by visual review"],
+          "subjectEvidence": [
+            "physical venue scene verified by visual review"
+          ],
           "review": {
             "method": "visual-review",
             "imageUrl": "https://assets.tbhpartnership.org.uk/uploads/2019/08/IMG_3221-scaled-1024x768.jpg",
@@ -573,7 +603,7 @@
         "url": "https://assets.tbhpartnership.org.uk/uploads/2016/08/BassettsMeadGM3-scaled-1024x768.jpg",
         "source": "https://tbhpartnership.org.uk/greenspace/bassetts-mead-country-park/",
         "credit": "Thames Basin Heaths Partnership",
-        "license": "Website preview \u2014 rights reserved",
+        "license": "Website preview — rights reserved",
         "rights": "website-preview",
         "strategy": "official-website-preview",
         "checkedAt": "2026-10-28T20:06:57.543456Z",
@@ -591,7 +621,9 @@
           "identityEvidence": [
             "2026-10-28: Thames Basin Heaths Partnership page identifies Bassetts Mead near Hook, postcode RG27 9UW, with car parks off Holt Lane, Doctors Acre and Athoke Croft; it identifies Hook Parish Council ownership and Hampshire & Isle of Wight Wildlife Trust management."
           ],
-          "subjectEvidence": ["physical venue scene verified by visual review"],
+          "subjectEvidence": [
+            "physical venue scene verified by visual review"
+          ],
           "review": {
             "method": "visual-review",
             "imageUrl": "https://assets.tbhpartnership.org.uk/uploads/2016/08/BassettsMeadGM3-scaled-1024x768.jpg",
@@ -639,7 +671,9 @@
       },
       "checkedAt": "2026-10-28T20:06:57.543456Z",
       "website": {
-        "urls": ["https://www.village-hotels.co.uk/farnborough"],
+        "urls": [
+          "https://www.village-hotels.co.uk/farnborough"
+        ],
         "status": "found",
         "source": "mapped"
       },
@@ -647,7 +681,7 @@
         "url": "https://image-tc.galaxy.tf/wijpeg-atsdtp46984w8gft1dzh8wrry/5819scr-f2da74ce467a4df.jpg",
         "source": "https://www.village-hotels.co.uk/farnborough",
         "credit": "Village Hotels",
-        "license": "Website preview \u2014 rights reserved",
+        "license": "Website preview — rights reserved",
         "rights": "website-preview",
         "strategy": "official-website-preview",
         "checkedAt": "2026-10-28T20:06:57.543456Z",
@@ -665,7 +699,9 @@
           "identityEvidence": [
             "2026-10-28: Official Village Hotel Farnborough page confirms Business Park, Pinehurst Road, Farnborough GU14 7BF and describes its gym, indoor pool and health club."
           ],
-          "subjectEvidence": ["physical venue scene verified by visual review"],
+          "subjectEvidence": [
+            "physical venue scene verified by visual review"
+          ],
           "review": {
             "method": "visual-review",
             "imageUrl": "https://image-tc.galaxy.tf/wijpeg-atsdtp46984w8gft1dzh8wrry/5819scr-f2da74ce467a4df.jpg",
@@ -698,6 +734,5318 @@
           "finding": "Dedicated web open returned image content marker for the exact publisher URL. MCP exposed only a text marker, so actual visual review used the existing local rendition."
         },
         "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
+      }
+    },
+    {
+      "query": {
+        "id": "lightwater",
+        "name": "Lightwater Country Park",
+        "lat": 51.347,
+        "lng": -0.679,
+        "area": "Lightwater, Surrey",
+        "category": "Country park",
+        "aliases": [],
+        "website": "https://www.surreyheath.gov.uk/parks-and-countryside/lightwater-country-park"
+      },
+      "checkedAt": "2026-10-28T20:16:54.050Z",
+      "website": {
+        "urls": [
+          "https://www.surreyheath.gov.uk/parks-and-countryside/lightwater-country-park"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.surreyheath.gov.uk/parks-and-countryside/lightwater-country-park",
+            "pageUrl": null,
+            "reason": "website-http-404",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "frimley-lodge",
+        "name": "Frimley Lodge Park",
+        "lat": 51.3,
+        "lng": -0.726,
+        "area": "Frimley Green, Surrey",
+        "category": "Park & canal",
+        "aliases": [],
+        "website": "https://www.surreyheath.gov.uk/parks-and-countryside/frimley-lodge-park"
+      },
+      "checkedAt": "2026-10-28T20:16:55.099Z",
+      "website": {
+        "urls": [
+          "https://www.surreyheath.gov.uk/parks-and-countryside/frimley-lodge-park"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.surreyheath.gov.uk/parks-and-countryside/frimley-lodge-park",
+            "pageUrl": null,
+            "reason": "website-http-404",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "look-out",
+        "name": "The Look Out",
+        "lat": 51.386,
+        "lng": -0.74,
+        "area": "Bracknell, Berkshire",
+        "category": "Science discovery",
+        "aliases": [],
+        "website": "https://www.bracknell-forest.gov.uk/leisure-and-events/look-out-discovery-centre"
+      },
+      "checkedAt": "2026-10-28T20:16:55.853Z",
+      "website": {
+        "urls": [
+          "https://www.bracknell-forest.gov.uk/leisure-and-events/look-out-discovery-centre"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.bracknell-forest.gov.uk/leisure-and-events/look-out-discovery-centre",
+            "pageUrl": "https://www.bracknell-forest.gov.uk/leisure-and-events/look-out-discovery-centre",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "wellington",
+        "name": "Wellington Country Park",
+        "lat": 51.3592235,
+        "lng": -0.9612239,
+        "area": "Riseley, Berkshire",
+        "category": "Family day out",
+        "aliases": [],
+        "website": "https://wellingtoncountrypark.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:16:56.063Z",
+      "website": {
+        "urls": [
+          "https://wellingtoncountrypark.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": {
+        "url": "https://wellingtoncountrypark.co.uk/wp-content/uploads/2026/08/children-playing-adventure-playground-wellington-country-park.jpg",
+        "source": "https://wellingtoncountrypark.co.uk/",
+        "credit": "Wellington Country Park",
+        "license": "Website preview — rights reserved",
+        "rights": "website-preview",
+        "strategy": "official-website-preview",
+        "checkedAt": "2026-10-28T20:16:57.450Z",
+        "confidence": 0.8999999999999999,
+        "matched": [
+          "body",
+          "venue name in page title, heading or business schema",
+          "physical venue scene in image metadata",
+          "image occurs in page content"
+        ],
+        "preview": {
+          "pageUrl": "https://wellingtoncountrypark.co.uk/",
+          "publisher": "Wellington Country Park",
+          "kind": "venue-image",
+          "identityEvidence": [
+            "venue name in page title, heading or business schema"
+          ],
+          "subjectEvidence": [
+            "physical venue scene in image metadata"
+          ]
+        }
+      },
+      "retryable": false,
+      "status": "matched",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://wellingtoncountrypark.co.uk/",
+            "pageUrl": "https://wellingtoncountrypark.co.uk/",
+            "reason": null,
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unscoped-image-context": 2,
+              "unsafe-or-unsupported-image": 18,
+              "branding-map-or-stock": 7,
+              "unconfirmed-photo-subject": 40,
+              "small-or-banner-art": 2
+            },
+            "candidates": [
+              {
+                "url": "https://wellingtoncountrypark.co.uk/wp-content/uploads/2026/08/children-playing-adventure-playground-wellington-country-park.jpg",
+                "source": "https://wellingtoncountrypark.co.uk/",
+                "photoScore": 90,
+                "evidence": [
+                  "body",
+                  "venue name in page title, heading or business schema",
+                  "physical venue scene in image metadata",
+                  "image occurs in page content"
+                ],
+                "subjectEvidence": [
+                  "physical venue scene in image metadata"
+                ]
+              }
+            ]
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "rural-life",
+        "name": "Rural Life Living Museum",
+        "lat": 51.184,
+        "lng": -0.771,
+        "area": "Tilford, Surrey",
+        "category": "Living history",
+        "aliases": [],
+        "website": "https://rural-life.org.uk/"
+      },
+      "checkedAt": "2026-10-28T20:16:57.457Z",
+      "website": {
+        "urls": [
+          "https://rural-life.org.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://rural-life.org.uk/",
+            "pageUrl": "https://rural-life.org.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 53
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "farnham-castle",
+        "name": "Farnham Castle",
+        "lat": 51.2185201,
+        "lng": -0.8023933,
+        "area": "Farnham, Surrey",
+        "category": "Historic keep",
+        "aliases": [],
+        "website": "https://www.farnhamcastle.com/"
+      },
+      "checkedAt": "2026-10-28T20:16:58.232Z",
+      "website": {
+        "urls": [
+          "https://www.farnhamcastle.com/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.farnhamcastle.com/",
+            "pageUrl": "https://www.farnhamcastle.com/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unscoped-image-context": 1,
+              "unsafe-or-unsupported-image": 2,
+              "unconfirmed-photo-subject": 26,
+              "unconfirmed-venue-scene": 1,
+              "food-or-drink-subject": 1
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "newlands-corner",
+        "name": "Newlands Corner",
+        "lat": 51.232,
+        "lng": -0.507,
+        "area": "Guildford, Surrey",
+        "category": "Downs & viewpoint",
+        "aliases": [],
+        "website": "https://www.surreycc.gov.uk/culture-and-leisure/countryside/sites/visitor-information/newlands-corner"
+      },
+      "checkedAt": "2026-10-28T20:17:01.492Z",
+      "website": {
+        "urls": [
+          "https://www.surreycc.gov.uk/culture-and-leisure/countryside/sites/visitor-information/newlands-corner"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.surreycc.gov.uk/culture-and-leisure/countryside/sites/visitor-information/newlands-corner",
+            "pageUrl": "https://www.surreycc.gov.uk/culture-and-leisure/countryside/sites/visitor-information/newlands-corner",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 12
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "alice-holt",
+        "name": "Alice Holt Forest",
+        "lat": 51.173,
+        "lng": -0.85,
+        "area": "Farnham, Hampshire",
+        "category": "Forest trails",
+        "aliases": [],
+        "website": "https://www.forestryengland.uk/alice-holt-forest"
+      },
+      "checkedAt": "2026-10-28T20:17:02.203Z",
+      "website": {
+        "urls": [
+          "https://www.forestryengland.uk/alice-holt-forest"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.forestryengland.uk/alice-holt-forest",
+            "pageUrl": "https://www.forestryengland.uk/alice-holt-forest",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unscoped-image-context": 1,
+              "unconfirmed-preview-location": 107
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "california",
+        "name": "California Country Park",
+        "lat": 51.3800656,
+        "lng": -0.87157,
+        "area": "Finchampstead, Berkshire",
+        "category": "Country park",
+        "aliases": [],
+        "website": "https://www.wokingham.gov.uk/parks-and-countryside/california-country-park"
+      },
+      "checkedAt": "2026-10-28T20:17:03.108Z",
+      "website": {
+        "urls": [
+          "https://www.wokingham.gov.uk/parks-and-countryside/california-country-park"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.wokingham.gov.uk/parks-and-countryside/california-country-park",
+            "pageUrl": null,
+            "reason": "website-http-404",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "south-hill",
+        "name": "South Hill Park",
+        "lat": 51.393,
+        "lng": -0.753,
+        "area": "Bracknell, Berkshire",
+        "category": "Arts centre & grounds",
+        "aliases": [],
+        "website": "https://www.southhillpark.org.uk/"
+      },
+      "checkedAt": "2026-10-28T20:17:04.370Z",
+      "website": {
+        "urls": [
+          "https://www.southhillpark.org.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.southhillpark.org.uk/",
+            "pageUrl": "https://www.southhillpark.org.uk/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "reading-museum",
+        "name": "Reading Museum",
+        "lat": 51.457,
+        "lng": -0.97,
+        "area": "Reading, Berkshire",
+        "category": "Museum",
+        "aliases": [],
+        "website": "https://www.readingmuseum.org.uk/"
+      },
+      "checkedAt": "2026-10-28T20:17:04.839Z",
+      "website": {
+        "urls": [
+          "https://www.readingmuseum.org.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.readingmuseum.org.uk/",
+            "pageUrl": "https://www.readingmuseum.org.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 42
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "merl",
+        "name": "The Museum of English Rural Life",
+        "lat": 51.449,
+        "lng": -0.961,
+        "area": "Reading, Berkshire",
+        "category": "Museum",
+        "aliases": [],
+        "website": "https://merl.reading.ac.uk/"
+      },
+      "checkedAt": "2026-10-28T20:17:05.261Z",
+      "website": {
+        "urls": [
+          "https://merl.reading.ac.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://merl.reading.ac.uk/",
+            "pageUrl": "https://merl.reading.ac.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 68
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "brooklands",
+        "name": "Brooklands Museum",
+        "lat": 51.3549958,
+        "lng": -0.4646239,
+        "area": "Weybridge, Surrey",
+        "category": "Motoring & aviation",
+        "aliases": [],
+        "website": "https://www.brooklandsmuseum.com/"
+      },
+      "checkedAt": "2026-10-28T20:17:06.260Z",
+      "website": {
+        "urls": [
+          "https://www.brooklandsmuseum.com/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": true,
+      "status": "delivery-unavailable",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.brooklandsmuseum.com/",
+            "pageUrl": "https://www.brooklandsmuseum.com/",
+            "reason": null,
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-photo-subject": 124,
+              "small-or-banner-art": 33,
+              "unsafe-or-unsupported-image": 1,
+              "branding-map-or-stock": 24
+            },
+            "candidates": [
+              {
+                "url": "https://www.brooklandsmuseum.com/media/xeaftddp/brk_100_weblanding_landscape_001.webp?rxy=0.5026214568197004%2C0.6001684054630254&rmode=crop&width=3840&height=2160&quality=80",
+                "source": "https://www.brooklandsmuseum.com/",
+                "photoScore": 90,
+                "evidence": [
+                  "body",
+                  "venue name in page title, heading or business schema",
+                  "physical venue scene in image metadata",
+                  "image occurs in page content"
+                ],
+                "subjectEvidence": [
+                  "physical venue scene in image metadata"
+                ]
+              }
+            ]
+          }
+        ],
+        "reason": null
+      },
+      "deliveryFailure": {
+        "checkedAt": "2026-10-28T20:21:50.919Z",
+        "imageUrl": "https://www.brooklandsmuseum.com/media/xeaftddp/brk_100_weblanding_landscape_001.webp?rxy=0.5026214568197004%2C0.6001684054630254&rmode=crop&width=3840&height=2160&quality=80",
+        "testStatus": "failed",
+        "reason": "publisher-image-delivery-failed",
+        "elapsedMs": 16001,
+        "failures": []
+      }
+    },
+    {
+      "query": {
+        "id": "guildford-castle",
+        "name": "Guildford Castle Grounds",
+        "lat": 51.233,
+        "lng": -0.573,
+        "area": "Guildford, Surrey",
+        "category": "Gardens & history",
+        "aliases": [
+          "Guildford Castle"
+        ],
+        "website": "https://www.guildford.gov.uk/castle"
+      },
+      "checkedAt": "2026-10-28T20:17:07.182Z",
+      "website": {
+        "urls": [
+          "https://www.guildford.gov.uk/castle"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.guildford.gov.uk/castle",
+            "pageUrl": "https://www.guildford.gov.uk/article/25594/About-Guildford-Castle?ccp=true",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 4,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unscoped-image-context": 1,
+              "unconfirmed-preview-location": 24
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "norden-farm",
+        "name": "Norden Farm",
+        "lat": 51.5157802,
+        "lng": -0.7463915,
+        "area": "Maidenhead, Berkshire",
+        "category": "Arts & cinema",
+        "aliases": [],
+        "website": "https://norden.farm/"
+      },
+      "checkedAt": "2026-10-28T20:17:09.163Z",
+      "website": {
+        "urls": [
+          "https://norden.farm/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://norden.farm/",
+            "pageUrl": "https://norden.farm/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "red-kangaroo",
+        "name": "Oxygen Reading",
+        "lat": 51.4602939,
+        "lng": -1.0067089,
+        "area": "Reading, Berkshire",
+        "category": "Trampoline activity",
+        "aliases": [],
+        "website": "https://oxygenactiveplay.co.uk/activity-parks/reading/"
+      },
+      "checkedAt": "2026-10-28T20:17:09.822Z",
+      "website": {
+        "urls": [
+          "https://oxygenactiveplay.co.uk/activity-parks/reading/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://oxygenactiveplay.co.uk/activity-parks/reading/",
+            "pageUrl": "https://oxygenactiveplay.co.uk/activity-parks/reading/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 132,
+              "unscoped-image-context": 4
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "craggy",
+        "name": "Blue Spider Climbing",
+        "lat": 51.2601023,
+        "lng": -0.5682091,
+        "area": "Guildford, Surrey",
+        "category": "Indoor climbing",
+        "aliases": [],
+        "website": "https://spiderclimbing.com/blue-spider/"
+      },
+      "checkedAt": "2026-10-28T20:17:10.715Z",
+      "website": {
+        "urls": [
+          "https://spiderclimbing.com/blue-spider/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://spiderclimbing.com/blue-spider/",
+            "pageUrl": null,
+            "reason": "website-http-403",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "everyman",
+        "name": "Everyman Wokingham",
+        "lat": 51.41,
+        "lng": -0.835,
+        "area": "Wokingham, Berkshire",
+        "category": "Cinema",
+        "aliases": [
+          "Everyman"
+        ],
+        "website": "https://www.everymancinema.com/venues-list/x11nv-everyman-wokingham/"
+      },
+      "checkedAt": "2026-10-28T20:17:11.095Z",
+      "website": {
+        "urls": [
+          "https://www.everymancinema.com/venues-list/x11nv-everyman-wokingham/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.everymancinema.com/venues-list/x11nv-everyman-wokingham/",
+            "pageUrl": "https://www.everymancinema.com/venues-list/x11nv-everyman-wokingham/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": false,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 30
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "escape-reading",
+        "name": "Escape Reading",
+        "lat": 51.4545707,
+        "lng": -0.9772849,
+        "area": "Queens Walk, Reading",
+        "category": "Escape rooms",
+        "aliases": [],
+        "website": "https://www.escapereading.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:17:11.372Z",
+      "website": {
+        "urls": [
+          "https://www.escapereading.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.escapereading.co.uk/",
+            "pageUrl": "https://escapereading.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 2,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 27
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "painshill",
+        "name": "Painshill",
+        "lat": 51.3311252,
+        "lng": -0.4247878,
+        "area": "Cobham, Surrey",
+        "category": "Landscape garden",
+        "aliases": [],
+        "website": "https://www.painshill.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:17:12.881Z",
+      "website": {
+        "urls": [
+          "https://www.painshill.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": true,
+      "status": "delivery-unavailable",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.painshill.co.uk/",
+            "pageUrl": "https://www.painshill.co.uk/",
+            "reason": null,
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unsafe-or-unsupported-image": 54,
+              "unconfirmed-photo-subject": 58,
+              "small-or-banner-art": 24,
+              "branding-map-or-stock": 10,
+              "unscoped-image-context": 34
+            },
+            "candidates": [
+              {
+                "url": "https://www.painshill.co.uk/wp-content/uploads/2021/03/Stroll_around_the_serpentine_Lake.jpg",
+                "source": "https://www.painshill.co.uk/",
+                "photoScore": 90,
+                "evidence": [
+                  "body",
+                  "venue name in page title, heading or business schema",
+                  "physical venue scene in image metadata",
+                  "image occurs in page content"
+                ],
+                "subjectEvidence": [
+                  "physical venue scene in image metadata"
+                ]
+              }
+            ]
+          }
+        ],
+        "reason": null
+      },
+      "deliveryFailure": {
+        "checkedAt": "2026-10-28T20:21:50.919Z",
+        "imageUrl": "https://www.painshill.co.uk/wp-content/uploads/2021/03/Stroll_around_the_serpentine_Lake.jpg",
+        "testStatus": "failed",
+        "reason": "publisher-image-delivery-failed",
+        "elapsedMs": 15849,
+        "failures": []
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-14836780",
+        "name": "Reading Canoe Club",
+        "lat": 51.468016,
+        "lng": -0.9825959,
+        "area": "Nearby",
+        "category": "sports centre",
+        "website": "https://reading-canoe.org.uk/"
+      },
+      "checkedAt": "2026-10-28T20:17:13.132Z",
+      "website": {
+        "urls": [
+          "https://reading-canoe.org.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://reading-canoe.org.uk/",
+            "pageUrl": "https://reading-canoe.org.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unscoped-image-context": 1,
+              "unconfirmed-preview-location": 26
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-36407446",
+        "name": "Odeon Multiplex",
+        "lat": 51.520685,
+        "lng": -0.7227654,
+        "area": "Maidenhead",
+        "address": "King Street",
+        "postcode": "SL6 1DY",
+        "category": "Cinema",
+        "wikidata": "Q41019517",
+        "website": "https://www.odeon.co.uk/cinemas/maidenhead/"
+      },
+      "checkedAt": "2026-10-28T20:17:14.138Z",
+      "website": {
+        "urls": [
+          "https://www.odeon.co.uk/cinemas/maidenhead/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.odeon.co.uk/cinemas/maidenhead/",
+            "pageUrl": null,
+            "reason": "website-http-403",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-60491186",
+        "name": "The Fat Duck",
+        "lat": 51.5079166,
+        "lng": -0.7017133,
+        "area": "Maidenhead",
+        "address": "High Street",
+        "postcode": "SL6 2AQ",
+        "category": "Restaurant",
+        "wikidata": "Q2300919",
+        "wikipedia": "en:The Fat Duck",
+        "website": "https://thefatduck.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:17:14.204Z",
+      "website": {
+        "urls": [
+          "https://thefatduck.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://thefatduck.co.uk/",
+            "pageUrl": "https://thefatduck.co.uk/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": false,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 24
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-270763537",
+        "name": "The Spice Lounge",
+        "lat": 51.435578,
+        "lng": -0.7495003,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.spiceloungewarfield.com/"
+      },
+      "checkedAt": "2026-10-28T20:17:14.803Z",
+      "website": {
+        "urls": [
+          "https://www.spiceloungewarfield.com/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.spiceloungewarfield.com/",
+            "pageUrl": "https://www.spiceloungewarfield.com/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 30
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-288706997",
+        "name": "Cole Museum of Zoology",
+        "lat": 51.4380368,
+        "lng": -0.9435728,
+        "area": "Reading",
+        "category": "Museum",
+        "wikidata": "Q5142674",
+        "wikipedia": "en:Cole Museum of Zoology",
+        "website": "https://collections.reading.ac.uk/cole-museum/"
+      },
+      "checkedAt": "2026-10-28T20:17:15.227Z",
+      "website": {
+        "urls": [
+          "https://collections.reading.ac.uk/cole-museum/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://collections.reading.ac.uk/cole-museum/",
+            "pageUrl": "https://collections.reading.ac.uk/cole-museum/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-photo-subject": 19,
+              "branding-map-or-stock": 13,
+              "unsafe-or-unsupported-image": 8,
+              "small-or-banner-art": 9
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-319156861",
+        "name": "Royal Tandoori",
+        "lat": 51.4547265,
+        "lng": -0.9690664,
+        "area": "Reading",
+        "address": "Duke Street",
+        "postcode": "RG1 4RY",
+        "category": "Restaurant",
+        "website": "http://www.royaltandoorireading.com/"
+      },
+      "checkedAt": "2026-10-28T20:17:15.999Z",
+      "website": {
+        "urls": [
+          "https://www.royaltandoorireading.com/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.royaltandoorireading.com/",
+            "pageUrl": "https://www.royaltandoorireading.com/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unsafe-or-unsupported-image": 2,
+              "branding-map-or-stock": 2,
+              "unconfirmed-photo-subject": 4
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-319305698",
+        "name": "Clay's Hyderabadi Kitchen",
+        "lat": 51.4681227,
+        "lng": -0.9725259,
+        "area": "Reading",
+        "address": "Prospect Street",
+        "postcode": "RG4 8JG",
+        "category": "Restaurant",
+        "aliases": [
+          "Clay's Kitchen",
+          "The Baron Cadogan"
+        ],
+        "website": "https://www.clayskitchen.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:17:17.362Z",
+      "website": {
+        "urls": [
+          "https://www.clayskitchen.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.clayskitchen.co.uk/",
+            "pageUrl": "https://clayskitchen.co.uk/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 2,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": false,
+              "evidence": [
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 78
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-320701916",
+        "name": "Spice Oven",
+        "lat": 51.4675065,
+        "lng": -0.9766739,
+        "area": "Caversham, Reading",
+        "address": "Church Street",
+        "postcode": "RG4 8AT",
+        "category": "Restaurant",
+        "website": "https://www.spiceoven.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:17:18.294Z",
+      "website": {
+        "urls": [
+          "https://www.spiceoven.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": true,
+      "status": "retryable",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.spiceoven.co.uk/",
+            "pageUrl": null,
+            "reason": "timeout-or-abort",
+            "retryable": true,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-404180433",
+        "name": "Go Ape!",
+        "lat": 51.3873621,
+        "lng": -0.7394763,
+        "area": "Nearby",
+        "category": "Local attraction",
+        "website": "https://goape.co.uk/locations/bracknell"
+      },
+      "checkedAt": "2026-10-28T20:17:30.303Z",
+      "website": {
+        "urls": [
+          "https://goape.co.uk/locations/bracknell"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://goape.co.uk/locations/bracknell",
+            "pageUrl": "https://goape.co.uk/locations/bracknell/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 2,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": false,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 191
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-416480042",
+        "name": "Wasing Park",
+        "lat": 51.3751529,
+        "lng": -1.1761359,
+        "area": "Nearby",
+        "category": "Local attraction",
+        "website": "https://www.wasing.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:17:30.706Z",
+      "website": {
+        "urls": [
+          "https://www.wasing.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.wasing.co.uk/",
+            "pageUrl": "https://www.wasing.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 65,
+              "unscoped-image-context": 1
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-429501931",
+        "name": "Workhouse Coffee",
+        "lat": 51.4561197,
+        "lng": -0.9934672,
+        "area": "Reading",
+        "address": "Oxford Road",
+        "postcode": "RG30 1AY",
+        "category": "Café",
+        "website": "https://workhousecoffee.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:17:35.704Z",
+      "website": {
+        "urls": [
+          "https://workhousecoffee.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://workhousecoffee.co.uk/",
+            "pageUrl": "https://workhousecoffee.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address"
+              ]
+            },
+            "rejected": {
+              "branding-map-or-stock": 27,
+              "unconfirmed-photo-subject": 9,
+              "unsafe-or-unsupported-image": 1
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-434543992",
+        "name": "The Waterside Inn",
+        "lat": 51.5090535,
+        "lng": -0.6996551,
+        "area": "Maidenhead",
+        "address": "Ferry Road",
+        "postcode": "SL6 2AT",
+        "category": "Restaurant",
+        "wikidata": "Q7773745",
+        "website": "http://www.waterside-inn.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:17:36.068Z",
+      "website": {
+        "urls": [
+          "https://www.waterside-inn.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.waterside-inn.co.uk/",
+            "pageUrl": "https://www.waterside-inn.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": true,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue address matched"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-photo-subject": 8,
+              "unsafe-or-unsupported-image": 2,
+              "branding-map-or-stock": 3
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-440616752",
+        "name": "The Gym",
+        "lat": 51.4606363,
+        "lng": -1.0134647,
+        "area": "Reading",
+        "address": "Oxford Road",
+        "postcode": "RG30 1PR",
+        "category": "fitness centre",
+        "website": "https://www.thegymgroup.com/find-a-gym/reading-gyms/reading-west/"
+      },
+      "checkedAt": "2026-10-28T20:17:36.428Z",
+      "website": {
+        "urls": [
+          "https://www.thegymgroup.com/find-a-gym/reading-gyms/reading-west/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.thegymgroup.com/find-a-gym/reading-gyms/reading-west/",
+            "pageUrl": "https://www.thegymgroup.com/find-a-gym/reading-gyms/reading-west/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "venue address matched"
+              ]
+            },
+            "rejected": {
+              "not-image-url": 1,
+              "unconfirmed-photo-subject": 25,
+              "unsafe-or-unsupported-image": 5,
+              "food-or-drink-subject": 2,
+              "person-subject": 7,
+              "small-or-banner-art": 4,
+              "unscoped-image-context": 1
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-476284370",
+        "name": "Lumpini Thai Restaurant",
+        "lat": 51.4775147,
+        "lng": -0.8663783,
+        "area": "Nearby",
+        "address": "London Road",
+        "postcode": "RG10 9ER",
+        "category": "Restaurant",
+        "website": "https://lumpini2.com/"
+      },
+      "checkedAt": "2026-10-28T20:17:36.654Z",
+      "website": {
+        "urls": [
+          "https://lumpini2.com/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://lumpini2.com/",
+            "pageUrl": null,
+            "reason": "unsafe-dns-address",
+            "retryable": false,
+            "requestCount": 0,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-538159972",
+        "name": "Sen Ichie",
+        "lat": 51.4110555,
+        "lng": -0.8303429,
+        "area": "Nearby",
+        "address": "Peach Street",
+        "postcode": "RG40 1XJ",
+        "category": "Restaurant",
+        "website": "https://www.panrestaurant.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:17:36.695Z",
+      "website": {
+        "urls": [
+          "https://www.panrestaurant.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": true,
+      "status": "retryable",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.panrestaurant.co.uk/",
+            "pageUrl": null,
+            "reason": "website-network",
+            "retryable": true,
+            "requestCount": 0,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-598916339",
+        "name": "Jenners Riverside Café",
+        "lat": 51.5288343,
+        "lng": -0.7015805,
+        "area": "Maidenhead",
+        "address": "Ray Mead Road",
+        "postcode": "SL6 8NP",
+        "category": "Café",
+        "website": "http://www.jennerscafe.com/"
+      },
+      "checkedAt": "2026-10-28T20:17:36.736Z",
+      "website": {
+        "urls": [
+          "https://www.jennerscafe.com/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.jennerscafe.com/",
+            "pageUrl": "https://www.jennerscafe.com/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 8
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-626695954",
+        "name": "Emperor of India",
+        "lat": 51.5060129,
+        "lng": -0.7127113,
+        "area": "Maidenhead",
+        "address": "Windsor Road",
+        "postcode": "SL6 1UZ",
+        "category": "Restaurant",
+        "website": "https://www.emperorofindia.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:17:37.375Z",
+      "website": {
+        "urls": [
+          "https://www.emperorofindia.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": true,
+      "status": "retryable",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.emperorofindia.co.uk/",
+            "pageUrl": null,
+            "reason": "timeout-or-abort",
+            "retryable": true,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-702594794",
+        "name": "FBC Centre",
+        "lat": 51.3792551,
+        "lng": -0.8617612,
+        "area": "Finchampstead",
+        "address": "Gorse Ride North",
+        "postcode": "RG40 4ES",
+        "category": "Café",
+        "website": "http://finchampstead.com/"
+      },
+      "checkedAt": "2026-10-28T20:17:49.390Z",
+      "website": {
+        "urls": [
+          "https://finchampstead.com/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://finchampstead.com/",
+            "pageUrl": "https://www.finchampstead.com/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 2,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": [
+                "venue area in page metadata, path or business address",
+                "venue address matched"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-venue": 1
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-776885208",
+        "name": "Beefeater",
+        "lat": 51.3459388,
+        "lng": -0.785771,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.beefeater.co.uk/en-gb/locations/berkshire/rackstraws-farm"
+      },
+      "checkedAt": "2026-10-28T20:17:50.149Z",
+      "website": {
+        "urls": [
+          "https://www.beefeater.co.uk/en-gb/locations/berkshire/rackstraws-farm"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": true,
+      "status": "retryable",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.beefeater.co.uk/en-gb/locations/berkshire/rackstraws-farm",
+            "pageUrl": null,
+            "reason": "timeout-or-abort",
+            "retryable": true,
+            "requestCount": 3,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-784104733",
+        "name": "Starbucks",
+        "lat": 51.4811934,
+        "lng": -1.5574766,
+        "area": "Nearby",
+        "category": "Café",
+        "website": "https://www.starbucks.com/store-locator/store/19001/membury-west-welcome-break-m-4-motorway-westbound-junction-14-15-berkshire-en"
+      },
+      "checkedAt": "2026-10-28T20:18:02.162Z",
+      "website": {
+        "urls": [
+          "https://www.starbucks.com/store-locator/store/19001/membury-west-welcome-break-m-4-motorway-westbound-junction-14-15-berkshire-en"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.starbucks.com/store-locator/store/19001/membury-west-welcome-break-m-4-motorway-westbound-junction-14-15-berkshire-en",
+            "pageUrl": "https://www.starbucks.com/store-locator/store/19001/membury-west-welcome-break-m-4-motorway-westbound-junction-14-15-berkshire-en",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": false,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 1,
+              "unscoped-image-context": 12
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-911842146",
+        "name": "Masakali",
+        "lat": 51.4616893,
+        "lng": -0.9752311,
+        "area": "Reading",
+        "address": "Caversham Road",
+        "postcode": "RG1 8AN",
+        "category": "Restaurant",
+        "aliases": [
+          "Cozze Ristorante"
+        ],
+        "website": "https://www.masakali.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:02.310Z",
+      "website": {
+        "urls": [
+          "https://www.masakali.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.masakali.co.uk/",
+            "pageUrl": "https://www.masakali.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "conflicting-preview-location": 1
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-911842246",
+        "name": "Starbucks",
+        "lat": 51.4551746,
+        "lng": -0.9699002,
+        "area": "Reading",
+        "address": "King Street",
+        "postcode": "RG1 2BH",
+        "category": "Café",
+        "website": "https://www.starbucks.com/store-locator/store/1013147/reading-king-street-1-buttermarket-and-6-king-street-reading-eng-rg-1-"
+      },
+      "checkedAt": "2026-10-28T20:18:02.540Z",
+      "website": {
+        "urls": [
+          "https://www.starbucks.com/store-locator/store/1013147/reading-king-street-1-buttermarket-and-6-king-street-reading-eng-rg-1-"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.starbucks.com/store-locator/store/1013147/reading-king-street-1-buttermarket-and-6-king-street-reading-eng-rg-1-",
+            "pageUrl": "https://www.starbucks.com/store-locator/store/1013147/reading-king-street-1-buttermarket-and-6-king-street-reading-eng-rg-1-",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 1,
+              "unscoped-image-context": 12
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-912280497",
+        "name": "The Coconut Tree",
+        "lat": 51.4546555,
+        "lng": -0.9656784,
+        "area": "Reading",
+        "address": "Kings Road",
+        "postcode": "RG1 3BJ",
+        "category": "Restaurant",
+        "website": "https://www.thecoconut-tree.com/reading"
+      },
+      "checkedAt": "2026-10-28T20:18:02.654Z",
+      "website": {
+        "urls": [
+          "https://www.thecoconut-tree.com/reading"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.thecoconut-tree.com/reading",
+            "pageUrl": "https://www.thecoconut-tree.com/restaurant_bars/reading/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 2,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "venue address matched"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-photo-subject": 27,
+              "branding-map-or-stock": 3,
+              "unsafe-or-unsupported-image": 10,
+              "small-or-banner-art": 1
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-912374779",
+        "name": "Spitiko",
+        "lat": 51.4677679,
+        "lng": -0.972888,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://spitiko.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:07.229Z",
+      "website": {
+        "urls": [
+          "https://spitiko.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://spitiko.uk/",
+            "pageUrl": "https://spitiko.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 56
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-912374880",
+        "name": "Pathaan's",
+        "lat": 51.4664853,
+        "lng": -0.9770983,
+        "area": "Reading",
+        "address": "Bridge Street",
+        "postcode": "RG4 8AA",
+        "category": "Restaurant",
+        "website": "https://www.pathaansrestaurant.co.uk/reading/"
+      },
+      "checkedAt": "2026-10-28T20:18:07.486Z",
+      "website": {
+        "urls": [
+          "https://www.pathaansrestaurant.co.uk/reading/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.pathaansrestaurant.co.uk/reading/",
+            "pageUrl": "https://www.pathaansrestaurant.co.uk/reading/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": [
+                "venue area in page metadata, path or business address",
+                "venue address matched"
+              ]
+            },
+            "rejected": {
+              "branding-map-or-stock": 2,
+              "unconfirmed-venue": 9,
+              "unsafe-or-unsupported-image": 8
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-974464892",
+        "name": "Fenixia Chinese Restaurant",
+        "lat": 51.3457828,
+        "lng": -0.8015514,
+        "area": "Nearby",
+        "address": "Yorktown Road",
+        "postcode": "GU47 9DT",
+        "category": "Restaurant",
+        "website": "https://fenixiarestaurant.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:08.148Z",
+      "website": {
+        "urls": [
+          "https://fenixiarestaurant.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://fenixiarestaurant.co.uk/",
+            "pageUrl": "https://fenixiarestaurant.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": true,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue address matched"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-photo-subject": 9,
+              "branding-map-or-stock": 8,
+              "unscoped-image-context": 2
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1082006795",
+        "name": "PizzaExpress",
+        "lat": 51.5231385,
+        "lng": -0.7162359,
+        "area": "Maidenhead",
+        "address": "Bridge Street",
+        "postcode": "SL6 8BJ",
+        "category": "Restaurant",
+        "website": "https://www.pizzaexpress.com/maidenhead-bridge-street"
+      },
+      "checkedAt": "2026-10-28T20:18:10.670Z",
+      "website": {
+        "urls": [
+          "https://www.pizzaexpress.com/maidenhead-bridge-street"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.pizzaexpress.com/maidenhead-bridge-street",
+            "pageUrl": "https://locations.pizzaexpress.com/maidenhead-bridge-street",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 2,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": true,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "venue address matched",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "food-or-drink-subject": 10,
+              "unconfirmed-photo-subject": 3,
+              "unsafe-or-unsupported-image": 10
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1243175103",
+        "name": "Reading Film Theatre",
+        "lat": 51.4413054,
+        "lng": -0.9445099,
+        "area": "Nearby",
+        "category": "Cinema",
+        "wikidata": "Q40473855",
+        "website": "https://www.readingfilmtheatre.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:11.453Z",
+      "website": {
+        "urls": [
+          "https://www.readingfilmtheatre.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.readingfilmtheatre.co.uk/",
+            "pageUrl": "https://www.readingfilmtheatre.co.uk/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": false,
+              "evidence": [
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 30
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1302117920",
+        "name": "Fidget & Bob",
+        "lat": 51.4309409,
+        "lng": -0.9750898,
+        "area": "Reading",
+        "address": "Gweal Avenue",
+        "postcode": "RG2 0GX",
+        "category": "Café",
+        "website": "https://www.fidgetandbob.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:12.089Z",
+      "website": {
+        "urls": [
+          "https://www.fidgetandbob.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.fidgetandbob.co.uk/",
+            "pageUrl": "https://www.fidgetandbob.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address"
+              ]
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1497436623",
+        "name": "Caldesi in Campagna",
+        "lat": 51.5083172,
+        "lng": -0.6979697,
+        "area": "Maidenhead",
+        "address": "Old Mill Lane",
+        "postcode": "SL6 2BG",
+        "category": "Restaurant",
+        "website": "https://www.caldesi.com/"
+      },
+      "checkedAt": "2026-10-28T20:18:12.633Z",
+      "website": {
+        "urls": [
+          "https://www.caldesi.com/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.caldesi.com/",
+            "pageUrl": "https://www.caldesi.com/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": false,
+              "evidence": [
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unscoped-image-context": 3,
+              "unconfirmed-preview-location": 21
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1622819205",
+        "name": "Forbury’s",
+        "lat": 51.4560733,
+        "lng": -0.9681777,
+        "area": "Reading",
+        "address": "Forbury Square",
+        "postcode": "RG1 3BB",
+        "category": "Restaurant",
+        "website": "https://forburys.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:13.315Z",
+      "website": {
+        "urls": [
+          "https://forburys.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": true,
+      "status": "retryable",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://forburys.co.uk/",
+            "pageUrl": null,
+            "reason": "timeout-or-abort",
+            "retryable": true,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1629426215",
+        "name": "Sushimania",
+        "lat": 51.4541694,
+        "lng": -0.9771799,
+        "area": "Reading",
+        "address": "Queens Walk",
+        "postcode": "RG1 7QF",
+        "category": "Restaurant",
+        "website": "https://sushimania.co.uk/location/reading/"
+      },
+      "checkedAt": "2026-10-28T20:18:25.320Z",
+      "website": {
+        "urls": [
+          "https://sushimania.co.uk/location/reading/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://sushimania.co.uk/location/reading/",
+            "pageUrl": "https://sushimania.co.uk/location/reading/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "venue address matched"
+              ]
+            },
+            "rejected": {
+              "small-or-banner-art": 3,
+              "branding-map-or-stock": 5,
+              "unconfirmed-photo-subject": 4,
+              "unsafe-or-unsupported-image": 3
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1629465834",
+        "name": "Escape Reading",
+        "lat": 51.4545707,
+        "lng": -0.9772849,
+        "area": "Reading",
+        "address": "Queens Walk",
+        "postcode": "RG1 7QF",
+        "category": "escape game",
+        "website": "https://escapereading.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:27.049Z",
+      "website": {
+        "urls": [
+          "https://escapereading.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://escapereading.co.uk/",
+            "pageUrl": "https://escapereading.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "venue address matched"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-photo-subject": 27
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1631050530",
+        "name": "Pepe Sale",
+        "lat": 51.4547713,
+        "lng": -0.9773374,
+        "area": "Reading",
+        "address": "Queens Walk",
+        "postcode": "RG1 7QF",
+        "category": "Restaurant",
+        "website": "https://www.pepesale.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:27.484Z",
+      "website": {
+        "urls": [
+          "https://www.pepesale.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.pepesale.co.uk/",
+            "pageUrl": "https://www.pepesale.co.uk/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {
+              "unscoped-image-context": 1,
+              "unconfirmed-preview-location": 6
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1668014930",
+        "name": "Lincoln Coffee House",
+        "lat": 51.4549271,
+        "lng": -0.970027,
+        "area": "Nearby",
+        "category": "Café",
+        "aliases": [
+          "Workhouse Coffee"
+        ],
+        "website": "https://www.lincolncoffeehouse.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:27.947Z",
+      "website": {
+        "urls": [
+          "https://www.lincolncoffeehouse.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.lincolncoffeehouse.co.uk/",
+            "pageUrl": "https://www.lincolncoffeehouse.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 65
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1774818177",
+        "name": "Toby Carvery",
+        "lat": 51.423005,
+        "lng": -0.9334027,
+        "area": "Reading",
+        "address": "Chalfont Way",
+        "postcode": "RG6 5HJ",
+        "category": "Restaurant",
+        "website": "https://www.tobycarvery.co.uk/restaurants/south-east/lowerearleyreading"
+      },
+      "checkedAt": "2026-10-28T20:18:28.217Z",
+      "website": {
+        "urls": [
+          "https://www.tobycarvery.co.uk/restaurants/south-east/lowerearleyreading"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.tobycarvery.co.uk/restaurants/south-east/lowerearleyreading",
+            "pageUrl": null,
+            "reason": "website-http-403",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1795046268",
+        "name": "Henry Street Garden Centre cafe",
+        "lat": 51.3956621,
+        "lng": -0.9136482,
+        "area": "Reading",
+        "address": "Swallowfield Road",
+        "postcode": "RG2 9JY",
+        "category": "Café",
+        "website": "https://www.henrystreet.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:28.303Z",
+      "website": {
+        "urls": [
+          "https://www.henrystreet.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.henrystreet.co.uk/",
+            "pageUrl": "https://www.henrystreet.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "venue address matched"
+              ]
+            },
+            "rejected": {
+              "branding-map-or-stock": 18,
+              "unconfirmed-photo-subject": 46,
+              "small-or-banner-art": 9,
+              "artwork-or-promotion": 4,
+              "unsafe-or-unsupported-image": 3
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1854241639",
+        "name": "California Country Park",
+        "lat": 51.3791101,
+        "lng": -0.8743286,
+        "area": "Nearby",
+        "category": "Local attraction",
+        "wikidata": "Q5020366",
+        "wikipedia": "en:California Country Park",
+        "website": "https://www.wokinghamcountryside.co.uk/california-country-park"
+      },
+      "checkedAt": "2026-10-28T20:18:29.412Z",
+      "website": {
+        "urls": [
+          "https://www.wokinghamcountryside.co.uk/california-country-park"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.wokinghamcountryside.co.uk/california-country-park",
+            "pageUrl": "https://www.wokinghamcountryside.co.uk/california-country-park",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 7
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1866955492",
+        "name": "Toby Carvery",
+        "lat": 51.4627288,
+        "lng": -0.5849203,
+        "area": "Windsor",
+        "address": "Straight Road",
+        "postcode": "SL4 2RR",
+        "category": "Restaurant",
+        "website": "https://www.tobycarvery.co.uk/restaurants/south-east/oldwindsorberkshire"
+      },
+      "checkedAt": "2026-10-28T20:18:30.004Z",
+      "website": {
+        "urls": [
+          "https://www.tobycarvery.co.uk/restaurants/south-east/oldwindsorberkshire"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.tobycarvery.co.uk/restaurants/south-east/oldwindsorberkshire",
+            "pageUrl": null,
+            "reason": "website-http-403",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1923780272",
+        "name": "Quattro",
+        "lat": 51.4679285,
+        "lng": -0.972739,
+        "area": "Caversham, Reading",
+        "address": "Prospect Street",
+        "postcode": "RG4 8JG",
+        "category": "Restaurant",
+        "website": "https://www.quattro-restaurant.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:30.047Z",
+      "website": {
+        "urls": [
+          "https://www.quattro-restaurant.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.quattro-restaurant.co.uk/",
+            "pageUrl": "https://quattro-restaurant.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 2,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "venue address matched"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-photo-subject": 16,
+              "unsafe-or-unsupported-image": 7
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1923781313",
+        "name": "Geo Café",
+        "lat": 51.467844,
+        "lng": -0.972805,
+        "area": "Reading",
+        "address": "Prospect Street",
+        "postcode": "RG4 8JG",
+        "category": "Café",
+        "aliases": [
+          "RG Bread"
+        ],
+        "website": "https://geo-cafe.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:40.528Z",
+      "website": {
+        "urls": [
+          "https://geo-cafe.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://geo-cafe.co.uk/",
+            "pageUrl": "https://geo-cafe.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": true,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue address matched"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-photo-subject": 32,
+              "unsafe-or-unsupported-image": 66
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1940696349",
+        "name": "Bill's",
+        "lat": 51.4549061,
+        "lng": -0.9732485,
+        "area": "Reading",
+        "address": "Chain Street",
+        "postcode": "RG1 2HX",
+        "category": "Restaurant",
+        "website": "https://bills-website.co.uk/restaurants/reading"
+      },
+      "checkedAt": "2026-10-28T20:18:40.726Z",
+      "website": {
+        "urls": [
+          "https://bills-website.co.uk/restaurants/reading"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://bills-website.co.uk/restaurants/reading",
+            "pageUrl": null,
+            "reason": "unsafe-redirect",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2083398162",
+        "name": "Boswells",
+        "lat": 51.4548451,
+        "lng": -0.9762259,
+        "area": "Reading",
+        "address": "Broad Street",
+        "postcode": "RG1 7QE",
+        "category": "Café",
+        "aliases": [
+          "Boswell’s",
+          "Boswells Cafe"
+        ],
+        "website": "https://boswellsgroup.com/"
+      },
+      "checkedAt": "2026-10-28T20:18:40.874Z",
+      "website": {
+        "urls": [
+          "https://boswellsgroup.com/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://boswellsgroup.com/",
+            "pageUrl": "https://boswellsgroup.com/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "branding-map-or-stock": 4,
+              "unconfirmed-photo-subject": 27,
+              "small-or-banner-art": 9
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2119841204",
+        "name": "The Shenai",
+        "lat": 51.3453139,
+        "lng": -0.7974027,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://theshenaisandhurst.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:41.864Z",
+      "website": {
+        "urls": [
+          "https://theshenaisandhurst.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://theshenaisandhurst.co.uk/",
+            "pageUrl": "https://theshenaisandhurst.co.uk/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": false,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 46
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2188186734",
+        "name": "Giggling Squid",
+        "lat": 51.4842416,
+        "lng": -0.6078821,
+        "area": "Windsor",
+        "address": "Thames Street",
+        "postcode": "SL4 1PR",
+        "category": "Restaurant",
+        "website": "https://www.gigglingsquid.com/restaurant/billericay/"
+      },
+      "checkedAt": "2026-10-28T20:18:42.082Z",
+      "website": {
+        "urls": [
+          "https://www.gigglingsquid.com/restaurant/billericay/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.gigglingsquid.com/restaurant/billericay/",
+            "pageUrl": "https://www.gigglingsquid.com/restaurant/billericay/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "invalid-schema": 1,
+              "unconfirmed-preview-location": 45
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2281854845",
+        "name": "Artichoke Cafe",
+        "lat": 51.3671609,
+        "lng": -0.7942835,
+        "area": "Nearby",
+        "category": "Café",
+        "website": "https://www.artichoke.cafe/"
+      },
+      "checkedAt": "2026-10-28T20:18:42.603Z",
+      "website": {
+        "urls": [
+          "https://www.artichoke.cafe/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.artichoke.cafe/",
+            "pageUrl": "https://www.artichoke.cafe/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": false,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 27
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2325397965",
+        "name": "Picnic",
+        "lat": 51.4552702,
+        "lng": -0.9698275,
+        "area": "Reading",
+        "address": "Butter Market",
+        "postcode": "RG1 2DP",
+        "category": "Café",
+        "website": "https://www.picnicfoods.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:43.388Z",
+      "website": {
+        "urls": [
+          "https://www.picnicfoods.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.picnicfoods.co.uk/",
+            "pageUrl": null,
+            "reason": "website-http-403",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2364897631",
+        "name": "Monkey Muay Thai",
+        "lat": 51.523222,
+        "lng": -0.7201466,
+        "area": "Maidenhead",
+        "address": "Market Street",
+        "postcode": "SL6 8AA",
+        "category": "fitness centre",
+        "website": "https://www.monkeymuaythai.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:43.986Z",
+      "website": {
+        "urls": [
+          "https://www.monkeymuaythai.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.monkeymuaythai.co.uk/",
+            "pageUrl": "https://www.monkeymuaythai.co.uk/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2364939028",
+        "name": "Lee Dynasty",
+        "lat": 51.5227931,
+        "lng": -0.7192881,
+        "area": "Maidenhead",
+        "address": "High Street",
+        "postcode": "SL6 1JG",
+        "category": "Restaurant",
+        "website": "https://leedynasty.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:44.477Z",
+      "website": {
+        "urls": [
+          "https://leedynasty.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://leedynasty.uk/",
+            "pageUrl": "https://leedynasty.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "venue address matched"
+              ]
+            },
+            "rejected": {
+              "branding-map-or-stock": 3,
+              "unconfirmed-photo-subject": 14,
+              "small-or-banner-art": 1,
+              "unsafe-or-unsupported-image": 3
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2364939032",
+        "name": "Caffè Nero",
+        "lat": 51.5227579,
+        "lng": -0.7207285,
+        "area": "Maidenhead",
+        "address": "High Street",
+        "postcode": "SL6 1LB",
+        "category": "Café",
+        "website": "https://www.caffenero.com/uk/stores/maidenhead"
+      },
+      "checkedAt": "2026-10-28T20:18:44.981Z",
+      "website": {
+        "urls": [
+          "https://www.caffenero.com/uk/stores/maidenhead"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.caffenero.com/uk/stores/maidenhead",
+            "pageUrl": "https://www.caffenero.com/uk/stores/maidenhead",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 3
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2364966123",
+        "name": "The Greek House",
+        "lat": 51.5226127,
+        "lng": -0.7238573,
+        "area": "Maidenhead",
+        "address": "High Street",
+        "postcode": "SL6 1PT",
+        "category": "Restaurant",
+        "website": "https://thegreekhouse.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:46.478Z",
+      "website": {
+        "urls": [
+          "https://thegreekhouse.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://thegreekhouse.uk/",
+            "pageUrl": "https://thegreekhouse.uk/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2421932504",
+        "name": "David Lloyd",
+        "lat": 51.5202961,
+        "lng": -0.7223175,
+        "area": "Maidenhead",
+        "address": "Grenfell Place",
+        "postcode": "SL6 1HJ",
+        "category": "sports centre",
+        "website": "https://www.davidlloyd.co.uk/clubs/maidenhead/"
+      },
+      "checkedAt": "2026-10-28T20:18:46.646Z",
+      "website": {
+        "urls": [
+          "https://www.davidlloyd.co.uk/clubs/maidenhead/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": true,
+      "status": "delivery-unavailable",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.davidlloyd.co.uk/clubs/maidenhead/",
+            "pageUrl": "https://www.davidlloyd.co.uk/clubs/maidenhead/",
+            "reason": null,
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unsafe-or-unsupported-image": 5,
+              "unconfirmed-photo-subject": 56,
+              "branding-map-or-stock": 8
+            },
+            "candidates": [
+              {
+                "url": "https://www.davidlloyd.co.uk/cms/images/softwire-david-lloyd/image/upload/f_auto/v1/Reception/kz6edqq0sbbgkz9wvqj9.jpg",
+                "source": "https://www.davidlloyd.co.uk/clubs/maidenhead/",
+                "photoScore": 90,
+                "evidence": [
+                  "body",
+                  "venue name in page title, heading or business schema",
+                  "venue area in page metadata, path or business address",
+                  "multi-branch operator",
+                  "physical venue scene in image metadata",
+                  "image occurs in page content"
+                ],
+                "subjectEvidence": [
+                  "physical venue scene in image metadata"
+                ]
+              }
+            ]
+          }
+        ],
+        "reason": null
+      },
+      "deliveryFailure": {
+        "checkedAt": "2026-10-28T20:21:50.919Z",
+        "imageUrl": "https://www.davidlloyd.co.uk/cms/images/softwire-david-lloyd/image/upload/f_auto/v1/Reception/kz6edqq0sbbgkz9wvqj9.jpg",
+        "testStatus": "timedOut",
+        "reason": "publisher-image-delivery-failed",
+        "elapsedMs": 44781,
+        "failures": []
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2499414397",
+        "name": "Piazza Cafe",
+        "lat": 51.456839,
+        "lng": -0.9715549,
+        "area": "Reading",
+        "address": "Harris Arcade",
+        "postcode": "RG1 1DN",
+        "category": "Café",
+        "website": "http://harris-arcade.com/shops/unit1.asp?expand=Cafes%20%26%20Sandwiches"
+      },
+      "checkedAt": "2026-10-28T20:18:48.670Z",
+      "website": {
+        "urls": [
+          "https://harris-arcade.com/shops/unit1.asp?expand=Cafes%20%26%20Sandwiches"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": true,
+      "status": "retryable",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://harris-arcade.com/shops/unit1.asp?expand=Cafes%20%26%20Sandwiches",
+            "pageUrl": null,
+            "reason": "website-network",
+            "retryable": true,
+            "requestCount": 0,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2624213943",
+        "name": "The Royal Berkshire Medical Museum",
+        "lat": 51.4513858,
+        "lng": -0.95861,
+        "area": "Nearby",
+        "category": "Museum",
+        "wikidata": "Q113370137",
+        "website": "http://www.royalberkshire.nhs.uk/wards__departments/m/medical_museum.aspx?theme=Patient"
+      },
+      "checkedAt": "2026-10-28T20:18:48.692Z",
+      "website": {
+        "urls": [
+          "https://www.royalberkshire.nhs.uk/wards__departments/m/medical_museum.aspx?theme=Patient"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.royalberkshire.nhs.uk/wards__departments/m/medical_museum.aspx?theme=Patient",
+            "pageUrl": null,
+            "reason": "website-http-404",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2688357765",
+        "name": "Caversham Health Club",
+        "lat": 51.4668941,
+        "lng": -0.9731135,
+        "area": "Reading",
+        "address": "Archway Road",
+        "postcode": "RG4 8HX",
+        "category": "fitness centre",
+        "website": "https://www.cavershamhealthclub.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:48.907Z",
+      "website": {
+        "urls": [
+          "https://www.cavershamhealthclub.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.cavershamhealthclub.co.uk/",
+            "pageUrl": "https://www.cavershamhealthclub.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-photo-subject": 22,
+              "branding-map-or-stock": 1,
+              "unsafe-or-unsupported-image": 4,
+              "food-or-drink-subject": 1
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2793679079",
+        "name": "Black Sheep Coffee",
+        "lat": 51.4566515,
+        "lng": -0.9722378,
+        "area": "Reading",
+        "address": "Friar Street",
+        "postcode": "RG1 1EX",
+        "category": "Café",
+        "aliases": [
+          "Caffè Nero"
+        ],
+        "website": "https://blacksheepcoffee.co.uk/blogs/locations/queen-victoria-street"
+      },
+      "checkedAt": "2026-10-28T20:18:49.353Z",
+      "website": {
+        "urls": [
+          "https://blacksheepcoffee.co.uk/blogs/locations/queen-victoria-street"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://blacksheepcoffee.co.uk/blogs/locations/queen-victoria-street",
+            "pageUrl": "https://blacksheepcoffee.co.uk/blogs/locations/queen-victoria-street",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address"
+              ]
+            },
+            "rejected": {
+              "unsafe-or-unsupported-image": 3,
+              "unconfirmed-photo-subject": 4,
+              "branding-map-or-stock": 3
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2870747601",
+        "name": "Giggling Squid",
+        "lat": 51.40956,
+        "lng": -0.835611,
+        "area": "Nearby",
+        "category": "Restaurant",
+        "website": "https://www.gigglingsquid.com/restaurant/wokingham"
+      },
+      "checkedAt": "2026-10-28T20:18:49.626Z",
+      "website": {
+        "urls": [
+          "https://www.gigglingsquid.com/restaurant/wokingham"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.gigglingsquid.com/restaurant/wokingham",
+            "pageUrl": "https://www.gigglingsquid.com/restaurant/wokingham",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "invalid-schema": 1,
+              "unconfirmed-photo-subject": 41,
+              "unsafe-or-unsupported-image": 2,
+              "branding-map-or-stock": 2
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2872006601",
+        "name": "Starbucks",
+        "lat": 51.4577666,
+        "lng": -0.9718685,
+        "area": "Reading",
+        "address": "Station Road",
+        "postcode": "RG1 1JX",
+        "category": "Café",
+        "website": "https://www.starbucks.com/store-locator/store/1053718/reading-station-p-7-station-road-reading-eng-rg-1-1-lz-gb"
+      },
+      "checkedAt": "2026-10-28T20:18:50.110Z",
+      "website": {
+        "urls": [
+          "https://www.starbucks.com/store-locator/store/1053718/reading-station-p-7-station-road-reading-eng-rg-1-1-lz-gb"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.starbucks.com/store-locator/store/1053718/reading-station-p-7-station-road-reading-eng-rg-1-1-lz-gb",
+            "pageUrl": "https://www.starbucks.com/store-locator/store/1053718/reading-station-p-7-station-road-reading-eng-rg-1-1-lz-gb",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 1,
+              "unscoped-image-context": 12
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2940472942",
+        "name": "Wagamama",
+        "lat": 51.4524019,
+        "lng": -0.9716059,
+        "area": "Reading",
+        "address": "Riverside Court",
+        "postcode": "RG1 2AG",
+        "category": "Restaurant",
+        "website": "https://www.wagamama.com/restaurants/reading/reading"
+      },
+      "checkedAt": "2026-10-28T20:18:50.300Z",
+      "website": {
+        "urls": [
+          "https://www.wagamama.com/restaurants/reading/reading"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.wagamama.com/restaurants/reading/reading",
+            "pageUrl": "https://www.wagamama.com/restaurants/reading/reading",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": true,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "venue address matched",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-photo-subject": 9,
+              "unsafe-or-unsupported-image": 4,
+              "food-or-drink-subject": 3
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2940778574",
+        "name": "Zizzi",
+        "lat": 51.4524953,
+        "lng": -0.9713673,
+        "area": "Reading",
+        "address": "The Riverside, The Oracle Shopping Centre",
+        "postcode": "RG1 2AG",
+        "category": "Restaurant",
+        "website": "https://www.zizzi.co.uk/italian/restaurants/reading-oracle"
+      },
+      "checkedAt": "2026-10-28T20:18:52.183Z",
+      "website": {
+        "urls": [
+          "https://www.zizzi.co.uk/italian/restaurants/reading-oracle"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": {
+        "url": "https://www.zizzi.co.uk/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fysupxjc9%2Fproduction%2Fc030c83047de8ee7c7416bd9bf45c88208d1246f-1920x1080.png&w=3840&q=75",
+        "source": "https://www.zizzi.co.uk/italian-restaurants/south-east/reading-oracle",
+        "credit": "Zizzi",
+        "license": "Website preview — rights reserved",
+        "rights": "website-preview",
+        "strategy": "official-website-preview",
+        "checkedAt": "2026-10-28T20:18:53.343Z",
+        "width": 3840,
+        "confidence": 0.8999999999999999,
+        "matched": [
+          "body",
+          "venue name in page title, heading or business schema",
+          "venue area in page metadata, path or business address",
+          "venue address matched",
+          "multi-branch operator",
+          "physical venue scene in image metadata",
+          "image occurs in page content"
+        ],
+        "preview": {
+          "pageUrl": "https://www.zizzi.co.uk/italian-restaurants/south-east/reading-oracle",
+          "publisher": "Zizzi",
+          "kind": "venue-image",
+          "identityEvidence": [
+            "venue name in page title, heading or business schema",
+            "venue area in page metadata, path or business address",
+            "venue address matched",
+            "multi-branch operator"
+          ],
+          "subjectEvidence": [
+            "physical venue scene in image metadata"
+          ]
+        }
+      },
+      "retryable": false,
+      "status": "matched",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.zizzi.co.uk/italian/restaurants/reading-oracle",
+            "pageUrl": "https://www.zizzi.co.uk/italian-restaurants/south-east/reading-oracle",
+            "reason": null,
+            "retryable": false,
+            "requestCount": 2,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": true,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "venue address matched",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-photo-subject": 130,
+              "unsafe-or-unsupported-image": 12,
+              "small-or-banner-art": 18,
+              "food-or-drink-subject": 20,
+              "branding-map-or-stock": 12
+            },
+            "candidates": [
+              {
+                "url": "https://www.zizzi.co.uk/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fysupxjc9%2Fproduction%2Fc030c83047de8ee7c7416bd9bf45c88208d1246f-1920x1080.png&w=3840&q=75",
+                "source": "https://www.zizzi.co.uk/italian-restaurants/south-east/reading-oracle",
+                "photoScore": 90,
+                "evidence": [
+                  "body",
+                  "venue name in page title, heading or business schema",
+                  "venue area in page metadata, path or business address",
+                  "venue address matched",
+                  "multi-branch operator",
+                  "physical venue scene in image metadata",
+                  "image occurs in page content"
+                ],
+                "subjectEvidence": [
+                  "physical venue scene in image metadata"
+                ]
+              }
+            ]
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2940787187",
+        "name": "Nando's",
+        "lat": 51.4529895,
+        "lng": -0.970165,
+        "area": "Reading",
+        "address": "The Riverside, The Oracle Shopping Centre",
+        "postcode": "RG1 2AG",
+        "category": "Restaurant",
+        "website": "https://www.nandos.co.uk/restaurants/reading-oracle-centre"
+      },
+      "checkedAt": "2026-10-28T20:18:53.348Z",
+      "website": {
+        "urls": [
+          "https://www.nandos.co.uk/restaurants/reading-oracle-centre"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.nandos.co.uk/restaurants/reading-oracle-centre",
+            "pageUrl": "https://www.nandos.co.uk/restaurants/reading-oracle-centre",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": true,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "venue address matched",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "different-schema-venue": 1,
+              "unconfirmed-photo-subject": 10,
+              "unsafe-or-unsupported-image": 11,
+              "food-or-drink-subject": 8
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2941126926",
+        "name": "Caffè Nero",
+        "lat": 51.4534281,
+        "lng": -0.9709162,
+        "area": "Reading",
+        "address": "The Riverside, The Oracle Shopping Centre",
+        "postcode": "RG1 2AG",
+        "category": "Café",
+        "website": "https://www.caffenero.com/uk/stores/reading-oracle"
+      },
+      "checkedAt": "2026-10-28T20:18:53.794Z",
+      "website": {
+        "urls": [
+          "https://www.caffenero.com/uk/stores/reading-oracle"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.caffenero.com/uk/stores/reading-oracle",
+            "pageUrl": "https://www.caffenero.com/uk/stores/reading-oracle",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 3
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2941138175",
+        "name": "Bella Italia",
+        "lat": 51.4535614,
+        "lng": -0.9705665,
+        "area": "Reading",
+        "address": "The Riverside, The Oracle Shopping Centre",
+        "postcode": "RG1 2AG",
+        "category": "Restaurant",
+        "website": "https://www.bellaitalia.co.uk/restaurants/reading/the-oracle"
+      },
+      "checkedAt": "2026-10-28T20:18:54.998Z",
+      "website": {
+        "urls": [
+          "https://www.bellaitalia.co.uk/restaurants/reading/the-oracle"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.bellaitalia.co.uk/restaurants/reading/the-oracle",
+            "pageUrl": "https://www.bellaitalia.co.uk/restaurants/reading/the-oracle",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address"
+              ]
+            },
+            "rejected": {
+              "conflicting-preview-location": 1
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2941140492",
+        "name": "PizzaExpress",
+        "lat": 51.4536176,
+        "lng": -0.970419,
+        "area": "Reading",
+        "address": "The Riverside, The Oracle Shopping Centre",
+        "postcode": "RG1 2AG",
+        "category": "Restaurant",
+        "website": "https://www.pizzaexpress.com/reading-oracle-shopping-centre"
+      },
+      "checkedAt": "2026-10-28T20:18:55.683Z",
+      "website": {
+        "urls": [
+          "https://www.pizzaexpress.com/reading-oracle-shopping-centre"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.pizzaexpress.com/reading-oracle-shopping-centre",
+            "pageUrl": "https://locations.pizzaexpress.com/reading-oracle-shopping-centre",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 2,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": true,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "venue address matched",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "food-or-drink-subject": 6,
+              "unconfirmed-photo-subject": 3,
+              "unsafe-or-unsupported-image": 10
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2964982471",
+        "name": "Creperie Doux Sourire",
+        "lat": 51.4531366,
+        "lng": -0.9699425,
+        "area": "Reading",
+        "address": "The Oracle",
+        "postcode": "RG1 2AG",
+        "category": "Café",
+        "aliases": [
+          "Starbucks"
+        ],
+        "commons": "Category:Creperie Doux Sourire, The Oracle, Reading",
+        "website": "https://www.creperiedouxsourire.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:56.235Z",
+      "website": {
+        "urls": [
+          "https://www.creperiedouxsourire.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.creperiedouxsourire.co.uk/",
+            "pageUrl": "https://www.creperiedouxsourire.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": true,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue address matched"
+              ]
+            },
+            "rejected": {
+              "unscoped-image-context": 1,
+              "unsafe-or-unsupported-image": 2,
+              "branding-map-or-stock": 12,
+              "person-subject": 6,
+              "unconfirmed-photo-subject": 30
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2964982472",
+        "name": "Starbucks",
+        "lat": 51.4538529,
+        "lng": -0.971417,
+        "area": "Reading",
+        "address": "The Oracle",
+        "postcode": "RG1 2AG",
+        "category": "Café",
+        "website": "https://www.starbucks.com/store-locator/store/3103/reading-oracle-upper-mall-the-oracle-shopping-centre-reading-eng-rg-1-2-ag-g"
+      },
+      "checkedAt": "2026-10-28T20:18:56.490Z",
+      "website": {
+        "urls": [
+          "https://www.starbucks.com/store-locator/store/3103/reading-oracle-upper-mall-the-oracle-shopping-centre-reading-eng-rg-1-2-ag-g"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.starbucks.com/store-locator/store/3103/reading-oracle-upper-mall-the-oracle-shopping-centre-reading-eng-rg-1-2-ag-g",
+            "pageUrl": "https://www.starbucks.com/store-locator/store/3103/reading-oracle-upper-mall-the-oracle-shopping-centre-reading-eng-rg-1-2-ag-g",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 1,
+              "unscoped-image-context": 12
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-2987381895",
+        "name": "House of Flavours",
+        "lat": 51.454747,
+        "lng": -0.967282,
+        "area": "Reading",
+        "address": "Kings Road",
+        "postcode": "RG1 3AA",
+        "category": "Restaurant",
+        "website": "http://house-of-flavours.com/"
+      },
+      "checkedAt": "2026-10-28T20:18:56.706Z",
+      "website": {
+        "urls": [
+          "https://house-of-flavours.com/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": true,
+      "status": "retryable",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://house-of-flavours.com/",
+            "pageUrl": null,
+            "reason": "website-http-500",
+            "retryable": true,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-3059637339",
+        "name": "Abstract Bodyworks Newbury",
+        "lat": 51.3992127,
+        "lng": -1.3216865,
+        "area": "Nearby",
+        "address": "Kings Road West",
+        "postcode": "RG14 5BY",
+        "category": "sports centre",
+        "website": "https://www.pe-newbury.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:57.481Z",
+      "website": {
+        "urls": [
+          "https://www.pe-newbury.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.pe-newbury.co.uk/",
+            "pageUrl": "https://www.pe-newbury.co.uk/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": true,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": [
+                "venue address matched"
+              ]
+            },
+            "rejected": {
+              "different-schema-venue": 1,
+              "unconfirmed-venue": 5,
+              "small-or-banner-art": 8,
+              "unsafe-or-unsupported-image": 2,
+              "unscoped-image-context": 6
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-3111764567",
+        "name": "PureGym",
+        "lat": 51.4605608,
+        "lng": -0.9760156,
+        "area": "Nearby",
+        "category": "fitness centre",
+        "website": "https://www.puregym.com/gyms/reading-caversham-road/"
+      },
+      "checkedAt": "2026-10-28T20:18:57.672Z",
+      "website": {
+        "urls": [
+          "https://www.puregym.com/gyms/reading-caversham-road/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.puregym.com/gyms/reading-caversham-road/",
+            "pageUrl": "https://www.puregym.com/gyms/reading-caversham-road/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": false,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unscoped-image-context": 1,
+              "unconfirmed-preview-location": 23
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-3243324497",
+        "name": "GAIL's",
+        "lat": 51.4550434,
+        "lng": -0.970531,
+        "area": "Reading",
+        "address": "Broad Street",
+        "postcode": "RG1 2BD",
+        "category": "Café",
+        "website": "https://gails.com/pages/reading"
+      },
+      "checkedAt": "2026-10-28T20:18:58.341Z",
+      "website": {
+        "urls": [
+          "https://gails.com/pages/reading"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": {
+        "url": "https://gails.com/cdn/shop/files/gails-charity-3-1.jpg?v=1686140163&width=1500",
+        "source": "https://gails.com/pages/reading",
+        "credit": "GAIL's",
+        "license": "Website preview — rights reserved",
+        "rights": "website-preview",
+        "strategy": "official-website-preview",
+        "checkedAt": "2026-10-28T20:18:58.651Z",
+        "width": 2560,
+        "height": 853,
+        "confidence": 0.8999999999999999,
+        "matched": [
+          "body",
+          "venue name in page title, heading or business schema",
+          "venue area in page metadata, path or business address",
+          "multi-branch operator",
+          "physical venue scene in image metadata",
+          "image occurs in page content"
+        ],
+        "preview": {
+          "pageUrl": "https://gails.com/pages/reading",
+          "publisher": "GAIL's",
+          "kind": "venue-image",
+          "identityEvidence": [
+            "venue name in page title, heading or business schema",
+            "venue area in page metadata, path or business address",
+            "multi-branch operator"
+          ],
+          "subjectEvidence": [
+            "physical venue scene in image metadata"
+          ]
+        }
+      },
+      "retryable": false,
+      "status": "matched",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://gails.com/pages/reading",
+            "pageUrl": "https://gails.com/pages/reading",
+            "reason": null,
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unscoped-image-context": 1,
+              "unsafe-or-unsupported-image": 1,
+              "unconfirmed-photo-subject": 23,
+              "branding-map-or-stock": 8
+            },
+            "candidates": [
+              {
+                "url": "https://gails.com/cdn/shop/files/gails-charity-3-1.jpg?v=1686140163&width=1500",
+                "source": "https://gails.com/pages/reading",
+                "photoScore": 90,
+                "evidence": [
+                  "body",
+                  "venue name in page title, heading or business schema",
+                  "venue area in page metadata, path or business address",
+                  "multi-branch operator",
+                  "physical venue scene in image metadata",
+                  "image occurs in page content"
+                ],
+                "subjectEvidence": [
+                  "physical venue scene in image metadata"
+                ]
+              }
+            ]
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-3445424748",
+        "name": "Harvester",
+        "lat": 51.4494702,
+        "lng": -1.0113196,
+        "area": "Reading",
+        "address": "Liebenrood Road",
+        "postcode": "RG30 2ND",
+        "category": "Restaurant",
+        "website": "https://www.harvester.co.uk/restaurants/southeast/themansionhousereading"
+      },
+      "checkedAt": "2026-10-28T20:18:58.654Z",
+      "website": {
+        "urls": [
+          "https://www.harvester.co.uk/restaurants/southeast/themansionhousereading"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.harvester.co.uk/restaurants/southeast/themansionhousereading",
+            "pageUrl": null,
+            "reason": "website-http-403",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-3559353113",
+        "name": "Côte Brasserie",
+        "lat": 51.4862066,
+        "lng": -0.6084351,
+        "area": "Windsor",
+        "address": "High Street",
+        "postcode": "SL4 6AA",
+        "category": "Restaurant",
+        "website": "https://www.cote.co.uk/restaurant/windsor"
+      },
+      "checkedAt": "2026-10-28T20:18:58.847Z",
+      "website": {
+        "urls": [
+          "https://www.cote.co.uk/restaurant/windsor"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.cote.co.uk/restaurant/windsor",
+            "pageUrl": "https://www.cote.co.uk/restaurant/windsor",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": true,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "venue address matched",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-photo-subject": 42,
+              "unsafe-or-unsupported-image": 11,
+              "small-or-banner-art": 10,
+              "branding-map-or-stock": 16
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-3607893091",
+        "name": "Costa",
+        "lat": 51.3862039,
+        "lng": -1.3180588,
+        "area": "Newbury",
+        "address": "Pinchington Lane",
+        "postcode": "RG14 7HU",
+        "category": "Café",
+        "website": "http://www.costa.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:18:59.407Z",
+      "website": {
+        "urls": [
+          "https://www.costa.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": true,
+      "status": "retryable",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.costa.co.uk/",
+            "pageUrl": null,
+            "reason": "timeout-or-abort",
+            "retryable": true,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-3609764381",
+        "name": "Toby Carvery",
+        "lat": 51.4939923,
+        "lng": -0.5473154,
+        "area": "Slough",
+        "address": "London Road",
+        "postcode": "SL3 8PS",
+        "category": "Restaurant",
+        "website": "https://www.tobycarvery.co.uk/restaurants/south-east/langleyslough"
+      },
+      "checkedAt": "2026-10-28T20:19:11.423Z",
+      "website": {
+        "urls": [
+          "https://www.tobycarvery.co.uk/restaurants/south-east/langleyslough"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.tobycarvery.co.uk/restaurants/south-east/langleyslough",
+            "pageUrl": null,
+            "reason": "website-http-403",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-3663477138",
+        "name": "Chow Asian Kitchen",
+        "lat": 51.4238305,
+        "lng": -1.0368278,
+        "area": "Reading",
+        "address": "Moto Reading Services",
+        "postcode": "RG30 3UQ",
+        "category": "Restaurant",
+        "website": "https://www.chowasiankitchen.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:19:11.464Z",
+      "website": {
+        "urls": [
+          "https://www.chowasiankitchen.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.chowasiankitchen.co.uk/",
+            "pageUrl": "https://www.chowasiankitchen.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 79,
+              "unscoped-image-context": 1
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-3732894055",
+        "name": "Dolphin's Caribbean Kitchen",
+        "lat": 51.4548461,
+        "lng": -0.9745563,
+        "area": "Reading",
+        "address": "St Mary's Butts",
+        "postcode": "RG1 2LG",
+        "category": "Restaurant",
+        "aliases": [
+          "7 Bone Burger Co."
+        ],
+        "website": "https://dolphinscuisine.com/"
+      },
+      "checkedAt": "2026-10-28T20:19:11.652Z",
+      "website": {
+        "urls": [
+          "https://dolphinscuisine.com/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://dolphinscuisine.com/",
+            "pageUrl": "https://dolphinscuisine.com/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": true,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": [
+                "venue area in page metadata, path or business address"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-venue": 3
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-3732894058",
+        "name": "Coconut Bar & Kitchen",
+        "lat": 51.4549816,
+        "lng": -0.9746816,
+        "area": "Reading",
+        "address": "St Mary's Butts",
+        "postcode": "RG1 2LG",
+        "category": "Restaurant",
+        "website": "https://www.coconutbarkitchen.co.uk/"
+      },
+      "checkedAt": "2026-10-28T20:19:12.383Z",
+      "website": {
+        "urls": [
+          "https://www.coconutbarkitchen.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.coconutbarkitchen.co.uk/",
+            "pageUrl": "https://www.coconutbarkitchen.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "venue address matched"
+              ]
+            },
+            "rejected": {
+              "unscoped-image-context": 2,
+              "different-schema-venue": 1,
+              "unsafe-or-unsupported-image": 2,
+              "branding-map-or-stock": 13,
+              "unconfirmed-photo-subject": 597,
+              "small-or-banner-art": 282,
+              "food-or-drink-subject": 6,
+              "person-subject": 2
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-3786759959",
+        "name": "PizzaExpress",
+        "lat": 51.411206,
+        "lng": -0.8351179,
+        "area": "Nearby",
+        "address": "Broad Street",
+        "postcode": "RG40 1AU",
+        "category": "Restaurant",
+        "website": "https://www.pizzaexpress.com/wokingham-broad-street"
+      },
+      "checkedAt": "2026-10-28T20:19:14.352Z",
+      "website": {
+        "urls": [
+          "https://www.pizzaexpress.com/wokingham-broad-street"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.pizzaexpress.com/wokingham-broad-street",
+            "pageUrl": "https://locations.pizzaexpress.com/wokingham-broad-street",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 2,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": true,
+              "multiBranch": true,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue address matched",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "food-or-drink-subject": 19,
+              "unconfirmed-photo-subject": 3,
+              "unsafe-or-unsupported-image": 10
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-3786759964",
+        "name": "Zizzi",
+        "lat": 51.4109618,
+        "lng": -0.8345493,
+        "area": "Wokingham",
+        "address": "Broad Street",
+        "postcode": "RG40 1AU",
+        "category": "Restaurant",
+        "website": "https://www.zizzi.co.uk/italian/restaurants/wokingham"
+      },
+      "checkedAt": "2026-10-28T20:19:14.819Z",
+      "website": {
+        "urls": [
+          "https://www.zizzi.co.uk/italian/restaurants/wokingham"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.zizzi.co.uk/italian/restaurants/wokingham",
+            "pageUrl": "https://www.zizzi.co.uk/italian-restaurants/south-east/wokingham",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 2,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": true,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "venue address matched",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-photo-subject": 130,
+              "unsafe-or-unsupported-image": 12,
+              "small-or-banner-art": 18,
+              "food-or-drink-subject": 24,
+              "branding-map-or-stock": 12
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-3791960779",
+        "name": "Muffin Break",
+        "lat": 51.4552476,
+        "lng": -0.9758934,
+        "area": "Reading",
+        "postcode": "RG1 7QH",
+        "category": "Café",
+        "website": "https://muffinbreak.co.uk/store/reading-broad-street-mall/"
+      },
+      "checkedAt": "2026-10-28T20:19:15.720Z",
+      "website": {
+        "urls": [
+          "https://muffinbreak.co.uk/store/reading-broad-street-mall/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": true,
+      "status": "delivery-unavailable",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://muffinbreak.co.uk/store/reading-broad-street-mall/",
+            "pageUrl": "https://muffinbreak.co.uk/store/reading-broad-street-mall/",
+            "reason": null,
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-photo-subject": 12,
+              "food-or-drink-subject": 1,
+              "small-or-banner-art": 2,
+              "unsafe-or-unsupported-image": 1,
+              "branding-map-or-stock": 3
+            },
+            "candidates": [
+              {
+                "url": "https://muffinbreak.co.uk/wp-content/uploads/2017/09/Detail-Interior-Chester0041-500x350.jpg",
+                "source": "https://muffinbreak.co.uk/store/reading-broad-street-mall/",
+                "photoScore": 90,
+                "evidence": [
+                  "body",
+                  "venue name in page title, heading or business schema",
+                  "venue area in page metadata, path or business address",
+                  "multi-branch operator",
+                  "physical venue scene in image metadata",
+                  "image occurs in page content"
+                ],
+                "subjectEvidence": [
+                  "physical venue scene in image metadata"
+                ]
+              }
+            ]
+          }
+        ],
+        "reason": null
+      },
+      "deliveryFailure": {
+        "checkedAt": "2026-10-28T20:21:50.919Z",
+        "imageUrl": "https://muffinbreak.co.uk/wp-content/uploads/2017/09/Detail-Interior-Chester0041-500x350.jpg",
+        "testStatus": "failed",
+        "reason": "publisher-image-delivery-failed",
+        "elapsedMs": 16664,
+        "failures": []
       }
     }
   ]
