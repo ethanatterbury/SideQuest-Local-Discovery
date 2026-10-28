@@ -11,7 +11,11 @@ import {
 import { useApp } from "@/components/providers";
 import { EmptyState } from "@/components/primitives";
 import { TOWNS } from "@/providers/geocoding";
-import { rankPlaces, effectiveDiscoveryQuery } from "@/domain/discovery";
+import {
+  rankPlaces,
+  effectiveDiscoveryQuery,
+  exactVenueSearch,
+} from "@/domain/discovery";
 import { PlaceCard } from "./place-card";
 import { Refinement } from "./refinement";
 import { Signature } from "./signature";
@@ -63,13 +67,15 @@ export function Discover({ explore = false }: { explore?: boolean }) {
     () => rankPlaces(catalog, effective, env, impressionState),
     [catalog, effective, env, impressionState],
   );
-  const nameMatches = query.text
-    ? ranked.filter((r) =>
-        `${r.place.name} ${r.place.area} ${r.place.category}`
-          .toLowerCase()
-          .includes(query.text.toLowerCase()),
-      )
-    : [];
+  const nameMatches = exactVenueSearch(query, catalog)
+    ? ranked
+    : query.text
+      ? ranked.filter((r) =>
+          `${r.place.name} ${r.place.area} ${r.place.category}`
+            .toLowerCase()
+            .includes(query.text.toLowerCase()),
+        )
+      : [];
   const results = nameMatches.length ? nameMatches : ranked;
   const shown = useRef(new Set<string>());
   const impressions = useRef<string[]>([]);
@@ -119,12 +125,10 @@ export function Discover({ explore = false }: { explore?: boolean }) {
             className="discovery-search"
             onSubmit={(event) => {
               event.preventDefault();
-              document
-                .getElementById("your-options")
-                ?.scrollIntoView({
-                  behavior: env.reducedMotion ? "instant" : "smooth",
-                  block: "start",
-                });
+              document.getElementById("your-options")?.scrollIntoView({
+                behavior: env.reducedMotion ? "instant" : "smooth",
+                block: "start",
+              });
             }}
           >
             <Search size={19} aria-hidden="true" />

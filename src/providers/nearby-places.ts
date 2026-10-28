@@ -613,7 +613,7 @@ async function readCell(id: string): Promise<Place[]> {
     return [];
   }
 }
-async function snapshotArea(
+export async function snapshotArea(
   coords: Coordinates,
   radius: number,
 ): Promise<Place[]> {

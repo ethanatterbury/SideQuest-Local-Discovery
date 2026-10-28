@@ -9,7 +9,8 @@
   color: #526252;
 }
 .marker {
-  position: relative;
+  /* The projection transform assumes an absolute origin, outside normal flow. */
+  position: absolute;
   z-index: 2;
   border: 2px solid #ffffff;
   border-radius: 50%;
@@ -65,6 +66,8 @@
 }
 
 .cluster {
+  /* A selected place can remain visible inside this cluster. Keep expansion reachable. */
+  z-index: 3;
   border-radius: 50%;
   width: 42px;
   height: 42px;

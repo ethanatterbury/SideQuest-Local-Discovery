@@ -47,14 +47,30 @@ export function matchesActivity(
   );
 }
 
-/** Exact mapped names are identities; other search text can describe outing preferences. */
+/** Normalize common written name variants without inferring the venue's activities. */
+function venueSearchName(value: string): string {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .replace(/[&+]/g, " and ")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+function matchesVenueName(place: Place, name: string): boolean {
+  return [place.name, ...(place.aliases ?? [])].some(
+    (candidate) => venueSearchName(candidate) === name,
+  );
+}
+
+/** Exact mapped names and aliases are identities; other text describes preferences. */
 export function exactVenueSearch(
   query: DiscoveryQuery,
   places: Place[],
 ): string | undefined {
-  const name = query.text.trim().toLowerCase();
-  return name &&
-    places.some((place) => place.name.trim().toLowerCase() === name)
+  const name = venueSearchName(query.text);
+  return name && places.some((place) => matchesVenueName(place, name))
     ? name
     : undefined;
 }
@@ -97,8 +113,7 @@ export function rankPlaces(
   ].filter((intent) => intent !== "any");
   const ranked = places
     .flatMap((place) => {
-      if (searchedName && place.name.trim().toLowerCase() !== searchedName)
-        return [];
+      if (searchedName && !matchesVenueName(place, searchedName)) return [];
       if (!matchesActivity(place, query.activity)) return [];
       if (!isSuitableForQuery(place, query)) return [];
       const family =

@@ -133,6 +133,30 @@ it("gives later visible photos their own request window instead of expiring them
   expect(peak).toBe(3);
 });
 
+it("allows transport time after the server's photo lookup budget", async () => {
+  vi.useFakeTimers();
+  const image = {
+    url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Venue.jpg",
+    source: "https://commons.wikimedia.org/wiki/File:Venue.jpg",
+    credit: "Author",
+    license: "CC0",
+    rights: "open",
+    checkedAt: "2026-10-28T00:00:00Z",
+  };
+  vi.stubGlobal("fetch", async () => {
+    // A valid 4.4s server lookup plus 600ms of request/response transport.
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    return Response.json({ image });
+  });
+  const result = findPlacePhoto({
+    ...PLACES[0],
+    id: "server-budget-plus-transport",
+    image: undefined,
+  });
+  await vi.advanceTimersByTimeAsync(5000);
+  expect(await result).toEqual(image);
+});
+
 it("bounds active requests and queue waits even when upstream ignores abort", async () => {
   vi.useFakeTimers();
   const fetcher = vi.fn(() => new Promise<Response>(() => {}));

@@ -17,6 +17,9 @@ const queue: (() => void)[] = [];
 // Browsing may reveal a dozen cards at once; queued cards need their own network window.
 const QUEUE_WAIT_MS = 30_000;
 const MAX_QUEUED = 60;
+// The server may spend its whole lookup budget before sending a response.
+// Leave time for request/response transport rather than cancelling that result.
+const REQUEST_DEADLINE_MS = PHOTO_DEADLINE_MS + 2000;
 let active = 0;
 function next() {
   if (active < 3 && queue.length) {
@@ -78,7 +81,7 @@ export function findPlacePhoto(place: Place): Promise<Image | null> {
     const job = async () => {
       running = true;
       clearTimeout(deadline);
-      deadline = setTimeout(expire, PHOTO_DEADLINE_MS);
+      deadline = setTimeout(expire, REQUEST_DEADLINE_MS);
       let image: Image | null = null;
       let retryable = false;
       try {

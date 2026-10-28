@@ -45,6 +45,56 @@ afterEach(() => {
 });
 
 describe("configured national discovery", () => {
+  it("retains local snapshot venues when every capped provider search succeeds", async () => {
+    const { getNearbyPlaces } = await import("@/providers/nearby-places");
+    const snapshot = await getNearbyPlaces({ lat: 51.18, lng: -0.62 }, 5);
+    expect(snapshot.places.length).toBeGreaterThan(1);
+    const overlapping = snapshot.places[0];
+    const [, osmType, osmId] = overlapping.id.split("-");
+    vi.stubGlobal("fetch", async () =>
+      Response.json(
+        collection(
+          feature(
+            {
+              osm_id: 987654321,
+              leisure: undefined,
+              amenity: undefined,
+              tourism: "museum",
+            },
+            { name: "Provider-only museum", lat: 51.18, lon: -0.62 },
+          ),
+          feature(
+            {
+              osm_id: Number(osmId),
+              osm_type: osmType,
+              leisure: undefined,
+              amenity: undefined,
+              tourism: "museum",
+            },
+            {
+              name: "Updated provider venue",
+              lat: overlapping.coordinates.lat,
+              lon: overlapping.coordinates.lng,
+            },
+          ),
+        ),
+      ),
+    );
+    const { getDiscoveryPlaces } = await import("@/providers/geoapify-places");
+    const result = await getDiscoveryPlaces({ lat: 51.18, lng: -0.62 }, 5);
+    expect(result.source).toBe("live");
+    expect(result.incomplete).toBeUndefined();
+    expect(
+      result.places.filter((place) => place.id === overlapping.id),
+    ).toMatchObject([{ name: "Updated provider venue" }]);
+    expect(
+      result.places.some((place) => place.id === snapshot.places[1].id),
+    ).toBe(true);
+    expect(
+      result.places.some((place) => place.id === "osm-way-987654321"),
+    ).toBe(true);
+  });
+
   it("does not convert a supplier-marked adult venue into an ordinary cinema", async () => {
     const { normalizeGeoapifyResponse } =
       await import("@/providers/geoapify-places");

@@ -332,7 +332,8 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
           const existingCluster = markers.get(id);
           const button =
             existingCluster?.getElement() || document.createElement("button");
-          button.className = styles.cluster;
+          // MapLibre owns positioning/state classes on this cached element.
+          button.classList.add(styles.cluster);
           button.textContent = String(
             cluster.properties?.point_count_abbreviated,
           );
@@ -387,12 +388,10 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
           const selected = props.selected?.id === p.id,
             saved = props.saved.includes(p.id),
             visited = props.visited.includes(p.id);
-          button.className = [
-            styles.marker,
-            selected ? styles.selected : "",
-            saved ? styles.saved : "",
-            visited ? styles.visited : "",
-          ].join(" ");
+          button.classList.add(styles.marker);
+          button.classList.toggle(styles.selected, selected);
+          button.classList.toggle(styles.saved, saved);
+          button.classList.toggle(styles.visited, visited);
           const glyph = markerGlyph(p.category, saved, visited);
           if (button.innerHTML !== glyph) button.innerHTML = glyph;
           button.setAttribute(

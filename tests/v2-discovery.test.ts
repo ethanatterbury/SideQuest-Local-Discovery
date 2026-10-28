@@ -77,6 +77,82 @@ const rank = (places: Place[], query = DEFAULT_QUERY, state = emptyState()) =>
   rankPlaces(places, query, env, state);
 
 describe("V2 eligibility and relevance", () => {
+  it("finds the mapped Godalming cafe by its written name in the capped Kids catalogue", async () => {
+    const { getNearbyPlaces } = await import("@/providers/nearby-places");
+    const location = { name: "Godalming", lat: 51.18, lng: -0.62 };
+    const catalogue = await getNearbyPlaces(location, 25);
+    expect(catalogue.places).toHaveLength(300);
+    const result = rankPlaces(
+      catalogue.places,
+      {
+        ...DEFAULT_QUERY,
+        company: "family",
+        intent: "kids",
+        childrenAges: [3],
+        includeCategories: ["food"],
+        text: "Small and Mighty",
+      },
+      { ...env, location },
+      emptyState(),
+    );
+    expect(result.map((item) => item.place.id)).toEqual(["osm-way-403382388"]);
+    expect(result[0].place.category).toBe("Café");
+    expect(result[0].place.ageRange).toBeUndefined();
+    expect(venueSuitability(result[0].place).kind).toBe("food");
+    expect(result[0].reasons).toContain("Check age suitability with the venue");
+  });
+
+  it.each([
+    "Acorn and Bee",
+    "Acorn + Bee",
+    "Acorn & Bee",
+    "The former playroom",
+  ])(
+    "finds an explicitly named cafe under Kids without inventing play or age evidence: %s",
+    (text) => {
+      const cafe = venue("mapped-cafe", "Café", {
+        name: "Acorn & Bee",
+        aliases: ["The former playroom"],
+        intents: ["food"],
+      });
+      const result = rank([cafe, venue("unrelated", "museum")], {
+        ...DEFAULT_QUERY,
+        company: "family",
+        intent: "kids",
+        childrenAges: [3],
+        text,
+        includeCategories: ["food"],
+      });
+      expect(result.map((item) => item.place.id)).toEqual(["mapped-cafe"]);
+      expect(result[0].reasons).toContain(
+        "Check age suitability with the venue",
+      );
+      expect(venueSuitability(result[0].place).kind).toBe("food");
+      expect(result[0].place.ageRange).toBeUndefined();
+      expect(
+        rank([cafe], {
+          ...DEFAULT_QUERY,
+          company: "family",
+          intent: "kids",
+          childrenAges: [3],
+          text,
+          includeCategories: [],
+        }),
+      ).toEqual([]);
+      expect(
+        rank([cafe], {
+          ...DEFAULT_QUERY,
+          company: "family",
+          intent: "kids",
+          childrenAges: [3],
+          text,
+          includeCategories: ["food"],
+          strictSuitability: true,
+        }),
+      ).toEqual([]);
+    },
+  );
+
   it("requires explicit opt-ins, including allowing fitness when selected", () => {
     const records = [
       venue("meal", "restaurant", { intents: ["food"] }),

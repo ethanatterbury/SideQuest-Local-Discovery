@@ -3,6 +3,9 @@ import { existsSync } from "node:fs";
 export default defineConfig({
   testDir: "tests/e2e",
   fullyParallel: false,
+  // Software WebGL contexts share the runner's CPU; concurrent files starve
+  // map startup/fallback timers and make GPU screenshot checks unreliable.
+  workers: 1,
   timeout: 45000,
   expect: { timeout: 15000 },
   use: {

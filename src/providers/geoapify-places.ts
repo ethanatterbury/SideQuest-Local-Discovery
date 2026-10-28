@@ -9,6 +9,7 @@ import {
   normalizeOsmElement,
   rememberLivePlaces,
   selectNearbyPlaces,
+  snapshotArea,
   validCoordinates,
   type NearbyResult,
 } from "./nearby-places";
@@ -327,6 +328,15 @@ export async function getDiscoveryPlaces(
             source = fallback.source;
             message = `${sourceMessage(true)} Geoapify activity results are unavailable. ${fallback.message || (fallback.source === "live" ? "Outings supplied by live OpenStreetMap / Overpass discovery." : "Showing available OpenStreetMap outing data.")}`;
           }
+          // Category-capped provider success does not mean complete local coverage.
+          // Retain already available OSM snapshot venues; fresher provider identities win.
+          places = [
+            ...new Map(
+              [...(await snapshotArea(center, bucket + 2)), ...places].map(
+                (place) => [place.id, place],
+              ),
+            ).values(),
+          ];
           rememberLivePlaces(places);
           const result = { places, partial, source, message };
           storeResult(key, result);

@@ -101,7 +101,8 @@ test("MapLibre renders local geography and style load alone fails with a recover
   });
   await expect(page.locator(".map-status")).toHaveText(
     /Location overview · map unavailable/,
-    { timeout: 14000 },
+    // The app deadline remains 10s; allow software-GPU scheduling on CI.
+    { timeout: 30000 },
   );
   await expect(page.locator(".geographic-fallback")).toBeVisible();
   await expect(

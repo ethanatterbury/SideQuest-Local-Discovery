@@ -37,23 +37,27 @@ const fixtureImage = sharp(
   .png()
   .toBuffer();
 
-async function fixtures(page: Page, delayedPhoto = false) {
+async function fixtures(
+  page: Page,
+  delayedPhoto = false,
+  failures = ["weather"],
+) {
   // These journeys exercise live delivery; geographic delivery has its own fixture suite.
   await page.route("**/data/venues/manifest.json", (route) =>
     route.fulfill({ json: { cells: {} } }),
   );
   await localMapFixture(page);
-  await page.addInitScript(() => {
+  await page.addInitScript((failures) => {
     sessionStorage.setItem(
       "sidequest:environment",
       JSON.stringify({
         weather: "sunny",
         time: "midday",
-        failures: ["weather"],
+        failures,
         reducedMotion: true,
       }),
     );
-  });
+  }, failures);
   await page.route("**/api/places?**", (route) =>
     route.fulfill({
       json: {
@@ -294,7 +298,8 @@ test("changing company clears child ages, child activity and a stale child searc
 test("prepared area data arriving after live discovery preserves fresh venue details", async ({
   page,
 }) => {
-  await fixtures(page);
+  // Catalogue ordering does not depend on GPU rendering, which has separate cases.
+  await fixtures(page, false, ["weather", "map"]);
   await page.route("**/api/places?**", (route) =>
     route.fulfill({
       json: { places: [{ ...venue, name: "Fresh Museum" }], source: "live" },
@@ -313,7 +318,8 @@ test("prepared area data arriving after live discovery preserves fresh venue det
       json: { places: [{ ...venue, name: "Old Museum" }] },
     });
   });
-  await page.goto(`/map?place=${venue.id}`);
+  // Remote image loading must not consume the held prepared-cell deadline.
+  await page.goto(`/map?place=${venue.id}`, { waitUntil: "domcontentloaded" });
   await expect(page.locator(".map-selected h2")).toHaveText("Fresh Museum");
   const response = page.waitForResponse((url) =>
     url.url().includes("205_-3.json"),
