@@ -50,6 +50,16 @@ export interface PhotoDiagnostics {
   networkRequests?: number;
   upstreamErrors?: Record<string, number>;
   retryAfterMs?: number;
+  officialWebsite?: {
+    discoveryStatus?: string;
+    attempts: {
+      website: string;
+      reason: string | null;
+      candidateCount: number;
+      rejected: Record<string, number>;
+    }[];
+    elapsedMs: number;
+  };
 }
 export interface PhotoResult {
   image: PlacePhoto | null;

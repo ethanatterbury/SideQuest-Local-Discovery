@@ -144,3 +144,49 @@ it("finds an official preview despite an indexed Commons absence", async () => {
     image: { rights: "website-preview", url: image.url },
   });
 });
+
+it("preserves official website rejection evidence when reusable-source lookup also fails", async () => {
+  vi.mocked(resolveOfficialWebsitePreview).mockResolvedValueOnce({
+    image: null,
+    retryable: false,
+    result: {
+      candidates: [],
+      identity: {
+        matchedName: true,
+        matchedArea: true,
+        matchedAddress: false,
+        multiBranch: false,
+        branchSpecific: true,
+        evidence: [],
+      },
+      rejected: { "branding-map-or-stock": 1 },
+      pageUrl: "https://littlelantern.co.uk/fleet/",
+      reason: "no-venue-photo",
+      requestCount: 1,
+      retryable: false,
+      elapsedMs: 20,
+    },
+  });
+  vi.mocked(lookupPlacePhoto).mockResolvedValueOnce({
+    image: null,
+    source: "unavailable",
+  });
+  const response = await GET(
+    new Request(
+      "https://sidequest.example/api/photo?name=Venue&lat=51&lng=-1&debug=1",
+    ),
+  );
+  expect(await response.json()).toMatchObject({
+    image: null,
+    diagnostics: {
+      officialWebsite: {
+        attempts: [
+          {
+            reason: "no-venue-photo",
+            rejected: { "branding-map-or-stock": 1 },
+          },
+        ],
+      },
+    },
+  });
+});

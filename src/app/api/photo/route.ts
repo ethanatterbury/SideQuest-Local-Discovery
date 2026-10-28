@@ -99,6 +99,7 @@ async function resolveRequest(request: Request, started: number) {
       refresh,
     );
   const previewRetryable = result?.retryable;
+  const officialDiagnostics = result?.diagnostics?.officialWebsite;
   if (!result?.image)
     result = entry
       ? {
@@ -117,8 +118,25 @@ async function resolveRequest(request: Request, started: number) {
             PHOTO_REQUEST_DEADLINE_MS - (Date.now() - started) - 50,
           ),
         });
-  if (result.image) result.image = approvedPhoto(result.image) || null;
-  if (!result.image && previewRetryable) result.retryable = true;
+  if (debug && officialDiagnostics) {
+    result = {
+      ...result,
+      diagnostics: {
+        strategy: null,
+        sourcesAttempted: [],
+        candidateCount: 0,
+        rejected: {},
+        requestCount: 0,
+        elapsedMs: Date.now() - started,
+        ...result.diagnostics,
+        officialWebsite: officialDiagnostics,
+      },
+    };
+  }
+  if (result.image)
+    result = { ...result, image: approvedPhoto(result.image) || null };
+  if (!result.image && previewRetryable)
+    result = { ...result, retryable: true };
   return Response.json(result, {
     headers: {
       "Cache-Control":
@@ -148,6 +166,28 @@ async function officialPreview(
   const timer = setTimeout(abort, budget);
   const previewStarted = Date.now();
   let retryable = false;
+  const attempts: NonNullable<
+    NonNullable<PhotoResult["diagnostics"]>["officialWebsite"]
+  >["attempts"] = [];
+  let discoveryStatus: string | undefined;
+  const diagnostics = () =>
+    debug
+      ? {
+          diagnostics: {
+            strategy: null,
+            sourcesAttempted: attempts.map((attempt) => attempt.website),
+            candidateCount: 0,
+            rejected: {},
+            requestCount: 0,
+            elapsedMs: Date.now() - started,
+            officialWebsite: {
+              discoveryStatus,
+              attempts,
+              elapsedMs: Date.now() - previewStarted,
+            },
+          },
+        }
+      : {};
   try {
     let urls: string[] = [];
     try {
@@ -167,6 +207,7 @@ async function officialPreview(
         timeoutMs: Math.min(2200, budget),
       });
       urls = discovery.urls.slice(0, 2);
+      discoveryStatus = discovery.status;
       retryable = ["unavailable", "disabled"].includes(discovery.status);
     }
     for (const website of urls) {
@@ -179,6 +220,12 @@ async function officialPreview(
         { ...query, website },
         { signal: controller.signal, timeoutMs: remaining, refresh },
       );
+      attempts.push({
+        website,
+        reason: preview.result.reason,
+        candidateCount: preview.result.candidates.length,
+        rejected: preview.result.rejected,
+      });
       retryable ||= preview.retryable;
       const image = approvedPhoto(preview.image);
       if (image)
@@ -194,6 +241,11 @@ async function officialPreview(
                   rejected: preview.result.rejected,
                   requestCount: preview.result.requestCount,
                   elapsedMs: Date.now() - started,
+                  officialWebsite: {
+                    discoveryStatus,
+                    attempts,
+                    elapsedMs: Date.now() - previewStarted,
+                  },
                 },
               }
             : {}),
@@ -203,9 +255,15 @@ async function officialPreview(
       image: null,
       source: "unavailable",
       ...(retryable ? { retryable: true } : {}),
+      ...diagnostics(),
     };
   } catch {
-    return { image: null, source: "unavailable", retryable: true };
+    return {
+      image: null,
+      source: "unavailable",
+      retryable: true,
+      ...diagnostics(),
+    };
   } finally {
     clearTimeout(timer);
     signal.removeEventListener("abort", abort);
