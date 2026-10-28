@@ -1,0 +1,216 @@
+name: Maintain prepared venue photographs
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: Maximum venues to inspect (0–100; no paid searches)
+        required: true
+        default: 100
+        type: number
+  schedule:
+    - cron: "17 */6 * * *"
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/venue-photos.yml
+      - scripts/prepare-venue-photos.mjs
+      - scripts/lib/venue-photo-batch.mjs
+      - scripts/lib/photo-delivery-results.mjs
+      - scripts/lib/provider-loader.mjs
+      - src/providers/official-photo*.ts
+      - src/providers/photo-policy.ts
+      - src/providers/photo-query.ts
+      - src/providers/prepared-venue-photos.ts
+      - src/providers/places.ts
+      - src/providers/data/regional-osm.json
+      - src/providers/data/venue-photo-previews.json
+      - tests/e2e/prepared-publisher-photos.spec.ts
+
+permissions:
+  contents: read
+
+# One durable ledger and manifest; a run never cancels another run mid-checkpoint.
+concurrency:
+  group: venue-photo-maintenance-main
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    outputs:
+      base_sha: ${{ steps.base.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - id: base
+        name: Record the catalogue revision
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Preserve the incoming metadata for nonregression checks
+        run: |
+          mkdir -p work/photo-maintenance
+          cp src/providers/data/venue-photo-previews.json work/photo-maintenance/before-previews.json
+          cp src/providers/data/venue-photo-search-ledger.json work/photo-maintenance/before-ledger.json
+      - name: Inspect a bounded batch of official websites
+        env:
+          PHOTO_LIMIT: ${{ github.event_name == 'workflow_dispatch' && toJSON(inputs.limit) || '100' }}
+          TAVILY_API_KEY: ""
+        run: |
+          node scripts/prepare-venue-photos.mjs --limit="$PHOTO_LIMIT" --max-searches=0 --monthly-cap=1000 --timeout-ms=12000 | tee work/photo-maintenance/batch.jsonl
+      - name: Validate approved metadata and preserve existing photographs
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync } from "node:fs";
+          import assert from "node:assert/strict";
+          import { loadProvider } from "./scripts/lib/provider-loader.mjs";
+          const read = (path) => JSON.parse(readFileSync(path, "utf8"));
+          const before = read("work/photo-maintenance/before-previews.json");
+          const after = read("src/providers/data/venue-photo-previews.json");
+          const ledgerBefore = read("work/photo-maintenance/before-ledger.json");
+          const ledgerAfter = read("src/providers/data/venue-photo-search-ledger.json");
+          const { approvedPhoto } = loadProvider("src/providers/photo-policy.ts");
+          const { websiteDiscoveryIdentity } = loadProvider("src/providers/prepared-venue-photos.ts");
+          assert.equal(after.version, 1);
+          assert.ok(Array.isArray(after.entries));
+          assert.equal(ledgerAfter.version, 1);
+          // This workflow has no search key and is never allowed to spend a credit.
+          assert.deepEqual(ledgerAfter, ledgerBefore);
+          const current = new Map();
+          for (const entry of after.entries) {
+            const query = entry.query;
+            assert.ok(typeof query?.id === "string" && query.id.length > 0);
+            assert.ok(typeof query.name === "string" && query.name.trim());
+            assert.ok(Number.isFinite(query.lat) && Math.abs(query.lat) <= 90);
+            assert.ok(Number.isFinite(query.lng) && Math.abs(query.lng) <= 180);
+            assert.ok(Number.isFinite(Date.parse(entry.checkedAt)));
+            const key = websiteDiscoveryIdentity(query);
+            assert.ok(!current.has(key), "Duplicate venue identity in manifest");
+            if (entry.image) {
+              assert.ok(approvedPhoto(entry.image, entry.checkedAt), `Unapproved photo: ${query.id}`);
+              assert.equal(entry.retryable, false);
+            }
+            current.set(key, entry);
+          }
+          for (const entry of before.entries) {
+            if (!approvedPhoto(entry.image, entry.checkedAt)) continue;
+            const retained = current.get(websiteDiscoveryIdentity(entry.query));
+            assert.ok(approvedPhoto(retained?.image, retained?.checkedAt), `Existing approved photo removed: ${entry.query.id}`);
+          }
+          const summary = {
+            entries: after.entries.length,
+            publisherPhotographs: after.entries.filter((entry) => entry.image?.rights === "website-preview").length,
+            unresolved: after.entries.filter((entry) => !entry.image).length,
+            paidSearches: 0,
+          };
+          writeFileSync("work/photo-maintenance/summary.json", JSON.stringify(summary, null, 2) + "\n");
+          console.log(JSON.stringify(summary));
+          NODE
+      - name: Run application tests
+        run: npm test
+      - name: Build the production application with prepared photos
+        run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Verify real publisher images, source credits, and detail screenshots
+        id: browser
+        continue-on-error: true
+        env:
+          SIDEQUEST_LIVE_PHOTO_CHECK: "1"
+          SIDEQUEST_E2E_PRODUCTION: "1"
+          PLAYWRIGHT_JSON_OUTPUT_NAME: work/photo-maintenance/browser-results.json
+        run: npx playwright test tests/e2e/prepared-publisher-photos.spec.ts --workers=4 --reporter=list,json
+      - name: Quarantine failed new photos and preserve successful batch checkpoints
+        run: |
+          cp src/providers/data/venue-photo-previews.json work/photo-maintenance/batch-candidate.json
+          node scripts/lib/photo-delivery-results.mjs --before=work/photo-maintenance/before-previews.json --after=src/providers/data/venue-photo-previews.json --results=work/photo-maintenance/browser-results.json --summary=work/photo-maintenance/delivery-summary.json
+      - name: Retain the complete batch and browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: venue-photo-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            work/photo-maintenance/
+            src/providers/data/venue-photo-previews.json
+            src/providers/data/venue-photo-search-ledger.json
+            test-results/
+          retention-days: 14
+      - name: Retain the verified publication candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: venue-photo-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            src/providers/data/venue-photo-previews.json
+            src/providers/data/venue-photo-search-ledger.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Explain the publication gate
+        if: always()
+        env:
+          PREPARATION_STATUS: ${{ job.status }}
+          BROWSER_STATUS: ${{ steps.browser.outcome }}
+        run: |
+          {
+            echo "### Prepared venue photographs"
+            echo "Catalogue revision: ${{ steps.base.outputs.sha }}"
+            echo "Official website HTML only; paid searches disabled."
+            echo "Preparation and live-browser status: $PREPARATION_STATUS"
+            echo "Live publisher assertions: $BROWSER_STATUS"
+            echo "Per-venue screenshots, image response failures, decode dimensions and timings are retained in the evidence artifact, including when a publisher fails."
+            echo "Only new photos with passing real browser delivery are published. Failed new photos become retryable metadata checkpoints; prior approved photos are retained with failure evidence. Missing or incomplete browser infrastructure evidence blocks publication."
+            if [ -f work/photo-maintenance/delivery-summary.json ]; then
+              echo '```json'
+              cat work/photo-maintenance/delivery-summary.json
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # The network, build and test job above has read-only repository permissions.
+  # Only this short job can write, and it stages exactly the two metadata files.
+  publish:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/download-artifact@v4
+        with:
+          name: venue-photo-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: work/photo-publication
+      - name: Publish the verified metadata without overwriting newer work
+        env:
+          VERIFIED_BASE_SHA: ${{ needs.prepare.outputs.base_sha }}
+        run: |
+          current_sha=$(git rev-parse HEAD)
+          if [ "$current_sha" != "$VERIFIED_BASE_SHA" ]; then
+            git fetch --no-tags --depth=1 origin "$VERIFIED_BASE_SHA"
+            changed_files=$(git diff --name-only "$VERIFIED_BASE_SHA" "$current_sha")
+            if [ "$changed_files" != "src/providers/data/regions/england.json.gz" ]; then
+              echo "Main advanced beyond the independent England metadata import. The candidate is retained; rerun preparation against the new revision." | tee -a "$GITHUB_STEP_SUMMARY"
+              exit 1
+            fi
+          fi
+          cp work/photo-publication/venue-photo-previews.json src/providers/data/venue-photo-previews.json
+          cp work/photo-publication/venue-photo-search-ledger.json src/providers/data/venue-photo-search-ledger.json
+          git add -- src/providers/data/venue-photo-previews.json src/providers/data/venue-photo-search-ledger.json
+          if git diff --cached --quiet; then
+            echo "No prepared photo metadata changed." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Refresh prepared venue photo metadata"
+          # A regular fast-forward push rejects any race after the revision check.
+          git push origin HEAD:main
+          echo "Published verified photo metadata to main: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"

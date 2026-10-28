@@ -1,6 +1,7 @@
 import generated from "./data/place-photo-index.json";
 import type { PhotoQuery, PhotoResult } from "./place-photo";
 import { photoIdentity, photoVenueIdentity } from "./photo-query";
+import { preparedVenuePhoto } from "./prepared-venue-photos";
 import { approvedPhoto } from "./photo-policy";
 export type PhotoIndexEntry = {
   query: PhotoQuery;
@@ -32,6 +33,10 @@ export function indexedPhoto(
   query: PhotoQuery,
   entries: PhotoIndexEntry[] = photoIndex.entries,
 ): PhotoIndexEntry | null {
+  if (entries === photoIndex.entries) {
+    const image = preparedVenuePhoto(query);
+    if (image) return { query, image, checkedAt: image.checkedAt! };
+  }
   const entry = entries.find((e) =>
     e.image
       ? photoVenueIdentity(e.query) === photoVenueIdentity(query)

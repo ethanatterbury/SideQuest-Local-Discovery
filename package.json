@@ -18,7 +18,8 @@
     "format": "prettier --write src tests scripts *.ts *.mjs *.json",
     "test:visual": "node scripts/visual-matrix.mjs",
     "test:offline": "node scripts/offline-smoke.mjs",
-    "prepare:data": "node scripts/materialize-venue-media.mjs && node scripts/build-venue-cells.mjs"
+    "prepare:data": "node scripts/materialize-venue-media.mjs && node scripts/build-venue-cells.mjs",
+    "prepare:photos": "node scripts/prepare-venue-photos.mjs"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.2.8",

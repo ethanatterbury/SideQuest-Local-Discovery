@@ -1,0 +1,704 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-28T20:06:57.543456Z",
+  "entries": [
+    {
+      "query": {
+        "id": "osm-node-12368230770",
+        "name": "Pirates Landing",
+        "lat": 51.2150652,
+        "lng": -0.7956978,
+        "area": "Farnham",
+        "address": "Brightwells Yard",
+        "website": "https://pirateslanding.co.uk/pirates-landing-farnham/"
+      },
+      "checkedAt": "2026-10-28T15:39:48.754Z",
+      "website": {
+        "urls": ["https://pirateslanding.co.uk/pirates-landing-farnham/"],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": {
+        "url": "https://pirateslanding.co.uk/wp-content/uploads/2025/03/IMG_0959.jpeg",
+        "source": "https://pirateslanding.co.uk/pirates-landing-farnham/",
+        "credit": "Pirates Landing",
+        "license": "Website preview \u2014 rights reserved",
+        "rights": "website-preview",
+        "strategy": "official-website-preview",
+        "checkedAt": "2026-10-28T15:39:48.754Z",
+        "width": 480,
+        "height": 640,
+        "confidence": 0.95,
+        "matched": [
+          "official publisher venue and location matched",
+          "physical venue scene verified by visual review"
+        ],
+        "preview": {
+          "kind": "venue-image",
+          "pageUrl": "https://pirateslanding.co.uk/pirates-landing-farnham/",
+          "publisher": "Pirates Landing",
+          "identityEvidence": [
+            "2026-10-28: Official Farnham branch page names Pirates Landing Farnham at Brightwells Yard, Farnham."
+          ],
+          "subjectEvidence": ["physical venue scene verified by visual review"],
+          "review": {
+            "method": "visual-review",
+            "imageUrl": "https://pirateslanding.co.uk/wp-content/uploads/2025/03/IMG_0959.jpeg",
+            "checkedAt": "2026-10-28T15:39:48.754Z",
+            "description": "Pirates Landing frontage with large venue letters, pirate ship logo, glazed entrance and a brick building surrounding a paved forecourt."
+          }
+        }
+      },
+      "retryable": false,
+      "status": "matched",
+      "evidence": {
+        "officialPage": {
+          "url": "https://pirateslanding.co.uk/pirates-landing-farnham/",
+          "webReference": "turn652770view0",
+          "checkedAt": "2026-10-28T15:39:48.754Z",
+          "finding": "Official Farnham branch page names Pirates Landing Farnham at Brightwells Yard, Farnham."
+        },
+        "visualReview": {
+          "tool": "view_image",
+          "checkedAt": "2026-10-28T15:39:48.754Z",
+          "description": "Pirates Landing frontage with large venue letters, pirate ship logo, glazed entrance and a brick building surrounding a paved forecourt.",
+          "reviewedStoredRendition": "work/photo-research/local-review/osm-node-12368230770-fe3a12b7ba5c.webp",
+          "renditionSha256": "fe3a12b7ba5cd7dffc3f83b7ea1a60cc108c4da01d87292ac43aed2013d8c8e4",
+          "archive": "photos-official-initial.tar.gz",
+          "originalUrlMapping": "src/providers/data/venue-media.json originalUrl; existing archived WebP rendition reviewed, original bytes were not fetched to workspace"
+        },
+        "liveImage": {
+          "url": "https://pirateslanding.co.uk/wp-content/uploads/2025/03/IMG_0959.jpeg",
+          "webReference": "turn976549view0",
+          "finding": "Dedicated web open/click returned image content marker for the exact publisher URL. MCP exposed only a text marker, so actual visual review used the existing local rendition."
+        },
+        "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
+      }
+    },
+    {
+      "query": {
+        "id": "osm-way-170414865",
+        "name": "Wokingham Leisure Centre",
+        "lat": 51.407719,
+        "lng": -0.838336,
+        "area": "Wokingham",
+        "address": "Wellington Road",
+        "website": "https://www.placesleisure.org/centres/wokingham-leisure-centre/",
+        "postcode": "RG40 2AF"
+      },
+      "checkedAt": "2026-10-28T15:39:48.754Z",
+      "website": {
+        "urls": [
+          "https://www.placesleisure.org/centres/wokingham-leisure-centre/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": {
+        "url": "https://www.placesleisure.org/media/u5gdme24/gallery-wokingham-gym.webp?width=1200&height=600&v=1dbf013075c5ca0",
+        "source": "https://www.placesleisure.org/centres/wokingham-leisure-centre/",
+        "credit": "Wokingham Leisure Centre",
+        "license": "Website preview \u2014 rights reserved",
+        "rights": "website-preview",
+        "strategy": "official-website-preview",
+        "checkedAt": "2026-10-28T15:39:48.754Z",
+        "width": 1200,
+        "height": 600,
+        "confidence": 0.95,
+        "matched": [
+          "official publisher venue and location matched",
+          "physical venue scene verified by visual review"
+        ],
+        "preview": {
+          "kind": "venue-image",
+          "pageUrl": "https://www.placesleisure.org/centres/wokingham-leisure-centre/",
+          "publisher": "Wokingham Leisure Centre",
+          "identityEvidence": [
+            "2026-10-28: Official Wokingham Leisure Centre page confirms Wellington Road, Wokingham, Berkshire RG40 2AF."
+          ],
+          "subjectEvidence": ["physical venue scene verified by visual review"],
+          "review": {
+            "method": "visual-review",
+            "imageUrl": "https://www.placesleisure.org/media/u5gdme24/gallery-wokingham-gym.webp?width=1200&height=600&v=1dbf013075c5ca0",
+            "checkedAt": "2026-10-28T15:39:48.754Z",
+            "description": "Bright gym with plate-loaded strength machines, weight racks and adjustable benches beside a long wall of windows."
+          }
+        }
+      },
+      "retryable": false,
+      "status": "matched",
+      "evidence": {
+        "officialPage": {
+          "url": "https://www.placesleisure.org/centres/wokingham-leisure-centre/",
+          "webReference": "turn146994view1",
+          "checkedAt": "2026-10-28T15:39:48.754Z",
+          "finding": "Official Wokingham Leisure Centre page confirms Wellington Road, Wokingham, Berkshire RG40 2AF."
+        },
+        "visualReview": {
+          "tool": "view_image",
+          "checkedAt": "2026-10-28T15:39:48.754Z",
+          "description": "Bright gym with plate-loaded strength machines, weight racks and adjustable benches beside a long wall of windows.",
+          "reviewedStoredRendition": "work/photo-research/local-review/osm-way-170414865-c035b1a74f53.webp",
+          "renditionSha256": "c035b1a74f53262e4a83c51678bc0421797a6833055a06d65f76c355ad8fb95e",
+          "archive": "photos-official-initial.tar.gz",
+          "originalUrlMapping": "src/providers/data/venue-media.json originalUrl; existing archived WebP rendition reviewed, original bytes were not fetched to workspace"
+        },
+        "liveImage": {
+          "url": "https://www.placesleisure.org/media/u5gdme24/gallery-wokingham-gym.webp?width=1200&height=600&v=1dbf013075c5ca0",
+          "webReference": "turn976549view2",
+          "finding": "Dedicated web open/click returned image content marker for the exact publisher URL. MCP exposed only a text marker, so actual visual review used the existing local rendition."
+        },
+        "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-6298975412",
+        "name": "Pineto Lounge",
+        "lat": 51.4173471,
+        "lng": -0.7507643,
+        "area": "Bracknell",
+        "address": "8 Eagle Lane, Braccan Walk",
+        "website": "https://thelounges.co.uk/pineto",
+        "postcode": "RG12 1BG"
+      },
+      "checkedAt": "2026-10-28T15:39:48.754Z",
+      "website": {
+        "urls": ["https://thelounges.co.uk/pineto"],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": {
+        "url": "https://bunny-wp-pullzone-lgrcnjwfpd.b-cdn.net/wp-content/uploads/2024/02/Pineto-Lounge-Bracknell-Highlights_BMS3717_.jpg",
+        "source": "https://thelounges.co.uk/pineto",
+        "credit": "Pineto Lounge",
+        "license": "Website preview \u2014 rights reserved",
+        "rights": "website-preview",
+        "strategy": "official-website-preview",
+        "checkedAt": "2026-10-28T15:39:48.754Z",
+        "width": 1200,
+        "height": 798,
+        "confidence": 0.95,
+        "matched": [
+          "official publisher venue and location matched",
+          "physical venue scene verified by visual review"
+        ],
+        "preview": {
+          "kind": "venue-image",
+          "pageUrl": "https://thelounges.co.uk/pineto",
+          "publisher": "Pineto Lounge",
+          "identityEvidence": [
+            "2026-10-28: Official Pineto branch page confirms 8 Eagle Lane, Braccan Walk, Bracknell RG12 1BG."
+          ],
+          "subjectEvidence": ["physical venue scene verified by visual review"],
+          "review": {
+            "method": "visual-review",
+            "imageUrl": "https://bunny-wp-pullzone-lgrcnjwfpd.b-cdn.net/wp-content/uploads/2024/02/Pineto-Lounge-Bracknell-Highlights_BMS3717_.jpg",
+            "checkedAt": "2026-10-28T15:39:48.754Z",
+            "description": "Actual Pineto Lounge glazed frontage at night, with venue lettering, outdoor tables, diners and strings of coloured lights."
+          }
+        }
+      },
+      "retryable": false,
+      "status": "matched",
+      "evidence": {
+        "officialPage": {
+          "url": "https://thelounges.co.uk/pineto",
+          "webReference": "turn201589view0",
+          "checkedAt": "2026-10-28T15:39:48.754Z",
+          "finding": "Official Pineto branch page confirms 8 Eagle Lane, Braccan Walk, Bracknell RG12 1BG."
+        },
+        "visualReview": {
+          "tool": "view_image",
+          "checkedAt": "2026-10-28T15:39:48.754Z",
+          "description": "Actual Pineto Lounge glazed frontage at night, with venue lettering, outdoor tables, diners and strings of coloured lights.",
+          "reviewedStoredRendition": "work/photo-research/local-review/osm-node-6298975412-a41077c536c4.webp",
+          "renditionSha256": "a41077c536c4e62311ab80ba9dc7a1fcb2a0e7bf6cb93331138483d039633783",
+          "archive": "photos-official-initial.tar.gz",
+          "originalUrlMapping": "src/providers/data/venue-media.json originalUrl; existing archived WebP rendition reviewed, original bytes were not fetched to workspace"
+        },
+        "liveImage": {
+          "url": "https://bunny-wp-pullzone-lgrcnjwfpd.b-cdn.net/wp-content/uploads/2024/02/Pineto-Lounge-Bracknell-Highlights_BMS3717_.jpg",
+          "webReference": "turn863724view0",
+          "finding": "Dedicated web open/click returned image content marker for the exact publisher URL. MCP exposed only a text marker, so actual visual review used the existing local rendition."
+        },
+        "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
+      }
+    },
+    {
+      "query": {
+        "id": "osm-way-762643098",
+        "name": "Kingfisher on the Quay",
+        "lat": 51.2971895,
+        "lng": -0.7372661,
+        "area": "Mytchett",
+        "address": "Coleford Bridge Road",
+        "website": "https://www.mcmullens.co.uk/local-pub/kingfisher-on-the-quay/",
+        "postcode": "GU16 6DS"
+      },
+      "checkedAt": "2026-10-28T15:39:48.754Z",
+      "website": {
+        "urls": [
+          "https://www.mcmullens.co.uk/local-pub/kingfisher-on-the-quay/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": {
+        "url": "https://www.mcmullens.co.uk/app/uploads/2024/05/McMullens_Kingfisher-On-The-Quay-Camberley_Web-Res_04-2048x1072.jpg",
+        "source": "https://www.mcmullens.co.uk/local-pub/kingfisher-on-the-quay/",
+        "credit": "Kingfisher on the Quay",
+        "license": "Website preview \u2014 rights reserved",
+        "rights": "website-preview",
+        "strategy": "official-website-preview",
+        "checkedAt": "2026-10-28T15:39:48.754Z",
+        "width": 1200,
+        "height": 628,
+        "confidence": 0.95,
+        "matched": [
+          "official publisher venue and location matched",
+          "physical venue scene verified by visual review"
+        ],
+        "preview": {
+          "kind": "venue-image",
+          "pageUrl": "https://www.mcmullens.co.uk/local-pub/kingfisher-on-the-quay/",
+          "publisher": "Kingfisher on the Quay",
+          "identityEvidence": [
+            "2026-10-28: Official Kingfisher on the Quay branch page confirms Coleford Bridge Road, Mytchett, Camberley, Surrey GU16 6DS."
+          ],
+          "subjectEvidence": ["physical venue scene verified by visual review"],
+          "review": {
+            "method": "visual-review",
+            "imageUrl": "https://www.mcmullens.co.uk/app/uploads/2024/05/McMullens_Kingfisher-On-The-Quay-Camberley_Web-Res_04-2048x1072.jpg",
+            "checkedAt": "2026-10-28T15:39:48.754Z",
+            "description": "Pub dining room with timber-clad walls, wooden tables and mixed chairs, large windows, rope-wrapped pillars and basket lamps."
+          }
+        }
+      },
+      "retryable": false,
+      "status": "matched",
+      "evidence": {
+        "officialPage": {
+          "url": "https://www.mcmullens.co.uk/local-pub/kingfisher-on-the-quay/",
+          "webReference": "turn146994view3",
+          "checkedAt": "2026-10-28T15:39:48.754Z",
+          "finding": "Official Kingfisher on the Quay branch page confirms Coleford Bridge Road, Mytchett, Camberley, Surrey GU16 6DS."
+        },
+        "visualReview": {
+          "tool": "view_image",
+          "checkedAt": "2026-10-28T15:39:48.754Z",
+          "description": "Pub dining room with timber-clad walls, wooden tables and mixed chairs, large windows, rope-wrapped pillars and basket lamps.",
+          "reviewedStoredRendition": "work/photo-research/local-review/osm-way-762643098-7605a5aa14cb.webp",
+          "renditionSha256": "7605a5aa14cb55742b18c0d904142ee1aa34694d15aa10d91819b306a1e89778",
+          "archive": "photos-official-initial.tar.gz",
+          "originalUrlMapping": "src/providers/data/venue-media.json originalUrl; existing archived WebP rendition reviewed, original bytes were not fetched to workspace"
+        },
+        "liveImage": {
+          "url": "https://www.mcmullens.co.uk/app/uploads/2024/05/McMullens_Kingfisher-On-The-Quay-Camberley_Web-Res_04-2048x1072.jpg",
+          "webReference": "turn976549view4",
+          "finding": "Dedicated web open/click returned image content marker for the exact publisher URL. MCP exposed only a text marker, so actual visual review used the existing local rendition."
+        },
+        "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11278417015",
+        "name": "Ruby's Play Cafe",
+        "lat": 51.340175,
+        "lng": -0.7763774,
+        "area": "Sandhurst",
+        "address": "414 Yorktown Road",
+        "postcode": "GU47 0PR",
+        "website": "https://www.therubyplaycafe.co.uk/"
+      },
+      "checkedAt": "2026-10-28T15:40:39.732Z",
+      "website": {
+        "urls": ["https://www.therubyplaycafe.co.uk/"],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": {
+        "url": "https://www.therubyplaycafe.co.uk/cdn/shop/files/Untitled_600_x_600mm_600_x_200mm_600_x_300mm_450_x_300mm_450_x_450mm_450_x_325mm_1_4320x.png?v=1675848798",
+        "source": "https://www.therubyplaycafe.co.uk/",
+        "credit": "The Ruby Play Cafe",
+        "license": "Website preview \u2014 rights reserved",
+        "rights": "website-preview",
+        "strategy": "official-website-preview",
+        "checkedAt": "2026-10-28T15:40:39.732Z",
+        "preview": {
+          "kind": "venue-image",
+          "pageUrl": "https://www.therubyplaycafe.co.uk/",
+          "publisher": "The Ruby Play Cafe",
+          "identityEvidence": [
+            "2026-10-28: Official page identifies The Ruby Play Cafe and 414 Yorktown Road, Sandhurst GU47 0PR."
+          ],
+          "subjectEvidence": [
+            "physical venue scene described by external image analysis"
+          ],
+          "review": {
+            "method": "image-analysis:web-image-search",
+            "imageUrl": "https://www.therubyplaycafe.co.uk/cdn/shop/files/Untitled_600_x_600mm_600_x_200mm_600_x_300mm_450_x_300mm_450_x_450mm_450_x_325mm_1_4320x.png?v=1675848798",
+            "checkedAt": "2026-10-28T15:40:39.732Z",
+            "description": "Open-plan play cafe with pastel tables and chairs, fenced miniature jungle, construction and market play areas, and Ruby Play Cafe branding."
+          }
+        },
+        "confidence": 0.85
+      },
+      "retryable": false,
+      "status": "matched",
+      "evidence": {
+        "method": "External image-specific generated description from dedicated web image_query; not HTML alt text, and not personally visually inspected.",
+        "imageQuery": {
+          "webReference": "turn881424image5",
+          "sourceUrl": "https://www.therubyplaycafe.co.uk/",
+          "imageUrl": "https://www.therubyplaycafe.co.uk/cdn/shop/files/Untitled_600_x_600mm_600_x_200mm_600_x_300mm_450_x_300mm_450_x_450mm_450_x_325mm_1_4320x.png?v=1675848798",
+          "description": "Open-plan play cafe with pastel tables and chairs, fenced miniature jungle, construction and market play areas, and Ruby Play Cafe branding."
+        },
+        "officialPage": {
+          "webReference": "turn628264view0",
+          "url": "https://www.therubyplaycafe.co.uk/",
+          "identity": "Official page identifies The Ruby Play Cafe and 414 Yorktown Road, Sandhurst GU47 0PR."
+        },
+        "scope": "Single-venue official homepage; exact external image URL linked to this publisher by image search and described by external image analysis.",
+        "limitation": "MCP tool serializes image content as text-only ImageDisplayed markers; no image bytes were exposed to this agent for personal visual review. Current text rendition of the homepage may omit this image; image_query ties this exact URL to that official publisher page."
+      }
+    },
+    {
+      "query": {
+        "id": "osm-way-1303652926",
+        "name": "Mini Town",
+        "lat": 50.8803838,
+        "lng": -1.0321404,
+        "area": "Waterlooville",
+        "address": "25 Wellington Way",
+        "postcode": "PO7 7ED",
+        "website": "https://www.minitownroleplay.co.uk/"
+      },
+      "checkedAt": "2026-10-28T15:40:39.732Z",
+      "website": {
+        "urls": ["https://www.minitownroleplay.co.uk/"],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "needs-branch-review",
+      "evidence": {
+        "method": "External image-specific generated description from dedicated web image_query; not HTML alt text, and not personally visually inspected.",
+        "imageQuery": {
+          "webReference": "turn650458image0",
+          "sourceUrl": "https://www.minitownroleplay.co.uk/",
+          "imageUrl": "https://static.wixstatic.com/media/d77a28_e60be0d701534889827082bf2609bb68~mv2.jpeg/v1/fill/w_640%2Ch_636%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/d77a28_e60be0d701534889827082bf2609bb68~mv2.jpeg",
+          "description": "Child-sized pink hair salon play station with a striped awning, mannequin hairdressing heads, white styling stations and a checkerboard floor."
+        },
+        "officialPage": {
+          "webReference": "turn290163view0",
+          "url": "https://www.minitownroleplay.co.uk/",
+          "identity": "Official page lists its Waterlooville branch at 25 Wellington Way, Waterlooville PO7 7ED."
+        },
+        "scope": "Multi-branch operator: retained as a candidate until image-specific branch evidence can be reproduced independently.",
+        "limitation": "MCP tool serializes image content as text-only ImageDisplayed markers; no image bytes were exposed to this agent for personal visual review. Current text rendition of the homepage may omit this image; image_query ties this exact URL to that official publisher page.",
+        "candidateImageUrl": "https://static.wixstatic.com/media/d77a28_e60be0d701534889827082bf2609bb68~mv2.jpeg/v1/fill/w_640%2Ch_636%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/d77a28_e60be0d701534889827082bf2609bb68~mv2.jpeg",
+        "reason": "branch-review-required"
+      }
+    },
+    {
+      "query": {
+        "id": "osm-way-69972599",
+        "name": "Southwood country park",
+        "lat": 51.2875413,
+        "lng": -0.7835585,
+        "area": "Nearby",
+        "category": "Park",
+        "website": "https://www.rushmoor.gov.uk/southwoodcountrypark"
+      },
+      "checkedAt": "2026-10-28T20:06:57.543456Z",
+      "website": {
+        "urls": ["https://www.rushmoor.gov.uk/southwoodcountrypark"],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": {
+        "url": "https://www.rushmoor.gov.uk/media/x44jixll/southwood-country-park-cafe-and-field-centre.jpg?width=800&height=533&v=1d96e119ee557b0",
+        "source": "https://www.rushmoor.gov.uk/southwoodcountrypark",
+        "credit": "Rushmoor Borough Council",
+        "license": "Website preview \u2014 rights reserved",
+        "rights": "website-preview",
+        "strategy": "official-website-preview",
+        "checkedAt": "2026-10-28T20:06:57.543456Z",
+        "width": 800,
+        "height": 533,
+        "confidence": 0.95,
+        "matched": [
+          "official publisher venue and location matched",
+          "physical venue scene verified by visual review"
+        ],
+        "preview": {
+          "kind": "venue-image",
+          "pageUrl": "https://www.rushmoor.gov.uk/southwoodcountrypark",
+          "publisher": "Rushmoor Borough Council",
+          "identityEvidence": [
+            "2026-10-28: Official Rushmoor Borough Council page identifies Southwood Country Park as 57 hectares of green space in Farnborough and locates its field centre and east car park on Ively Road, Farnborough."
+          ],
+          "subjectEvidence": ["physical venue scene verified by visual review"],
+          "review": {
+            "method": "visual-review",
+            "imageUrl": "https://www.rushmoor.gov.uk/media/x44jixll/southwood-country-park-cafe-and-field-centre.jpg?width=800&height=533&v=1d96e119ee557b0",
+            "checkedAt": "2026-10-28T20:06:57.543456Z",
+            "description": "Timber-clad field-centre building with Southwood Country Park Cafe & Field Centre lettering, glazed doors and a paved pedestrian forecourt."
+          }
+        }
+      },
+      "retryable": false,
+      "status": "matched",
+      "evidence": {
+        "officialPage": {
+          "url": "https://www.rushmoor.gov.uk/southwoodcountrypark",
+          "webReference": "turn220911view1",
+          "checkedAt": "2026-10-28T20:06:57.543456Z",
+          "finding": "Official Rushmoor Borough Council page identifies Southwood Country Park as 57 hectares of green space in Farnborough and locates its field centre and east car park on Ively Road, Farnborough."
+        },
+        "visualReview": {
+          "tool": "view_image",
+          "checkedAt": "2026-10-28T20:06:57.543456Z",
+          "description": "Timber-clad field-centre building with Southwood Country Park Cafe & Field Centre lettering, glazed doors and a paved pedestrian forecourt.",
+          "reviewedStoredRendition": "work/photo-research/extra-local-review/osm-way-69972599-85cfe8e28f19.webp",
+          "renditionSha256": "85cfe8e28f197db4d4c63d210df0cd609dc6bcb18440b678dbc8fbb73ea65ba9",
+          "archive": "photos-official-initial.tar.gz",
+          "originalUrlMapping": "src/providers/data/venue-media.json originalUrl; existing archived WebP rendition reviewed, original bytes were not fetched to workspace"
+        },
+        "liveImage": {
+          "url": "https://www.rushmoor.gov.uk/media/x44jixll/southwood-country-park-cafe-and-field-centre.jpg?width=800&height=533&v=1d96e119ee557b0",
+          "webReference": "turn478847view1",
+          "finding": "Dedicated web open returned image content marker for the exact publisher URL. MCP exposed only a text marker, so actual visual review used the existing local rendition."
+        },
+        "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
+      }
+    },
+    {
+      "query": {
+        "id": "osm-way-816205062",
+        "name": "Whitewater Meadows",
+        "lat": 51.2914452,
+        "lng": -0.9454283,
+        "area": "Nearby",
+        "category": "Park",
+        "website": "https://www.tbhpartnership.org.uk/greenspace/whitewater-meadows/"
+      },
+      "checkedAt": "2026-10-28T20:06:57.543456Z",
+      "website": {
+        "urls": [
+          "https://tbhpartnership.org.uk/greenspace/whitewater-meadows/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": {
+        "url": "https://assets.tbhpartnership.org.uk/uploads/2019/08/IMG_3221-scaled-1024x768.jpg",
+        "source": "https://tbhpartnership.org.uk/greenspace/whitewater-meadows/",
+        "credit": "Thames Basin Heaths Partnership",
+        "license": "Website preview \u2014 rights reserved",
+        "rights": "website-preview",
+        "strategy": "official-website-preview",
+        "checkedAt": "2026-10-28T20:06:57.543456Z",
+        "width": 1024,
+        "height": 768,
+        "confidence": 0.95,
+        "matched": [
+          "official publisher venue and location matched",
+          "physical venue scene verified by visual review"
+        ],
+        "preview": {
+          "kind": "venue-image",
+          "pageUrl": "https://tbhpartnership.org.uk/greenspace/whitewater-meadows/",
+          "publisher": "Thames Basin Heaths Partnership",
+          "identityEvidence": [
+            "2026-10-28: Thames Basin Heaths Partnership page identifies Whitewater Meadows beside the River Whitewater, with its car park at Papermill Avenue, Hook RG27 9QU."
+          ],
+          "subjectEvidence": ["physical venue scene verified by visual review"],
+          "review": {
+            "method": "visual-review",
+            "imageUrl": "https://assets.tbhpartnership.org.uk/uploads/2019/08/IMG_3221-scaled-1024x768.jpg",
+            "checkedAt": "2026-10-28T20:06:57.543456Z",
+            "description": "A mown walking path crosses a broad grassy meadow with bushes, mature trees and blue sky filled with white clouds."
+          }
+        }
+      },
+      "retryable": false,
+      "status": "matched",
+      "evidence": {
+        "officialPage": {
+          "url": "https://tbhpartnership.org.uk/greenspace/whitewater-meadows/",
+          "webReference": "turn146155view2",
+          "checkedAt": "2026-10-28T20:06:57.543456Z",
+          "finding": "Thames Basin Heaths Partnership page identifies Whitewater Meadows beside the River Whitewater, with its car park at Papermill Avenue, Hook RG27 9QU."
+        },
+        "visualReview": {
+          "tool": "view_image",
+          "checkedAt": "2026-10-28T20:06:57.543456Z",
+          "description": "A mown walking path crosses a broad grassy meadow with bushes, mature trees and blue sky filled with white clouds.",
+          "reviewedStoredRendition": "work/photo-research/extra-local-review/osm-way-816205062-225f929c286d.webp",
+          "renditionSha256": "225f929c286d9040bb59970a0c048aefa21f00105f12a7d154d4761eb6a5f025",
+          "archive": "photos-official-initial.tar.gz",
+          "originalUrlMapping": "src/providers/data/venue-media.json originalUrl; existing archived WebP rendition reviewed, original bytes were not fetched to workspace"
+        },
+        "liveImage": {
+          "url": "https://assets.tbhpartnership.org.uk/uploads/2019/08/IMG_3221-scaled-1024x768.jpg",
+          "webReference": "turn862413view2",
+          "finding": "Dedicated web open returned image content marker for the exact publisher URL. MCP exposed only a text marker, so actual visual review used the existing local rendition."
+        },
+        "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
+      }
+    },
+    {
+      "query": {
+        "id": "osm-way-40349996",
+        "name": "Bassetts Mead Country Park",
+        "lat": 51.284879,
+        "lng": -0.9431537,
+        "area": "Nearby",
+        "category": "Park",
+        "website": "https://www.tbhpartnership.org.uk/greenspace/bassetts-mead-country-park/"
+      },
+      "checkedAt": "2026-10-28T20:06:57.543456Z",
+      "website": {
+        "urls": [
+          "https://tbhpartnership.org.uk/greenspace/bassetts-mead-country-park/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": {
+        "url": "https://assets.tbhpartnership.org.uk/uploads/2016/08/BassettsMeadGM3-scaled-1024x768.jpg",
+        "source": "https://tbhpartnership.org.uk/greenspace/bassetts-mead-country-park/",
+        "credit": "Thames Basin Heaths Partnership",
+        "license": "Website preview \u2014 rights reserved",
+        "rights": "website-preview",
+        "strategy": "official-website-preview",
+        "checkedAt": "2026-10-28T20:06:57.543456Z",
+        "width": 1024,
+        "height": 768,
+        "confidence": 0.95,
+        "matched": [
+          "official publisher venue and location matched",
+          "physical venue scene verified by visual review"
+        ],
+        "preview": {
+          "kind": "venue-image",
+          "pageUrl": "https://tbhpartnership.org.uk/greenspace/bassetts-mead-country-park/",
+          "publisher": "Thames Basin Heaths Partnership",
+          "identityEvidence": [
+            "2026-10-28: Thames Basin Heaths Partnership page identifies Bassetts Mead near Hook, postcode RG27 9UW, with car parks off Holt Lane, Doctors Acre and Athoke Croft; it identifies Hook Parish Council ownership and Hampshire & Isle of Wight Wildlife Trust management."
+          ],
+          "subjectEvidence": ["physical venue scene verified by visual review"],
+          "review": {
+            "method": "visual-review",
+            "imageUrl": "https://assets.tbhpartnership.org.uk/uploads/2016/08/BassettsMeadGM3-scaled-1024x768.jpg",
+            "checkedAt": "2026-10-28T20:06:57.543456Z",
+            "description": "Buttercups and other meadow flowers fill a grassy field bordered by bushes, tall reeds and trees under a clear blue sky."
+          }
+        }
+      },
+      "retryable": false,
+      "status": "matched",
+      "evidence": {
+        "officialPage": {
+          "url": "https://tbhpartnership.org.uk/greenspace/bassetts-mead-country-park/",
+          "webReference": "turn146155view3",
+          "checkedAt": "2026-10-28T20:06:57.543456Z",
+          "finding": "Thames Basin Heaths Partnership page identifies Bassetts Mead near Hook, postcode RG27 9UW, with car parks off Holt Lane, Doctors Acre and Athoke Croft; it identifies Hook Parish Council ownership and Hampshire & Isle of Wight Wildlife Trust management."
+        },
+        "visualReview": {
+          "tool": "view_image",
+          "checkedAt": "2026-10-28T20:06:57.543456Z",
+          "description": "Buttercups and other meadow flowers fill a grassy field bordered by bushes, tall reeds and trees under a clear blue sky.",
+          "reviewedStoredRendition": "work/photo-research/extra-local-review/osm-way-40349996-ea4ae243505e.webp",
+          "renditionSha256": "ea4ae243505e5eff78efa137071a1fd7ae6523261365d69c7d1806b2b68a6e80",
+          "archive": "photos-official-initial.tar.gz",
+          "originalUrlMapping": "src/providers/data/venue-media.json originalUrl; existing archived WebP rendition reviewed, original bytes were not fetched to workspace"
+        },
+        "liveImage": {
+          "url": "https://assets.tbhpartnership.org.uk/uploads/2016/08/BassettsMeadGM3-scaled-1024x768.jpg",
+          "webReference": "turn862413view3",
+          "finding": "Dedicated web open returned image content marker for the exact publisher URL. MCP exposed only a text marker, so actual visual review used the existing local rendition."
+        },
+        "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
+      }
+    },
+    {
+      "query": {
+        "id": "osm-way-160942371",
+        "name": "Village Hotel, Farnborough",
+        "lat": 51.2868101,
+        "lng": -0.759817,
+        "area": "Farnborough",
+        "postcode": "GU14 7BF",
+        "category": "Restaurant",
+        "website": "https://www.village-hotels.co.uk/hotels/farnborough/"
+      },
+      "checkedAt": "2026-10-28T20:06:57.543456Z",
+      "website": {
+        "urls": ["https://www.village-hotels.co.uk/farnborough"],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": {
+        "url": "https://image-tc.galaxy.tf/wijpeg-atsdtp46984w8gft1dzh8wrry/5819scr-f2da74ce467a4df.jpg",
+        "source": "https://www.village-hotels.co.uk/farnborough",
+        "credit": "Village Hotels",
+        "license": "Website preview \u2014 rights reserved",
+        "rights": "website-preview",
+        "strategy": "official-website-preview",
+        "checkedAt": "2026-10-28T20:06:57.543456Z",
+        "width": 1065,
+        "height": 800,
+        "confidence": 0.95,
+        "matched": [
+          "official publisher venue and location matched",
+          "physical venue scene verified by visual review"
+        ],
+        "preview": {
+          "kind": "venue-image",
+          "pageUrl": "https://www.village-hotels.co.uk/farnborough",
+          "publisher": "Village Hotels",
+          "identityEvidence": [
+            "2026-10-28: Official Village Hotel Farnborough page confirms Business Park, Pinehurst Road, Farnborough GU14 7BF and describes its gym, indoor pool and health club."
+          ],
+          "subjectEvidence": ["physical venue scene verified by visual review"],
+          "review": {
+            "method": "visual-review",
+            "imageUrl": "https://image-tc.galaxy.tf/wijpeg-atsdtp46984w8gft1dzh8wrry/5819scr-f2da74ce467a4df.jpg",
+            "checkedAt": "2026-10-28T20:06:57.543456Z",
+            "description": "Actual multi-storey Village Hotel frontage with dark blue glazing, central silver cladding, ground-floor Verve Grill lettering, trimmed shrubs and a paved entrance approach."
+          }
+        }
+      },
+      "retryable": false,
+      "status": "matched",
+      "evidence": {
+        "officialPage": {
+          "url": "https://www.village-hotels.co.uk/farnborough",
+          "webReference": "turn862413view6",
+          "checkedAt": "2026-10-28T20:06:57.543456Z",
+          "finding": "Official Village Hotel Farnborough page confirms Business Park, Pinehurst Road, Farnborough GU14 7BF and describes its gym, indoor pool and health club."
+        },
+        "visualReview": {
+          "tool": "view_image",
+          "checkedAt": "2026-10-28T20:06:57.543456Z",
+          "description": "Actual multi-storey Village Hotel frontage with dark blue glazing, central silver cladding, ground-floor Verve Grill lettering, trimmed shrubs and a paved entrance approach.",
+          "reviewedStoredRendition": "work/photo-research/extra-local-review/osm-way-160942371-2e0349e28c62.webp",
+          "renditionSha256": "2e0349e28c62ae36ceb17c7afad5f712145ac0eceeffa3f2a281fc9bf7a89222",
+          "archive": "photos-official-initial.tar.gz",
+          "originalUrlMapping": "src/providers/data/venue-media.json originalUrl; existing archived WebP rendition reviewed, original bytes were not fetched to workspace"
+        },
+        "liveImage": {
+          "url": "https://image-tc.galaxy.tf/wijpeg-atsdtp46984w8gft1dzh8wrry/5819scr-f2da74ce467a4df.jpg",
+          "webReference": "turn862413view4",
+          "finding": "Dedicated web open returned image content marker for the exact publisher URL. MCP exposed only a text marker, so actual visual review used the existing local rendition."
+        },
+        "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
+      }
+    }
+  ]
+}

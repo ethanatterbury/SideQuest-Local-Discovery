@@ -159,6 +159,13 @@ export type Place = {
       kind: "open-graph" | "twitter" | "venue-image";
       identityEvidence: string[];
       subjectEvidence: string[];
+      review?: {
+        method: "visual-review" | "image-analysis:web-image-search";
+        imageUrl: string;
+        checkedAt: string;
+        description: string;
+        sha256?: string;
+      };
     };
     checkedAt?: string;
   };

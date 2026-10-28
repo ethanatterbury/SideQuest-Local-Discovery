@@ -1,3 +1,8 @@
+import {
+  preparedWebsiteCandidates,
+  websiteDiscoveryIdentity,
+} from "./prepared-venue-photos";
+export { websiteDiscoveryIdentity };
 import { isIP } from "node:net";
 export type WebsiteDiscoveryQuery = {
   id?: string;
@@ -49,8 +54,16 @@ function candidate(value: unknown): URL | null {
     return null;
   }
 }
-/** Candidate discovery only. Official page identity/location must still be checked. */
+/** Public browsing only reads durable prepared hints; a configured key cannot trigger spend. */
 export async function discoverOfficialWebsite(
+  query: WebsiteDiscoveryQuery,
+  options: { signal?: AbortSignal; timeoutMs?: number } = {},
+): Promise<WebsiteDiscoveryResult> {
+  if (options.signal?.aborted) return { urls: [], status: "unavailable" };
+  return preparedWebsiteCandidates(query) || { urls: [], status: "disabled" };
+}
+/** Explicit offline maintenance only. Callers must reserve their persistent search budget first. */
+export async function searchOfficialWebsite(
   query: WebsiteDiscoveryQuery,
   options: { signal?: AbortSignal; timeoutMs?: number } = {},
 ): Promise<WebsiteDiscoveryResult> {
@@ -63,12 +76,7 @@ export async function discoverOfficialWebsite(
     !Number.isFinite(query.lng)
   )
     return { urls: [], status: "no-match" };
-  const key = JSON.stringify([
-    normalize(query.name),
-    query.lat.toFixed(4),
-    query.lng.toFixed(4),
-    query.area,
-  ]);
+  const key = websiteDiscoveryIdentity(query);
   const hit = cache.get(key);
   if (hit && hit.until > Date.now()) return hit.result;
   const running = pending.get(key);

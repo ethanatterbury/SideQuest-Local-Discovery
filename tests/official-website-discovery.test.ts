@@ -9,10 +9,10 @@ it("does not use web search without a configured key", async () => {
   vi.stubEnv("TAVILY_API_KEY", "");
   const fetcher = vi.fn();
   vi.stubGlobal("fetch", fetcher);
-  const { discoverOfficialWebsite } =
+  const { searchOfficialWebsite } =
     await import("../src/providers/official-website-discovery");
   expect(
-    await discoverOfficialWebsite({ name: "Acorn Play", lat: 51, lng: -1 }),
+    await searchOfficialWebsite({ name: "Acorn Play", lat: 51, lng: -1 }),
   ).toEqual({ urls: [], status: "disabled" });
   expect(fetcher).not.toHaveBeenCalled();
 });
@@ -30,16 +30,16 @@ it("returns bounded untrusted official-site candidates, shares lookups and omits
     }),
   );
   vi.stubGlobal("fetch", fetcher);
-  const { discoverOfficialWebsite } =
+  const { searchOfficialWebsite } =
     await import("../src/providers/official-website-discovery");
   const query = { name: "Acorn Play", lat: 51, lng: -1, area: "Fleet" };
   const [a, b] = await Promise.all([
-    discoverOfficialWebsite(query),
-    discoverOfficialWebsite(query),
+    searchOfficialWebsite(query),
+    searchOfficialWebsite(query),
   ]);
   expect(a).toEqual({ urls: ["https://acorn.example/play"], status: "found" });
   expect(b).toEqual(a);
-  expect(await discoverOfficialWebsite(query)).toEqual(a);
+  expect(await searchOfficialWebsite(query)).toEqual(a);
   expect(fetcher).toHaveBeenCalledTimes(1);
   const options = fetcher.mock.calls[0] as unknown as [string, RequestInit];
   const body = JSON.parse(String(options[1].body));
@@ -58,13 +58,33 @@ it("treats provider quota exhaustion as unavailable without leaking its response
     "fetch",
     vi.fn(async () => new Response("private quota detail", { status: 432 })),
   );
-  const { discoverOfficialWebsite } =
+  const { searchOfficialWebsite } =
     await import("../src/providers/official-website-discovery");
   expect(
-    await discoverOfficialWebsite({
+    await searchOfficialWebsite({
       name: "Another play venue",
       lat: 52,
       lng: -2,
     }),
   ).toEqual({ urls: [], status: "unavailable" });
+});
+
+it("spends no search credits across public requests even when a Tavily key is configured", async () => {
+  vi.stubEnv("TAVILY_API_KEY", "test-private-key");
+  const fetcher = vi.fn(async () => Response.json({ results: [] }));
+  vi.stubGlobal("fetch", fetcher);
+  const { discoverOfficialWebsite } =
+    await import("../src/providers/official-website-discovery");
+  const results = await Promise.all(
+    Array.from({ length: 100 }, (_, i) =>
+      discoverOfficialWebsite({
+        id: `osm-node-${i + 1}`,
+        name: `Public venue ${i}`,
+        lat: 51,
+        lng: -1,
+      }),
+    ),
+  );
+  expect(results.every((result) => result.status === "disabled")).toBe(true);
+  expect(fetcher).not.toHaveBeenCalled();
 });

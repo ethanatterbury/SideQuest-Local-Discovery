@@ -49,12 +49,33 @@ function approvedWebsitePreview(
     );
   if (!evidence(preview.identityEvidence) || !evidence(preview.subjectEvidence))
     return;
+  const review = preview.review;
+  const validReview =
+    !!review &&
+    ["visual-review", "image-analysis:web-image-search"].includes(
+      review.method,
+    ) &&
+    review.imageUrl === image.url &&
+    typeof review.description === "string" &&
+    review.description.trim().length >= 20 &&
+    review.description.length <= 1000 &&
+    Number.isFinite(Date.parse(review.checkedAt)) &&
+    Date.parse(review.checkedAt) <= Date.now() + 300000 &&
+    (!review.sha256 || /^[a-f0-9]{64}$/.test(review.sha256));
+  if (review && !validReview) return;
   if (
     preview.kind === "venue-image" &&
     !preview.subjectEvidence.some(
       (value) =>
         value === "physical venue scene in image metadata" ||
-        value === "named outdoor attraction photograph",
+        value === "named outdoor attraction photograph" ||
+        (validReview &&
+          review?.method === "visual-review" &&
+          value === "physical venue scene verified by visual review") ||
+        (validReview &&
+          review?.method === "image-analysis:web-image-search" &&
+          value ===
+            "physical venue scene described by external image analysis"),
     )
   )
     return;
