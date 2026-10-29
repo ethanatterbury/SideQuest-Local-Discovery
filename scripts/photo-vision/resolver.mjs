@@ -213,6 +213,149 @@ function validatedScores(output) {
   };
 }
 
+/** Scene quality only: source identity and open rights are independently verified. */
+export function createLocalSceneReviewer(deps = {}) {
+  const download = deps.download || downloadOfficialPhoto;
+  const decodeImage = deps.decodeImage || decodePhotoImage;
+  let classifier;
+  const loadClassifier = () => {
+    if (!classifier) {
+      const pending = deps.loadClassifier
+        ? Promise.resolve().then(() => deps.loadClassifier())
+        : runtime().then((loaded) => loaded.classify);
+      classifier = pending;
+      void pending.catch(() => {
+        if (classifier === pending) classifier = undefined;
+      });
+    }
+    return classifier;
+  };
+  return async (image, options = {}) => {
+    let modelStatus = "not-loaded";
+    const finish = (status, reason, evidence = {}) => ({
+      accepted: status === "accepted",
+      sha256: null,
+      width: null,
+      height: null,
+      localClip: null,
+      ...evidence,
+      diagnostics: { status, reason, modelStatus },
+    });
+    if (
+      Object.keys(options).some(
+        (key) => !["signal", "timeoutMs"].includes(key),
+      ) ||
+      (options.timeoutMs !== undefined &&
+        (!Number.isFinite(options.timeoutMs) || options.timeoutMs < 1)) ||
+      image?.strategy !== "geograph-commons-source-id" ||
+      image.rights !== "open" ||
+      !approvedPhoto(image) ||
+      !image.source.startsWith("https://commons.wikimedia.org/wiki/File:") ||
+      !image.url.startsWith("https://upload.wikimedia.org/wikipedia/commons/")
+    )
+      return finish("ineligible", "unconfirmed-open-photo-source");
+    const controller = new AbortController();
+    const abort = () => controller.abort();
+    options.signal?.addEventListener("abort", abort, { once: true });
+    if (options.signal?.aborted) abort();
+    const timer = setTimeout(
+      abort,
+      Math.min(12_000, options.timeoutMs || 12_000),
+    );
+    try {
+      if (controller.signal.aborted) return finish("timeout", "review-timeout");
+      let classify;
+      try {
+        classify = await bounded(loadClassifier(), controller.signal);
+        if (typeof classify !== "function")
+          throw new Error("invalid-model-runtime");
+        modelStatus = "ready";
+      } catch {
+        modelStatus = "unavailable";
+        return finish(
+          controller.signal.aborted ? "timeout" : "unavailable",
+          "model-unavailable",
+        );
+      }
+      let photo;
+      try {
+        photo = await bounded(
+          download(image.url, {
+            signal: controller.signal,
+            timeoutMs: Math.min(5000, options.timeoutMs || 12000),
+          }),
+          controller.signal,
+        );
+      } catch {
+        return finish(
+          controller.signal.aborted ? "timeout" : "unavailable",
+          "image-download-unavailable",
+        );
+      }
+      if (!photo) return finish("unavailable", "image-download-unavailable");
+      const bytes = Buffer.isBuffer(photo.buffer)
+        ? photo.buffer
+        : Buffer.from(photo.buffer || []);
+      const contentType = magicType(bytes);
+      if (
+        !bytes.length ||
+        bytes.length > 8_000_000 ||
+        !contentType ||
+        contentType !== photo.contentType ||
+        photo.url !== image.url
+      )
+        return finish("rejected", "invalid-image");
+      let frame;
+      try {
+        frame = await bounded(
+          decodeImage(bytes, contentType),
+          controller.signal,
+        );
+        if (
+          !Number.isInteger(frame.width) ||
+          !Number.isInteger(frame.height) ||
+          Math.min(frame.width, frame.height) < 240 ||
+          frame.width / frame.height > 4 ||
+          frame.height / frame.width > 4 ||
+          frame.width * frame.height > 40_000_000
+        )
+          return finish("rejected", "unusable-image-dimensions");
+      } catch {
+        return finish(
+          controller.signal.aborted ? "timeout" : "rejected",
+          "image-decoding-failed",
+        );
+      }
+      let clip;
+      try {
+        clip = validatedScores(
+          await bounded(classify(frame), controller.signal),
+        );
+      } catch {
+        return finish(
+          controller.signal.aborted ? "timeout" : "unavailable",
+          "classification-failed",
+        );
+      }
+      if (!clip) return finish("unavailable", "invalid-model-output");
+      if (
+        clip.bestVenueScore < threshold.minScore ||
+        clip.margin < threshold.minMargin
+      )
+        return finish("rejected", "scene-threshold-not-met");
+      return finish("accepted", "scene-threshold-met", {
+        sha256: createHash("sha256").update(bytes).digest("hex"),
+        width: frame.width,
+        height: frame.height,
+        localClip: clip,
+      });
+    } finally {
+      clearTimeout(timer);
+      options.signal?.removeEventListener("abort", abort);
+    }
+  };
+}
+
 /**
  * Review only opt-in official-provider candidates with completed identity gates.
  * No photograph is stored: original bytes and decoded frames remain in memory.

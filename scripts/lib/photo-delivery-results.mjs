@@ -5,7 +5,9 @@ import { pathToFileURL } from "node:url";
 import { loadProvider } from "./provider-loader.mjs";
 import {
   photoDeliveryChecks,
+  photoDeliveryUrlMatches,
   photoDeliverySelectionTime,
+  photoNeedsDelivery,
 } from "./photo-delivery-selection.mjs";
 
 const { approvedPhoto } = loadProvider("src/providers/photo-policy.ts");
@@ -14,6 +16,18 @@ const { websiteDiscoveryIdentity } = loadProvider(
 );
 const INVENTORY =
   "every prepared publisher photograph has a navigable venue id";
+
+/**
+ * @typedef {object} PhotoDeliveryFailure
+ * @property {string} id
+ * @property {string} name
+ * @property {string} checkedAt
+ * @property {string} imageUrl
+ * @property {string} testStatus
+ * @property {string} reason
+ * @property {number} elapsedMs
+ * @property {{url: string, error: string | null}[]} failures
+ */
 
 function specsIn(suite) {
   return [...(suite.specs ?? []), ...(suite.suites ?? []).flatMap(specsIn)];
@@ -113,10 +127,10 @@ export function reconcilePhotoDelivery({
     quarantined: 0,
     retainedPrior: 0,
     retainedVerified: 0,
-    failures: [],
+    failures: /** @type {PhotoDeliveryFailure[]} */ ([]),
   };
   const entries = after.entries.map((entry) => {
-    if (entry.image?.rights !== "website-preview") return entry;
+    if (!photoNeedsDelivery(entry)) return entry;
     const identity = websiteDiscoveryIdentity(entry.query);
     const check = required.get(identity);
     if (!check) {
@@ -127,50 +141,102 @@ export function reconcilePhotoDelivery({
       };
     }
     const title = `${entry.query.id}: ${entry.query.name}`;
+    // Missing, duplicated or unfinished tests mean the batch itself is incomplete.
     const result = resultFor(specs, title);
-    const delivery = JSON.parse(
-      attachment(result, "publisher-image-delivery").toString("utf8"),
-    );
-    assert.equal(
-      delivery.id,
-      entry.query.id,
-      `Mismatched delivery evidence: ${title}`,
-    );
-    assert.equal(
-      delivery.expectedImageUrl,
-      entry.image.url,
-      `Mismatched delivery image: ${title}`,
-    );
-    assert.equal(
-      delivery.source,
-      entry.image.source,
-      `Mismatched delivery source: ${title}`,
-    );
-    assert.ok(
-      Number.isFinite(delivery.elapsedMs),
-      `Incomplete delivery evidence: ${title}`,
-    );
-    assert.ok(
-      delivery.navigationStatus === 200 && delivery.venueVisible === true,
-      `Browser infrastructure or venue page failure: ${title}`,
-    );
-    if (result.status === "passed") {
-      assert.ok(
-        delivery.browser?.hero?.some(
-          (image) =>
-            image.complete === true &&
-            image.naturalWidth > 0 &&
-            image.naturalHeight > 0 &&
-            image.src === entry.image.url &&
-            image.currentSrc === entry.image.url,
-        ),
-        `No decoded publisher photograph in browser evidence: ${title}`,
+    let delivery;
+    let evidenceError;
+    try {
+      delivery = JSON.parse(
+        attachment(result, "publisher-image-delivery").toString("utf8"),
       );
-      if (check.screenshot)
+      assert.equal(
+        delivery.id,
+        entry.query.id,
+        `Mismatched delivery evidence: ${title}`,
+      );
+      assert.equal(
+        delivery.expectedImageUrl,
+        entry.image.url,
+        `Mismatched delivery image: ${title}`,
+      );
+      assert.equal(
+        delivery.source,
+        entry.image.source,
+        `Mismatched delivery source: ${title}`,
+      );
+      assert.ok(
+        Number.isFinite(delivery.elapsedMs),
+        `Incomplete delivery evidence: ${title}`,
+      );
+      assert.ok(
+        delivery.navigationStatus === 200 && delivery.venueVisible === true,
+        `Browser infrastructure or venue page failure: ${title}`,
+      );
+      if (result.status === "passed") {
         assert.ok(
-          attachment(result, "detail-page").length > 0,
-          `Missing screenshot evidence: ${title}`,
+          delivery.browser?.hero?.some(
+            (image) =>
+              image.complete === true &&
+              image.naturalWidth > 0 &&
+              image.naturalHeight > 0 &&
+              photoDeliveryUrlMatches(
+                image.src,
+                entry.image,
+                delivery.browser.pageUrl,
+              ) &&
+              photoDeliveryUrlMatches(
+                image.currentSrc,
+                entry.image,
+                delivery.browser.pageUrl,
+              ),
+          ),
+          `No decoded prepared photograph in browser evidence: ${title}`,
         );
+        if (entry.image.rights === "open") {
+          const credit = delivery.browser.credit;
+          assert.ok(
+            credit?.visible === true &&
+              typeof credit.text === "string" &&
+              credit.text.startsWith("Photo:") &&
+              credit.text.includes(entry.image.credit) &&
+              credit.text.includes(entry.image.license) &&
+              Array.isArray(credit.links) &&
+              credit.links.some(
+                (link) =>
+                  link.href === entry.image.source &&
+                  typeof link.text === "string" &&
+                  link.text.includes(entry.image.credit) &&
+                  link.text.includes(entry.image.license),
+              ),
+            `Missing or mismatched open photo attribution evidence: ${title}`,
+          );
+          if (entry.image.license.startsWith("CC BY")) {
+            const version = entry.image.license.match(
+              /\b(?:1\.0|2\.0|2\.5|3\.0|4\.0)\b/,
+            )?.[0];
+            const href = version
+              ? `https://creativecommons.org/licenses/${entry.image.license.includes("SA") ? "by-sa" : "by"}/${version}/`
+              : entry.image.source;
+            assert.ok(
+              credit.links.some(
+                (link) => link.text === "Licence" && link.href === href,
+              ),
+              `Missing open photo licence attribution link: ${title}`,
+            );
+          }
+        }
+        if (check.screenshot)
+          assert.ok(
+            attachment(result, "detail-page").length > 0,
+            `Missing screenshot evidence: ${title}`,
+          );
+      }
+    } catch (error) {
+      // A completed test is never approval without its complete per-photo proof.
+      // Quarantine this image while preserving independently verified siblings.
+      evidenceError = String(error?.message || error).slice(0, 1000);
+    }
+    if (result.status === "passed" && !evidenceError) {
       summary.passed++;
       const verified = { ...entry, deliveryVerifiedAt: checkedAt };
       delete verified.deliveryFailure;
@@ -181,9 +247,19 @@ export function reconcilePhotoDelivery({
       checkedAt,
       imageUrl: entry.image.url,
       testStatus: result.status,
-      reason: "publisher-image-delivery-failed",
-      elapsedMs: delivery.elapsedMs,
-      failures: (delivery.imageFailures ?? []).slice(0, 10),
+      reason: evidenceError
+        ? "incomplete-photo-delivery-evidence"
+        : "publisher-image-delivery-failed",
+      elapsedMs: Number.isFinite(delivery?.elapsedMs)
+        ? delivery.elapsedMs
+        : Number.isFinite(result.duration)
+          ? result.duration
+          : 0,
+      failures: evidenceError
+        ? [{ url: entry.image.url, error: evidenceError }]
+        : Array.isArray(delivery?.imageFailures)
+          ? delivery.imageFailures.slice(0, 10)
+          : [],
     };
     summary.failures.push({
       id: entry.query.id,

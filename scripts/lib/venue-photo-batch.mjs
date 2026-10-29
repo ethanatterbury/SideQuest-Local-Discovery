@@ -754,6 +754,7 @@ export async function runVenuePhotoBatch(options, providers) {
           checkedAt,
           reviewVersion,
           website,
+          ...(prior?.geograph ? { geograph: prior.geograph } : {}),
           image,
           retryable: image ? false : retryable,
           status: image

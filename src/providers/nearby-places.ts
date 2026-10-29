@@ -620,6 +620,31 @@ export function selectNearbyPlaces(
 const snapshotMessage =
   "OpenStreetMap area snapshot · check venue details before going.";
 const cellCache = new Map<string, Place[]>();
+// Per-object provenance is internal: never trust a cell/global newest timestamp.
+const snapshotDates = new WeakMap<Place, string>();
+export function snapshotSourceDate(place: Place): string | undefined {
+  return snapshotDates.get(place);
+}
+let snapshotIndex: Promise<Record<string, string>> | undefined;
+async function readSnapshotIndex(): Promise<Record<string, string>> {
+  snapshotIndex ??= readFile(
+    path.join(process.cwd(), "public/data/venues/id-index.json"),
+    "utf8",
+  ).then((body) => JSON.parse(body));
+  return snapshotIndex;
+}
+/** Local source record only; bypass remembered providers and all live lookups. */
+export async function getSnapshotPlace(id: string): Promise<Place | null> {
+  if (!/^osm-(node|way|relation)-[1-9]\d{0,15}$/.test(id)) return null;
+  try {
+    const index = await readSnapshotIndex();
+    if (typeof index[id] !== "string") return null;
+    return (await readCell(index[id])).find((place) => place.id === id) || null;
+  } catch {
+    snapshotIndex = undefined;
+    return null;
+  }
+}
 async function readCell(id: string): Promise<Place[]> {
   if (!/^\d+_-?\d+$/.test(id)) return [];
   if (cellCache.has(id)) return cellCache.get(id)!;
@@ -628,6 +653,10 @@ async function readCell(id: string): Promise<Place[]> {
       path.join(process.cwd(), "public/data/venues", id + ".json"),
     );
     const places = Array.isArray(data.places) ? (data.places as Place[]) : [];
+    for (const place of places) {
+      const sourceAt = data.sourceDates?.[place.id];
+      if (typeof sourceAt === "string") snapshotDates.set(place, sourceAt);
+    }
     cellCache.set(id, places);
     if (cellCache.size > 80) cellCache.delete(cellCache.keys().next().value!);
     return places;
@@ -774,22 +803,8 @@ export async function getLivePlace(id: string): Promise<Place | null> {
   const match = /^osm-(node|way|relation)-([1-9]\d{0,15})$/.exec(id);
   if (!match || !Number.isSafeInteger(Number(match[2]))) return null;
   if (details.has(id)) return details.get(id)!;
-  try {
-    const index = JSON.parse(
-      await readFile(
-        path.join(process.cwd(), "public/data/venues/id-index.json"),
-        "utf8",
-      ),
-    );
-    if (typeof index[id] === "string") {
-      const found = (await readCell(index[id])).find(
-        (place) => place.id === id,
-      );
-      if (found) return found;
-    }
-  } catch {
-    /* Missing data still permits a bounded live lookup. */
-  }
+  const snapshot = await getSnapshotPlace(id);
+  if (snapshot) return snapshot;
   const key = `detail:${id}`;
   try {
     let request = pending.get(key);

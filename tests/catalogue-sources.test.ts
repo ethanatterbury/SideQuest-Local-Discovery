@@ -3,6 +3,35 @@ import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { gzipSync } from "node:zlib";
+import { canonicalCataloguePlaces } from "../scripts/lib/catalogue-sources.mjs";
+
+it("prepares only the published source winner when a venue name or centroid changes", () => {
+  const old = {
+    id: "osm-way-123",
+    name: "Old name",
+    coordinates: { lat: 51, lng: -1 },
+  };
+  const other = {
+    id: "osm-node-123",
+    name: "Different venue",
+    coordinates: { lat: 52, lng: -1 },
+  };
+  const current = {
+    ...old,
+    name: "Current name",
+    coordinates: { lat: 51.0001, lng: -1 },
+  };
+  const result = canonicalCataloguePlaces([old, other, current]);
+  expect(result).toEqual([current, other]);
+  expect(result[0]).toBe(current);
+});
+
+it.each([null, {}, [{ name: "No ID" }], [{ id: " " }]])(
+  "does not silently discard invalid catalogue input %j",
+  (input) => {
+    expect(() => canonicalCataloguePlaces(input)).toThrow();
+  },
+);
 
 const folders: string[] = [];
 async function fixture() {

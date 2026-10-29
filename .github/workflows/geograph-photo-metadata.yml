@@ -1,0 +1,163 @@
+name: Prepare Geograph photo metadata candidates
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "31 5 * * 1"
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/geograph-photo-metadata.yml
+      - scripts/import-geograph-venue-matches.py
+      - tests/test_geograph_venue_matches.py
+      - scripts/build-venue-cells.mjs
+      - scripts/lib/catalogue-sources.mjs
+      - scripts/lib/provider-loader.mjs
+      - src/providers/nearby-places.ts
+      - src/domain/**
+      - src/providers/data/regional-osm.json
+      - src/providers/data/venue-evidence.json
+      - src/providers/data/regions/**
+      - package.json
+      - package-lock.json
+
+permissions:
+  contents: read
+
+concurrency:
+  group: geograph-photo-metadata-main
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      base_sha: ${{ steps.base.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - id: base
+        name: Record the source revision
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: npm ci --ignore-scripts
+      - name: Prepare national venue metadata locally
+        run: npm run prepare:data
+      - name: Verify the streaming matcher with tiny offline fixtures
+        run: python -m unittest discover -s tests -p test_geograph_venue_matches.py -v
+      - name: Stream free metadata under fixed processing quotas
+        shell: bash
+        run: |
+          mkdir -p work/geograph
+          python scripts/import-geograph-venue-matches.py --download --work-dir work/geograph --max-file-mb 512 --max-total-mb 1024 --output src/providers/data/geograph-venue-matches.json.gz | tee work/geograph/import.jsonl
+      - name: Report candidates and matching evidence
+        run: |
+          python - <<'PY'
+          import gzip, json, os
+          with gzip.open('src/providers/data/geograph-venue-matches.json.gz', 'rt') as stream:
+              data = json.load(stream)
+          assert data['version'] == 1 and data['status'] == 'candidates'
+          entries = data['entries']
+          summary = {
+              'matchedVenues': len(entries),
+              'candidateMetadataRecords': sum(len(e['candidates']) for e in entries),
+              'approvedImages': 0,
+              'imageDownloads': 0,
+              'sourceDumps': data['sources'],
+              'sampleEvidence': [
+                  {'venueId': e['query']['id'], 'geographId': c['geographId'],
+                   'distanceMetres': c['evidence']['distanceMetres'],
+                   'subjectPrecisionMetres': c['subjectPrecision']['metres']}
+                  for e in entries[:5] for c in e['candidates'][:1]],
+          }
+          with open('work/geograph/summary.json', 'w') as stream:
+              json.dump(summary, stream, indent=2)
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as stream:
+              stream.write('### Geograph metadata candidates\n\n')
+              stream.write('Free daily metadata only. No images downloaded or approved; these counts are candidates, not photo coverage.\n\n')
+              stream.write('```json\n' + json.dumps(summary, indent=2) + '\n```\n')
+          print(json.dumps(summary))
+          PY
+      - name: Retain count and timing evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: geograph-metadata-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            work/geograph/import.jsonl
+            work/geograph/summary.json
+          retention-days: 7
+      - name: Retain only the compressed publication candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: geograph-metadata-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: src/providers/data/geograph-venue-matches.json.gz
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: geograph-metadata-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: work/geograph-publication
+      - name: Publish candidate metadata without overwriting newer sources
+        env:
+          PREPARED_BASE_SHA: ${{ needs.prepare.outputs.base_sha }}
+        shell: bash
+        run: |
+          current_sha=$(git rev-parse HEAD)
+          git merge-base --is-ancestor "$PREPARED_BASE_SHA" "$current_sha"
+          # Independent UI and photo publication may advance main. Any change to
+          # matching inputs, normalization, this importer, or its output blocks reuse.
+          relevant=(
+            .github/workflows/geograph-photo-metadata.yml
+            scripts/import-geograph-venue-matches.py
+            tests/test_geograph_venue_matches.py
+            scripts/build-venue-cells.mjs
+            scripts/lib/catalogue-sources.mjs
+            scripts/lib/provider-loader.mjs
+            src/providers/nearby-places.ts
+            src/domain
+            src/providers/data/regional-osm.json
+            src/providers/data/venue-evidence.json
+            src/providers/data/regions
+            src/providers/data/geograph-venue-matches.json.gz
+            package.json
+            package-lock.json
+          )
+          if ! git diff --quiet "$PREPARED_BASE_SHA" "$current_sha" -- "${relevant[@]}"; then
+            echo "Matching sources or candidate metadata changed after preparation; rerun against current main." | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          cp work/geograph-publication/geograph-venue-matches.json.gz src/providers/data/geograph-venue-matches.json.gz
+          git add -- src/providers/data/geograph-venue-matches.json.gz
+          if git diff --cached --quiet; then
+            echo "Candidate metadata is unchanged." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Refresh Geograph venue photo metadata candidates"
+          # A normal fast-forward push rejects a race after the source guard.
+          git push origin HEAD:main
+          echo "Published candidate metadata: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"

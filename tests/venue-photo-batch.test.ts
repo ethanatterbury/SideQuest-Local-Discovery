@@ -96,6 +96,53 @@ afterEach(async () => {
   );
 });
 
+it("preserves an independent Geograph miss checkpoint when an official-site refresh still has no photograph", async () => {
+  const paths = await setup();
+  const venue = place("geograph-preservation", "https://acornplay.co.uk/");
+  const geograph = {
+    version: "geograph-commons-v1",
+    fingerprint: "a".repeat(64),
+    checkedAt: new Date(start - day).toISOString(),
+    status: "unresolved",
+    retryable: false,
+    reason: "not-found",
+    attempts: [{ geographId: 12345, reason: "not-found" }],
+  };
+  await writeFile(
+    paths.output,
+    JSON.stringify({
+      version: 1,
+      entries: [
+        {
+          query: {
+            id: venue.id,
+            name: venue.name,
+            lat: venue.coordinates.lat,
+            lng: venue.coordinates.lng,
+            area: venue.area,
+            website: venue.website,
+          },
+          checkedAt: new Date(start - 31 * day).toISOString(),
+          image: null,
+          retryable: false,
+          status: "unresolved",
+          website: { urls: [venue.website], status: "found", source: "mapped" },
+          geograph,
+        },
+      ],
+    }),
+  );
+  const deps = providers();
+  expect(
+    await runVenuePhotoBatch(
+      { ...paths, places: [venue], refresh: true },
+      deps,
+    ),
+  ).toMatchObject({ processed: 1, matched: 0, unresolved: 1 });
+  expect(deps.resolveOfficialWebsitePreview).toHaveBeenCalledOnce();
+  expect((await json(paths.output)).entries[0].geograph).toEqual(geograph);
+});
+
 it("accepts batches above 100 through 1000 while rejecting 1001", async () => {
   const paths = await setup();
   const report = await runVenuePhotoBatch(

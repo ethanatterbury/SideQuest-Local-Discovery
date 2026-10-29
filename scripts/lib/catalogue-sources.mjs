@@ -6,6 +6,18 @@ import { promisify } from "node:util";
 const decompress = promisify(gunzip);
 const regions = "src/providers/data/regions";
 
+/** Match cell publication: the last source owns each stable venue ID. */
+export function canonicalCataloguePlaces(places) {
+  if (!Array.isArray(places)) throw new Error("Expected catalogue places");
+  const current = new Map();
+  for (const place of places) {
+    if (typeof place?.id !== "string" || !place.id.trim())
+      throw new Error("Invalid catalogue venue ID");
+    current.set(place.id, place);
+  }
+  return [...current.values()];
+}
+
 /** Share the same durable OSM sources between production cells and photo batches. */
 export async function discoverCatalogueSources(root, supplied = []) {
   if (supplied.length) return [...supplied];

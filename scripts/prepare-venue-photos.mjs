@@ -4,6 +4,7 @@ import { loadProvider } from "./lib/provider-loader.mjs";
 import { runVenuePhotoBatch } from "./lib/venue-photo-batch.mjs";
 import { withLocalPhotoReview } from "./lib/offline-photo-preview.mjs";
 import {
+  canonicalCataloguePlaces,
   discoverCatalogueSources,
   readCatalogueSource,
 } from "./lib/catalogue-sources.mjs";
@@ -94,6 +95,9 @@ ledger between runs and use one ledger for every job sharing the API key.`);
       );
     }
   }
+  // Use the same source winner as published cells; older names/centroids must
+  // not create competing photographs and duplicate browser tests for one ID.
+  places = canonicalCataloguePlaces(places);
   // Prepare activities before optional food, drink and retail listings.
   places.sort(
     (a, b) =>

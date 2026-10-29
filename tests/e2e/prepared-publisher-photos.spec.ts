@@ -1,17 +1,18 @@
 import { test, expect } from "@playwright/test";
 import { readFileSync } from "node:fs";
+import { PLACES } from "../../src/providers/places";
 import type { PreparedVenuePhotoEntry } from "../../src/providers/prepared-venue-photos";
 import {
   photoDeliveryChecks,
+  photoDeliveryUrlMatches,
   photoDeliverySelectionTime,
+  photoNeedsDelivery,
 } from "../../scripts/lib/photo-delivery-selection.mjs";
 
 const manifest = JSON.parse(
   readFileSync("src/providers/data/venue-photo-previews.json", "utf8"),
 ) as { entries: PreparedVenuePhotoEntry[] };
-const publisherPhotos = manifest.entries.filter(
-  (entry) => entry.image?.rights === "website-preview",
-);
+const preparedPhotos = manifest.entries.filter(photoNeedsDelivery);
 const before = process.env.SIDEQUEST_PHOTO_BASE_MANIFEST
   ? JSON.parse(readFileSync(process.env.SIDEQUEST_PHOTO_BASE_MANIFEST, "utf8"))
   : { version: 1, entries: [] };
@@ -21,7 +22,82 @@ const deliveryChecks = photoDeliveryChecks({
   now: photoDeliverySelectionTime(),
 });
 
-// These checks deliberately use the real publisher network. Regular e2e runs
+test("an open Geograph photo loads directly from Commons with photographer and licence links", async ({
+  page,
+}) => {
+  const image = {
+    url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Local_Park.jpg",
+    source: "https://commons.wikimedia.org/wiki/File:Local_Park.jpg",
+    credit: "Local photographer",
+    license: "CC BY-SA 2.0",
+    rights: "open" as const,
+    strategy: "geograph-commons-source-id",
+    checkedAt: "2026-10-28T00:00:00.000Z",
+  };
+  const place = {
+    ...PLACES[0],
+    id: "osm-node-987654321",
+    name: "Local Park",
+    image,
+  };
+  await page.route("**/data/venues/manifest.json", (route) =>
+    route.fulfill({ json: { cells: {} } }),
+  );
+  await page.route("**/api/places?**", (route) =>
+    route.fulfill({ json: { places: [], source: "live" } }),
+  );
+  await page.route(`**/api/places/${place.id}`, (route) =>
+    route.fulfill({ json: place }),
+  );
+  const bytes = readFileSync("public/icons/icon-192.png");
+  await page.route(image.url, (route) =>
+    route.fulfill({ contentType: "image/png", body: bytes }),
+  );
+  let optimizerRequests = 0;
+  await page.route("**/_next/image?**", (route) => {
+    optimizerRequests++;
+    return route.fulfill({
+      contentType: "image/png",
+      body: bytes,
+    });
+  });
+  await page.goto(`/place/${place.id}`);
+  await expect(
+    page.getByRole("heading", { level: 1, name: place.name, exact: true }),
+  ).toBeVisible();
+  const photo = page.locator(".detail-hero img");
+  await expect(photo).toBeVisible();
+  await expect(photo).toHaveAttribute("src", image.url);
+  expect(
+    photoDeliveryUrlMatches(await photo.getAttribute("src"), image, page.url()),
+  ).toBe(true);
+  await expect
+    .poll(() =>
+      photo.evaluate(
+        (element: HTMLImageElement) =>
+          element.complete &&
+          element.naturalWidth > 0 &&
+          element.naturalHeight > 0,
+      ),
+    )
+    .toBe(true);
+  await expect(page.locator(".detail-hero .photo-source")).toHaveCount(0);
+  const credit = page.locator(".image-credit");
+  await expect(credit).toBeVisible();
+  await expect(credit).toContainText(
+    `Photo: ${image.credit} · ${image.license}`,
+  );
+  await expect(credit.getByRole("link").first()).toHaveAttribute(
+    "href",
+    image.source,
+  );
+  await expect(
+    credit.getByRole("link", { name: "Licence", exact: true }),
+  ).toHaveAttribute("href", "https://creativecommons.org/licenses/by-sa/2.0/");
+  expect(optimizerRequests).toBe(0);
+});
+
+// These checks deliberately use the real image host network. Regular e2e runs
 // stay deterministic; the maintenance workflow opts in after a production build.
 test.describe("prepared publisher photographs on real detail pages", () => {
   test.skip(
@@ -33,8 +109,8 @@ test.describe("prepared publisher photographs on real detail pages", () => {
 
   test("every prepared publisher photograph has a navigable venue id", () => {
     expect(
-      publisherPhotos.every((entry) => Boolean(entry.query.id)),
-      "Every prepared publisher photograph needs a navigable venue id",
+      preparedPhotos.every((entry) => Boolean(entry.query.id)),
+      "Every prepared photograph needs a navigable venue id",
     ).toBe(true);
   });
 
@@ -95,7 +171,14 @@ test.describe("prepared publisher photographs on real detail pages", () => {
           exact: true,
         });
         await expect(photo).toBeVisible({ timeout: 10_000 });
-        await expect(photo).toHaveAttribute("src", image.url);
+        expect(
+          photoDeliveryUrlMatches(
+            await photo.getAttribute("src"),
+            image,
+            page.url(),
+          ),
+          "The displayed photo must use this exact prepared image",
+        ).toBe(true);
         await expect
           .poll(
             () =>
@@ -107,28 +190,45 @@ test.describe("prepared publisher photographs on real detail pages", () => {
               ),
             {
               timeout: 12_000,
-              message: "The publisher photograph must decode",
+              message: "The prepared photograph must decode",
             },
           )
           .toBe(true);
         await photo.evaluate(async (element: HTMLImageElement) => {
           await element.decode();
           if (element.naturalWidth <= 0 || element.naturalHeight <= 0)
-            throw new Error(
-              "Publisher image decoded without usable dimensions",
-            );
+            throw new Error("Prepared image decoded without usable dimensions");
         });
         delivery.imageDecodedMs = Date.now() - startedAt;
-        await expect(hero.locator(".photo-source")).toHaveText(
-          `From ${image.credit}`,
-        );
+        if (image.rights === "website-preview")
+          await expect(hero.locator(".photo-source")).toHaveText(
+            `From ${image.credit}`,
+          );
+        else await expect(hero.locator(".photo-source")).toHaveCount(0);
         const credit = page.locator(".image-credit");
-        await expect(credit).toContainText("Website preview");
+        await expect(credit).toBeVisible();
+        await expect(credit).toContainText(
+          image.rights === "website-preview" ? "Website preview:" : "Photo:",
+        );
         await expect(credit.getByRole("link").first()).toHaveAttribute(
           "href",
           image.source,
         );
         await expect(credit).toContainText(image.credit);
+        await expect(credit).toContainText(image.license);
+        if (image.rights === "open" && image.license.startsWith("CC BY")) {
+          const version = image.license.match(
+            /\b(?:1\.0|2\.0|2\.5|3\.0|4\.0)\b/,
+          )?.[0];
+          await expect(
+            credit.getByRole("link", { name: "Licence", exact: true }),
+          ).toHaveAttribute(
+            "href",
+            version
+              ? `https://creativecommons.org/licenses/${image.license.includes("SA") ? "by-sa" : "by"}/${version}/`
+              : image.source,
+          );
+        }
       } finally {
         delivery.elapsedMs = Date.now() - startedAt;
         delivery.imageResponses = imageResponses;
@@ -137,6 +237,24 @@ test.describe("prepared publisher photographs on real detail pages", () => {
           delivery.browser = await page
             .evaluate(() => ({
               pageUrl: location.href,
+              credit: (() => {
+                const credit =
+                  document.querySelector<HTMLElement>(".image-credit");
+                return credit
+                  ? {
+                      visible:
+                        credit.getClientRects().length > 0 &&
+                        getComputedStyle(credit).visibility !== "hidden",
+                      text: credit.innerText,
+                      links: Array.from(
+                        credit.querySelectorAll<HTMLAnchorElement>("a"),
+                      ).map((link) => ({
+                        href: link.href,
+                        text: link.innerText,
+                      })),
+                    }
+                  : null;
+              })(),
               hero: Array.from(
                 document.querySelectorAll<HTMLImageElement>(".detail-hero img"),
               ).map((element) => ({

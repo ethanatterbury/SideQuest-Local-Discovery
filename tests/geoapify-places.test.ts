@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { Place } from "@/domain/models";
 
 // Geoapify's documented GeoJSON shape. IDs and venue details here are test data.
 const feature = (
@@ -86,7 +87,7 @@ describe("configured national discovery", () => {
     expect(result.incomplete).toBeUndefined();
     expect(
       result.places.filter((place) => place.id === overlapping.id),
-    ).toMatchObject([{ name: "Updated provider venue" }]);
+    ).toHaveLength(1);
     expect(
       result.places.some((place) => place.id === snapshot.places[1].id),
     ).toBe(true);
@@ -730,5 +731,114 @@ describe("Geoapify GeoJSON conversion", () => {
         collection(feature({ leisure: "", amenity: "", natural: "tree" })),
       ),
     ).toEqual([]);
+  });
+});
+
+describe("recent canonical OSM identity", () => {
+  const now = Date.parse("2026-10-29T12:00:00Z");
+  async function venues() {
+    const { normalizeGeoapifyResponse } =
+      await import("@/providers/geoapify-places");
+    const provider = normalizeGeoapifyResponse(
+      collection(
+        feature(
+          {
+            leisure: "sports_centre",
+            amenity: undefined,
+            website: "https://old-fixture.test/",
+          },
+          {
+            name: "Former Riverside Gym",
+            postcode: "AB1 2CD",
+            street: "River Road",
+            city: "Riverside",
+          },
+        ),
+      ),
+    )[0];
+    const canonical = {
+      ...provider,
+      name: "Riverside Learning Centre",
+      coordinates: {
+        lat: provider.coordinates.lat + 0.00002,
+        lng: provider.coordinates.lng,
+      },
+      website: "https://current-fixture.test/",
+      category: "Museum",
+      area: "Nearby",
+      postcode: undefined,
+      street: undefined,
+    };
+    return { provider, canonical };
+  }
+  it("preserves recent canonical name, coordinates, website and category while filling missing address", async () => {
+    const { provider, canonical } = await venues();
+    const { mergeRecentSnapshotPlace } =
+      await import("@/providers/geoapify-places");
+    const merged = mergeRecentSnapshotPlace(
+      provider,
+      canonical,
+      "2026-10-28T06:00:00Z",
+      now,
+    );
+    expect(merged).toMatchObject({
+      name: canonical.name,
+      coordinates: canonical.coordinates,
+      website: canonical.website,
+      category: canonical.category,
+      postcode: "AB1 2CD",
+      street: "River Road",
+      area: "Riverside",
+    });
+    const { websiteDiscoveryIdentity } =
+      await import("@/providers/prepared-venue-photos");
+    const query = (p: Place) => ({
+      id: p.id,
+      name: p.name,
+      lat: p.coordinates.lat,
+      lng: p.coordinates.lng,
+    });
+    expect(websiteDiscoveryIdentity(query(merged))).toBe(
+      websiteDiscoveryIdentity(query(canonical)),
+    );
+  });
+  it.each([
+    undefined,
+    "invalid",
+    "2026-09-01T00:00:00Z",
+    "2026-10-30T00:00:00Z",
+  ])(
+    "keeps live provider identity without recent owned source date (%s)",
+    async (sourceAt) => {
+      const { provider, canonical } = await venues();
+      const { mergeRecentSnapshotPlace } =
+        await import("@/providers/geoapify-places");
+      expect(mergeRecentSnapshotPlace(provider, canonical, sourceAt, now)).toBe(
+        provider,
+      );
+    },
+  );
+  it("rejects another OSM identity or a centroid moved beyond 25 metres", async () => {
+    const { provider, canonical } = await venues();
+    const { mergeRecentSnapshotPlace } =
+      await import("@/providers/geoapify-places");
+    for (const changed of [
+      { ...canonical, id: "osm-way-9999" },
+      {
+        ...canonical,
+        coordinates: {
+          ...canonical.coordinates,
+          lat: canonical.coordinates.lat + 0.001,
+        },
+      },
+    ])
+      expect(
+        mergeRecentSnapshotPlace(
+          provider,
+          changed,
+          "2026-10-28T06:00:00Z",
+          now,
+        ),
+      ).toBe(provider);
   });
 });

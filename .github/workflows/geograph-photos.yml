@@ -1,0 +1,201 @@
+name: Maintain Geograph venue photographs
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: Maximum venue matches to inspect (0–1000; no paid API)
+        required: true
+        default: 1000
+        type: number
+  workflow_run:
+    workflows: [Prepare Geograph photo metadata candidates]
+    types: [completed]
+    branches: [main]
+  schedule:
+    - cron: "47 * * * *"
+
+permissions:
+  contents: read
+
+# Both photo sources update one manifest; their preparation and publication serialize.
+concurrency:
+  group: venue-photo-maintenance-main
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name != 'workflow_run' ||
+       (github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_branch == 'main' &&
+        github.event.workflow_run.head_repository.full_name == github.repository))
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      PHOTO_VISION_CACHE_DIR: ${{ github.workspace }}/work/photo-vision-model-cache
+    outputs:
+      base_sha: ${{ steps.base.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - id: base
+        name: Record the catalogue revision
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Require the completed metadata import
+        run: test -s src/providers/data/geograph-venue-matches.json.gz
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Install isolated CPU photograph review dependencies
+        env:
+          ONNXRUNTIME_NODE_INSTALL_CUDA: skip
+        run: npm ci --prefix scripts/photo-vision
+      - uses: actions/cache@v4
+        with:
+          path: work/photo-vision-model-cache
+          key: photo-vision-${{ runner.os }}-transformers-3.8.1-clip-d15189d7028b43f1d3e65039190477f6af591c2a-q8
+      - name: Run application tests before inspecting Commons photographs
+        run: npm test
+      - name: Preserve incoming metadata and immutable delivery time
+        run: |
+          mkdir -p work/photo-maintenance
+          cp src/providers/data/venue-photo-previews.json work/photo-maintenance/before-previews.json
+          echo "SIDEQUEST_PHOTO_DELIVERY_AT=$(date --utc +%Y-%m-%dT%H:%M:%S.000Z)" >> "$GITHUB_ENV"
+      - name: Resolve exact Commons source IDs and inspect scenes in memory
+        env:
+          PHOTO_LIMIT: ${{ github.event_name == 'workflow_dispatch' && toJSON(inputs.limit) || '1000' }}
+        run: |
+          node scripts/prepare-geograph-photos.mjs --limit="$PHOTO_LIMIT" --max-runtime-ms=1200000 --timeout-ms=6500 | tee work/photo-maintenance/batch.jsonl
+      - name: Validate approved links and preserve existing photographs
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync } from "node:fs";
+          import assert from "node:assert/strict";
+          import { loadProvider } from "./scripts/lib/provider-loader.mjs";
+          const read = (path) => JSON.parse(readFileSync(path, "utf8"));
+          const before = read("work/photo-maintenance/before-previews.json");
+          const after = read("src/providers/data/venue-photo-previews.json");
+          const { approvedPhoto } = loadProvider("src/providers/photo-policy.ts");
+          const { websiteDiscoveryIdentity } = loadProvider("src/providers/prepared-venue-photos.ts");
+          assert.equal(after.version, 1);
+          const current = new Map();
+          for (const entry of after.entries) {
+            const key = websiteDiscoveryIdentity(entry.query);
+            assert.ok(!current.has(key), "Duplicate venue identity");
+            if (entry.image) assert.ok(approvedPhoto(entry.image, entry.checkedAt), `Unapproved photo: ${entry.query.id}`);
+            current.set(key, entry);
+          }
+          for (const prior of before.entries) {
+            if (approvedPhoto(prior.image, prior.checkedAt)) {
+              const retained = current.get(websiteDiscoveryIdentity(prior.query));
+              assert.ok(approvedPhoto(retained?.image, retained?.checkedAt), `Existing photo removed: ${prior.query.id}`);
+            }
+          }
+          const summary = {
+            entries: after.entries.length,
+            photographs: after.entries.filter((entry) => entry.image).length,
+            geographPhotographs: after.entries.filter((entry) => entry.image?.strategy === "geograph-commons-source-id").length,
+            paidSearches: 0,
+            storedImageFiles: 0,
+          };
+          writeFileSync("work/photo-maintenance/summary.json", JSON.stringify(summary, null, 2) + "\n");
+          console.log(JSON.stringify(summary));
+          NODE
+      - name: Build the production application with prepared photos
+        run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Verify real photos, exact attribution and decoded venue images
+        id: browser
+        continue-on-error: true
+        env:
+          SIDEQUEST_LIVE_PHOTO_CHECK: "1"
+          SIDEQUEST_E2E_PRODUCTION: "1"
+          SIDEQUEST_PHOTO_BASE_MANIFEST: work/photo-maintenance/before-previews.json
+          PLAYWRIGHT_JSON_OUTPUT_NAME: work/photo-maintenance/browser-results.json
+        run: npx playwright test tests/e2e/prepared-publisher-photos.spec.ts --workers=4 --reporter=list,json
+      - name: Quarantine failed new photos and retain verified checkpoints
+        run: |
+          node scripts/lib/photo-delivery-results.mjs --before=work/photo-maintenance/before-previews.json --after=src/providers/data/venue-photo-previews.json --results=work/photo-maintenance/browser-results.json --summary=work/photo-maintenance/delivery-summary.json
+      - name: Retain bounded batch and browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: geograph-photo-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            work/photo-maintenance/batch.jsonl
+            work/photo-maintenance/summary.json
+            work/photo-maintenance/delivery-summary.json
+            work/photo-maintenance/browser-results.json
+            work/photo-maintenance/before-previews.json
+            src/providers/data/venue-photo-previews.json
+            test-results/
+          retention-days: 1
+      - name: Retain the verified publication candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: geograph-photo-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: src/providers/data/venue-photo-previews.json
+          if-no-files-found: error
+          retention-days: 1
+      - name: Report measured delivery results
+        if: always()
+        run: |
+          {
+            echo "### Geograph source-linked venue photographs"
+            echo "Metadata source IDs, name and precise subject locations are checked independently of local CPU scene classification."
+            echo "Only real browser decode and attribution results permit publication; unknown photos remain unresolved."
+            for report in summary delivery-summary; do
+              if [ -f "work/photo-maintenance/$report.json" ]; then
+                echo '```json'
+                cat "work/photo-maintenance/$report.json"
+                echo '```'
+              fi
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  publish:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: geograph-photo-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: work/photo-publication
+      - name: Publish only verified photo metadata without overwriting newer work
+        env:
+          VERIFIED_BASE_SHA: ${{ needs.prepare.outputs.base_sha }}
+        run: |
+          git merge-base --is-ancestor "$VERIFIED_BASE_SHA" HEAD
+          if ! git diff --quiet "$VERIFIED_BASE_SHA" HEAD -- . \
+            ':!src/providers/data/regions/england.json.gz' \
+            ':!src/providers/data/geograph-venue-matches.json.gz' \
+            ':!scripts/audit-overture-websites.py' \
+            ':!tests/test_overture_websites.py' \
+            ':!.github/workflows/overture-website-audit.yml'; then
+            echo "Photo preparation or application code changed; rerun against current main." | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          cp work/photo-publication/venue-photo-previews.json src/providers/data/venue-photo-previews.json
+          git add -- src/providers/data/venue-photo-previews.json
+          if git diff --cached --quiet; then
+            echo "No photo metadata changed." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Refresh verified Geograph venue photograph links"
+          git push origin HEAD:main
+          echo "Published verified photo links: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"

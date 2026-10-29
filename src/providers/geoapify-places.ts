@@ -4,6 +4,9 @@ import { inUK } from "@/domain/geo-cells";
 import { optionalCategory } from "@/domain/venue-suitability";
 import {
   getLivePlace,
+  getSnapshotPlace,
+  distanceKm,
+  snapshotSourceDate,
   getNearbyPlaces,
   getRememberedLivePlace,
   normalizeOsmElement,
@@ -138,6 +141,45 @@ export function normalizeGeoapifyResponse(value: unknown): Place[] {
     places.push(place);
   }
   return places;
+}
+
+const maximumSnapshotAge = 45 * 24 * 60 * 60_000;
+/** Recent owned OSM extracts preserve the identity used for prepared evidence. */
+export function mergeRecentSnapshotPlace(
+  provider: Place,
+  snapshot: Place | null | undefined,
+  sourceAt: string | undefined,
+  now = Date.now(),
+): Place {
+  const age = now - Date.parse(sourceAt || "");
+  if (
+    !snapshot ||
+    snapshot.id !== provider.id ||
+    !Number.isFinite(age) ||
+    age < 0 ||
+    age > maximumSnapshotAge ||
+    distanceKm(provider.coordinates, snapshot.coordinates) > 0.025
+  )
+    return provider;
+  return {
+    ...snapshot,
+    area:
+      snapshot.area && snapshot.area !== "Nearby"
+        ? snapshot.area
+        : provider.area,
+    ...(!snapshot.street && provider.street ? { street: provider.street } : {}),
+    ...(!snapshot.postcode && provider.postcode
+      ? { postcode: provider.postcode }
+      : {}),
+  };
+}
+async function withRecentSnapshot(place: Place): Promise<Place> {
+  const snapshot = await getSnapshotPlace(place.id);
+  return mergeRecentSnapshotPlace(
+    place,
+    snapshot,
+    (snapshot && snapshotSourceDate(snapshot)) || undefined,
+  );
 }
 
 function storeResult(key: string, result: ProviderResult, failed = false) {
@@ -330,14 +372,27 @@ export async function getDiscoveryPlaces(
             source = fallback.source;
             message = `${sourceMessage(true)} Geoapify activity results are unavailable. ${fallback.message || (fallback.source === "live" ? "Outings supplied by live OpenStreetMap / Overpass discovery." : "Showing available OpenStreetMap outing data.")}`;
           }
-          // Category-capped provider success does not mean complete local coverage.
-          // Retain already available OSM snapshot venues; fresher provider identities win.
+          // Capped provider results retain local coverage. Only a recent,
+          // individually owned source record can replace a nearby provider identity.
+          const snapshots = await snapshotArea(center, bucket + 2);
+          const canonical = new Map(
+            snapshots.map((place) => [place.id, place]),
+          );
           places = [
-            ...new Map(
-              [...(await snapshotArea(center, bucket + 2)), ...places].map(
-                (place) => [place.id, place],
-              ),
-            ).values(),
+            ...new Map([
+              ...snapshots.map((place) => [place.id, place] as const),
+              ...places.map((place) => {
+                const snapshot = canonical.get(place.id);
+                return [
+                  place.id,
+                  mergeRecentSnapshotPlace(
+                    place,
+                    snapshot,
+                    snapshot && snapshotSourceDate(snapshot),
+                  ),
+                ] as const;
+              }),
+            ]).values(),
           ];
           rememberLivePlaces(places);
           const result = { places, partial, source, message };
@@ -375,7 +430,8 @@ export async function getDiscoveryPlace(
   const match = /^osm-(node|way|relation)-([1-9]\d{0,15})$/.exec(id);
   if (!match || !Number.isSafeInteger(Number(match[2]))) return null;
   const remembered = getRememberedLivePlace(id);
-  if (remembered && !options.refreshDetails) return remembered;
+  if (remembered && !options.refreshDetails)
+    return withRecentSnapshot(remembered);
   const apiKey = process.env.GEOAPIFY_API_KEY?.trim();
   const key = `detail:${id}`;
   const entry = cache.get(key);
@@ -402,8 +458,9 @@ export async function getDiscoveryPlace(
         (candidate) => candidate.id === id,
       );
       if (place && inUK(place.coordinates)) {
-        rememberLivePlaces([place]);
-        return place;
+        const canonical = await withRecentSnapshot(place);
+        rememberLivePlaces([canonical]);
+        return canonical;
       }
       storeResult(key, { places: [], partial: false }, true);
     } catch {

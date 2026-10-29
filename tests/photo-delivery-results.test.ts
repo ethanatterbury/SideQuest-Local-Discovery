@@ -37,6 +37,16 @@ const entry = {
   status: "matched",
   evidence: { attempts: [{ website: image.source }] },
 };
+const openImage = {
+  url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Pirates_Landing.jpg",
+  source: "https://commons.wikimedia.org/wiki/File:Pirates_Landing.jpg",
+  credit: "Local photographer",
+  license: "CC BY-SA 2.0",
+  rights: "open",
+  strategy: "geograph-commons-source-id",
+  checkedAt: image.checkedAt,
+};
+const openEntry = { ...entry, image: openImage };
 const manifest = (entries: unknown[]) => ({
   version: 1,
   generatedAt: image.checkedAt,
@@ -50,8 +60,10 @@ function report(
     decodedWidth?: number;
     screenshot?: boolean;
     navigationStatus?: number;
+    image?: typeof image | typeof openImage;
   } = {},
 ) {
+  const expectedImage = options.image ?? image;
   const folder = mkdtempSync(join(tmpdir(), "photo-delivery-results-"));
   folders.push(folder);
   const deliveryPath = join(folder, "delivery.json");
@@ -60,8 +72,8 @@ function report(
     deliveryPath,
     JSON.stringify({
       id: entry.query.id,
-      expectedImageUrl: image.url,
-      source: image.source,
+      expectedImageUrl: expectedImage.url,
+      source: expectedImage.source,
       navigationStatus: options.navigationStatus ?? 200,
       venueVisible: true,
       imageDecodedMs: status === "passed" ? 400 : undefined,
@@ -69,21 +81,35 @@ function report(
       imageFailures:
         status === "passed"
           ? []
-          : [{ url: image.url, error: "net::ERR_FAILED" }],
+          : [{ url: expectedImage.url, error: "net::ERR_FAILED" }],
       browser: {
         pageUrl: `http://localhost:3000/place/${entry.query.id}`,
         hero:
           status === "passed"
             ? [
                 {
-                  src: image.url,
-                  currentSrc: image.url,
+                  src: expectedImage.url,
+                  currentSrc: expectedImage.url,
                   complete: true,
                   naturalWidth: options.decodedWidth ?? 1280,
                   naturalHeight: 800,
                 },
               ]
             : [],
+        credit: {
+          visible: true,
+          text: `Photo: ${expectedImage.credit} · ${expectedImage.license}. Cropped for display.`,
+          links: [
+            {
+              href: expectedImage.source,
+              text: `${expectedImage.credit} · ${expectedImage.license}`,
+            },
+            {
+              href: "https://creativecommons.org/licenses/by-sa/2.0/",
+              text: "Licence",
+            },
+          ],
+        },
       },
     }),
   );
@@ -174,6 +200,63 @@ function inventoryOnly() {
   inventory.suites[0].suites[0].specs.splice(1, 1);
   return inventory;
 }
+
+test.each([
+  "missing-decode",
+  "missing-attachment",
+  "mismatched-source",
+  "missing-screenshot",
+])(
+  "quarantines only an incomplete photo proof and publishes other verified photos: %s",
+  (problem) => {
+    const good = report();
+    const bad = report();
+    const badEntry = {
+      ...entry,
+      query: { ...entry.query, id: "osm-node-456", name: "Another venue" },
+    };
+    const spec = bad.suites[0].suites[0].specs[1];
+    spec.title = `${badEntry.query.id}: ${badEntry.query.name}`;
+    const attachments = spec.tests[0].results[0].attachments;
+    const path = attachments.find(
+      (item) => item.name === "publisher-image-delivery",
+    )!.path;
+    const delivery = JSON.parse(readFileSync(path, "utf8"));
+    delivery.id = badEntry.query.id;
+    if (problem === "missing-decode") delivery.browser.hero = [];
+    if (problem === "mismatched-source")
+      delivery.source = "https://other-venue.co.uk/";
+    if (problem === "missing-attachment") attachments.splice(0, 1);
+    if (problem === "missing-screenshot") attachments.splice(1, 1);
+    writeFileSync(path, JSON.stringify(delivery));
+    good.suites[0].suites[0].specs.push(spec);
+    const result = reconcilePhotoDelivery({
+      before: manifest([]),
+      after: manifest([entry, badEntry]),
+      report: good,
+      checkedAt: image.checkedAt,
+    });
+    expect(result.summary).toMatchObject({
+      passed: 1,
+      failed: 1,
+      quarantined: 1,
+      retainedPrior: 0,
+    });
+    expect(result.manifest.entries[0]).toMatchObject({
+      image,
+      deliveryVerifiedAt: image.checkedAt,
+    });
+    expect(result.manifest.entries[1]).toMatchObject({
+      image: null,
+      retryable: true,
+      deliveryFailure: {
+        testStatus: "passed",
+        reason: "incomplete-photo-delivery-evidence",
+      },
+    });
+    expect(result.manifest.entries[1].deliveryVerifiedAt).toBeUndefined();
+  },
+);
 
 test.each(["2026-10-29T02:50:14.000Z", "invalid"])(
   "honours an explicit reconciliation time regardless of workflow environment %s",
@@ -332,7 +415,14 @@ test("requires fresh evidence when a verified venue image URL, source or stable 
   const prior = { ...entry, deliveryVerifiedAt: "2026-10-01T00:00:00.000Z" };
   const replacements = [
     { ...prior, image: { ...image, url: `${image.url}?new=1` } },
-    { ...prior, image: { ...image, source: `${image.source}new/` } },
+    {
+      ...prior,
+      image: {
+        ...image,
+        source: `${image.source}new/`,
+        preview: { ...image.preview, pageUrl: `${image.source}new/` },
+      },
+    },
     { ...prior, query: { ...entry.query, lat: 52 } },
   ];
   for (const replacement of replacements) {
@@ -346,6 +436,123 @@ test("requires fresh evidence when a verified venue image URL, source or stable 
     ).toThrow(/missing browser result/i);
   }
 });
+
+test("requires browser evidence before publishing a new open Geograph photo", () => {
+  expect(() =>
+    reconcilePhotoDelivery({
+      before: manifest([]),
+      after: manifest([openEntry]),
+      report: inventoryOnly(),
+      checkedAt: image.checkedAt,
+    }),
+  ).toThrow(/missing browser result/i);
+});
+
+test.each([false, true])(
+  "publishes open Geograph photos after direct or optimized decode and attribution evidence (optimized: %s)",
+  (optimized) => {
+    const browser = report("passed", { image: openImage });
+    if (optimized) {
+      const path =
+        browser.suites[0].suites[0].specs[1].tests[0].results[0].attachments[0]
+          .path;
+      const delivery = JSON.parse(readFileSync(path, "utf8"));
+      const url = `http://localhost:3000/_next/image?url=${encodeURIComponent(openImage.url)}&w=1920&q=75`;
+      delivery.browser.hero[0].src = url;
+      delivery.browser.hero[0].currentSrc = url;
+      writeFileSync(path, JSON.stringify(delivery));
+    }
+    const result = reconcilePhotoDelivery({
+      before: manifest([]),
+      after: manifest([openEntry]),
+      report: browser,
+      checkedAt: image.checkedAt,
+    });
+    expect(result.manifest.entries[0]).toMatchObject({
+      image: openImage,
+      deliveryVerifiedAt: image.checkedAt,
+    });
+    expect(result.summary.passed).toBe(1);
+  },
+);
+
+test("retains the original timestamp of unchanged verified open Geograph photos", () => {
+  const prior = {
+    ...openEntry,
+    deliveryVerifiedAt: "2026-10-01T00:00:00.000Z",
+  };
+  const result = reconcilePhotoDelivery({
+    before: manifest([prior]),
+    after: manifest([{ ...prior, deliveryVerifiedAt: image.checkedAt }]),
+    report: inventoryOnly(),
+    checkedAt: image.checkedAt,
+  });
+  expect(result.summary.retainedVerified).toBe(1);
+  expect(result.manifest.entries[0].deliveryVerifiedAt).toBe(
+    prior.deliveryVerifiedAt,
+  );
+});
+
+test.each([false, true])(
+  "quarantines a failed new open image or restores its prior approved image (prior: %s)",
+  (hasPrior) => {
+    const prior = {
+      ...openEntry,
+      image: {
+        ...openImage,
+        url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Prior.jpg",
+      },
+    };
+    const result = reconcilePhotoDelivery({
+      before: manifest(hasPrior ? [prior] : []),
+      after: manifest([openEntry]),
+      report: report("failed", { image: openImage }),
+      checkedAt: image.checkedAt,
+    });
+    expect(result.summary.failed).toBe(1);
+    expect(result.manifest.entries[0].image).toEqual(
+      hasPrior ? prior.image : null,
+    );
+    expect(result.summary).toMatchObject({
+      retainedPrior: Number(hasPrior),
+      quarantined: Number(!hasPrior),
+    });
+  },
+);
+
+test.each(["missing", "wrong-credit", "wrong-source", "hidden"])(
+  "quarantines passed open-photo checks without exact visible attribution evidence %s",
+  (problem) => {
+    const browser = report("passed", { image: openImage });
+    const path =
+      browser.suites[0].suites[0].specs[1].tests[0].results[0].attachments[0]
+        .path;
+    const delivery = JSON.parse(readFileSync(path, "utf8"));
+    if (problem === "missing") delete delivery.browser.credit;
+    if (problem === "wrong-credit")
+      delivery.browser.credit.text =
+        "Photo: Incorrect photographer · CC BY-SA 2.0";
+    if (problem === "wrong-source")
+      delivery.browser.credit.links[0].href =
+        "https://commons.wikimedia.org/wiki/File:Other.jpg";
+    if (problem === "hidden") delivery.browser.credit.visible = false;
+    writeFileSync(path, JSON.stringify(delivery));
+    const result = reconcilePhotoDelivery({
+      before: manifest([]),
+      after: manifest([openEntry]),
+      report: browser,
+      checkedAt: image.checkedAt,
+    });
+    expect(result.manifest.entries[0].image).toBeNull();
+    expect(result.summary.failures[0]).toMatchObject({
+      reason: "incomplete-photo-delivery-evidence",
+      testStatus: "passed",
+    });
+    expect(result.summary.failures[0].failures[0].error).toMatch(
+      /attribution/i,
+    );
+  },
+);
 
 test("requires screenshots only for the deterministic first twelve required delivery checks", () => {
   const entries = Array.from({ length: 13 }, (_, index) => ({
@@ -452,38 +659,83 @@ test.each(["interrupted", "skipped"])(
   },
 );
 
-test("refuses browser fixture failures that never produced per-venue delivery evidence", () => {
-  expect(() =>
-    reconcilePhotoDelivery({
-      before: manifest([]),
-      after: manifest([entry]),
-      report: report("failed", { delivery: false }),
-    }),
-  ).toThrow(/delivery evidence/i);
+test("quarantines a completed browser test that produced no per-venue delivery evidence", () => {
+  const result = reconcilePhotoDelivery({
+    before: manifest([]),
+    after: manifest([entry]),
+    report: report("failed", { delivery: false }),
+  });
+  expect(result.manifest.entries[0].image).toBeNull();
+  expect(result.summary.failures[0]).toMatchObject({
+    reason: "incomplete-photo-delivery-evidence",
+    testStatus: "failed",
+  });
+  expect(result.summary.failures[0].failures[0].error).toMatch(
+    /delivery evidence/i,
+  );
 });
 
-test("refuses application server failures instead of treating them as dead publishers", () => {
-  expect(() =>
-    reconcilePhotoDelivery({
-      before: manifest([]),
-      after: manifest([entry]),
-      report: report("failed", { navigationStatus: 503 }),
-    }),
-  ).toThrow(/infrastructure|venue page/i);
+test("quarantines a failed venue navigation without approving its publisher image", () => {
+  const result = reconcilePhotoDelivery({
+    before: manifest([]),
+    after: manifest([entry]),
+    report: report("failed", { navigationStatus: 503 }),
+  });
+  expect(result.manifest.entries[0].image).toBeNull();
+  expect(result.summary.failures[0].reason).toBe(
+    "incomplete-photo-delivery-evidence",
+  );
+  expect(result.summary.failures[0].failures[0].error).toMatch(
+    /infrastructure|venue page/i,
+  );
 });
 
 test.each([{ decodedWidth: 0 }, { screenshot: false }])(
-  "refuses passed assertions without usable image or screenshot evidence %j",
+  "quarantines passed assertions without usable image or screenshot evidence %j",
   (options) => {
-    expect(() =>
-      reconcilePhotoDelivery({
-        before: manifest([]),
-        after: manifest([entry]),
-        report: report("passed", options),
-      }),
-    ).toThrow(/decoded|detail-page/i);
+    const result = reconcilePhotoDelivery({
+      before: manifest([]),
+      after: manifest([entry]),
+      report: report("passed", options),
+    });
+    expect(result.manifest.entries[0].image).toBeNull();
+    expect(result.summary.failures[0]).toMatchObject({
+      reason: "incomplete-photo-delivery-evidence",
+      testStatus: "passed",
+    });
+    expect(result.summary.failures[0].failures[0].error).toMatch(
+      /decoded|detail-page/i,
+    );
   },
 );
+
+test("retains a prior approved photo when a replacement passes without valid decode proof", () => {
+  const prior = {
+    ...entry,
+    image: { ...image, url: "https://pirateslanding.co.uk/prior.jpg" },
+    deliveryVerifiedAt: "2026-10-01T00:00:00.000Z",
+  };
+  const result = reconcilePhotoDelivery({
+    before: manifest([prior]),
+    after: manifest([entry]),
+    report: report("passed", { decodedWidth: 0 }),
+    checkedAt: image.checkedAt,
+  });
+  expect(result.manifest.entries[0]).toMatchObject({
+    image: prior.image,
+    deliveryVerifiedAt: prior.deliveryVerifiedAt,
+    deliveryFailure: {
+      reason: "incomplete-photo-delivery-evidence",
+      testStatus: "passed",
+    },
+  });
+  expect(result.summary).toMatchObject({
+    passed: 0,
+    failed: 1,
+    retainedPrior: 1,
+    quarantined: 0,
+  });
+});
 
 test("refuses missing, duplicate and global-error reports", () => {
   expect(() =>

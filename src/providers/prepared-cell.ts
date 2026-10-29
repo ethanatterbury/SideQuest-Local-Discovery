@@ -8,7 +8,7 @@ const decompress = promisify(gunzip);
 /** Server bundles carry gzip cells; local older builds can still read JSON. */
 export async function readPreparedCellJson(
   file: string,
-): Promise<{ places?: Place[] }> {
+): Promise<{ places?: Place[]; sourceDates?: Record<string, string | null> }> {
   let compressed: Buffer;
   try {
     compressed = await readFile(file + ".gz");

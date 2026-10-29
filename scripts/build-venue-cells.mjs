@@ -20,6 +20,7 @@ const supplied = process.argv.slice(2);
 const files = await discoverCatalogueSources(root, supplied);
 const cells = new Map(),
   ids = {},
+  placeSourceDates = new WeakMap(),
   sourceDates = [],
   sources = new Set();
 for (const file of files) {
@@ -31,7 +32,11 @@ for (const file of files) {
     const place = withStoredPhoto(raw),
       id = cellId(place.coordinates);
     const records = cells.get(id) || new Map();
+    if (ids[place.id] && ids[place.id] !== id)
+      cells.get(ids[place.id])?.delete(place.id);
     records.set(place.id, place);
+    // Ownership follows the exact winning source record, including old sources.
+    placeSourceDates.set(place, data.generatedAt || null);
     cells.set(id, records);
     ids[place.id] = id;
   }
@@ -44,7 +49,17 @@ const manifest = {
   cells: {},
 };
 for (const [id, records] of cells) {
-  const body = JSON.stringify({ version: 2, places: [...records.values()] });
+  const sourceDates = Object.fromEntries(
+    [...records.values()].map((place) => [
+      place.id,
+      placeSourceDates.get(place),
+    ]),
+  );
+  const body = JSON.stringify({
+    version: 2,
+    places: [...records.values()],
+    sourceDates,
+  });
   const hash = createHash("sha256").update(body).digest("hex").slice(0, 12);
   await writeFile(path.join(output, id + ".json"), body);
   await writeFile(

@@ -82,9 +82,10 @@ jobs:
           echo "SIDEQUEST_PHOTO_DELIVERY_AT=$(date --utc +%Y-%m-%dT%H:%M:%S.000Z)" >> "$GITHUB_ENV"
       - name: Inspect a bounded batch of official websites
         env:
-          PHOTO_LIMIT: ${{ github.event_name == 'workflow_dispatch' && toJSON(inputs.limit) || '1000' }}
+          PHOTO_LIMIT: ${{ github.event_name == 'workflow_dispatch' && toJSON(inputs.limit) || github.event_name == 'push' && '200' || '1000' }}
+          PHOTO_RUNTIME_MS: ${{ github.event_name == 'push' && '300000' || '1200000' }}
         run: |
-          node scripts/prepare-venue-photos.mjs --limit="$PHOTO_LIMIT" --max-searches=0 --monthly-cap=1000 --timeout-ms=12000 --max-runtime-ms=1200000 --local-vision=true | tee work/photo-maintenance/batch.jsonl
+          node scripts/prepare-venue-photos.mjs --limit="$PHOTO_LIMIT" --max-searches=0 --monthly-cap=1000 --timeout-ms=12000 --max-runtime-ms="$PHOTO_RUNTIME_MS" --local-vision=true | tee work/photo-maintenance/batch.jsonl
       - name: Validate approved metadata and preserve existing photographs
         run: |
           node --input-type=module <<'NODE'
@@ -158,6 +159,8 @@ jobs:
             work/photo-maintenance/summary.json
             work/photo-maintenance/delivery-summary.json
             work/photo-maintenance/browser-results.json
+            work/photo-maintenance/before-previews.json
+            src/providers/data/venue-photo-previews.json
             test-results/
           retention-days: 1
       - name: Retain the verified publication candidate
@@ -215,7 +218,10 @@ jobs:
             git fetch --no-tags --depth=1 origin "$VERIFIED_BASE_SHA"
             if ! git diff --quiet "$VERIFIED_BASE_SHA" "$current_sha" -- . \
               ':!src/providers/data/regions/england.json.gz' \
-              ':!src/providers/data/geograph-venue-matches.json.gz'; then
+              ':!src/providers/data/geograph-venue-matches.json.gz' \
+              ':!scripts/audit-overture-websites.py' \
+              ':!tests/test_overture_websites.py' \
+              ':!.github/workflows/overture-website-audit.yml'; then
               echo "Main advanced beyond independent source metadata imports. The candidate is retained; rerun preparation against the new revision." | tee -a "$GITHUB_STEP_SUMMARY"
               exit 1
             fi

@@ -1,0 +1,70 @@
+name: Audit free Overture website coverage
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/overture-website-audit.yml
+      - scripts/audit-overture-websites.py
+      - tests/test_overture_websites.py
+
+permissions:
+  contents: read
+
+concurrency:
+  group: overture-website-coverage-main
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: npm ci --ignore-scripts
+      - run: python -m pip install pyarrow==22.0.0
+      - name: Verify actual Parquet filtering and bounded HTTP transport offline
+        run: python -m unittest discover -s tests -p test_overture_websites.py -v
+      - name: Prepare the current default venue catalogue
+        run: npm run prepare:data
+      - name: Measure pinned Overture website candidates under hard byte and runtime quotas
+        run: |
+          mkdir -p work/overture
+          python scripts/audit-overture-websites.py --max-bytes=2147483648 --max-seconds=1100 | tee work/overture/audit.jsonl
+      - name: Report measured coverage without approving or publishing websites
+        if: always()
+        run: |
+          {
+            echo '### Free Overture website coverage audit'
+            echo 'Pinned release 2026-10-21.0, source URL metadata only; no API key, paid search, image requests or approved images.'
+            echo 'Every HTTP response body is charged against a 2 GiB cap before reading; exact ranges, fixed hosts and no redirects. Runtime is bounded at 1100 seconds.'
+            echo 'Only distinctive exact-name, unique existing OSM activity matches within 75 metres are candidates. Confidence must be at least 0.5; known closed businesses are excluded.'
+            echo 'A partial result is explicitly marked and does not measure full England coverage. No production catalogue or photograph manifest is changed.'
+            if [ -f work/overture/summary.json ]; then
+              echo '```json'
+              cat work/overture/summary.json
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Retain candidate-only metadata and measured evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: overture-website-coverage-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            work/overture/audit.jsonl
+            work/overture/summary.json
+            work/overture/website-candidates.json.gz
+          retention-days: 7

@@ -68,6 +68,9 @@ export function PlaceImage({
     : image?.url;
   const optimizeRemoteImage =
     !!imageSource &&
+    // These prepared URLs already select a bounded Wikimedia thumbnail.
+    // Serve its CDN directly, avoiding a second transform and a cold proxy.
+    image?.strategy !== "geograph-commons-source-id" &&
     (imageSource.startsWith("https://upload.wikimedia.org/") ||
       imageSource.startsWith("https://archive.org/download/"));
   const container = useRef<HTMLDivElement>(null);
