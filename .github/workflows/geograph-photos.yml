@@ -37,6 +37,7 @@ jobs:
       PHOTO_VISION_CACHE_DIR: ${{ github.workspace }}/work/photo-vision-model-cache
     outputs:
       base_sha: ${{ steps.base.outputs.sha }}
+      candidate_artifact: ${{ steps.base.outputs.candidate_artifact }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,7 +45,9 @@ jobs:
           persist-credentials: false
       - id: base
         name: Record the catalogue revision
-        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "candidate_artifact=geograph-photo-candidate-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
       - name: Require the completed metadata import
         run: test -s src/providers/data/geograph-venue-matches.json.gz
       - uses: actions/setup-node@v4
@@ -139,7 +142,7 @@ jobs:
       - name: Retain the verified publication candidate
         uses: actions/upload-artifact@v4
         with:
-          name: geograph-photo-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          name: ${{ steps.base.outputs.candidate_artifact }}
           path: src/providers/data/venue-photo-previews.json
           if-no-files-found: error
           retention-days: 1
@@ -172,30 +175,42 @@ jobs:
           fetch-depth: 0
       - uses: actions/download-artifact@v4
         with:
-          name: geograph-photo-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          name: ${{ needs.prepare.outputs.candidate_artifact }}
           path: work/photo-publication
       - name: Publish only verified photo metadata without overwriting newer work
         env:
           VERIFIED_BASE_SHA: ${{ needs.prepare.outputs.base_sha }}
         run: |
-          git merge-base --is-ancestor "$VERIFIED_BASE_SHA" HEAD
-          if ! git diff --quiet "$VERIFIED_BASE_SHA" HEAD -- . \
-            ':!src/providers/data/regions/england.json.gz' \
-            ':!src/providers/data/geograph-venue-matches.json.gz' \
-            ':!scripts/audit-overture-websites.py' \
-            ':!tests/test_overture_websites.py' \
-            ':!.github/workflows/overture-website-audit.yml'; then
-            echo "Photo preparation or application code changed; rerun against current main." | tee -a "$GITHUB_STEP_SUMMARY"
-            exit 1
-          fi
-          cp work/photo-publication/venue-photo-previews.json src/providers/data/venue-photo-previews.json
-          git add -- src/providers/data/venue-photo-previews.json
-          if git diff --cached --quiet; then
-            echo "No photo metadata changed." >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Refresh verified Geograph venue photograph links"
-          git push origin HEAD:main
-          echo "Published verified photo links: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
+          git fetch --no-tags origin "$VERIFIED_BASE_SHA"
+          for attempt in 1 2 3; do
+            git fetch --no-tags origin main
+            current_sha=$(git rev-parse FETCH_HEAD)
+            git merge-base --is-ancestor "$VERIFIED_BASE_SHA" "$current_sha"
+            if ! git diff --quiet "$VERIFIED_BASE_SHA" "$current_sha" -- . \
+              ':!src/providers/data/regions/england.json.gz' \
+              ':!src/providers/data/geograph-venue-matches.json.gz' \
+              ':!scripts/audit-overture-websites.py' \
+              ':!tests/test_overture_websites.py' \
+              ':!.github/workflows/overture-website-audit.yml'; then
+              echo "Application or photo metadata changed since verification. Rerun preparation against current main." | tee -a "$GITHUB_STEP_SUMMARY"
+              exit 1
+            fi
+            git checkout --detach "$current_sha"
+            cp work/photo-publication/venue-photo-previews.json src/providers/data/venue-photo-previews.json
+            git add -- src/providers/data/venue-photo-previews.json
+            if git diff --cached --quiet; then
+              echo "No verified photo metadata changed." >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            git commit -m "Refresh verified Geograph venue photograph links"
+            # A normal fast-forward push is the final compare-and-swap check.
+            if git push origin HEAD:main; then
+              echo "Published verified photo metadata to main: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            echo "Publication race on attempt $attempt; fetching and revalidating current main." >> "$GITHUB_STEP_SUMMARY"
+          done
+          echo "Main kept advancing during publication. The verified candidate is retained; retry publication." | tee -a "$GITHUB_STEP_SUMMARY"
+          exit 1

@@ -51,6 +51,7 @@ jobs:
       PHOTO_VISION_CACHE_DIR: ${{ github.workspace }}/work/photo-vision-model-cache
     outputs:
       base_sha: ${{ steps.base.outputs.sha }}
+      candidate_artifact: ${{ steps.base.outputs.candidate_artifact }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -58,7 +59,9 @@ jobs:
           persist-credentials: false
       - id: base
         name: Record the catalogue revision
-        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "candidate_artifact=venue-photo-candidate-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -166,7 +169,7 @@ jobs:
       - name: Retain the verified publication candidate
         uses: actions/upload-artifact@v4
         with:
-          name: venue-photo-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          name: ${{ steps.base.outputs.candidate_artifact }}
           path: |
             src/providers/data/venue-photo-previews.json
             src/providers/data/venue-photo-search-ledger.json
@@ -205,37 +208,46 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 0
       - uses: actions/download-artifact@v4
         with:
-          name: venue-photo-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          name: ${{ needs.prepare.outputs.candidate_artifact }}
           path: work/photo-publication
       - name: Publish the verified metadata without overwriting newer work
         env:
           VERIFIED_BASE_SHA: ${{ needs.prepare.outputs.base_sha }}
         run: |
-          current_sha=$(git rev-parse HEAD)
-          if [ "$current_sha" != "$VERIFIED_BASE_SHA" ]; then
-            git fetch --no-tags --depth=1 origin "$VERIFIED_BASE_SHA"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch --no-tags origin "$VERIFIED_BASE_SHA"
+          for attempt in 1 2 3; do
+            git fetch --no-tags origin main
+            current_sha=$(git rev-parse FETCH_HEAD)
+            git merge-base --is-ancestor "$VERIFIED_BASE_SHA" "$current_sha"
             if ! git diff --quiet "$VERIFIED_BASE_SHA" "$current_sha" -- . \
               ':!src/providers/data/regions/england.json.gz' \
               ':!src/providers/data/geograph-venue-matches.json.gz' \
               ':!scripts/audit-overture-websites.py' \
               ':!tests/test_overture_websites.py' \
               ':!.github/workflows/overture-website-audit.yml'; then
-              echo "Main advanced beyond independent source metadata imports. The candidate is retained; rerun preparation against the new revision." | tee -a "$GITHUB_STEP_SUMMARY"
+              echo "Application or photo metadata changed since verification. Rerun preparation against current main." | tee -a "$GITHUB_STEP_SUMMARY"
               exit 1
             fi
-          fi
-          cp work/photo-publication/venue-photo-previews.json src/providers/data/venue-photo-previews.json
-          cp work/photo-publication/venue-photo-search-ledger.json src/providers/data/venue-photo-search-ledger.json
-          git add -- src/providers/data/venue-photo-previews.json src/providers/data/venue-photo-search-ledger.json
-          if git diff --cached --quiet; then
-            echo "No prepared photo metadata changed." >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Refresh prepared venue photo metadata"
-          # A regular fast-forward push rejects any race after the revision check.
-          git push origin HEAD:main
-          echo "Published verified photo metadata to main: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
+            git checkout --detach "$current_sha"
+            cp work/photo-publication/venue-photo-previews.json src/providers/data/venue-photo-previews.json
+            cp work/photo-publication/venue-photo-search-ledger.json src/providers/data/venue-photo-search-ledger.json
+            git add -- src/providers/data/venue-photo-previews.json src/providers/data/venue-photo-search-ledger.json
+            if git diff --cached --quiet; then
+              echo "No verified photo metadata changed." >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            git commit -m "Refresh prepared venue photo metadata"
+            # A normal fast-forward push is the final compare-and-swap check.
+            if git push origin HEAD:main; then
+              echo "Published verified photo metadata to main: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            echo "Publication race on attempt $attempt; fetching and revalidating current main." >> "$GITHUB_STEP_SUMMARY"
+          done
+          echo "Main kept advancing during publication. The verified candidate is retained; retry publication." | tee -a "$GITHUB_STEP_SUMMARY"
+          exit 1

@@ -2,6 +2,10 @@ name: Prepare Geograph photo metadata candidates
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: [Prepare England catalogue]
+    types: [completed]
+    branches: [main]
   schedule:
     - cron: "31 5 * * 1"
   push:
@@ -30,7 +34,11 @@ concurrency:
 
 jobs:
   prepare:
-    if: github.ref == 'refs/heads/main'
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_repository.full_name == github.repository))
     runs-on: ubuntu-latest
     timeout-minutes: 30
     outputs:

@@ -173,6 +173,26 @@ class GeographMatchingTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             module.validate_schema(schema.replace('`wgs84_lat` decimal(10,6)', '`wgs84_lat` varchar(10)'), module.BASE_COLUMNS)
 
+    def test_live_geo_schema_allows_unknown_viewpoint_but_not_unknown_subject_precision(self):
+        # Actual official gridimage_geo.schema observed in run 40897571272.
+        schema = """CREATE TABLE `gridimage_geo` (
+  `gridimage_id` int(11) NOT NULL DEFAULT '0',
+  `nateastings` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `natnorthings` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `natgrlen` enum('10','8','6','4','2') NOT NULL DEFAULT '4',
+  `viewpoint_eastings` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `viewpoint_northings` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `viewpoint_grlen` enum('10','8','6','4','2','0') NOT NULL DEFAULT '0',
+  `view_direction` smallint(6) NOT NULL DEFAULT '-1',
+  `use6fig` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`gridimage_id`)
+);"""
+        module.validate_schema(schema, module.GEO_COLUMNS)
+        with self.assertRaises(ValueError):
+            module.validate_schema(schema.replace(
+                "`natgrlen` enum('10','8','6','4','2')",
+                "`natgrlen` enum('10','8','6','4','2','0')"), module.GEO_COLUMNS)
+
     def test_bounds_decompression_and_candidate_work(self):
         with self.assertRaises(ValueError):
             self.run_import(max_uncompressed_bytes=10)

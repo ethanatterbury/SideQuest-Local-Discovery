@@ -28,7 +28,7 @@ BASE_TYPES = ('int(11)', 'int(11)', 'varchar(128)', 'varchar(128)',
               "enum('rejected','pending','accepted','geograph')", 'date', 'varchar(6)',
               'smallint(3)', 'smallint(4)', 'decimal(10,6)', 'decimal(10,6)', 'tinyint(1)')
 GEO_TYPES = ('int(11)', 'mediumint(8)', 'mediumint(8)', "enum('10','8','6','4','2')",
-             'mediumint(8)', 'mediumint(8)', "enum('10','8','6','4','2')", 'smallint(6)', 'tinyint(3)')
+             'mediumint(8)', 'mediumint(8)', "enum('10','8','6','4','2','0')", 'smallint(6)', 'tinyint(3)')
 SOURCE_ROOT = 'https://data.geograph.org.uk/dumps/'
 LICENSE_URL = 'https://creativecommons.org/licenses/by-sa/2.0/'
 STOPWORDS = set('the a an and of at in on for to saint st park parks garden gardens country '
