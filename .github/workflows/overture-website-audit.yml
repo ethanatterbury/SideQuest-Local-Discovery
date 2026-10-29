@@ -1,13 +1,8 @@
 name: Audit free Overture website coverage
 
+# Manual maintenance only. Live discovery must not trigger catalogue redeployments.
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/overture-website-audit.yml
-      - scripts/audit-overture-websites.py
-      - tests/test_overture_websites.py
 
 permissions:
   contents: read

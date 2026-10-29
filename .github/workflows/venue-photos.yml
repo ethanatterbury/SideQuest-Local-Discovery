@@ -1,38 +1,14 @@
 name: Maintain prepared venue photographs
 
+# Manual maintenance only. Live discovery must not trigger catalogue redeployments.
 on:
   workflow_dispatch:
     inputs:
       limit:
-        description: Maximum venues to inspect (0–1000; no paid searches)
+        description: Maximum venues to inspect manually (0–1000; no paid searches)
         required: true
         default: 1000
         type: number
-  schedule:
-    - cron: "17 * * * *"
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/venue-photos.yml
-      - scripts/prepare-venue-photos.mjs
-      - scripts/lib/venue-photo-batch.mjs
-      - scripts/lib/photo-delivery-results.mjs
-      - scripts/lib/photo-delivery-selection.mjs
-      - scripts/lib/offline-photo-preview.mjs
-      - scripts/lib/provider-loader.mjs
-      - scripts/photo-vision/resolver.mjs
-      - scripts/photo-vision/package.json
-      - scripts/photo-vision/package-lock.json
-      - src/domain/models.ts
-      - src/providers/official-photo*.ts
-      - src/providers/photo-policy.ts
-      - src/providers/photo-query.ts
-      - src/providers/photo-reference*.ts
-      - src/providers/prepared-venue-photos.ts
-      - src/providers/places.ts
-      - src/providers/data/regional-osm.json
-      - src/providers/data/venue-photo-previews.json
-      - tests/e2e/prepared-publisher-photos.spec.ts
 
 permissions:
   contents: read

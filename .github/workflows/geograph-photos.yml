@@ -1,26 +1,14 @@
 name: Maintain Geograph venue photographs
 
+# Manual maintenance only. Live discovery must not trigger catalogue redeployments.
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/geograph-photos.yml
-      - scripts/prepare-geograph-photos.mjs
-      - scripts/lib/geograph-photo-batch.mjs
-      - src/providers/geograph-commons-photo.ts
   workflow_dispatch:
     inputs:
       limit:
-        description: Maximum venue matches to inspect (0–1000; no paid API)
+        description: Maximum venues to inspect manually (0–1000; no paid searches)
         required: true
         default: 1000
         type: number
-  workflow_run:
-    workflows: [Prepare Geograph photo metadata candidates]
-    types: [completed]
-    branches: [main]
-  schedule:
-    - cron: "47 * * * *"
 
 permissions:
   contents: read
@@ -79,9 +67,10 @@ jobs:
           echo "SIDEQUEST_PHOTO_DELIVERY_AT=$(date --utc +%Y-%m-%dT%H:%M:%S.000Z)" >> "$GITHUB_ENV"
       - name: Resolve exact Commons source IDs and inspect scenes in memory
         env:
-          PHOTO_LIMIT: ${{ github.event_name == 'workflow_dispatch' && toJSON(inputs.limit) || '1000' }}
+          PHOTO_LIMIT: ${{ github.event_name == 'workflow_dispatch' && toJSON(inputs.limit) || github.event_name == 'push' && '200' || '1000' }}
+          PHOTO_RUNTIME_MS: ${{ github.event_name == 'push' && '300000' || '1200000' }}
         run: |
-          node scripts/prepare-geograph-photos.mjs --limit="$PHOTO_LIMIT" --max-runtime-ms=1200000 --timeout-ms=6500 | tee work/photo-maintenance/batch.jsonl
+          node scripts/prepare-geograph-photos.mjs --limit="$PHOTO_LIMIT" --max-runtime-ms="$PHOTO_RUNTIME_MS" --timeout-ms=6500 | tee work/photo-maintenance/batch.jsonl
       - name: Validate approved links and preserve existing photographs
         run: |
           node --input-type=module <<'NODE'

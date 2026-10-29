@@ -1,13 +1,8 @@
 name: Offline photograph vision pilot
 
+# Manual maintenance only. Live discovery must not trigger catalogue redeployments.
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/photo-vision-pilot.yml
-      - scripts/photo-vision/**
-      - docs/photo-vision-pilot.md
 
 permissions:
   contents: read

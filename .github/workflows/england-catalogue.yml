@@ -1,18 +1,8 @@
 name: Prepare England catalogue
 
+# Manual maintenance only. Live discovery must not trigger catalogue redeployments.
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "43 3 1 * *"
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/england-catalogue.yml
-      - scripts/prepare-england.mjs
-      - scripts/import-osm-extract.py
-      - scripts/audit-catalog.mjs
-      - scripts/lib/england-coverage.mjs
-      - scripts/lib/catalogue-sources.mjs
 
 permissions:
   contents: read

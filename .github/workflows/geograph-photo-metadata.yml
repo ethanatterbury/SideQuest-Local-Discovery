@@ -1,29 +1,8 @@
 name: Prepare Geograph photo metadata candidates
 
+# Manual maintenance only. Live discovery must not trigger catalogue redeployments.
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: [Prepare England catalogue]
-    types: [completed]
-    branches: [main]
-  schedule:
-    - cron: "31 5 * * 1"
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/geograph-photo-metadata.yml
-      - scripts/import-geograph-venue-matches.py
-      - tests/test_geograph_venue_matches.py
-      - scripts/build-venue-cells.mjs
-      - scripts/lib/catalogue-sources.mjs
-      - scripts/lib/provider-loader.mjs
-      - src/providers/nearby-places.ts
-      - src/domain/**
-      - src/providers/data/regional-osm.json
-      - src/providers/data/venue-evidence.json
-      - src/providers/data/regions/**
-      - package.json
-      - package-lock.json
 
 permissions:
   contents: read
