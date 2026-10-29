@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-29T17:18:28.906Z",
+  "generatedAt": "2026-10-29T20:41:10.321Z",
   "entries": [
     {
       "query": {
@@ -46813,6 +46813,28 @@
           }
         ],
         "reason": null
+      },
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "19844cc66009576876d83374b03699c6cc5f4460329d40f1ce7325d5f579fb54",
+        "checkedAt": "2026-10-29T20:38:56.872Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8409847,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 8409844,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 5200545,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
       }
     },
     {
@@ -47075,6 +47097,28 @@
           }
         ],
         "reason": null
+      },
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "2d8d95161093d65c797f616bf286f7ba9bc1c1e157dddb339d2b88b938236bec",
+        "checkedAt": "2026-10-29T20:40:27.385Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8211880,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7812981,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7496178,
+            "reason": "unsafe-image-url"
+          }
+        ]
       }
     },
     {
@@ -61432,6 +61476,3181 @@
           }
         ],
         "reason": "website-preview-pending"
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11126568005",
+        "name": "Pit View",
+        "lat": 50.3658017,
+        "lng": -4.8123239
+      },
+      "checkedAt": "2026-10-29T20:38:56.853Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "416f0bede4729a8e6308b2bc96bf4d79a935b05a5119e7ff16023b4d0f1a24dc",
+        "checkedAt": "2026-10-29T20:38:56.853Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 5090958,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11148818672",
+        "name": "The Drill Hall",
+        "lat": 51.6442635,
+        "lng": -2.6711523
+      },
+      "checkedAt": "2026-10-29T20:38:58.955Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "b752f22b90f29f4e789ebd229b9367f49cbd43c9127d903b6848e27c981b33cc",
+        "checkedAt": "2026-10-29T20:38:58.955Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 3673738,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11159491078",
+        "name": "Repton School Art Gallery",
+        "lat": 52.8398424,
+        "lng": -1.5503136
+      },
+      "checkedAt": "2026-10-29T20:38:58.973Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "f1ad70e1ad9fda4efee9199cb727873304d02cc3c29503a12135524d7f8f87af",
+        "checkedAt": "2026-10-29T20:38:58.973Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7718333,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11170606006",
+        "name": "Turner Museum of Glass",
+        "lat": 53.3816729,
+        "lng": -1.477438
+      },
+      "checkedAt": "2026-10-29T20:39:00.566Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "e1fc80ff18f8816f0b45bf3126437113ad44dede3847463b87e90fe06534af51",
+        "checkedAt": "2026-10-29T20:39:00.566Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7049494,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1117771737",
+        "name": "Eridge Rocks",
+        "lat": 51.098538,
+        "lng": 0.2190313
+      },
+      "checkedAt": "2026-10-29T20:39:01.592Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "79d5d767a036f0e53d1fb943ee438627f902147e8cd405861d8e65781abde4be",
+        "checkedAt": "2026-10-29T20:39:01.592Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8073951,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 8073953,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 8073955,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11188039600",
+        "name": "Sculpture Matrix",
+        "lat": 52.8002439,
+        "lng": -0.1253891
+      },
+      "checkedAt": "2026-10-29T20:39:05.500Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "f67cd02d4d70489f0aed3a33c1de8efe9cf78767e7750885b52b44a4a1544a6e",
+        "checkedAt": "2026-10-29T20:39:05.500Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8399929,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11188039626",
+        "name": "Momotaro Garden",
+        "lat": 52.8001467,
+        "lng": -0.1246713
+      },
+      "checkedAt": "2026-10-29T20:39:06.794Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "98e0e1ef4815b6ffb7a3d24cfaf9fd65dc1da36b4db8bf8e318bf5dc10d734aa",
+        "checkedAt": "2026-10-29T20:39:06.794Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8399937,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11197544437",
+        "name": "Cromer Artspace on the Prom",
+        "lat": 52.9339754,
+        "lng": 1.2924617
+      },
+      "checkedAt": "2026-10-29T20:39:08.071Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "fb91886625bdfd05b4be943e18e871bf19e9af1718ed350af218e02f77139a11",
+        "checkedAt": "2026-10-29T20:39:08.071Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7808268,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11200048026",
+        "name": "Colourfields Panopticon",
+        "lat": 53.7575199,
+        "lng": -2.4975449
+      },
+      "checkedAt": "2026-10-29T20:39:09.409Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "c4181e0f24181e7dc972243dd4ff0748763016b29245616b2841065ea09b6ce7",
+        "checkedAt": "2026-10-29T20:39:09.409Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7173521,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11206224967",
+        "name": "Rissington Kart Club",
+        "lat": 51.8658915,
+        "lng": -1.6847898
+      },
+      "checkedAt": "2026-10-29T20:39:09.441Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "6d31449d0c37492bacaf04fed4a041b340ad5cfe9ba81b4f322741e7ddda821b",
+        "checkedAt": "2026-10-29T20:39:09.441Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 5028322,
+            "reason": "dated-or-nonphysical-subject"
+          },
+          {
+            "geographId": 5028328,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11234355668",
+        "name": "The Italian Garden, Compton Acres",
+        "lat": 50.7069002,
+        "lng": -1.925884
+      },
+      "checkedAt": "2026-10-29T20:39:09.457Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "1bb4cf9c430d4f3015af81382ec445cef9bfa27b2ccaf40bae4901cfc98b845d",
+        "checkedAt": "2026-10-29T20:39:09.457Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 4118860,
+            "reason": "dated-or-nonphysical-subject"
+          },
+          {
+            "geographId": 4118937,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11234355696",
+        "name": "The Japanese Garden, Compton Acres",
+        "lat": 50.7066263,
+        "lng": -1.9273175
+      },
+      "checkedAt": "2026-10-29T20:39:09.489Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "91fca25c566a91df011d081e37b2fa5f5a857f2cf360ffe13c3c14f9020ad66c",
+        "checkedAt": "2026-10-29T20:39:09.489Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 6165072,
+            "reason": "dated-or-nonphysical-subject"
+          },
+          {
+            "geographId": 6165040,
+            "reason": "dated-or-nonphysical-subject"
+          },
+          {
+            "geographId": 6165045,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11234355702",
+        "name": "The Heather Garden, Compton Acres",
+        "lat": 50.7062225,
+        "lng": -1.9276283
+      },
+      "checkedAt": "2026-10-29T20:39:09.519Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "9510d69043971a898c41dd816af42b067b094d2c9bbae0e02d7059f647de3cbd",
+        "checkedAt": "2026-10-29T20:39:09.519Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 4119132,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11238751647",
+        "name": "New Addington Leisure Centre",
+        "lat": 51.3408646,
+        "lng": -0.0162694
+      },
+      "checkedAt": "2026-10-29T20:39:09.535Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "34671437dd4be4c7f01a0d9f15f8faed54c222df20ae77de98b8301e8b4971cc",
+        "checkedAt": "2026-10-29T20:39:09.535Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 4875555,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11263387323",
+        "name": "4 Princelet Street",
+        "lat": 51.5197234,
+        "lng": -0.0731421
+      },
+      "checkedAt": "2026-10-29T20:39:09.552Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "07c45a268c703866e911282b67d292de0438485f4d8b1cd4e687cdac289dfd1d",
+        "checkedAt": "2026-10-29T20:39:09.552Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 4739264,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11272209977",
+        "name": "Plaza",
+        "lat": 51.1874261,
+        "lng": -2.2332237
+      },
+      "checkedAt": "2026-10-29T20:39:09.569Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "e6df30bff8c36887385db18dd3f52ab4219f7f6bf342b39eb015fcc9ea9ef2b3",
+        "checkedAt": "2026-10-29T20:39:09.569Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7556641,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7579385,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7579386,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1128833022",
+        "name": "Plaza Theatre",
+        "lat": 50.9899856,
+        "lng": -1.490668
+      },
+      "checkedAt": "2026-10-29T20:39:13.293Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "57f004fbc5f8841b894a193cbeac5794e3d21bd7ecba689b94e5eccf5ac24b9f",
+        "checkedAt": "2026-10-29T20:39:13.293Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7642574,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 4503971,
+            "reason": "dated-or-nonphysical-subject"
+          },
+          {
+            "geographId": 4505381,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11293206062",
+        "name": "Cascades",
+        "lat": 51.1798027,
+        "lng": -2.2407104
+      },
+      "checkedAt": "2026-10-29T20:39:14.571Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "58319b4f93626abf199d39cdeca7b564a25ffb6f621f1c84bdb03402e939997e",
+        "checkedAt": "2026-10-29T20:39:14.571Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7579390,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7579392,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7579389,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11339609269",
+        "name": "The chalet",
+        "lat": 51.8401248,
+        "lng": -2.6373893
+      },
+      "checkedAt": "2026-10-29T20:39:18.502Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "7a6c95420adc6dc07038f72f1de522b8adacc350f82596e5e9ef5b6fd2512a20",
+        "checkedAt": "2026-10-29T20:39:18.502Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8170531,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7570581,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7106211,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11385944074",
+        "name": "Flamingos",
+        "lat": 51.5348194,
+        "lng": -0.1528689
+      },
+      "checkedAt": "2026-10-29T20:39:22.408Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "e06c255a7ec8df9e87c772bc9b63db773050b20acb4fe607a7ae4ba818fa1201",
+        "checkedAt": "2026-10-29T20:39:22.408Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 3106216,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11406197943",
+        "name": "Sherborne Steam & Waterwheel Centre",
+        "lat": 50.9505554,
+        "lng": -2.5052783
+      },
+      "checkedAt": "2026-10-29T20:39:22.423Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "88c5b3c5c4f58c4301dcf6a87491f5ea8e4ab324c053e5e38efed4cd8f4e80b6",
+        "checkedAt": "2026-10-29T20:39:22.423Z",
+        "status": "unresolved",
+        "reason": "photo-review-rejected",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7338211,
+            "reason": "photo-review-rejected"
+          },
+          {
+            "geographId": 7337781,
+            "reason": "photo-review-rejected"
+          },
+          {
+            "geographId": 7338218,
+            "reason": "photo-review-rejected"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11407831931",
+        "name": "The Old Prison",
+        "lat": 51.8331494,
+        "lng": -1.843113
+      },
+      "checkedAt": "2026-10-29T20:39:26.549Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "6338e7748bd7febf32012fbb1af29293c9dc0b1edabe5565e21dec8e209115d0",
+        "checkedAt": "2026-10-29T20:39:26.549Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8028161,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 8009104,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7436380,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1143439223",
+        "name": "Miniland",
+        "lat": 51.4644853,
+        "lng": -0.6515961
+      },
+      "checkedAt": "2026-10-29T20:39:30.169Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "7d69356ee575683215a57ff95567daa1af755b0a95ae7f8d7f987000988ef199",
+        "checkedAt": "2026-10-29T20:39:30.169Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 6256562,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 6256569,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 3680045,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1143439237",
+        "name": "The Beginning",
+        "lat": 51.4636116,
+        "lng": -0.654037
+      },
+      "checkedAt": "2026-10-29T20:39:32.950Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "8e7d206990959ad6749af483ae679a6f78a9514911acaacf6e5044841a8cfca2",
+        "checkedAt": "2026-10-29T20:39:32.950Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8158657,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1143439243",
+        "name": "Knight's Kingdom",
+        "lat": 51.4618336,
+        "lng": -0.6504321
+      },
+      "checkedAt": "2026-10-29T20:39:34.265Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "0b2c1b6965c75cd9ca0afd265e6b40c0a8058e688c8fe1d814609c77b384654f",
+        "checkedAt": "2026-10-29T20:39:34.265Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8160518,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11462543586",
+        "name": "Offerton Cricket Club",
+        "lat": 53.4051236,
+        "lng": -2.1241842
+      },
+      "checkedAt": "2026-10-29T20:39:35.603Z",
+      "image": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/55/Offerton_Cricket_Club_-_geograph.org.uk_-_7064798.jpg",
+        "source": "https://commons.wikimedia.org/wiki/File:Offerton_Cricket_Club_-_geograph.org.uk_-_7064798.jpg",
+        "credit": "Graham Hogg",
+        "license": "CC BY-SA 2.0",
+        "rights": "open",
+        "strategy": "geograph-commons-source-id",
+        "checkedAt": "2026-10-29T20:39:35.603Z",
+        "width": 640,
+        "height": 480,
+        "confidence": 0.9,
+        "matched": [
+          "exact-geograph-source-id",
+          "full venue name in Geograph subject title",
+          "precise Geograph subject position within 150m"
+        ]
+      },
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "matched",
+      "retryable": false,
+      "evidence": {
+        "vision": {
+          "method": "image-analysis:local-clip",
+          "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/55/Offerton_Cricket_Club_-_geograph.org.uk_-_7064798.jpg",
+          "checkedAt": "2026-10-29T20:39:35.603Z",
+          "sha256": "ab3ce20f70bc1ea8944ef509106cb13b71ee1d374aadc9d9e29bbd817d7ccf88",
+          "width": 640,
+          "height": 480,
+          "localClip": {
+            "model": {
+              "id": "Xenova/clip-vit-base-patch32",
+              "revision": "d15189d7028b43f1d3e65039190477f6af591c2a",
+              "dtype": "q8",
+              "device": "cpu",
+              "library": "@huggingface/transformers",
+              "libraryVersion": "3.8.1"
+            },
+            "minScore": 0.8,
+            "minMargin": 0.5,
+            "bestVenueScore": 0.9850794076919556,
+            "bestRejectScore": 0.0017314330907538533,
+            "margin": 0.9833479746012017,
+            "scores": [
+              {
+                "id": "outdoor-place",
+                "group": "venue",
+                "score": 0.9850794076919556
+              },
+              {
+                "id": "venue-exterior",
+                "group": "venue",
+                "score": 0.009182903915643692
+              },
+              {
+                "id": "venue-interior",
+                "group": "venue",
+                "score": 0.0033656987361609936
+              },
+              {
+                "id": "construction",
+                "group": "reject",
+                "score": 0.0017314330907538533
+              },
+              {
+                "id": "ancillary-parking",
+                "group": "reject",
+                "score": 0.0002840538218151778
+              },
+              {
+                "id": "product-food",
+                "group": "reject",
+                "score": 0.00013468136603478342
+              },
+              {
+                "id": "logo-illustration",
+                "group": "reject",
+                "score": 0.00010939705680357292
+              },
+              {
+                "id": "portrait-event",
+                "group": "reject",
+                "score": 0.00007624134013894945
+              },
+              {
+                "id": "document",
+                "group": "reject",
+                "score": 0.00003617184847826138
+              }
+            ]
+          }
+        }
+      },
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "1e7f233344433214a75f29229a9c40a5c35d09ebbd5c262496018b3301bf5a4f",
+        "checkedAt": "2026-10-29T20:39:35.603Z",
+        "status": "matched",
+        "reason": "matched",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7064798,
+            "reason": "matched"
+          }
+        ],
+        "geographId": 7064798,
+        "title": "Offerton Cricket Club",
+        "photographer": "Graham Hogg",
+        "photoTaken": "2022-01-03",
+        "subjectPrecision": {
+          "digits": 8,
+          "metres": 10
+        },
+        "sourceUrl": "https://www.geograph.org.uk/photo/7064798",
+        "distanceMetres": 40.59
+      },
+      "deliveryVerifiedAt": "2026-10-29T20:38:55.000Z"
+    },
+    {
+      "query": {
+        "id": "osm-node-11538215027",
+        "name": "Snedshill",
+        "lat": 52.6909055,
+        "lng": -2.4434349
+      },
+      "checkedAt": "2026-10-29T20:39:37.153Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "170532fe7c0ac0fb4bb85f2441152242f70a7def9b1320c47c2f9d8568922259",
+        "checkedAt": "2026-10-29T20:39:37.153Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8272708,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 8272706,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 8272710,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1154525780",
+        "name": "Marsh Mill",
+        "lat": 53.874906,
+        "lng": -3.0119337
+      },
+      "checkedAt": "2026-10-29T20:39:40.814Z",
+      "image": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/2/27/Marsh_Mill%2C_Thornton_-_drying_kiln_-_geograph.org.uk_-_7658397.jpg",
+        "source": "https://commons.wikimedia.org/wiki/File:Marsh_Mill,_Thornton_-_drying_kiln_-_geograph.org.uk_-_7658397.jpg",
+        "credit": "Chris Allen",
+        "license": "CC BY-SA 2.0",
+        "rights": "open",
+        "strategy": "geograph-commons-source-id",
+        "checkedAt": "2026-10-29T20:39:40.814Z",
+        "width": 640,
+        "height": 427,
+        "confidence": 0.9,
+        "matched": [
+          "exact-geograph-source-id",
+          "full venue name in Geograph subject title",
+          "precise Geograph subject position within 150m"
+        ]
+      },
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "matched",
+      "retryable": false,
+      "evidence": {
+        "vision": {
+          "method": "image-analysis:local-clip",
+          "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/2/27/Marsh_Mill%2C_Thornton_-_drying_kiln_-_geograph.org.uk_-_7658397.jpg",
+          "checkedAt": "2026-10-29T20:39:40.814Z",
+          "sha256": "939d4c3b5b5aae6c988ba55872e4efc9e8297ca070990ee468ee7559e874629a",
+          "width": 640,
+          "height": 427,
+          "localClip": {
+            "model": {
+              "id": "Xenova/clip-vit-base-patch32",
+              "revision": "d15189d7028b43f1d3e65039190477f6af591c2a",
+              "dtype": "q8",
+              "device": "cpu",
+              "library": "@huggingface/transformers",
+              "libraryVersion": "3.8.1"
+            },
+            "minScore": 0.8,
+            "minMargin": 0.5,
+            "bestVenueScore": 0.9384105205535889,
+            "bestRejectScore": 0.009060419164597988,
+            "margin": 0.9293501013889909,
+            "scores": [
+              {
+                "id": "venue-exterior",
+                "group": "venue",
+                "score": 0.9384105205535889
+              },
+              {
+                "id": "venue-interior",
+                "group": "venue",
+                "score": 0.04549866542220116
+              },
+              {
+                "id": "construction",
+                "group": "reject",
+                "score": 0.009060419164597988
+              },
+              {
+                "id": "document",
+                "group": "reject",
+                "score": 0.002746494021266699
+              },
+              {
+                "id": "ancillary-parking",
+                "group": "reject",
+                "score": 0.0023034336045384407
+              },
+              {
+                "id": "product-food",
+                "group": "reject",
+                "score": 0.0010109840659424663
+              },
+              {
+                "id": "logo-illustration",
+                "group": "reject",
+                "score": 0.0004777509020641446
+              },
+              {
+                "id": "portrait-event",
+                "group": "reject",
+                "score": 0.00038085627602413297
+              },
+              {
+                "id": "outdoor-place",
+                "group": "venue",
+                "score": 0.00011085346341133118
+              }
+            ]
+          }
+        }
+      },
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "9ee8af68a8a5ade1dd40637ef9f83e00bc79eb1716c3f1a104ef6b6839d69b86",
+        "checkedAt": "2026-10-29T20:39:40.814Z",
+        "status": "matched",
+        "reason": "matched",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7658393,
+            "reason": "photo-review-rejected"
+          },
+          {
+            "geographId": 7658397,
+            "reason": "matched"
+          }
+        ],
+        "geographId": 7658397,
+        "title": "Marsh Mill, Thornton - drying kiln",
+        "photographer": "Chris Allen",
+        "photoTaken": "2023-09-17",
+        "subjectPrecision": {
+          "digits": 8,
+          "metres": 10
+        },
+        "sourceUrl": "https://www.geograph.org.uk/photo/7658397",
+        "distanceMetres": 4.88
+      },
+      "deliveryVerifiedAt": "2026-10-29T20:38:55.000Z"
+    },
+    {
+      "query": {
+        "id": "osm-node-11546637690",
+        "name": "Runway Visitor Park",
+        "lat": 53.3539875,
+        "lng": -2.2845452
+      },
+      "checkedAt": "2026-10-29T20:39:43.655Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "25537468931d333ffc6656c67db359633ffbd2f35bed46f015b3c97d596febb4",
+        "checkedAt": "2026-10-29T20:39:43.655Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 5955671,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 5955666,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 5955673,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1159674957",
+        "name": "Burrough Hill",
+        "lat": 52.6995862,
+        "lng": -0.8776427
+      },
+      "checkedAt": "2026-10-29T20:39:47.510Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "82ab0b1b6e242062ae1c4e036ae5fc7cabdcc1d83e4b15351d58ef060cd5690a",
+        "checkedAt": "2026-10-29T20:39:47.510Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7912608,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7912664,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7912666,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11619106198",
+        "name": "Red Dot Gallery",
+        "lat": 52.906246,
+        "lng": 1.0901965
+      },
+      "checkedAt": "2026-10-29T20:39:51.566Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "80218a71a9db0d0fc5941dcb4f54d8b282adb6335136778d55080fb70d167c96",
+        "checkedAt": "2026-10-29T20:39:51.566Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7661629,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7661627,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1165199681",
+        "name": "Surrey Docks Watersports Centre",
+        "lat": 51.4935452,
+        "lng": -0.0395831
+      },
+      "checkedAt": "2026-10-29T20:39:54.153Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "f563733dcbbca8625c98b2558fbaa03d3979f1acfcb5f50d3ee782e1e8efc880",
+        "checkedAt": "2026-10-29T20:39:54.153Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 2394874,
+            "reason": "dated-or-nonphysical-subject"
+          },
+          {
+            "geographId": 1876519,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11712232147",
+        "name": "Oakham Treasures",
+        "lat": 51.4657399,
+        "lng": -2.7175941
+      },
+      "checkedAt": "2026-10-29T20:39:54.182Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "2c1f749003b2c6306827e50092d31233c2b01370de4618c3866e74abb5d52c70",
+        "checkedAt": "2026-10-29T20:39:54.182Z",
+        "status": "unresolved",
+        "reason": "photo-review-rejected",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7196205,
+            "reason": "photo-review-rejected"
+          },
+          {
+            "geographId": 7196807,
+            "reason": "photo-review-rejected"
+          },
+          {
+            "geographId": 7196184,
+            "reason": "photo-review-rejected"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11734835716",
+        "name": "Powell Theatre",
+        "lat": 50.9480049,
+        "lng": -2.5167797
+      },
+      "checkedAt": "2026-10-29T20:39:58.279Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "64cba19262880e4c4ee4e43203276b17b1cf8a98831e5327d97d3feb7b3d9327",
+        "checkedAt": "2026-10-29T20:39:58.279Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 4589662,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11758824015",
+        "name": "Giant Anteater",
+        "lat": 53.2248616,
+        "lng": -2.8830736
+      },
+      "checkedAt": "2026-10-29T20:39:58.314Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "83c723bf9345aa2b1fc5a9d7d3ee7fc085fbd2264d434af2b58f388428ce4377",
+        "checkedAt": "2026-10-29T20:39:58.314Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 5355065,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11769425516",
+        "name": "Hayles Fruit Farm",
+        "lat": 51.966256,
+        "lng": -1.923133
+      },
+      "checkedAt": "2026-10-29T20:39:59.387Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "cfbd0a9183c898098ce4b367a7a0be53a807b8ca3b4a7dbfb0a4f46b081f2c04",
+        "checkedAt": "2026-10-29T20:39:59.387Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 4632661,
+            "reason": "dated-or-nonphysical-subject"
+          },
+          {
+            "geographId": 4632672,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11773290522",
+        "name": "Speke Hall",
+        "lat": 53.3368143,
+        "lng": -2.8742305
+      },
+      "checkedAt": "2026-10-29T20:39:59.403Z",
+      "image": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Speke_Hall%2C_Liverpool_-_geograph.org.uk_-_7254405.jpg",
+        "source": "https://commons.wikimedia.org/wiki/File:Speke_Hall,_Liverpool_-_geograph.org.uk_-_7254405.jpg",
+        "credit": "pam fray",
+        "license": "CC BY-SA 2.0",
+        "rights": "open",
+        "strategy": "geograph-commons-source-id",
+        "checkedAt": "2026-10-29T20:39:59.403Z",
+        "width": 640,
+        "height": 456,
+        "confidence": 0.9,
+        "matched": [
+          "exact-geograph-source-id",
+          "full venue name in Geograph subject title",
+          "precise Geograph subject position within 150m"
+        ]
+      },
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "matched",
+      "retryable": false,
+      "evidence": {
+        "vision": {
+          "method": "image-analysis:local-clip",
+          "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Speke_Hall%2C_Liverpool_-_geograph.org.uk_-_7254405.jpg",
+          "checkedAt": "2026-10-29T20:39:59.403Z",
+          "sha256": "9220976c4619e0e0b5c14e65655bdc369070b2a5d3c94dc40ee4ff9acb98fbd5",
+          "width": 640,
+          "height": 456,
+          "localClip": {
+            "model": {
+              "id": "Xenova/clip-vit-base-patch32",
+              "revision": "d15189d7028b43f1d3e65039190477f6af591c2a",
+              "dtype": "q8",
+              "device": "cpu",
+              "library": "@huggingface/transformers",
+              "libraryVersion": "3.8.1"
+            },
+            "minScore": 0.8,
+            "minMargin": 0.5,
+            "bestVenueScore": 0.9232890009880066,
+            "bestRejectScore": 0.010901384055614471,
+            "margin": 0.9123876169323921,
+            "scores": [
+              {
+                "id": "venue-exterior",
+                "group": "venue",
+                "score": 0.9232890009880066
+              },
+              {
+                "id": "venue-interior",
+                "group": "venue",
+                "score": 0.04896501451730728
+              },
+              {
+                "id": "outdoor-place",
+                "group": "venue",
+                "score": 0.012774408794939518
+              },
+              {
+                "id": "construction",
+                "group": "reject",
+                "score": 0.010901384055614471
+              },
+              {
+                "id": "ancillary-parking",
+                "group": "reject",
+                "score": 0.002002265304327011
+              },
+              {
+                "id": "product-food",
+                "group": "reject",
+                "score": 0.0011357043404132128
+              },
+              {
+                "id": "portrait-event",
+                "group": "reject",
+                "score": 0.0003900128649547696
+              },
+              {
+                "id": "logo-illustration",
+                "group": "reject",
+                "score": 0.00038049384602345526
+              },
+              {
+                "id": "document",
+                "group": "reject",
+                "score": 0.0001616847439436242
+              }
+            ]
+          }
+        }
+      },
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "2ff0e4c5053d80f442a77a8abec2faf4d6354af9fc1c44612938cf6a1ac5778f",
+        "checkedAt": "2026-10-29T20:39:59.403Z",
+        "status": "matched",
+        "reason": "matched",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8111962,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7254405,
+            "reason": "matched"
+          }
+        ],
+        "geographId": 7254405,
+        "title": "Speke Hall, Liverpool",
+        "photographer": "pam fray",
+        "photoTaken": "2022-08-10",
+        "subjectPrecision": {
+          "digits": 8,
+          "metres": 10
+        },
+        "sourceUrl": "https://www.geograph.org.uk/photo/7254405",
+        "distanceMetres": 12.94
+      },
+      "deliveryVerifiedAt": "2026-10-29T20:38:55.000Z"
+    },
+    {
+      "query": {
+        "id": "osm-node-11773788669",
+        "name": "National Telephone Kiosk Collection",
+        "lat": 52.3139549,
+        "lng": -2.0705397
+      },
+      "checkedAt": "2026-10-29T20:40:02.276Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "3e2bdcc787aaa55629507545e28444fb15971b674b03eee1e770be9792b46b42",
+        "checkedAt": "2026-10-29T20:40:02.276Z",
+        "status": "unresolved",
+        "reason": "photo-review-rejected",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 6999223,
+            "reason": "photo-review-rejected"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1179833836",
+        "name": "Frome Museum",
+        "lat": 51.2323275,
+        "lng": -2.3198141
+      },
+      "checkedAt": "2026-10-29T20:40:03.541Z",
+      "image": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Frome_Museum_-_geograph.org.uk_-_7698349.jpg",
+        "source": "https://commons.wikimedia.org/wiki/File:Frome_Museum_-_geograph.org.uk_-_7698349.jpg",
+        "credit": "David Martin",
+        "license": "CC BY-SA 2.0",
+        "rights": "open",
+        "strategy": "geograph-commons-source-id",
+        "checkedAt": "2026-10-29T20:40:03.541Z",
+        "width": 683,
+        "height": 1024,
+        "confidence": 0.9,
+        "matched": [
+          "exact-geograph-source-id",
+          "full venue name in Geograph subject title",
+          "precise Geograph subject position within 150m"
+        ]
+      },
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "matched",
+      "retryable": false,
+      "evidence": {
+        "vision": {
+          "method": "image-analysis:local-clip",
+          "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Frome_Museum_-_geograph.org.uk_-_7698349.jpg",
+          "checkedAt": "2026-10-29T20:40:03.541Z",
+          "sha256": "45376d968965ff13229a2acaaa7b21f26e0cf6cbd140b1343013213bc5516c2b",
+          "width": 683,
+          "height": 1024,
+          "localClip": {
+            "model": {
+              "id": "Xenova/clip-vit-base-patch32",
+              "revision": "d15189d7028b43f1d3e65039190477f6af591c2a",
+              "dtype": "q8",
+              "device": "cpu",
+              "library": "@huggingface/transformers",
+              "libraryVersion": "3.8.1"
+            },
+            "minScore": 0.8,
+            "minMargin": 0.5,
+            "bestVenueScore": 0.9614301323890686,
+            "bestRejectScore": 0.006302897818386555,
+            "margin": 0.955127234570682,
+            "scores": [
+              {
+                "id": "venue-exterior",
+                "group": "venue",
+                "score": 0.9614301323890686
+              },
+              {
+                "id": "venue-interior",
+                "group": "venue",
+                "score": 0.02250298112630844
+              },
+              {
+                "id": "construction",
+                "group": "reject",
+                "score": 0.006302897818386555
+              },
+              {
+                "id": "ancillary-parking",
+                "group": "reject",
+                "score": 0.004161307122558355
+              },
+              {
+                "id": "outdoor-place",
+                "group": "venue",
+                "score": 0.003974755760282278
+              },
+              {
+                "id": "document",
+                "group": "reject",
+                "score": 0.0005819870275445282
+              },
+              {
+                "id": "product-food",
+                "group": "reject",
+                "score": 0.00046374392695724964
+              },
+              {
+                "id": "logo-illustration",
+                "group": "reject",
+                "score": 0.00035217453842051327
+              },
+              {
+                "id": "portrait-event",
+                "group": "reject",
+                "score": 0.0002300380147062242
+              }
+            ]
+          }
+        }
+      },
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "9444f0b5fbbd3cea12b6d51488193f4cef0f7e9a6f76521f1f27c29081a0c657",
+        "checkedAt": "2026-10-29T20:40:03.541Z",
+        "status": "matched",
+        "reason": "matched",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8102250,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7887759,
+            "reason": "photo-review-rejected"
+          },
+          {
+            "geographId": 7698349,
+            "reason": "matched"
+          }
+        ],
+        "geographId": 7698349,
+        "title": "Frome Museum",
+        "photographer": "David Martin",
+        "photoTaken": "2024-01-27",
+        "subjectPrecision": {
+          "digits": 8,
+          "metres": 10
+        },
+        "sourceUrl": "https://www.geograph.org.uk/photo/7698349",
+        "distanceMetres": 8.82
+      },
+      "deliveryVerifiedAt": "2026-10-29T20:38:55.000Z"
+    },
+    {
+      "query": {
+        "id": "osm-node-1181086321",
+        "name": "Ravens Rock",
+        "lat": 51.4579044,
+        "lng": -2.4207311
+      },
+      "checkedAt": "2026-10-29T20:40:07.769Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "2ab71a7398b595e0241fd8a56c68cc11b9643954b7b80ea15db6a85f21240756",
+        "checkedAt": "2026-10-29T20:40:07.769Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 5669844,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 5669429,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11819785766",
+        "name": "The Northcourt",
+        "lat": 51.6820075,
+        "lng": -1.2746437
+      },
+      "checkedAt": "2026-10-29T20:40:10.494Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "15816ab7da90930b03542dbc5a8733171b8518eb35b50027fc0ddd1b9e7c5c2a",
+        "checkedAt": "2026-10-29T20:40:10.494Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8249691,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 8249695,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 8249693,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1185642722",
+        "name": "Eythorne",
+        "lat": 51.1991459,
+        "lng": 1.2638353
+      },
+      "checkedAt": "2026-10-29T20:40:14.421Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "e33e8a3a4886af44cf5ca1888da230f3cb7aaef60568f419f88fa21f613246a5",
+        "checkedAt": "2026-10-29T20:40:14.421Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7471197,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7545366,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7509900,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11875003469",
+        "name": "Goodwin's Court",
+        "lat": 51.5109551,
+        "lng": -0.1262724
+      },
+      "checkedAt": "2026-10-29T20:40:18.298Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "269ef7ed276f09e8ad354829b2007f854d1de2a23c2e457f6bbe1ccce071dce4",
+        "checkedAt": "2026-10-29T20:40:18.298Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 5371633,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11887630077",
+        "name": "The Hopestone",
+        "lat": 53.0457538,
+        "lng": -1.9475926
+      },
+      "checkedAt": "2026-10-29T20:40:18.329Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "d857ee4cc668046136513000991ff33a0b44c44ebb7c278cac3966e81d46e9b4",
+        "checkedAt": "2026-10-29T20:40:18.329Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 417296,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1188949254",
+        "name": "Spout Force",
+        "lat": 54.6224307,
+        "lng": -3.2694499
+      },
+      "checkedAt": "2026-10-29T20:40:18.357Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "delivery-unavailable",
+      "retryable": true,
+      "evidence": {
+        "vision": {
+          "method": "image-analysis:local-clip",
+          "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/10/Spout_Force_-_geograph.org.uk_-_6219344.jpg",
+          "checkedAt": "2026-10-29T20:40:18.357Z",
+          "sha256": "b89b0cf875456ca596d2c1abd133d28baeae9730a74f50a7caf684a59e72f7af",
+          "width": 480,
+          "height": 640,
+          "localClip": {
+            "model": {
+              "id": "Xenova/clip-vit-base-patch32",
+              "revision": "d15189d7028b43f1d3e65039190477f6af591c2a",
+              "dtype": "q8",
+              "device": "cpu",
+              "library": "@huggingface/transformers",
+              "libraryVersion": "3.8.1"
+            },
+            "minScore": 0.8,
+            "minMargin": 0.5,
+            "bestVenueScore": 0.8674486875534058,
+            "bestRejectScore": 0.015233740210533142,
+            "margin": 0.8522149473428726,
+            "scores": [
+              {
+                "id": "outdoor-place",
+                "group": "venue",
+                "score": 0.8674486875534058
+              },
+              {
+                "id": "venue-exterior",
+                "group": "venue",
+                "score": 0.08811472356319427
+              },
+              {
+                "id": "product-food",
+                "group": "reject",
+                "score": 0.015233740210533142
+              },
+              {
+                "id": "document",
+                "group": "reject",
+                "score": 0.014080497436225414
+              },
+              {
+                "id": "portrait-event",
+                "group": "reject",
+                "score": 0.0055080740712583065
+              },
+              {
+                "id": "venue-interior",
+                "group": "venue",
+                "score": 0.0036436431109905243
+              },
+              {
+                "id": "logo-illustration",
+                "group": "reject",
+                "score": 0.0030179391615092754
+              },
+              {
+                "id": "construction",
+                "group": "reject",
+                "score": 0.0027710178401321173
+              },
+              {
+                "id": "ancillary-parking",
+                "group": "reject",
+                "score": 0.00018165215442422777
+              }
+            ]
+          }
+        }
+      },
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "e93b0b56e019f2a6d5e5b71e2befda05bce87ca1eca3b50c116dc54477c95b3d",
+        "checkedAt": "2026-10-29T20:40:18.357Z",
+        "status": "matched",
+        "reason": "matched",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 6219344,
+            "reason": "matched"
+          }
+        ],
+        "geographId": 6219344,
+        "title": "Spout Force",
+        "photographer": "Graham Hogg",
+        "photoTaken": "2019-07-18",
+        "subjectPrecision": {
+          "digits": 8,
+          "metres": 10
+        },
+        "sourceUrl": "https://www.geograph.org.uk/photo/6219344",
+        "distanceMetres": 26.35
+      },
+      "deliveryFailure": {
+        "checkedAt": "2026-10-29T20:38:55.000Z",
+        "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/10/Spout_Force_-_geograph.org.uk_-_6219344.jpg",
+        "testStatus": "timedOut",
+        "reason": "publisher-image-delivery-failed",
+        "elapsedMs": 44749,
+        "failures": []
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11933588856",
+        "name": "Cow and Calf",
+        "lat": 53.9170664,
+        "lng": -1.8026613
+      },
+      "checkedAt": "2026-10-29T20:40:19.884Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "7818fb4d26ccaad1b4f9ae05d00c47e32650cb2e8c029b7021cf3bb52a54cf44",
+        "checkedAt": "2026-10-29T20:40:19.884Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8080617,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 8080618,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 8080635,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11967422534",
+        "name": "The Icky Picky",
+        "lat": 53.0183675,
+        "lng": -2.2272918
+      },
+      "checkedAt": "2026-10-29T20:40:23.509Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "fcbce4cd8de8ecb5f250277cfa44ac33bd358f74eef555617ddddc3f72be5484",
+        "checkedAt": "2026-10-29T20:40:23.509Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 5205387,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 5205383,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 5205375,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1199214375",
+        "name": "Cheddleton Flint Mill",
+        "lat": 53.0707741,
+        "lng": -2.0430162
+      },
+      "checkedAt": "2026-10-29T20:40:31.689Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "9399aacbc8cca4fb2209f1fec1b1985d137d6545c76773fec94a9bcbf59fba11",
+        "checkedAt": "2026-10-29T20:40:31.689Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 5564288,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 4684951,
+            "reason": "dated-or-nonphysical-subject"
+          },
+          {
+            "geographId": 4646957,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11993660940",
+        "name": "Shakespeare's New Place",
+        "lat": 52.1907216,
+        "lng": -1.7075747
+      },
+      "checkedAt": "2026-10-29T20:40:32.991Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "c8d82dce972a6fb5adc0c5e2d4773457a4474a6de4674dd2d0fbeb9d36f17710",
+        "checkedAt": "2026-10-29T20:40:32.991Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8153933,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 6442271,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-12011867938",
+        "name": "Lyn Model Railway",
+        "lat": 51.2293346,
+        "lng": -3.8284324
+      },
+      "checkedAt": "2026-10-29T20:40:35.626Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "8597850e5bb16f60418fac1507be7d1a18f79c32f23e42a1d2c9e58f874f7d80",
+        "checkedAt": "2026-10-29T20:40:35.626Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 4441607,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1201756429",
+        "name": "Stayley Cricket Club",
+        "lat": 53.4949437,
+        "lng": -2.0326804
+      },
+      "checkedAt": "2026-10-29T20:40:35.654Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "4dadf346460a196b0da8cea82cba839cf0c761f6f29d268643f601bab33cc1ca",
+        "checkedAt": "2026-10-29T20:40:35.654Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 3235645,
+            "reason": "dated-or-nonphysical-subject"
+          },
+          {
+            "geographId": 3235644,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-12052849964",
+        "name": "Dock Koi",
+        "lat": 53.5054393,
+        "lng": -0.0210421
+      },
+      "checkedAt": "2026-10-29T20:40:35.670Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "72df08d794fad57d77862765e8c331d0c1676e5bf3198f65ebd1f868673b39c0",
+        "checkedAt": "2026-10-29T20:40:35.670Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 3409470,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-12073741370",
+        "name": "Dilston Physic Garden",
+        "lat": 54.9657133,
+        "lng": -2.0414522
+      },
+      "checkedAt": "2026-10-29T20:40:35.687Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "31b9a4e7285c9523efd130f32fd5c07ca410f7e5d4ff8f4f8faa2da69cfaac20",
+        "checkedAt": "2026-10-29T20:40:35.687Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8062257,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 8062260,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7602924,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-12104663969",
+        "name": "Saxmundham Museum",
+        "lat": 52.2162207,
+        "lng": 1.491669
+      },
+      "checkedAt": "2026-10-29T20:40:39.480Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "5dceca75a0462b91a81d52d7bd096a2032cb016b8318f427739545dbc8e68d0e",
+        "checkedAt": "2026-10-29T20:40:39.480Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7392404,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 1092748,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-12118978001",
+        "name": "Romney, Hythe & Dymchurch Railway",
+        "lat": 50.9856514,
+        "lng": 0.9542878
+      },
+      "checkedAt": "2026-10-29T20:40:40.808Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "5c2a4bfb8b679ee92c2eaff7d6aeb0e3a1c9ddbdfed8518dc18936e94abc432f",
+        "checkedAt": "2026-10-29T20:40:40.808Z",
+        "status": "unresolved",
+        "reason": "photo-review-rejected",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7892430,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 5517881,
+            "reason": "photo-review-rejected"
+          },
+          {
+            "geographId": 5108483,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1212069369",
+        "name": "Wye Crown Millennium Stone",
+        "lat": 51.1813409,
+        "lng": 0.9629152
+      },
+      "checkedAt": "2026-10-29T20:40:43.674Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "d6c386a3214b0b94e90f622d4fc324386bbb15cce594d66397568eebc8d2ea3a",
+        "checkedAt": "2026-10-29T20:40:43.674Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 3467231,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-12122201381",
+        "name": "East Wressle and Brind Railway",
+        "lat": 53.7737047,
+        "lng": -0.9017024
+      },
+      "checkedAt": "2026-10-29T20:40:43.706Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "d842f9354295ad1a1c616a016e2921c25f27b63cd087d7e088dd36d31b5673fd",
+        "checkedAt": "2026-10-29T20:40:43.706Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7821770,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7821774,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7821778,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-12124180942",
+        "name": "Coton Manor Gardens",
+        "lat": 52.338327,
+        "lng": -1.0116599
+      },
+      "checkedAt": "2026-10-29T20:40:47.312Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "17c73835a6aed27657bd1b622f1f1c3664e2f23903fda60d37779a705b62a6a1",
+        "checkedAt": "2026-10-29T20:40:47.312Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 6516155,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1212594278",
+        "name": "Holton Windmill",
+        "lat": 52.3424186,
+        "lng": 1.5253615
+      },
+      "checkedAt": "2026-10-29T20:40:48.599Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "91c4db3173c9a68ca5d15b6a04e54a040bf9b17e831fae53c749badb5066b92b",
+        "checkedAt": "2026-10-29T20:40:48.599Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 1472666,
+            "reason": "dated-or-nonphysical-subject"
+          },
+          {
+            "geographId": 1472669,
+            "reason": "dated-or-nonphysical-subject"
+          },
+          {
+            "geographId": 1188849,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-12127591327",
+        "name": "Lych Gate",
+        "lat": 51.408869,
+        "lng": -0.0248081
+      },
+      "checkedAt": "2026-10-29T20:40:48.630Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "1c26fb070d11f7983dbc03ab05fbe6c7532b7f365d45254cd30b68afb4839882",
+        "checkedAt": "2026-10-29T20:40:48.630Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 2459538,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-12135846383",
+        "name": "Ham Sandwich sign",
+        "lat": 51.2382568,
+        "lng": 1.3341728
+      },
+      "checkedAt": "2026-10-29T20:40:48.646Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "19945298050ad8d64a4c42c7ed85f6dec09c9fffe684525e9f35777d40650fc6",
+        "checkedAt": "2026-10-29T20:40:48.646Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 6607591,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 6607594,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 5332406,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1213699278",
+        "name": "HMS Ganges Museum",
+        "lat": 51.9566863,
+        "lng": 1.2753345
+      },
+      "checkedAt": "2026-10-29T20:40:52.462Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "e89642461b697c31e9c55388d2b73444d1455fdca1bf1dfe7e3c17e530003199",
+        "checkedAt": "2026-10-29T20:40:52.462Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 2565248,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1216160782",
+        "name": "Grant Museum of Zoology",
+        "lat": 51.523732,
+        "lng": -0.1342662
+      },
+      "checkedAt": "2026-10-29T20:40:52.478Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "07e36c3c9ada162ab729c1be348c391657376776b037bc08cdb6c39f026b135b",
+        "checkedAt": "2026-10-29T20:40:52.478Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 2731842,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-12163377427",
+        "name": "Chippenham Cricket Club",
+        "lat": 51.4647832,
+        "lng": -2.1277066
+      },
+      "checkedAt": "2026-10-29T20:40:52.497Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "3b49deb3b016bc52ffb6a17a0cc97d0cbe7f3a7c4d2a23504e4fbbe508b8edc5",
+        "checkedAt": "2026-10-29T20:40:52.497Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7241653,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1222870101",
+        "name": "Huddersfield Observatory",
+        "lat": 53.6213106,
+        "lng": -1.8412782
+      },
+      "checkedAt": "2026-10-29T20:40:53.839Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "fb25d753943ee293fdcb1be75515138fe895d43edd1732d902978bb02e0aaf68",
+        "checkedAt": "2026-10-29T20:40:53.839Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 4763715,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-12230109130",
+        "name": "Paxton's Rock Garden",
+        "lat": 53.2255486,
+        "lng": -1.6087274
+      },
+      "checkedAt": "2026-10-29T20:40:53.866Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "84d88a3640030f7874c67b7768173206f3861128b5304e97a730bde17fbb0790",
+        "checkedAt": "2026-10-29T20:40:53.866Z",
+        "status": "unresolved",
+        "reason": "not-found",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8135678,
+            "reason": "not-found"
+          },
+          {
+            "geographId": 8135679,
+            "reason": "not-found"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1223756932",
+        "name": "Southwold Museum",
+        "lat": 52.327511,
+        "lng": 1.6778664
+      },
+      "checkedAt": "2026-10-29T20:40:56.360Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "95c32750ba5740ad7fd76e9b426c19d505ce17ff54544753d24fb946ccf1d474",
+        "checkedAt": "2026-10-29T20:40:56.360Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 6887400,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1225450823",
+        "name": "Dee Sailing Club",
+        "lat": 53.3475701,
+        "lng": -3.1585642
+      },
+      "checkedAt": "2026-10-29T20:40:57.831Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "0c77e20ceb80d3a26c27620b00516540ea64560db010d83f3a28dbf7aea69854",
+        "checkedAt": "2026-10-29T20:40:57.831Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7819512,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7819506,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-12256319348",
+        "name": "Millgate Arts Centre",
+        "lat": 53.5668175,
+        "lng": -2.0231288
+      },
+      "checkedAt": "2026-10-29T20:41:00.416Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "d439b0fd18bd67893f4189f1695f0098b0b1eef5c77dd2e5658f0c2729d26e47",
+        "checkedAt": "2026-10-29T20:41:00.416Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 4527660,
+            "reason": "dated-or-nonphysical-subject"
+          },
+          {
+            "geographId": 2257361,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-12278757767",
+        "name": "V&A East Storehouse",
+        "lat": 51.5464368,
+        "lng": -0.0211827
+      },
+      "checkedAt": "2026-10-29T20:41:00.449Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "8158997d3319228a98be4e0f81240698100e1d0d8789ec5dab763b10829dc105",
+        "checkedAt": "2026-10-29T20:41:00.449Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8163557,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1231440397",
+        "name": "The Rotunda",
+        "lat": 52.6308751,
+        "lng": -2.4912762
+      },
+      "checkedAt": "2026-10-29T20:41:01.726Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "delivery-unavailable",
+      "retryable": true,
+      "evidence": {
+        "vision": {
+          "method": "image-analysis:local-clip",
+          "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c3/At_the_rotunda_above_Coalbrookdale_in_January_-_geograph.org.uk_-_8243750.jpg",
+          "checkedAt": "2026-10-29T20:41:01.726Z",
+          "sha256": "1ea55e4ecea709b1fb982e652593846c2ab1b0a775542b846cb56a267ec073b0",
+          "width": 640,
+          "height": 480,
+          "localClip": {
+            "model": {
+              "id": "Xenova/clip-vit-base-patch32",
+              "revision": "d15189d7028b43f1d3e65039190477f6af591c2a",
+              "dtype": "q8",
+              "device": "cpu",
+              "library": "@huggingface/transformers",
+              "libraryVersion": "3.8.1"
+            },
+            "minScore": 0.8,
+            "minMargin": 0.5,
+            "bestVenueScore": 0.9571748375892639,
+            "bestRejectScore": 0.012774757109582424,
+            "margin": 0.9444000804796815,
+            "scores": [
+              {
+                "id": "outdoor-place",
+                "group": "venue",
+                "score": 0.9571748375892639
+              },
+              {
+                "id": "venue-exterior",
+                "group": "venue",
+                "score": 0.025590738281607628
+              },
+              {
+                "id": "document",
+                "group": "reject",
+                "score": 0.012774757109582424
+              },
+              {
+                "id": "logo-illustration",
+                "group": "reject",
+                "score": 0.0021432521753013134
+              },
+              {
+                "id": "construction",
+                "group": "reject",
+                "score": 0.0009921375894919038
+              },
+              {
+                "id": "venue-interior",
+                "group": "venue",
+                "score": 0.0006198781775310636
+              },
+              {
+                "id": "portrait-event",
+                "group": "reject",
+                "score": 0.00030703935772180557
+              },
+              {
+                "id": "ancillary-parking",
+                "group": "reject",
+                "score": 0.00024899450363591313
+              },
+              {
+                "id": "product-food",
+                "group": "reject",
+                "score": 0.000148351100506261
+              }
+            ]
+          }
+        }
+      },
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "984a940074788e7a577fe1b38c4365cd7642b787959fa7f8ec2b572bfe53244c",
+        "checkedAt": "2026-10-29T20:41:01.726Z",
+        "status": "matched",
+        "reason": "matched",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8243750,
+            "reason": "matched"
+          }
+        ],
+        "geographId": 8243750,
+        "title": "At the rotunda above Coalbrookdale in January",
+        "photographer": "Jeremy Bolwell",
+        "photoTaken": "2026-01-29",
+        "subjectPrecision": {
+          "digits": 8,
+          "metres": 10
+        },
+        "sourceUrl": "https://www.geograph.org.uk/photo/8243750",
+        "distanceMetres": 6.86
+      },
+      "deliveryFailure": {
+        "checkedAt": "2026-10-29T20:38:55.000Z",
+        "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c3/At_the_rotunda_above_Coalbrookdale_in_January_-_geograph.org.uk_-_8243750.jpg",
+        "testStatus": "failed",
+        "reason": "incomplete-photo-delivery-evidence",
+        "elapsedMs": 10232,
+        "failures": [
+          {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/c/c3/At_the_rotunda_above_Coalbrookdale_in_January_-_geograph.org.uk_-_8243750.jpg",
+            "error": "Browser infrastructure or venue page failure: osm-node-1231440397: The Rotunda"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1234511",
+        "name": "The Sounding Arch",
+        "lat": 51.5211136,
+        "lng": -0.7011499
+      },
+      "checkedAt": "2026-10-29T20:41:03.360Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "f772aab6fb8417060c46c3bd197486b9d6598384d45c034d56df8f8fd0c486b6",
+        "checkedAt": "2026-10-29T20:41:03.360Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7756991,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7692928,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7692931,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-12387341245",
+        "name": "Gordon Craig Theatre",
+        "lat": 51.9021525,
+        "lng": -0.2055987
+      },
+      "checkedAt": "2026-10-29T20:41:07.110Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "09546fad92cb8d0508d5b8e75d8043852a86ba705e0e6f1c0cf700e12642a463",
+        "checkedAt": "2026-10-29T20:41:07.110Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7775162,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 4709509,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-12391698662",
+        "name": "Headon Hill",
+        "lat": 50.672007,
+        "lng": -1.5580758
+      },
+      "checkedAt": "2026-10-29T20:41:08.434Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "ae2968f1f1c1f52e482401ef3b196c013c4cd0f3aaf3bff83cb7a30dccdba578",
+        "checkedAt": "2026-10-29T20:41:08.434Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 4086266,
+            "reason": "dated-or-nonphysical-subject"
+          },
+          {
+            "geographId": 4086273,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-12396858328",
+        "name": "Wells and Walsingham Light Railway",
+        "lat": 52.9496698,
+        "lng": 0.8647043
+      },
+      "checkedAt": "2026-10-29T20:41:08.464Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "retryable",
+      "retryable": true,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "b6330a865814a8be587ca635b995cb1fc7577190d48be1a9f6192858c7938e70",
+        "checkedAt": "2026-10-29T20:41:08.464Z",
+        "status": "retryable",
+        "reason": "api-cirrussearch-too-busy-error",
+        "retryable": true,
+        "attempts": [
+          {
+            "geographId": 7941801,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 6193605,
+            "reason": "api-cirrussearch-too-busy-error"
+          }
+        ],
+        "retryAfter": "2026-10-29T20:42:08.464Z"
       }
     }
   ]
