@@ -29,19 +29,37 @@ export const photoIndex = generated as unknown as {
   entries: PhotoIndexEntry[];
 };
 export { placePhotoQuery, photoIdentity } from "./photo-query";
+type IndexedEntry = { entry: PhotoIndexEntry; ordinal: number };
+const positives = new Map<string, IndexedEntry>();
+const negatives = new Map<string, IndexedEntry>();
+photoIndex.entries.forEach((entry, ordinal) => {
+  const index = entry.image ? positives : negatives;
+  const key = entry.image
+    ? photoVenueIdentity(entry.query)
+    : photoIdentity(entry.query);
+  if (!index.has(key)) index.set(key, { entry, ordinal });
+});
 export function indexedPhoto(
   query: PhotoQuery,
   entries: PhotoIndexEntry[] = photoIndex.entries,
 ): PhotoIndexEntry | null {
+  let entry: PhotoIndexEntry | undefined;
   if (entries === photoIndex.entries) {
     const image = preparedVenuePhoto(query);
     if (image) return { query, image, checkedAt: image.checkedAt! };
+    const positive = positives.get(photoVenueIdentity(query));
+    const negative = negatives.get(photoIdentity(query));
+    entry =
+      positive && (!negative || positive.ordinal < negative.ordinal)
+        ? positive.entry
+        : negative?.entry;
+  } else {
+    entry = entries.find((e) =>
+      e.image
+        ? photoVenueIdentity(e.query) === photoVenueIdentity(query)
+        : photoIdentity(e.query) === photoIdentity(query),
+    );
   }
-  const entry = entries.find((e) =>
-    e.image
-      ? photoVenueIdentity(e.query) === photoVenueIdentity(query)
-      : photoIdentity(e.query) === photoIdentity(query),
-  );
   if (!entry || entry.retryable) return null;
   const age = Date.now() - Date.parse(entry.checkedAt);
   if (

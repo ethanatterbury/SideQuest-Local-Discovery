@@ -1,5 +1,5 @@
 import { afterEach, expect, test } from "vitest";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { reconcilePhotoDelivery } from "../scripts/lib/photo-delivery-results.mjs";
@@ -109,7 +109,7 @@ function report(
   const result = (
     title: string,
     resultStatus: string,
-    resultAttachments: unknown[] = [],
+    resultAttachments: { name: string; contentType: string; path: string }[] = [],
   ) => ({
     title,
     tests: [
@@ -154,12 +154,170 @@ test("keeps a publisher photograph only after the real detail image decoded and 
     checkedAt: image.checkedAt,
   });
   expect(result.manifest.entries[0].image).toEqual(image);
+  expect(result.manifest.entries[0].deliveryVerifiedAt).toBe(image.checkedAt);
   expect(result.summary).toMatchObject({
     passed: 1,
     failed: 0,
     quarantined: 0,
     retainedPrior: 0,
   });
+});
+
+function inventoryOnly() {
+  const inventory = report();
+  inventory.suites[0].suites[0].specs.splice(1, 1);
+  return inventory;
+}
+
+test("retains the original verification for an unchanged recently verified photograph without retesting", () => {
+  const prior = { ...entry, deliveryVerifiedAt: "2026-10-01T00:00:00.000Z" };
+  const result = reconcilePhotoDelivery({
+    before: manifest([prior]),
+    after: manifest([{ ...prior, deliveryVerifiedAt: image.checkedAt }]),
+    report: inventoryOnly(),
+    checkedAt: image.checkedAt,
+  });
+  expect(result.manifest.entries[0].deliveryVerifiedAt).toBe(
+    prior.deliveryVerifiedAt,
+  );
+  expect(result.summary).toMatchObject({
+    passed: 0,
+    failed: 0,
+    retainedVerified: 1,
+  });
+});
+
+test("allows a completed inventory with no photographs requiring delivery checks", () => {
+  const unresolved = { ...entry, image: null, status: "unresolved" };
+  const result = reconcilePhotoDelivery({
+    before: manifest([]),
+    after: manifest([unresolved]),
+    report: inventoryOnly(),
+    checkedAt: image.checkedAt,
+  });
+  expect(result.manifest.entries).toEqual([unresolved]);
+  expect(result.summary).toMatchObject({
+    passed: 0,
+    failed: 0,
+    retainedVerified: 0,
+  });
+});
+
+test("rejects an all-skipped inventory even when no photograph needs a delivery check", () => {
+  const skipped = inventoryOnly();
+  skipped.suites[0].suites[0].specs[0].tests[0].results[0].status = "skipped";
+  expect(() =>
+    reconcilePhotoDelivery({
+      before: manifest([]),
+      after: manifest([]),
+      report: skipped,
+      checkedAt: image.checkedAt,
+    }),
+  ).toThrow(/incomplete/i);
+});
+
+test("retains ten thousand recently verified photographs without requiring ten thousand hourly browser results", () => {
+  const entries = Array.from({ length: 10_000 }, (_, index) => ({
+    ...entry,
+    query: { ...entry.query, id: `osm-node-${index}` },
+    deliveryVerifiedAt: "2026-10-01T00:00:00.000Z",
+  }));
+  const result = reconcilePhotoDelivery({
+    before: manifest(entries),
+    after: manifest(entries),
+    report: inventoryOnly(),
+    checkedAt: image.checkedAt,
+  });
+  expect(result.summary).toMatchObject({
+    passed: 0,
+    failed: 0,
+    retainedVerified: 10_000,
+  });
+  expect(
+    result.manifest.entries.every(
+      (item: { deliveryVerifiedAt?: string }) =>
+        item.deliveryVerifiedAt === entries[0].deliveryVerifiedAt,
+    ),
+  ).toBe(true);
+});
+
+test.each([
+  { deliveryVerifiedAt: "invalid" },
+  { deliveryVerifiedAt: "2026-10-29T00:00:00.000Z" },
+  { deliveryVerifiedAt: "2026-09-28T00:00:00.000Z" },
+  {
+    deliveryVerifiedAt: "2026-10-01T00:00:00.000Z",
+    deliveryFailure: { reason: "failed" },
+  },
+])(
+  "requires browser evidence for expired, invalid, future or previously failed verification %j",
+  (extra) => {
+    const prior = { ...entry, ...extra };
+    expect(() =>
+      reconcilePhotoDelivery({
+        before: manifest([prior]),
+        after: manifest([prior]),
+        report: inventoryOnly(),
+        checkedAt: image.checkedAt,
+      }),
+    ).toThrow(/missing browser result/i);
+  },
+);
+
+test("requires fresh evidence when a verified venue image URL, source or stable identity changes", () => {
+  const prior = { ...entry, deliveryVerifiedAt: "2026-10-01T00:00:00.000Z" };
+  const replacements = [
+    { ...prior, image: { ...image, url: `${image.url}?new=1` } },
+    { ...prior, image: { ...image, source: `${image.source}new/` } },
+    { ...prior, query: { ...entry.query, lat: 52 } },
+  ];
+  for (const replacement of replacements) {
+    expect(() =>
+      reconcilePhotoDelivery({
+        before: manifest([prior]),
+        after: manifest([replacement]),
+        report: inventoryOnly(),
+        checkedAt: image.checkedAt,
+      }),
+    ).toThrow(/missing browser result/i);
+  }
+});
+
+test("requires screenshots only for the deterministic first twelve required delivery checks", () => {
+  const entries = Array.from({ length: 13 }, (_, index) => ({
+    ...entry,
+    query: { ...entry.query, id: `osm-node-${index}` },
+  }));
+  const combined = report();
+  const specs = combined.suites[0].suites[0].specs;
+  specs.splice(1, 1);
+  for (const [index, current] of entries.entries()) {
+    const individual = report("passed", { screenshot: index < 12 });
+    const spec = individual.suites[0].suites[0].specs[1];
+    spec.title = `${current.query.id}: ${current.query.name}`;
+    const delivery = spec.tests[0].results[0].attachments.find(
+      (item) => item.name === "publisher-image-delivery",
+    )!;
+    const content = JSON.parse(readFileSync(delivery.path, "utf8"));
+    writeFileSync(
+      delivery.path,
+      JSON.stringify({ ...content, id: current.query.id }),
+    );
+    specs.push(spec);
+  }
+  const result = reconcilePhotoDelivery({
+    before: manifest([]),
+    after: manifest(entries),
+    report: combined,
+    checkedAt: image.checkedAt,
+  });
+  expect(result.summary.passed).toBe(13);
+  expect(
+    result.manifest.entries.every(
+      (item: { deliveryVerifiedAt?: string }) =>
+        item.deliveryVerifiedAt === image.checkedAt,
+    ),
+  ).toBe(true);
 });
 
 test("quarantines a failed new photo while preserving unresolved website checkpoints", () => {

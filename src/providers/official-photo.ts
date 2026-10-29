@@ -26,8 +26,21 @@ export interface OfficialPhotoIdentity {
   branchSpecific: boolean;
   evidence: string[];
 }
+/** Unapproved, branch-vetted inputs for opt-in offline image review only. */
+export interface OfficialPhotoReviewCandidate {
+  url: string;
+  source: string;
+  kind: string;
+  width?: number;
+  height?: number;
+  identityEvidence: string[];
+  photoScore: number;
+  subjectEvidence: string[];
+  reason: "unconfirmed-photo-subject" | "unconfirmed-venue-scene";
+}
 export interface OfficialPhotoParseResult {
   candidates: OfficialPhotoCandidate[];
+  reviewCandidates?: OfficialPhotoReviewCandidate[];
   identity: OfficialPhotoIdentity;
   rejected: Record<string, number>;
 }
@@ -52,6 +65,8 @@ export interface OfficialPhotoOptions {
   socialPreviewOnly?: boolean;
   /** Runtime external previews also allow explicitly identified physical venue scenes. */
   websitePreview?: boolean;
+  /** Offline preparation only; unknown subjects stay unapproved pending image review. */
+  collectReviewCandidates?: boolean;
   refresh?: boolean;
 }
 export interface OfficialPhotoDownload {
@@ -246,6 +261,8 @@ function imageUrl(raw: string, base: string): string | null {
 type RawImage = {
   raw: string;
   context: string;
+  /** Image-owned text only; nearby markup cannot establish branch ownership. */
+  ownershipContext?: string;
   kind: string;
   width?: number;
   height?: number;
@@ -349,7 +366,10 @@ export function parseOfficialPhotoHtml(
   html: string,
   pageUrl: string,
   query: OfficialPhotoQuery,
-  options: { socialPreviewOnly?: boolean; websitePreview?: boolean } = {},
+  options: Pick<
+    OfficialPhotoOptions,
+    "socialPreviewOnly" | "websitePreview" | "collectReviewCandidates"
+  > = {},
 ): OfficialPhotoParseResult {
   html = html.slice(0, HTML_LIMIT);
   const websitePreview = options.websitePreview || options.socialPreviewOnly;
@@ -549,6 +569,7 @@ export function parseOfficialPhotoHtml(
     const parentAttr = attributes(parent);
     const parentContext = `${parentAttr.class ?? ""} ${parentAttr.id ?? ""} ${parentAttr["aria-label"] ?? ""}`;
     const context = `${attr.alt ?? ""} ${attr.title ?? ""} ${attr.class ?? ""} ${attr.id ?? ""} ${websitePreview ? "" : parentContext} ${wordpressGallery ? "WordPress gallery" : ""}`;
+    const ownershipContext = `${attr.alt ?? ""} ${attr.title ?? ""} ${attr["aria-label"] ?? ""}`;
     const width = dimension(attr.width),
       height = dimension(attr.height);
     for (const key of [
@@ -560,13 +581,21 @@ export function parseOfficialPhotoHtml(
       "src",
     ])
       if (attr[key])
-        raw.push({ raw: attr[key], context, kind: "body", width, height });
+        raw.push({
+          raw: attr[key],
+          context,
+          ownershipContext,
+          kind: "body",
+          width,
+          height,
+        });
     // WordPress galleries expose their originals beside small cropped thumbnails.
     for (const key of ["data-large_image", "data-full-url", "data-orig-file"])
       if (attr[key])
         raw.push({
           raw: attr[key],
           context: `${context} gallery`,
+          ownershipContext,
           kind: "body",
           width: dimension(attr["data-large_image_width"]),
           height: dimension(attr["data-large_image_height"]),
@@ -578,7 +607,12 @@ export function parseOfficialPhotoHtml(
     ) {
       const href = attributes(anchor[0]).href;
       if (href && /\.(?:jpe?g|png|webp|avif)(?:$|[?#])/i.test(href))
-        raw.push({ raw: href, context: `${context} gallery`, kind: "body" });
+        raw.push({
+          raw: href,
+          context: `${context} gallery`,
+          ownershipContext,
+          kind: "body",
+        });
     }
     for (const key of ["data-srcset", "data-lazy-srcset", "srcset"])
       if (attr[key])
@@ -586,6 +620,7 @@ export function parseOfficialPhotoHtml(
           raw.push({
             ...image,
             context,
+            ownershipContext,
             kind: "body",
             height:
               width && height && image.width
@@ -691,11 +726,23 @@ export function parseOfficialPhotoHtml(
     }
     return false;
   });
-  if (websitePreview && conflictingLocation) {
+  if (
+    (websitePreview || options.collectReviewCandidates) &&
+    conflictingLocation
+  ) {
     reject("conflicting-preview-location");
-    return { candidates: [], identity, rejected };
+    return {
+      candidates: [],
+      identity,
+      rejected,
+      ...(options.collectReviewCandidates ? { reviewCandidates: [] } : {}),
+    };
   }
   const photos = new Map<string, OfficialPhotoCandidate>();
+  const review = new Map<
+    string,
+    { candidate: OfficialPhotoReviewCandidate; rank: number }
+  >();
   const bodyUrls = new Set(
     raw
       .filter((item) => item.kind === "body" || item.kind === "background")
@@ -710,6 +757,36 @@ export function parseOfficialPhotoHtml(
       .map((item) => imageUrl(item.raw, pageUrl))
       .filter(Boolean),
   );
+  const imageLocationMatched = (text: string) =>
+    [query.area, query.address, query.postcode].some(
+      (location) => !!location && contains(text, location),
+    );
+  // A local page can still publish shared brand campaigns and sibling branches.
+  // Keep opaque filenames when the exact image belongs to an explicitly local business.
+  const localBusinessUrls = new Set(
+    raw
+      .filter(
+        (item) =>
+          item.business &&
+          scopedBusinesses.includes(item.business) &&
+          imageLocationMatched(
+            `${item.business.name ?? ""} ${JSON.stringify(item.business.address ?? "")} ${item.business.url ?? ""}`,
+          ),
+      )
+      .map((item) => imageUrl(item.raw, pageUrl))
+      .filter(Boolean),
+  );
+  const ownedImageText = new Map<string, string>();
+  for (const item of raw) {
+    // Hydration windows and Organization schema have no reliable image-level owner.
+    if (["gallery-data", "schema"].includes(item.kind)) continue;
+    const url = imageUrl(item.raw, pageUrl);
+    if (url)
+      ownedImageText.set(
+        url,
+        `${ownedImageText.get(url) ?? ""} ${item.ownershipContext ?? item.context}`,
+      );
+  }
   for (const item of raw.slice(0, 1200)) {
     if (websitePreview && ["gallery-data", "schema"].includes(item.kind)) {
       // Nearby hydration captions and Organization art have no image-specific venue ownership.
@@ -738,7 +815,7 @@ export function parseOfficialPhotoHtml(
       reject("unsafe-or-unsupported-image");
       continue;
     }
-    if (websitePreview && otherBusinessUrls.has(url)) {
+    if ((websitePreview || multiBranch) && otherBusinessUrls.has(url)) {
       reject("different-schema-venue");
       continue;
     }
@@ -759,6 +836,13 @@ export function parseOfficialPhotoHtml(
       /* Invalid escapes do not invalidate the whole page. */
     }
     filename = filename.replace(/[+_-]/g, " ");
+    const imageBranchMatched =
+      localBusinessUrls.has(url) ||
+      imageLocationMatched(`${filename} ${ownedImageText.get(url) ?? ""}`);
+    if (multiBranch && !imageBranchMatched) {
+      reject("unconfirmed-image-branch");
+      continue;
+    }
     const subject = `${filename} ${item.context}`;
     if (
       excludedWords.test(`${filename} ${item.context}`) ||
@@ -817,7 +901,53 @@ export function parseOfficialPhotoHtml(
       },
       query,
     );
+    const identityEvidence = [
+      ...identity.evidence,
+      ...(multiBranch && imageBranchMatched
+        ? ["image attributed to the local branch"]
+        : []),
+    ];
+    const collectForReview = (
+      reason: OfficialPhotoReviewCandidate["reason"],
+    ) => {
+      if (!options.collectReviewCandidates || !locationMatched) return;
+      const image = new URL(url);
+      const knownImageEndpoint =
+        [
+          "images.ctfassets.net",
+          "imagedelivery.net",
+          "res.cloudinary.com",
+        ].includes(image.hostname) && !/\.[^/]+$/.test(image.pathname);
+      if (
+        !/\.(?:jpe?g|png|webp|avif)$/i.test(image.pathname) &&
+        !knownImageEndpoint
+      )
+        return;
+      const rank =
+        (["open-graph", "twitter"].includes(item.kind) ? 100 : 0) +
+        (/\bhero\b/i.test(item.context) ? 80 : 0) +
+        (onPage ? 20 : 0) +
+        Math.min(30, (item.width ?? 0) / 100);
+      const previous = review.get(url);
+      if (!previous || rank > previous.rank)
+        review.set(url, {
+          rank,
+          candidate: {
+            url,
+            source: pageUrl,
+            kind: item.kind,
+            width: item.width,
+            height: item.height,
+            identityEvidence,
+            photoScore: assessment.photoScore,
+            subjectEvidence: assessment.subjectEvidence,
+            reason,
+          },
+        });
+    };
     if (!assessment.accepted) {
+      if (assessment.rejection === "unconfirmed-photo-subject")
+        collectForReview("unconfirmed-photo-subject");
       reject(assessment.rejection ?? "unconfirmed-photo-subject");
       continue;
     }
@@ -827,6 +957,7 @@ export function parseOfficialPhotoHtml(
       assessment.photoScore < 75
     ) {
       // A 'gallery' class alone cannot establish a physical scene rather than food/artwork.
+      collectForReview("unconfirmed-venue-scene");
       reject("unconfirmed-venue-scene");
       continue;
     }
@@ -843,7 +974,7 @@ export function parseOfficialPhotoHtml(
       Math.min(5, (item.width ?? 800) / 400);
     const evidence = [
       item.kind,
-      ...identity.evidence,
+      ...identityEvidence,
       ...assessment.subjectEvidence,
       ...(schemaVenue ? ["matching LocalBusiness image"] : []),
       ...(onPage ? ["image occurs in page content"] : []),
@@ -865,7 +996,7 @@ export function parseOfficialPhotoHtml(
                 : "venue-image",
               pageUrl,
               publisher: query.name,
-              identityEvidence: identity.evidence,
+              identityEvidence,
               subjectEvidence: assessment.subjectEvidence,
             },
           }
@@ -883,6 +1014,15 @@ export function parseOfficialPhotoHtml(
     candidates: [...photos.values()]
       .sort((a, b) => b.rank - a.rank)
       .slice(0, MAX_IMAGES),
+    ...(options.collectReviewCandidates
+      ? {
+          reviewCandidates: [...review.values()]
+            .filter(({ candidate }) => !photos.has(candidate.url))
+            .sort((a, b) => b.rank - a.rank)
+            .slice(0, 8)
+            .map(({ candidate }) => candidate),
+        }
+      : {}),
     identity,
     rejected,
   };
@@ -1134,6 +1274,7 @@ export async function resolveOfficialPhotos(
     pageUrl: string | null = null;
   const empty: OfficialPhotoParseResult = {
     candidates: [],
+    ...(options.collectReviewCandidates ? { reviewCandidates: [] } : {}),
     rejected: {},
     identity: {
       matchedName: false,
@@ -1157,8 +1298,7 @@ export async function resolveOfficialPhotos(
     // Check public DNS for candidate CDNs too; no arbitrary private image URLs escape.
     const verified: OfficialPhotoCandidate[] = [];
     const guards = new Map<string, Promise<boolean>>();
-    const max = Math.min(MAX_IMAGES, Math.max(1, options.maxCandidates ?? 12));
-    for (const candidate of parsed.candidates.slice(0, Math.max(max * 3, 24))) {
+    const guardImage = async (candidate: { url: string }) => {
       const image = new URL(candidate.url);
       let guard = guards.get(image.hostname);
       if (!guard) {
@@ -1171,15 +1311,26 @@ export async function resolveOfficialPhotos(
         );
         guards.set(image.hostname, guard);
       }
-      if (await guard) verified.push(candidate);
-      else
+      const allowed = await guard;
+      if (!allowed)
         parsed.rejected["unsafe-image-dns"] =
           (parsed.rejected["unsafe-image-dns"] ?? 0) + 1;
+      return allowed;
+    };
+    const max = Math.min(MAX_IMAGES, Math.max(1, options.maxCandidates ?? 12));
+    for (const candidate of parsed.candidates.slice(0, Math.max(max * 3, 24))) {
+      if (await guardImage(candidate)) verified.push(candidate);
       if (verified.length >= max) break;
     }
+    const verifiedReview: OfficialPhotoReviewCandidate[] = [];
+    for (const candidate of parsed.reviewCandidates ?? [])
+      if (await guardImage(candidate)) verifiedReview.push(candidate);
     return {
       ...parsed,
       candidates: verified,
+      ...(options.collectReviewCandidates
+        ? { reviewCandidates: verifiedReview }
+        : {}),
       pageUrl,
       reason: verified.length
         ? null
@@ -1357,7 +1508,7 @@ export async function resolveOfficialWebsitePreview(
   options: OfficialPhotoOptions = {},
 ): Promise<WebsitePreviewResult> {
   // Injected transports remain isolated and deterministic for importers/tests.
-  if (options.fetch || options.lookup)
+  if (options.fetch || options.lookup || options.collectReviewCandidates)
     return resolveWebsitePreview(query, options);
   const key = JSON.stringify([
     query.name,

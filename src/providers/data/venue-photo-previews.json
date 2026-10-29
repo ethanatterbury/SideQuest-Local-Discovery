@@ -4832,42 +4832,9 @@
         "status": "found",
         "source": "mapped"
       },
-      "image": {
-        "url": "https://www.zizzi.co.uk/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fysupxjc9%2Fproduction%2Fc030c83047de8ee7c7416bd9bf45c88208d1246f-1920x1080.png&w=3840&q=75",
-        "source": "https://www.zizzi.co.uk/italian-restaurants/south-east/reading-oracle",
-        "credit": "Zizzi",
-        "license": "Website preview — rights reserved",
-        "rights": "website-preview",
-        "strategy": "official-website-preview",
-        "checkedAt": "2026-10-28T20:18:53.343Z",
-        "width": 3840,
-        "confidence": 0.8999999999999999,
-        "matched": [
-          "body",
-          "venue name in page title, heading or business schema",
-          "venue area in page metadata, path or business address",
-          "venue address matched",
-          "multi-branch operator",
-          "physical venue scene in image metadata",
-          "image occurs in page content"
-        ],
-        "preview": {
-          "pageUrl": "https://www.zizzi.co.uk/italian-restaurants/south-east/reading-oracle",
-          "publisher": "Zizzi",
-          "kind": "venue-image",
-          "identityEvidence": [
-            "venue name in page title, heading or business schema",
-            "venue area in page metadata, path or business address",
-            "venue address matched",
-            "multi-branch operator"
-          ],
-          "subjectEvidence": [
-            "physical venue scene in image metadata"
-          ]
-        }
-      },
+      "image": null,
       "retryable": false,
-      "status": "matched",
+      "status": "needs-image-branch-review",
       "evidence": {
         "attempts": [
           {
@@ -4917,7 +4884,8 @@
             ]
           }
         ],
-        "reason": null
+        "reason": "image-specific-branch-review-required",
+        "candidateImageUrl": "https://www.zizzi.co.uk/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fysupxjc9%2Fproduction%2Fc030c83047de8ee7c7416bd9bf45c88208d1246f-1920x1080.png&w=3840&q=75"
       }
     },
     {
@@ -5416,41 +5384,9 @@
         "status": "found",
         "source": "mapped"
       },
-      "image": {
-        "url": "https://gails.com/cdn/shop/files/gails-charity-3-1.jpg?v=1686140163&width=1500",
-        "source": "https://gails.com/pages/reading",
-        "credit": "GAIL's",
-        "license": "Website preview — rights reserved",
-        "rights": "website-preview",
-        "strategy": "official-website-preview",
-        "checkedAt": "2026-10-28T20:18:58.651Z",
-        "width": 2560,
-        "height": 853,
-        "confidence": 0.8999999999999999,
-        "matched": [
-          "body",
-          "venue name in page title, heading or business schema",
-          "venue area in page metadata, path or business address",
-          "multi-branch operator",
-          "physical venue scene in image metadata",
-          "image occurs in page content"
-        ],
-        "preview": {
-          "pageUrl": "https://gails.com/pages/reading",
-          "publisher": "GAIL's",
-          "kind": "venue-image",
-          "identityEvidence": [
-            "venue name in page title, heading or business schema",
-            "venue area in page metadata, path or business address",
-            "multi-branch operator"
-          ],
-          "subjectEvidence": [
-            "physical venue scene in image metadata"
-          ]
-        }
-      },
+      "image": null,
       "retryable": false,
-      "status": "matched",
+      "status": "needs-image-branch-review",
       "evidence": {
         "attempts": [
           {
@@ -5497,7 +5433,11 @@
             ]
           }
         ],
-        "reason": null
+        "reason": null,
+        "branchReview": {
+          "imageUrl": "https://gails.com/cdn/shop/files/gails-charity-3-1.jpg?v=1686140163&width=1500",
+          "reason": "Shared brand campaign image does not establish the Reading branch."
+        }
       }
     },
     {

@@ -10,6 +10,7 @@ import {
   safeOfficialPhotoUrl,
   type OfficialPhotoLookup,
   type OfficialPhotoQuery,
+  resolveOfficialWebsitePreview,
 } from "../src/providers/official-photo";
 
 const page = "https://venue.co.uk/wokingham/";
@@ -341,7 +342,7 @@ describe("official website photo extraction", () => {
         "https://costa.co.uk/wokingham/",
         chain,
       ).candidates,
-    ).toHaveLength(1);
+    ).toEqual([]);
     expect(
       parseOfficialPhotoHtml(
         '<title>Another venue</title><img class="hero" src="/building.jpg">',
@@ -350,6 +351,184 @@ describe("official website photo extraction", () => {
       ).candidates,
     ).toEqual([]);
   });
+
+  it.each([false, true])(
+    "rejects sibling-branch and shared campaign interiors on the correct branch page (preview: %s)",
+    (websitePreview) => {
+      const reading = {
+        ...query,
+        name: "Neighbourhood Bakery",
+        area: "Reading",
+      };
+      const html = `<title>Neighbourhood Bakery Reading</title><nav>Our locations</nav>
+        <img src="/Detail-Interior-Chester0041-500x350.jpg" alt="Bakery interior" width="1200" height="800">
+        <img src="/charity-3-1.jpg" alt="Bakery interior during our charity campaign" width="1200" height="800">`;
+      const result = parseOfficialPhotoHtml(
+        html,
+        "https://venue.co.uk/reading/",
+        reading,
+        { websitePreview },
+      );
+      expect(result.identity).toMatchObject({
+        multiBranch: true,
+        branchSpecific: true,
+      });
+      expect(result.candidates).toEqual([]);
+    },
+  );
+
+  it("collects unknown branch-vetted images only for an explicit offline review", () => {
+    const html = `<title>Neighbourhood Bakery Reading</title><nav>Our locations</nav>
+      <img class="hero" src="/reading-unknown.jpg" width="1400" height="900">
+      <img src="/reading-logo.jpg" alt="Brand logo">
+      <img src="/reading-food.jpg" alt="Coffee and cake">
+      <img src="/chester-unknown.jpg" width="1400" height="900">
+      <img src="/reading-small.jpg" width="100" height="100">
+      <img src="http://127.0.0.1/reading-unknown.jpg">
+      <img class="gallery" src="/reading-gallery.jpg" width="1200" height="800">`;
+    const reading = { ...query, name: "Neighbourhood Bakery", area: "Reading" };
+    const parse = (collectReviewCandidates = false) =>
+      parseOfficialPhotoHtml(html, "https://venue.co.uk/reading/", reading, {
+        websitePreview: true,
+        collectReviewCandidates,
+      });
+    expect(parse().reviewCandidates).toBeUndefined();
+    const reviewed = parse(true);
+    expect(reviewed.candidates).toEqual([]);
+    expect(reviewed.reviewCandidates?.map((image) => image.url)).toEqual([
+      "https://venue.co.uk/reading-unknown.jpg",
+      "https://venue.co.uk/reading-gallery.jpg",
+    ]);
+    expect(reviewed.reviewCandidates?.[0]).toMatchObject({
+      source: "https://venue.co.uk/reading/",
+      kind: "body",
+      width: 1400,
+      height: 900,
+      reason: "unconfirmed-photo-subject",
+    });
+    expect(reviewed.reviewCandidates?.[0].identityEvidence).toContain(
+      "image attributed to the local branch",
+    );
+  });
+
+  it("never collects an unknown image for an unconfirmed venue or branch", () => {
+    for (const title of [
+      "Different bakery Reading",
+      "Neighbourhood Bakery Chester",
+    ])
+      expect(
+        parseOfficialPhotoHtml(
+          `<title>${title}</title><nav>Our locations</nav><img src="/reading-unknown.jpg">`,
+          "https://venue.co.uk/",
+          { ...query, name: "Neighbourhood Bakery", area: "Reading" },
+          { websitePreview: true, collectReviewCandidates: true },
+        ).reviewCandidates,
+      ).toEqual([]);
+  });
+
+  it("collects only supported raster formats or known image CDN endpoints", () => {
+    const html = `<title>Pirates Landing Wokingham</title>
+      <img src="/unknown.html"><img src="/unknown.mp4"><img src="/unknown.bmp"><img src="/unknown">
+      <img src="/res.cloudinary.com/unknown.html"><img src="https://res.cloudinary.com/venue/video/upload/unknown.mp4">
+      <img src="/unknown.jpg"><img src="https://res.cloudinary.com/venue/image/upload/opaque">`;
+    const result = parseOfficialPhotoHtml(html, page, query, {
+      websitePreview: true,
+      collectReviewCandidates: true,
+    });
+    expect(result.reviewCandidates?.map((image) => image.url)).toEqual([
+      "https://venue.co.uk/unknown.jpg",
+      "https://res.cloudinary.com/venue/image/upload/opaque",
+    ]);
+  });
+
+  it("bounds and deduplicates offline review candidates", () => {
+    const html = `<title>Pirates Landing Wokingham</title>${Array.from(
+      { length: 12 },
+      (_, index) => `<img src="/${index}.jpg"><img src="/${index}.jpg">`,
+    ).join("")}`;
+    const result = parseOfficialPhotoHtml(html, page, query, {
+      websitePreview: true,
+      collectReviewCandidates: true,
+    });
+    expect(result.reviewCandidates).toHaveLength(8);
+    expect(
+      new Set(result.reviewCandidates?.map((image) => image.url)).size,
+    ).toBe(8);
+    expect(result.candidates).toEqual([]);
+  });
+
+  it("checks offline review candidate DNS without promoting unknown subjects", async () => {
+    const html = `<title>Pirates Landing Wokingham</title>
+      <img src="/unknown.jpg"><img src="https://cdn.venue.co.uk/unknown.jpg">`;
+    const result = await resolveOfficialWebsitePreview(query, {
+      fetch: vi.fn<typeof fetch>().mockResolvedValue(htmlResponse(html)),
+      lookup: async (host) => [
+        {
+          address: host.startsWith("cdn.") ? "10.0.0.1" : "8.8.8.8",
+          family: 4,
+        },
+      ],
+      collectReviewCandidates: true,
+    });
+    expect(result.image).toBeNull();
+    expect(result.result.reviewCandidates?.map((image) => image.url)).toEqual([
+      "https://venue.co.uk/unknown.jpg",
+    ]);
+    expect(result.result.rejected["unsafe-image-dns"]).toBe(1);
+  });
+
+  it("accepts multi-branch scenes attributed by their own image metadata or matching local business", () => {
+    const reading = {
+      ...query,
+      name: "Neighbourhood Bakery",
+      area: "Reading",
+      address: "Broad Street",
+      postcode: "RG1 2BD",
+    };
+    const html = `<title>Neighbourhood Bakery Reading</title><nav>Our locations</nav>
+      <img src="/reading-interior.jpg" alt="Bakery interior">
+      <img src="/a123.jpg" alt="Reading bakery interior">
+      <img src="/b123.jpg" alt="Broad Street bakery interior">
+      <img src="/c123.jpg" alt="RG1 2BD bakery interior">
+      <script type="application/ld+json">{"@type":"LocalBusiness","name":"Neighbourhood Bakery","address":{"addressLocality":"Reading","postalCode":"RG1 2BD"},"image":{"url":"/d123.jpg","caption":"Bakery interior"}}</script>`;
+    for (const websitePreview of [false, true]) {
+      const result = parseOfficialPhotoHtml(
+        html,
+        "https://venue.co.uk/reading/",
+        reading,
+        { websitePreview },
+      );
+      expect(result.candidates.map((image) => image.url)).toEqual(
+        expect.arrayContaining([
+          "https://venue.co.uk/reading-interior.jpg",
+          "https://venue.co.uk/a123.jpg",
+          "https://venue.co.uk/b123.jpg",
+          "https://venue.co.uk/c123.jpg",
+          "https://venue.co.uk/d123.jpg",
+        ]),
+      );
+      expect(result.candidates).toHaveLength(5);
+    }
+  });
+
+  it.each([false, true])(
+    "does not borrow branch ownership from generic schema, adjacent images, hydration or closed containers (preview: %s)",
+    (websitePreview) => {
+      const html = `<title>Neighbourhood Bakery Reading</title><nav>Our locations</nav>
+        <script type="application/ld+json">{"@type":"LocalBusiness","name":"Neighbourhood Bakery","image":{"url":"/a123.jpg","caption":"Bakery interior"}}</script>
+        <section aria-label="Reading branch gallery"></section><img src="/b123.jpg" alt="Bakery interior">
+        <img src="/reading-logo.svg" alt="Reading branch logo"><img src="/c123.jpg" alt="Bakery interior">
+        <script>window.gallery={"area":"Reading","imageUrl":"https://venue.co.uk/d123.jpg","caption":"Bakery interior"}</script>`;
+      expect(
+        parseOfficialPhotoHtml(
+          html,
+          "https://venue.co.uk/reading/",
+          { ...query, name: "Neighbourhood Bakery", area: "Reading" },
+          { websitePreview },
+        ).candidates,
+      ).toEqual([]);
+    },
+  );
 
   it("rejects another structured venue, menu artwork, stock images, map thumbnails and unexplained images", () => {
     const html = `<title>Pirates Landing Wokingham</title>

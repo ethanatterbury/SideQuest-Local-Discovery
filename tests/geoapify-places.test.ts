@@ -271,8 +271,12 @@ describe("configured national discovery", () => {
     const body = await response.json();
     expect(body.source).toBe("live");
     expect(body.message).toContain("Geoapify");
-    expect(body.places).toHaveLength(1);
-    expect(body.places[0]).toMatchObject({
+    expect(body.places.length).toBeLessThanOrEqual(300);
+    expect(
+      body.places.find(
+        (place: { id: string }) => place.id === "osm-way-987654321",
+      ),
+    ).toMatchObject({
       id: "osm-way-987654321",
       category: "Indoor soft play",
     });
@@ -349,7 +353,10 @@ describe("configured national discovery", () => {
       getDiscoveryPlaces({ lat: 53.48, lng: -2.24 }, 10, false),
       getDiscoveryPlaces({ lat: 53.48, lng: -2.24 }, 10, false),
     ]);
-    expect(a.places).toHaveLength(1);
+    expect(a.places.length).toBeLessThanOrEqual(300);
+    expect(a.places.some((place) => place.id === "osm-way-987654321")).toBe(
+      true,
+    );
     expect(b.places).toEqual(a.places);
     expect(
       (await getDiscoveryPlaces({ lat: 53.48, lng: -2.24 }, 10, false)).source,

@@ -6,7 +6,10 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { runVenuePhotoBatch } from "../scripts/lib/venue-photo-batch.mjs";
 import { placePhotoQuery, photoVenueIdentity } from "@/providers/photo-query";
-import { approvedPhoto } from "@/providers/photo-policy";
+import {
+  approvedPhoto,
+  LOCAL_PHOTO_REVIEW_MODEL,
+} from "@/providers/photo-policy";
 import { safeOfficialPhotoUrl } from "@/providers/official-photo";
 
 const folders: string[] = [];
@@ -31,13 +34,13 @@ const photo = (name: string) => ({
   source: "https://acornplay.co.uk/",
   credit: name,
   license: "Website preview — rights reserved",
-  rights: "website-preview",
-  strategy: "official-website-preview",
+  rights: "website-preview" as const,
+  strategy: "official-website-preview" as const,
   checkedAt: new Date(start).toISOString(),
   preview: {
     pageUrl: "https://acornplay.co.uk/",
     publisher: name,
-    kind: "venue-image",
+    kind: "venue-image" as const,
     identityEvidence: ["venue name and local address"],
     subjectEvidence: ["physical venue scene in image metadata"],
   },
@@ -90,6 +93,262 @@ afterEach(async () => {
     folders
       .splice(0)
       .map((folder) => rm(folder, { recursive: true, force: true })),
+  );
+});
+
+it("accepts batches above 100 through 1000 while rejecting 1001", async () => {
+  const paths = await setup();
+  const report = await runVenuePhotoBatch(
+    {
+      ...paths,
+      limit: 1000,
+      places: Array.from({ length: 101 }, (_, i) => place(`scale-${i}`)),
+    },
+    providers(),
+  );
+  expect(report.processed).toBe(101);
+  expect((await json(paths.output)).entries).toHaveLength(101);
+  await expect(
+    runVenuePhotoBatch({ ...paths, limit: 1001, places: [] }, providers()),
+  ).rejects.toThrow("limit");
+});
+
+it.each([999, 1200001])(
+  "rejects a runtime budget outside the bounded range: %s",
+  async (maxRuntimeMs) => {
+    const paths = await setup();
+    await expect(
+      runVenuePhotoBatch({ ...paths, maxRuntimeMs, places: [] }, providers()),
+    ).rejects.toThrow("maxRuntimeMs");
+  },
+);
+
+it("checkpoints at the runtime deadline and resumes remaining mapped sites", async () => {
+  const paths = await setup();
+  let clock = start;
+  const options = {
+    ...paths,
+    maxRuntimeMs: 1000,
+    places: ["first", "second"].map((id) =>
+      place(id, "https://acornplay.co.uk/"),
+    ),
+  };
+  const report = await runVenuePhotoBatch(
+    options,
+    providers({
+      now: () => clock,
+      resolveOfficialWebsitePreview: async (
+        _query: unknown,
+        { timeoutMs }: { timeoutMs: number },
+      ) => {
+        expect(timeoutMs).toBeGreaterThan(0);
+        expect(timeoutMs).toBeLessThanOrEqual(1000);
+        clock += 1000;
+        return empty();
+      },
+    }),
+  );
+  expect(report.timeBudgetExhausted).toBe(true);
+  expect(report.processed).toBe(1);
+  expect(
+    (await json(paths.output)).entries.map(
+      (entry: { query: { id: string } }) => entry.query.id,
+    ),
+  ).toEqual(["first"]);
+  const resumed = await runVenuePhotoBatch(
+    options,
+    providers({ now: () => start + 2000 }),
+  );
+  expect(resumed.timeBudgetExhausted).toBe(false);
+  expect(resumed.processed).toBe(1);
+  expect((await json(paths.output)).entries).toHaveLength(2);
+});
+
+it("bounds an unresponsive website provider and persists a retryable outcome", async () => {
+  const paths = await setup();
+  const began = Date.now();
+  const report = await runVenuePhotoBatch(
+    {
+      ...paths,
+      maxRuntimeMs: 1000,
+      places: [place("hung", "https://acornplay.co.uk/")],
+    },
+    providers({ resolveOfficialWebsitePreview: () => new Promise(() => {}) }),
+  );
+  expect(Date.now() - began).toBeLessThan(2000);
+  expect(report.timeBudgetExhausted).toBe(true);
+  expect((await json(paths.output)).entries[0]).toMatchObject({
+    status: "retryable",
+    retryable: true,
+    reviewVersion: "metadata-v1",
+  });
+});
+
+it("resumes discovery interrupted by the deadline without a second search or retry cooldown", async () => {
+  const paths = await setup();
+  let clock = start;
+  const options = {
+    ...paths,
+    maxRuntimeMs: 1000,
+    searchEnabled: true,
+    maxSearches: 1,
+    places: [place("search-deadline")],
+  };
+  const first = await runVenuePhotoBatch(
+    options,
+    providers({
+      now: () => clock,
+      searchOfficialWebsite: async (
+        _query: unknown,
+        { timeoutMs }: { timeoutMs: number },
+      ) => {
+        expect(timeoutMs).toBeLessThanOrEqual(1000);
+        clock += 1000;
+        return { status: "found", urls: ["https://acornplay.co.uk/"] };
+      },
+    }),
+  );
+  expect(first.timeBudgetExhausted).toBe(true);
+  expect((await json(paths.output)).entries[0].evidence.reason).toBe(
+    "website-preview-pending",
+  );
+  const resumed = await runVenuePhotoBatch(
+    options,
+    providers({ now: () => start + 2000 }),
+  );
+  expect(resumed.processed).toBe(1);
+  expect(resumed.searches).toBe(0);
+  expect((await json(paths.ledger)).months["2026-10"].attempts).toHaveLength(1);
+  expect((await json(paths.output)).entries[0].evidence.attempts).toHaveLength(
+    1,
+  );
+});
+
+it("retries old negative reviews before unseen mapped sites when review capability changes", async () => {
+  const paths = await setup();
+  const reviewed = place("old-negative", "https://acornplay.co.uk/");
+  await runVenuePhotoBatch({ ...paths, places: [reviewed] }, providers());
+  const report = await runVenuePhotoBatch(
+    {
+      ...paths,
+      limit: 1,
+      reviewVersion: "local-clip-v1",
+      places: [place("unseen", "https://acornplay.co.uk/"), reviewed],
+    },
+    providers({ now: () => start + 60000 }),
+  );
+  expect(report.processed).toBe(1);
+  expect((await json(paths.output)).entries).toHaveLength(1);
+  expect((await json(paths.output)).entries[0]).toMatchObject({
+    query: { id: "old-negative" },
+    reviewVersion: "local-clip-v1",
+  });
+  const cached = await runVenuePhotoBatch(
+    { ...paths, reviewVersion: "local-clip-v1", places: [reviewed] },
+    providers({ now: () => start + 120000 }),
+  );
+  expect(cached.processed).toBe(0);
+  expect(cached.cached).toBe(1);
+});
+
+it("keeps approved positive reviews cached when review capability changes", async () => {
+  const paths = await setup();
+  const p = place("positive", "https://acornplay.co.uk/");
+  await runVenuePhotoBatch(
+    { ...paths, places: [p] },
+    providers({
+      resolveOfficialWebsitePreview: async () => ({
+        ...empty(),
+        image: photo(p.name),
+      }),
+    }),
+  );
+  const report = await runVenuePhotoBatch(
+    { ...paths, places: [p], reviewVersion: "local-clip-v1" },
+    providers({ now: () => start + 60000 }),
+  );
+  expect(report.cached).toBe(1);
+  expect(report.processed).toBe(0);
+  expect((await json(paths.output)).entries[0]).toMatchObject({
+    status: "matched",
+    reviewVersion: "metadata-v1",
+  });
+});
+
+it("preserves bounded local model proof and diagnostics while dropping arbitrary provider payloads", async () => {
+  const paths = await setup();
+  const p = place("classified", "https://acornplay.co.uk/");
+  const reviewed = photo(p.name);
+  Object.assign(reviewed.preview, {
+    identityEvidence: [
+      "venue name in page title, heading or business schema",
+      "venue area in page metadata, path or business address",
+    ],
+    subjectEvidence: ["physical venue scene classified by local model"],
+    review: {
+      method: "image-analysis:local-clip",
+      imageUrl: reviewed.url,
+      checkedAt: new Date(start).toISOString(),
+      description: "A photograph of a physical play venue interior.",
+      sha256: "a".repeat(64),
+      localClip: {
+        model: { ...LOCAL_PHOTO_REVIEW_MODEL, secret: "private raw source" },
+        minScore: 0.8,
+        minMargin: 0.5,
+        bestVenueScore: 0.9,
+        bestRejectScore: 0.01,
+        margin: 0.89,
+        scores: [
+          "venue-interior",
+          "venue-exterior",
+          "outdoor-place",
+          "logo-illustration",
+          "portrait-event",
+          "product-food",
+          "ancillary-parking",
+          "construction",
+          "document",
+        ].map((id, i) => ({
+          id,
+          group: i < 3 ? "venue" : "reject",
+          score: i === 0 ? 0.9 : i === 1 ? 0.03 : 0.01,
+          buffer: "image bytes",
+        })),
+        html: "private raw source",
+      },
+    },
+  });
+  expect(approvedPhoto(reviewed)).toBeDefined();
+  await runVenuePhotoBatch(
+    { ...paths, reviewVersion: "local-clip-v1", places: [p] },
+    providers({
+      resolveOfficialWebsitePreview: async () => ({
+        ...empty(),
+        image: reviewed,
+        result: {
+          ...empty().result,
+          vision: {
+            status: "reviewed",
+            modelStatus: "ready",
+            count: 1,
+            reason: "venue-photo",
+            buffer: "image bytes",
+          },
+        },
+      }),
+    }),
+  );
+  const data = await json(paths.output);
+  expect(approvedPhoto(data.entries[0].image)).toBeDefined();
+  expect(data.entries[0].image.preview.review.localClip.scores).toHaveLength(9);
+  expect(data.entries[0].evidence.attempts[0].vision).toEqual({
+    status: "reviewed",
+    modelStatus: "ready",
+    count: 1,
+    reason: "venue-photo",
+  });
+  expect(await readFile(paths.output, "utf8")).not.toMatch(
+    /private raw source|image bytes|"buffer"|"secret"/,
   );
 });
 

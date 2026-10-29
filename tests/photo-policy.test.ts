@@ -73,3 +73,38 @@ it("rejects arbitrary remote URLs masquerading as open-license source evidence",
     ),
   ).toBeUndefined();
 });
+
+it("does not reuse a chain photo with only page-level branch evidence", () => {
+  const photo = {
+    url: "https://acornplay.co.uk/interior.jpg",
+    source: "https://acornplay.co.uk/fleet/",
+    credit: "Acorn Play",
+    license: "Website preview — rights reserved",
+    rights: "website-preview" as const,
+    strategy: "official-website-preview",
+    checkedAt,
+    preview: {
+      pageUrl: "https://acornplay.co.uk/fleet/",
+      publisher: "Acorn Play",
+      kind: "venue-image" as const,
+      identityEvidence: [
+        "multi-branch operator",
+        "venue area in page metadata, path or business address",
+      ],
+      subjectEvidence: ["physical venue scene in image metadata"],
+    },
+  };
+  expect(approvedPhoto(photo)).toBeUndefined();
+  expect(
+    approvedPhoto({
+      ...photo,
+      preview: {
+        ...photo.preview,
+        identityEvidence: [
+          ...photo.preview.identityEvidence,
+          "image attributed to the local branch",
+        ],
+      },
+    })?.url,
+  ).toBe(photo.url);
+});

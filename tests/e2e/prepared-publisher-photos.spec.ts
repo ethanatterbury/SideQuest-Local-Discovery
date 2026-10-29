@@ -1,6 +1,10 @@
 import { test, expect } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import type { PreparedVenuePhotoEntry } from "../../src/providers/prepared-venue-photos";
+import {
+  photoDeliveryChecks,
+  photoDeliverySelectionTime,
+} from "../../scripts/lib/photo-delivery-selection.mjs";
 
 const manifest = JSON.parse(
   readFileSync("src/providers/data/venue-photo-previews.json", "utf8"),
@@ -8,6 +12,14 @@ const manifest = JSON.parse(
 const publisherPhotos = manifest.entries.filter(
   (entry) => entry.image?.rights === "website-preview",
 );
+const before = process.env.SIDEQUEST_PHOTO_BASE_MANIFEST
+  ? JSON.parse(readFileSync(process.env.SIDEQUEST_PHOTO_BASE_MANIFEST, "utf8"))
+  : { version: 1, entries: [] };
+const deliveryChecks = photoDeliveryChecks({
+  before,
+  after: manifest,
+  now: photoDeliverySelectionTime(),
+});
 
 // These checks deliberately use the real publisher network. Regular e2e runs
 // stay deterministic; the maintenance workflow opts in after a production build.
@@ -26,7 +38,7 @@ test.describe("prepared publisher photographs on real detail pages", () => {
     ).toBe(true);
   });
 
-  for (const entry of publisherPhotos) {
+  for (const { entry, screenshot } of deliveryChecks) {
     test(`${entry.query.id}: ${entry.query.name}`, async ({
       page,
     }, testInfo) => {
@@ -38,6 +50,7 @@ test.describe("prepared publisher photographs on real detail pages", () => {
         name: entry.query.name,
         expectedImageUrl: image.url,
         source: image.source,
+        screenshotSampled: screenshot,
         checkedAt: new Date(startedAt).toISOString(),
       };
       const imageResponses: { url: string; status: number }[] = [];
@@ -147,15 +160,18 @@ test.describe("prepared publisher photographs on real detail pages", () => {
                 })),
             }))
             .catch((error: Error) => ({ error: error.message }));
-          try {
-            await testInfo.attach("detail-page", {
-              body: await page.screenshot({ fullPage: true, timeout: 5_000 }),
-              contentType: "image/png",
-            });
-          } catch (error) {
-            delivery.screenshotError =
-              error instanceof Error ? error.message : String(error);
-          }
+          if (screenshot)
+            try {
+              await testInfo.attach("detail-page", {
+                body: await page
+                  .locator(".detail-hero")
+                  .screenshot({ type: "jpeg", quality: 50, timeout: 5_000 }),
+                contentType: "image/jpeg",
+              });
+            } catch (error) {
+              delivery.screenshotError =
+                error instanceof Error ? error.message : String(error);
+            }
         }
         await testInfo.attach("publisher-image-delivery", {
           body: JSON.stringify(delivery, null, 2),

@@ -155,22 +155,82 @@ function photoMetadata(image) {
       subjectEvidence: strings(image.preview.subjectEvidence),
       ...(image.preview.review
         ? {
-            review: Object.fromEntries(
-              [
-                "method",
-                "provider",
-                "imageUrl",
-                "checkedAt",
-                "description",
-                "sha256",
-              ]
-                .filter((key) => typeof image.preview.review[key] === "string")
-                .map((key) => [key, image.preview.review[key]]),
-            ),
+            review: {
+              ...Object.fromEntries(
+                [
+                  "method",
+                  "provider",
+                  "imageUrl",
+                  "checkedAt",
+                  "description",
+                  "sha256",
+                ]
+                  .filter(
+                    (key) => typeof image.preview.review[key] === "string",
+                  )
+                  .map((key) => [key, image.preview.review[key]]),
+              ),
+              ...(image.preview.review.localClip
+                ? {
+                    localClip: localClipMetadata(
+                      image.preview.review.localClip,
+                    ),
+                  }
+                : {}),
+            },
           }
         : {}),
     };
   return saved;
+}
+
+function localClipMetadata(clip) {
+  return {
+    model: Object.fromEntries(
+      ["id", "revision", "dtype", "device", "library", "libraryVersion"]
+        .filter((key) => typeof clip.model?.[key] === "string")
+        .map((key) => [key, clip.model[key].slice(0, 300)]),
+    ),
+    ...Object.fromEntries(
+      ["minScore", "minMargin", "bestVenueScore", "bestRejectScore", "margin"]
+        .filter((key) => Number.isFinite(clip[key]))
+        .map((key) => [key, clip[key]]),
+    ),
+    scores: (Array.isArray(clip.scores) ? clip.scores : [])
+      .slice(0, 9)
+      .filter(
+        (score) =>
+          typeof score?.id === "string" &&
+          ["venue", "reject"].includes(score.group) &&
+          Number.isFinite(score.score),
+      )
+      .map((score) => ({
+        id: score.id.slice(0, 100),
+        group: score.group,
+        score: score.score,
+      })),
+  };
+}
+
+function visionMetadata(vision) {
+  if (!vision || typeof vision !== "object") return {};
+  return {
+    ...Object.fromEntries(
+      ["status", "modelStatus", "reason"]
+        .filter((key) => typeof vision[key] === "string")
+        .map((key) => [key, text(vision[key])]),
+    ),
+    ...Object.fromEntries(
+      ["count", "considered", "attempted"]
+        .filter(
+          (key) =>
+            Number.isInteger(vision[key]) &&
+            vision[key] >= 0 &&
+            vision[key] <= 1000,
+        )
+        .map((key) => [key, vision[key]]),
+    ),
+  };
 }
 
 function previewEvidence(website, result, safeOfficialPhotoUrl) {
@@ -192,6 +252,7 @@ function previewEvidence(website, result, safeOfficialPhotoUrl) {
       evidence: strings(identity.evidence),
     },
     rejected: counts(source.rejected),
+    ...(source.vision ? { vision: visionMetadata(source.vision) } : {}),
     candidates: (Array.isArray(source.candidates) ? source.candidates : [])
       .slice(0, 12)
       .flatMap((candidate) => {
@@ -268,7 +329,26 @@ export async function runVenuePhotoBatch(options, providers) {
     throw new Error(
       "The preview manifest and search ledger must use different files",
     );
-  const limit = integer(options.limit, 100, 100, "limit");
+  const limit = integer(options.limit, 100, 1000, "limit");
+  const maxRuntimeMs = integer(
+    options.maxRuntimeMs,
+    1200000,
+    1200000,
+    "maxRuntimeMs",
+  );
+  if (maxRuntimeMs < 1000)
+    throw new Error(
+      "Invalid maxRuntimeMs: expected an integer from 1000 to 1200000",
+    );
+  const reviewVersion = options.reviewVersion ?? "metadata-v1";
+  if (
+    typeof reviewVersion !== "string" ||
+    !reviewVersion.trim() ||
+    reviewVersion.length > 100
+  )
+    throw new Error(
+      "Invalid reviewVersion: expected a nonempty string up to 100 characters",
+    );
   const maxSearches = integer(options.maxSearches, 0, 1000, "maxSearches");
   const monthlyCap = integer(options.monthlyCap, 1000, 1000, "monthlyCap");
   const timeoutMs = Math.max(
@@ -294,6 +374,18 @@ export async function runVenuePhotoBatch(options, providers) {
       throw new Error("Invalid normalized place in photo preparation input");
     unique.set(websiteDiscoveryIdentity(query), query);
   }
+  const began = now();
+  const wallBegan = performance.now();
+  const remainingMs = () =>
+    Math.max(
+      0,
+      Math.floor(
+        Math.min(
+          maxRuntimeMs - (now() - began),
+          maxRuntimeMs - (performance.now() - wallBegan),
+        ),
+      ),
+    );
   return withLocks([output, ledgerPath], now, async () => {
     const manifest = await readJson(output, {
       version: 1,
@@ -340,6 +432,33 @@ export async function runVenuePhotoBatch(options, providers) {
       searchSkipped: 0,
       searches: 0,
       cached: 0,
+      timeBudgetExhausted: false,
+    };
+    const boundedProvider = async (provider, requestedTimeoutMs) => {
+      const remaining = remainingMs();
+      if (!remaining) {
+        report.timeBudgetExhausted = true;
+        throw new Error("Venue photo batch runtime exhausted");
+      }
+      const budget = Math.min(remaining, requestedTimeoutMs);
+      const controller = new AbortController();
+      let timer;
+      try {
+        return await Promise.race([
+          Promise.resolve().then(() =>
+            provider({ timeoutMs: budget, signal: controller.signal }),
+          ),
+          new Promise((_, reject) => {
+            timer = setTimeout(() => {
+              if (budget === remaining) report.timeBudgetExhausted = true;
+              controller.abort();
+              reject(new Error("Venue photo provider timeout"));
+            }, budget);
+          }),
+        ]);
+      } finally {
+        clearTimeout(timer);
+      }
     };
     const checkpoint = async () => {
       manifest.generatedAt = new Date(now()).toISOString();
@@ -369,7 +488,16 @@ export async function runVenuePhotoBatch(options, providers) {
           key,
           query,
           order,
-          priority: hasImage ? 2 : hasWebsite ? 0 : canSearch ? 1 : 3,
+          priority: hasImage
+            ? 3
+            : hasWebsite
+              ? prior &&
+                (prior.reviewVersion ?? "metadata-v1") !== reviewVersion
+                ? 0
+                : 1
+              : canSearch
+                ? 2
+                : 4,
           attemptedAt: Math.max(
             Date.parse(prior?.checkedAt) || 0,
             Date.parse(prior?.refreshFailure?.at) || 0,
@@ -407,6 +535,8 @@ export async function runVenuePhotoBatch(options, providers) {
         prior.evidence?.reason !== "website-preview-pending" &&
         prior.refreshFailure?.evidence?.reason !== "website-preview-pending" &&
         (prior.status !== "search-skipped" || !canSearch) &&
+        (priorImage ||
+          (prior.reviewVersion ?? "metadata-v1") === reviewVersion) &&
         (priorImage || sameSource) &&
         fresh(
           prior.refreshFailure?.at ?? prior.checkedAt,
@@ -418,6 +548,10 @@ export async function runVenuePhotoBatch(options, providers) {
         continue;
       }
       if (report.processed >= limit) break;
+      if (!remainingMs() || report.timeBudgetExhausted) {
+        report.timeBudgetExhausted = true;
+        break;
+      }
       const checkedAt = new Date(current).toISOString();
       const venueKey = websiteDiscoveryIdentity(query);
       const mappedUrls = officialWebsites(
@@ -496,7 +630,10 @@ export async function runVenuePhotoBatch(options, providers) {
             report.searches++;
             let result;
             try {
-              result = await searchOfficialWebsite(query, { timeoutMs: 3000 });
+              result = await boundedProvider(
+                (budget) => searchOfficialWebsite(query, budget),
+                3000,
+              );
             } catch {
               result = { urls: [], status: "unavailable" };
             }
@@ -527,16 +664,19 @@ export async function runVenuePhotoBatch(options, providers) {
               priorImage
                 ? {
                     ...prior,
+                    reviewVersion,
                     website,
                     image: photoMetadata(priorImage),
                     refreshFailure: {
                       at: checkedAt,
+                      reviewVersion,
                       evidence: pendingEvidence,
                     },
                   }
                 : {
                     query,
                     checkedAt,
+                    reviewVersion,
                     website,
                     image: null,
                     retryable: true,
@@ -553,14 +693,26 @@ export async function runVenuePhotoBatch(options, providers) {
       const attempts = [];
       let image = null;
       let retryable = website.status === "unavailable";
+      let previewIncomplete = false;
       for (const url of website.urls) {
+        if (!remainingMs() || report.timeBudgetExhausted) {
+          report.timeBudgetExhausted = true;
+          retryable = true;
+          previewIncomplete = true;
+          break;
+        }
         let result;
         try {
-          result = await resolveOfficialWebsitePreview(
-            { ...query, website: url },
-            { timeoutMs, refresh: Boolean(options.refresh) },
+          result = await boundedProvider(
+            (budget) =>
+              resolveOfficialWebsitePreview(
+                { ...query, website: url },
+                { ...budget, refresh: Boolean(options.refresh) },
+              ),
+            timeoutMs,
           );
         } catch {
+          previewIncomplete ||= report.timeBudgetExhausted;
           result = {
             image: null,
             retryable: true,
@@ -572,13 +724,17 @@ export async function runVenuePhotoBatch(options, providers) {
         image = photoMetadata(approvedPhoto(result?.image, checkedAt));
         if (image) break;
       }
+      if (!remainingMs()) report.timeBudgetExhausted = true;
       const evidence = {
         attempts,
-        reason: searchSkipped
-          ? "search-budget-or-key-disabled"
-          : website.urls.length
-            ? null
-            : `website-${website.status}`,
+        reason:
+          previewIncomplete && !image
+            ? "website-preview-pending"
+            : searchSkipped
+              ? "search-budget-or-key-disabled"
+              : website.urls.length
+                ? null
+                : `website-${website.status}`,
       };
       let entry;
       // HTML parser absence (including a non-retryable no-match) cannot prove
@@ -586,15 +742,17 @@ export async function runVenuePhotoBatch(options, providers) {
       if (!image && priorImage) {
         entry = {
           ...prior,
+          reviewVersion,
           website,
           image: photoMetadata(priorImage),
           retryable: false,
-          refreshFailure: { at: checkedAt, evidence },
+          refreshFailure: { at: checkedAt, reviewVersion, evidence },
         };
       } else {
         entry = {
           query,
           checkedAt,
+          reviewVersion,
           website,
           image,
           retryable: image ? false : retryable,
@@ -623,6 +781,7 @@ export async function runVenuePhotoBatch(options, providers) {
         searchStatus: website.status,
         searches: report.searches,
       });
+      if (!remainingMs()) report.timeBudgetExhausted = true;
     }
     if (!report.processed) await checkpoint();
     return report;

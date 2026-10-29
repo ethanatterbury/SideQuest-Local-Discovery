@@ -4,12 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       limit:
-        description: Maximum venues to inspect (0–100; no paid searches)
+        description: Maximum venues to inspect (0–1000; no paid searches)
         required: true
-        default: 100
+        default: 1000
         type: number
   schedule:
-    - cron: "17 */6 * * *"
+    - cron: "17 * * * *"
   push:
     branches: [main]
     paths:
@@ -17,10 +17,17 @@ on:
       - scripts/prepare-venue-photos.mjs
       - scripts/lib/venue-photo-batch.mjs
       - scripts/lib/photo-delivery-results.mjs
+      - scripts/lib/photo-delivery-selection.mjs
+      - scripts/lib/offline-photo-preview.mjs
       - scripts/lib/provider-loader.mjs
+      - scripts/photo-vision/resolver.mjs
+      - scripts/photo-vision/package.json
+      - scripts/photo-vision/package-lock.json
+      - src/domain/models.ts
       - src/providers/official-photo*.ts
       - src/providers/photo-policy.ts
       - src/providers/photo-query.ts
+      - src/providers/photo-reference*.ts
       - src/providers/prepared-venue-photos.ts
       - src/providers/places.ts
       - src/providers/data/regional-osm.json
@@ -40,6 +47,8 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      PHOTO_VISION_CACHE_DIR: ${{ github.workspace }}/work/photo-vision-model-cache
     outputs:
       base_sha: ${{ steps.base.outputs.sha }}
     steps:
@@ -55,17 +64,25 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Install isolated CPU photograph review dependencies
+        env:
+          ONNXRUNTIME_NODE_INSTALL_CUDA: skip
+        run: npm ci --prefix scripts/photo-vision
+      - uses: actions/cache@v4
+        with:
+          path: work/photo-vision-model-cache
+          key: photo-vision-${{ runner.os }}-transformers-3.8.1-clip-d15189d7028b43f1d3e65039190477f6af591c2a-q8
       - name: Preserve the incoming metadata for nonregression checks
         run: |
           mkdir -p work/photo-maintenance
           cp src/providers/data/venue-photo-previews.json work/photo-maintenance/before-previews.json
           cp src/providers/data/venue-photo-search-ledger.json work/photo-maintenance/before-ledger.json
+          echo "SIDEQUEST_PHOTO_DELIVERY_AT=$(date --utc +%Y-%m-%dT%H:%M:%S.000Z)" >> "$GITHUB_ENV"
       - name: Inspect a bounded batch of official websites
         env:
-          PHOTO_LIMIT: ${{ github.event_name == 'workflow_dispatch' && toJSON(inputs.limit) || '100' }}
-          TAVILY_API_KEY: ""
+          PHOTO_LIMIT: ${{ github.event_name == 'workflow_dispatch' && toJSON(inputs.limit) || '1000' }}
         run: |
-          node scripts/prepare-venue-photos.mjs --limit="$PHOTO_LIMIT" --max-searches=0 --monthly-cap=1000 --timeout-ms=12000 | tee work/photo-maintenance/batch.jsonl
+          node scripts/prepare-venue-photos.mjs --limit="$PHOTO_LIMIT" --max-searches=0 --monthly-cap=1000 --timeout-ms=12000 --max-runtime-ms=1200000 --local-vision=true | tee work/photo-maintenance/batch.jsonl
       - name: Validate approved metadata and preserve existing photographs
         run: |
           node --input-type=module <<'NODE'
@@ -125,23 +142,24 @@ jobs:
         env:
           SIDEQUEST_LIVE_PHOTO_CHECK: "1"
           SIDEQUEST_E2E_PRODUCTION: "1"
+          SIDEQUEST_PHOTO_BASE_MANIFEST: work/photo-maintenance/before-previews.json
           PLAYWRIGHT_JSON_OUTPUT_NAME: work/photo-maintenance/browser-results.json
         run: npx playwright test tests/e2e/prepared-publisher-photos.spec.ts --workers=4 --reporter=list,json
       - name: Quarantine failed new photos and preserve successful batch checkpoints
         run: |
-          cp src/providers/data/venue-photo-previews.json work/photo-maintenance/batch-candidate.json
           node scripts/lib/photo-delivery-results.mjs --before=work/photo-maintenance/before-previews.json --after=src/providers/data/venue-photo-previews.json --results=work/photo-maintenance/browser-results.json --summary=work/photo-maintenance/delivery-summary.json
-      - name: Retain the complete batch and browser evidence
+      - name: Retain bounded batch and browser evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: venue-photo-evidence-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            work/photo-maintenance/
-            src/providers/data/venue-photo-previews.json
-            src/providers/data/venue-photo-search-ledger.json
+            work/photo-maintenance/batch.jsonl
+            work/photo-maintenance/summary.json
+            work/photo-maintenance/delivery-summary.json
+            work/photo-maintenance/browser-results.json
             test-results/
-          retention-days: 14
+          retention-days: 1
       - name: Retain the verified publication candidate
         uses: actions/upload-artifact@v4
         with:
@@ -150,7 +168,7 @@ jobs:
             src/providers/data/venue-photo-previews.json
             src/providers/data/venue-photo-search-ledger.json
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 1
       - name: Explain the publication gate
         if: always()
         env:
@@ -160,11 +178,11 @@ jobs:
           {
             echo "### Prepared venue photographs"
             echo "Catalogue revision: ${{ steps.base.outputs.sha }}"
-            echo "Official website HTML only; paid searches disabled."
+            echo "Official website metadata and isolated local CPU image review; paid searches disabled."
             echo "Preparation and live-browser status: $PREPARATION_STATUS"
             echo "Live publisher assertions: $BROWSER_STATUS"
-            echo "Per-venue screenshots, image response failures, decode dimensions and timings are retained in the evidence artifact, including when a publisher fails."
-            echo "Only new photos with passing real browser delivery are published. Failed new photos become retryable metadata checkpoints; prior approved photos are retained with failure evidence. Missing or incomplete browser infrastructure evidence blocks publication."
+            echo "Decode, attribution and timing evidence covers every required photograph; hero JPEG screenshots sample the first 12 checks. Evidence expires after one day."
+            echo "New, changed, unverified and previously failed photos require real browser delivery checks. Unchanged photos verified within 30 days retain their prior verification timestamp. Failed new photos become retryable checkpoints; prior approved photos remain with failure evidence. Missing or incomplete browser infrastructure evidence blocks publication; a passing inventory with no required photos is valid."
             if [ -f work/photo-maintenance/delivery-summary.json ]; then
               echo '```json'
               cat work/photo-maintenance/delivery-summary.json

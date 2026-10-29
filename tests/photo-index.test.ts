@@ -1,10 +1,11 @@
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import {
   indexedPhoto,
   photoIdentity,
   photoIndex,
 } from "../src/providers/photo-index";
 import { safePhotoUrl } from "../src/providers/place-photo";
+import { preparedVenuePhoto } from "../src/providers/prepared-venue-photos";
 const query = { id: "osm-node-12", name: "Branch Park", lat: 51, lng: -1 };
 const image = {
   url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Park.jpg",
@@ -80,4 +81,51 @@ it("keeps verified prepared photos when new website or address metadata is disco
   expect(indexedPhoto(enriched, [entry])?.image?.url).toBe(image.url);
   expect(indexedPhoto(enriched, [{ ...entry, image: null }])).toBeNull();
   expect(photoIdentity(enriched)).not.toBe(photoIdentity(query));
+});
+
+it("matches the reference lookup across generated entries and missing venues", () => {
+  const reference = [...photoIndex.entries];
+  const queries = [
+    ...reference.flatMap(({ query }) => [
+      query,
+      { ...query, website: "https://new-source.invalid/" },
+      { ...query, name: `${query.name} unmatched` },
+    ]),
+    query,
+    { ...query, lat: 52 },
+  ];
+  for (const sample of queries) {
+    if (!preparedVenuePhoto(sample))
+      expect(indexedPhoto(sample)).toEqual(indexedPhoto(sample, reference));
+  }
+});
+
+it("preserves first-match ordering before freshness and retryability checks", async () => {
+  const fresh = new Date().toISOString();
+  const entries = [
+    { query, image: null, checkedAt: fresh, retryable: true },
+    { query, image, checkedAt: fresh },
+    { query: { ...query, id: "expired" }, image, checkedAt: "2020-01-01" },
+    { query: { ...query, id: "expired" }, image: null, checkedAt: fresh },
+    { query: { ...query, id: "positive" }, image, checkedAt: fresh },
+    { query: { ...query, id: "positive" }, image: null, checkedAt: fresh },
+  ];
+  vi.resetModules();
+  vi.doMock("../src/providers/data/place-photo-index.json", () => ({
+    default: { entries },
+  }));
+  try {
+    const { indexedPhoto: lookup } =
+      await import("../src/providers/photo-index");
+    for (const id of [query.id, "expired", "positive"]) {
+      const sample = { ...query, id };
+      expect(lookup(sample)).toEqual(lookup(sample, [...entries]));
+    }
+    expect(lookup(query)).toBeNull();
+    expect(lookup({ ...query, id: "expired" })).toBeNull();
+    expect(lookup({ ...query, id: "positive" })?.image).toBeTruthy();
+  } finally {
+    vi.doUnmock("../src/providers/data/place-photo-index.json");
+    vi.resetModules();
+  }
 });

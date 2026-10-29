@@ -8,10 +8,19 @@ Public `discoverOfficialWebsite` only reads prepared metadata. Even setting `TAV
 
 The **Maintain prepared venue photographs** GitHub Actions workflow works through the catalogue with `--max-searches=0`. It needs no additional account or API key. It keeps results between runs, tests actual publisher image delivery in Chromium, and publishes approved changes to main. Failed delivery checks keep their screenshots and diagnostics as workflow artifacts. New photos that fail browser checks remain unresolved, while successful photos and preparation checkpoints can still be published.
 
+The hourly job inspects up to 1,000 venues within a 20-minute preparation budget. Activities are prepared before optional food, drink and retail listings. This is a resumable processing batch, not a monthly request allowance. The England catalogue is supplied as compressed OpenStreetMap metadata; it contains links and listings, not an image warehouse.
+
+For eligible images with unhelpful filenames or captions, an isolated CPU CLIP model checks their visual subject. The model needs no inference API key or per-image credits. Image bytes are downloaded into memory, inspected, then discarded; only the publisher URL and evidence are stored. Official venue/location and image-specific chain-branch checks run before classification. Classification cannot establish venue identity by itself. A completed 26-image pilot averaged about 157 ms per image on its runner; this is not a national accuracy or total crawl-time guarantee. The production threshold is more conservative than the pilot.
+
+Browser verification covers every new or changed photo. Unchanged successful delivery evidence is reused for 30 days. Up to 12 hero JPEG screenshots are kept per run; evidence artifacts expire after one day. The site revalidates its catalogue manifest so new photo links do not wait behind a day-old manifest.
+
 To run locally:
 
 ```sh
 npm run prepare:photos -- --limit=100 --max-searches=0
+# Optional local CPU image checks (requires the isolated dependencies):
+ONNXRUNTIME_NODE_INSTALL_CUDA=skip npm ci --prefix scripts/photo-vision
+npm run prepare:photos -- --limit=1000 --max-searches=0 --local-vision=true
 npm run check
 ```
 

@@ -16,6 +16,16 @@ export type PreparedVenuePhotoEntry = {
   image: PlacePhoto | null;
   retryable?: boolean;
   status?: string;
+  /** Last passing real browser decode and attribution check for this image. */
+  deliveryVerifiedAt?: string;
+  deliveryFailure?: {
+    checkedAt: string;
+    imageUrl: string;
+    testStatus: string;
+    reason: string;
+    elapsedMs: number;
+    failures: { url: string; error: string | null }[];
+  };
 };
 export const preparedVenuePhotos = generated as {
   version: number;

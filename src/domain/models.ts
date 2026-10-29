@@ -101,6 +101,23 @@ export type Intent =
   | "date"
   | "kids";
 export type OpeningWindow = { days: number[]; open: number; close: number };
+/** Relative CLIP similarities are scene evidence, never proof of venue identity. */
+export type LocalClipPhotoEvidence = {
+  model: {
+    id: string;
+    revision: string;
+    dtype: string;
+    device: string;
+    library: string;
+    libraryVersion: string;
+  };
+  minScore: number;
+  minMargin: number;
+  bestVenueScore: number;
+  bestRejectScore: number;
+  margin: number;
+  scores: { id: string; group: "venue" | "reject"; score: number }[];
+};
 export type Place = {
   id: string;
   name: string;
@@ -160,11 +177,15 @@ export type Place = {
       identityEvidence: string[];
       subjectEvidence: string[];
       review?: {
-        method: "visual-review" | "image-analysis:web-image-search";
+        method:
+          | "visual-review"
+          | "image-analysis:web-image-search"
+          | "image-analysis:local-clip";
         imageUrl: string;
         checkedAt: string;
         description: string;
         sha256?: string;
+        localClip?: LocalClipPhotoEvidence;
       };
     };
     checkedAt?: string;

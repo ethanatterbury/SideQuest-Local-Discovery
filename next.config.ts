@@ -56,6 +56,15 @@ const config: NextConfig = {
         ],
       },
       {
+        source: "/data/venues/manifest.json",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=0, s-maxage=60, must-revalidate",
+          },
+        ],
+      },
+      {
         source: "/sw.js",
         headers: [{ key: "Cache-Control", value: "no-cache" }],
       },

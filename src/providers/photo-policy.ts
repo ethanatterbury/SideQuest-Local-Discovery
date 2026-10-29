@@ -8,6 +8,88 @@ export type PhotoPermission = {
   allowsRedistribution: true;
 };
 type Candidate = Image & { permission?: PhotoPermission };
+export const LOCAL_PHOTO_REVIEW_MODEL = {
+  id: "Xenova/clip-vit-base-patch32",
+  revision: "d15189d7028b43f1d3e65039190477f6af591c2a",
+  dtype: "q8",
+  device: "cpu",
+  library: "@huggingface/transformers",
+  libraryVersion: "3.8.1",
+} as const;
+export const LOCAL_PHOTO_REVIEW_THRESHOLD = {
+  minScore: 0.8,
+  minMargin: 0.5,
+} as const;
+export const LOCAL_PHOTO_REVIEW_GROUPS: Record<string, "venue" | "reject"> = {
+  "venue-interior": "venue",
+  "venue-exterior": "venue",
+  "outdoor-place": "venue",
+  "logo-illustration": "reject",
+  "portrait-event": "reject",
+  "product-food": "reject",
+  "ancillary-parking": "reject",
+  construction: "reject",
+  document: "reject",
+};
+
+/** Recompute the complete fixed prompt evidence; the method label grants nothing. */
+function validLocalClipReview(preview: NonNullable<Image["preview"]>): boolean {
+  const review = preview.review;
+  const clip = review?.localClip;
+  if (
+    !review ||
+    !/^[a-f0-9]{64}$/.test(review.sha256 ?? "") ||
+    !clip ||
+    !clip.model ||
+    Object.entries(LOCAL_PHOTO_REVIEW_MODEL).some(
+      ([key, value]) => clip.model[key as keyof typeof clip.model] !== value,
+    ) ||
+    clip.minScore !== LOCAL_PHOTO_REVIEW_THRESHOLD.minScore ||
+    clip.minMargin !== LOCAL_PHOTO_REVIEW_THRESHOLD.minMargin ||
+    !Array.isArray(clip.scores) ||
+    clip.scores.length !== Object.keys(LOCAL_PHOTO_REVIEW_GROUPS).length ||
+    clip.scores.some((score) => !score) ||
+    new Set(clip.scores.map((score) => score.id)).size !== clip.scores.length ||
+    clip.scores.some(
+      (score) =>
+        !score ||
+        !Object.hasOwn(LOCAL_PHOTO_REVIEW_GROUPS, score.id) ||
+        LOCAL_PHOTO_REVIEW_GROUPS[score.id] !== score.group ||
+        !Number.isFinite(score.score) ||
+        score.score < 0 ||
+        score.score > 1,
+    ) ||
+    !preview.identityEvidence.includes(
+      "venue name in page title, heading or business schema",
+    ) ||
+    !preview.identityEvidence.some(
+      (value) =>
+        value === "venue area in page metadata, path or business address" ||
+        value === "venue address matched",
+    )
+  )
+    return false;
+  const venue = Math.max(
+    ...clip.scores
+      .filter((score) => score.group === "venue")
+      .map((score) => score.score),
+  );
+  const reject = Math.max(
+    ...clip.scores
+      .filter((score) => score.group === "reject")
+      .map((score) => score.score),
+  );
+  const margin = venue - reject;
+  return (
+    Math.abs(clip.scores.reduce((sum, score) => sum + score.score, 0) - 1) <
+      1e-5 &&
+    venue >= clip.minScore &&
+    margin >= clip.minMargin &&
+    Math.abs(clip.bestVenueScore - venue) < 1e-9 &&
+    Math.abs(clip.bestRejectScore - reject) < 1e-9 &&
+    Math.abs(clip.margin - margin) < 1e-9
+  );
+}
 // Commons/archive keep their existing lookup budget; official discovery gets a larger route window.
 export const PHOTO_DEADLINE_MS = 4500;
 export const PHOTO_REQUEST_DEADLINE_MS = 6500;
@@ -49,19 +131,28 @@ function approvedWebsitePreview(
     );
   if (!evidence(preview.identityEvidence) || !evidence(preview.subjectEvidence))
     return;
+  if (
+    preview.identityEvidence.includes("multi-branch operator") &&
+    !preview.identityEvidence.includes("image attributed to the local branch")
+  )
+    return;
   const review = preview.review;
   const validReview =
     !!review &&
-    ["visual-review", "image-analysis:web-image-search"].includes(
-      review.method,
-    ) &&
+    [
+      "visual-review",
+      "image-analysis:web-image-search",
+      "image-analysis:local-clip",
+    ].includes(review.method) &&
     review.imageUrl === image.url &&
     typeof review.description === "string" &&
     review.description.trim().length >= 20 &&
     review.description.length <= 1000 &&
     Number.isFinite(Date.parse(review.checkedAt)) &&
     Date.parse(review.checkedAt) <= Date.now() + 300000 &&
-    (!review.sha256 || /^[a-f0-9]{64}$/.test(review.sha256));
+    (!review.sha256 || /^[a-f0-9]{64}$/.test(review.sha256)) &&
+    (review.method !== "image-analysis:local-clip" ||
+      validLocalClipReview(preview));
   if (review && !validReview) return;
   if (
     preview.kind === "venue-image" &&
@@ -75,7 +166,10 @@ function approvedWebsitePreview(
         (validReview &&
           review?.method === "image-analysis:web-image-search" &&
           value ===
-            "physical venue scene described by external image analysis"),
+            "physical venue scene described by external image analysis") ||
+        (validReview &&
+          review?.method === "image-analysis:local-clip" &&
+          value === "physical venue scene classified by local model"),
     )
   )
     return;

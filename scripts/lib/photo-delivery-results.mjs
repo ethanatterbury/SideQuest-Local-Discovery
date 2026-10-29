@@ -3,6 +3,10 @@ import assert from "node:assert/strict";
 import { readFileSync, writeFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { loadProvider } from "./provider-loader.mjs";
+import {
+  photoDeliveryChecks,
+  photoDeliverySelectionTime,
+} from "./photo-delivery-selection.mjs";
 
 const { approvedPhoto } = loadProvider("src/providers/photo-policy.ts");
 const { websiteDiscoveryIdentity } = loadProvider(
@@ -94,15 +98,32 @@ export function reconcilePhotoDelivery({
       entry,
     ]),
   );
+  const required = new Map(
+    photoDeliveryChecks({
+      before,
+      after,
+      now: photoDeliverySelectionTime(Date.parse(checkedAt)),
+    }).map((check) => [websiteDiscoveryIdentity(check.entry.query), check]),
+  );
   const summary = {
     passed: 0,
     failed: 0,
     quarantined: 0,
     retainedPrior: 0,
+    retainedVerified: 0,
     failures: [],
   };
   const entries = after.entries.map((entry) => {
     if (entry.image?.rights !== "website-preview") return entry;
+    const identity = websiteDiscoveryIdentity(entry.query);
+    const check = required.get(identity);
+    if (!check) {
+      summary.retainedVerified++;
+      return {
+        ...entry,
+        deliveryVerifiedAt: previous.get(identity).deliveryVerifiedAt,
+      };
+    }
     const title = `${entry.query.id}: ${entry.query.name}`;
     const result = resultFor(specs, title);
     const delivery = JSON.parse(
@@ -143,12 +164,13 @@ export function reconcilePhotoDelivery({
         ),
         `No decoded publisher photograph in browser evidence: ${title}`,
       );
-      assert.ok(
-        attachment(result, "detail-page").length > 0,
-        `Missing screenshot evidence: ${title}`,
-      );
+      if (check.screenshot)
+        assert.ok(
+          attachment(result, "detail-page").length > 0,
+          `Missing screenshot evidence: ${title}`,
+        );
       summary.passed++;
-      const verified = { ...entry };
+      const verified = { ...entry, deliveryVerifiedAt: checkedAt };
       delete verified.deliveryFailure;
       return verified;
     }
@@ -166,19 +188,21 @@ export function reconcilePhotoDelivery({
       name: entry.query.name,
       ...failure,
     });
-    const prior = previous.get(websiteDiscoveryIdentity(entry.query));
+    const prior = previous.get(identity);
     if (approvedPhoto(prior?.image, prior?.checkedAt)) {
       summary.retainedPrior++;
       return { ...prior, deliveryFailure: failure };
     }
     summary.quarantined++;
-    return {
+    const quarantined = {
       ...entry,
       image: null,
       retryable: true,
       status: "delivery-unavailable",
       deliveryFailure: failure,
     };
+    delete quarantined.deliveryVerifiedAt;
+    return quarantined;
   });
   return { manifest: { ...after, entries }, summary };
 }

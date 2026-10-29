@@ -14,6 +14,10 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Install isolated CPU photo test dependencies
+        env:
+          ONNXRUNTIME_NODE_INSTALL_CUDA: skip
+        run: npm ci --prefix scripts/photo-vision
       - run: npm run check
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
