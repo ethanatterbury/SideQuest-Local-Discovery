@@ -22,6 +22,7 @@ export interface OfficialPhotoIdentity {
   matchedName: boolean;
   matchedArea: boolean;
   matchedAddress: boolean;
+  matchedCoordinates?: boolean;
   multiBranch: boolean;
   branchSpecific: boolean;
   evidence: string[];
@@ -400,6 +401,11 @@ export function parseOfficialPhotoHtml(
       ? [name, simplified]
       : [name];
   });
+  const area =
+    query.area &&
+    !/^(?:nearby|unknown|uk|united kingdom)$/.test(normalized(query.area))
+      ? query.area
+      : undefined;
   // Structured LocalBusiness images carry stronger subject evidence than Organization branding.
   function walk(value: unknown, depth = 0): void {
     if (depth > 10) return;
@@ -458,11 +464,7 @@ export function parseOfficialPhotoHtml(
     if (names.some((name) => contains(String(business.name ?? ""), name)))
       return true;
     // Chains often name their Restaurant schema only after the local branch.
-    if (
-      !pageNamed ||
-      !query.area ||
-      !contains(String(business.name ?? ""), query.area)
-    )
+    if (!pageNamed || !area || !contains(String(business.name ?? ""), area))
       return false;
     try {
       return (
@@ -490,11 +492,40 @@ export function parseOfficialPhotoHtml(
   const businessText = scopedBusinesses
     .map((business) => JSON.stringify(business.address ?? ""))
     .join(" ");
+  const coordinateBusinesses = new Set(
+    scopedBusinesses.filter((business) => {
+      const geo = object(business.geo);
+      const coordinate = (value: unknown) =>
+        typeof value === "number" || (typeof value === "string" && value.trim())
+          ? Number(value)
+          : Number.NaN;
+      const lat = coordinate(geo?.latitude),
+        lng = coordinate(geo?.longitude);
+      if (
+        ![lat, lng, query.lat, query.lng].every(Number.isFinite) ||
+        Math.abs(lat) > 90 ||
+        Math.abs(lng) > 180 ||
+        Math.abs(query.lat) > 90 ||
+        Math.abs(query.lng) > 180
+      )
+        return false;
+      const toRad = Math.PI / 180;
+      const a =
+        Math.sin(((lat - query.lat) * toRad) / 2) ** 2 +
+        Math.cos(lat * toRad) *
+          Math.cos(query.lat * toRad) *
+          Math.sin(((lng - query.lng) * toRad) / 2) ** 2;
+      return (
+        6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(Math.max(0, 1 - a))) <=
+        0.15
+      );
+    }),
+  );
+  const matchedCoordinates = coordinateBusinesses.size > 0;
   const matchedName =
     names.some((name) => contains(primary, name)) || matchedBusiness.length > 0;
   const matchedArea =
-    !!query.area &&
-    (contains(primary, query.area) || contains(businessText, query.area));
+    !!area && (contains(primary, area) || contains(businessText, area));
   const visible = plain(
     html
       .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
@@ -515,11 +546,13 @@ export function parseOfficialPhotoHtml(
         query.postcode,
       ));
   const branchSpecific =
-    matchedName && (!multiBranch || matchedArea || matchedAddress);
+    matchedName &&
+    (!multiBranch || matchedArea || matchedAddress || matchedCoordinates);
   const identity: OfficialPhotoIdentity = {
     matchedName,
     matchedArea,
     matchedAddress,
+    ...(matchedCoordinates ? { matchedCoordinates: true } : {}),
     multiBranch,
     branchSpecific,
     evidence: [
@@ -530,6 +563,7 @@ export function parseOfficialPhotoHtml(
         ? ["venue area in page metadata, path or business address"]
         : []),
       ...(matchedAddress ? ["venue address matched"] : []),
+      ...(matchedCoordinates ? ["venue coordinates matched"] : []),
       ...(multiBranch ? ["multi-branch operator"] : []),
     ],
   };
@@ -758,7 +792,7 @@ export function parseOfficialPhotoHtml(
       .filter(Boolean),
   );
   const imageLocationMatched = (text: string) =>
-    [query.area, query.address, query.postcode].some(
+    [area, query.address, query.postcode].some(
       (location) => !!location && contains(text, location),
     );
   // A local page can still publish shared brand campaigns and sibling branches.
@@ -769,9 +803,10 @@ export function parseOfficialPhotoHtml(
         (item) =>
           item.business &&
           scopedBusinesses.includes(item.business) &&
-          imageLocationMatched(
-            `${item.business.name ?? ""} ${JSON.stringify(item.business.address ?? "")} ${item.business.url ?? ""}`,
-          ),
+          (coordinateBusinesses.has(item.business) ||
+            imageLocationMatched(
+              `${item.business.name ?? ""} ${JSON.stringify(item.business.address ?? "")} ${item.business.url ?? ""}`,
+            )),
       )
       .map((item) => imageUrl(item.raw, pageUrl))
       .filter(Boolean),
@@ -802,9 +837,9 @@ export function parseOfficialPhotoHtml(
     const localContent = `${headings} ${metas["og:title"] ?? ""} ${metas["og:description"] ?? ""} ${metas.description ?? ""} ${businessText}`;
     const locationMatched =
       matchedAddress ||
+      matchedCoordinates ||
       !!(
-        query.area &&
-        contains(`${localContent} ${multiBranch ? "" : visible}`, query.area)
+        area && contains(`${localContent} ${multiBranch ? "" : visible}`, area)
       );
     if (websitePreview && !locationMatched) {
       reject("unconfirmed-preview-location");

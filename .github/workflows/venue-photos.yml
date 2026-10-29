@@ -72,6 +72,8 @@ jobs:
         with:
           path: work/photo-vision-model-cache
           key: photo-vision-${{ runner.os }}-transformers-3.8.1-clip-d15189d7028b43f1d3e65039190477f6af591c2a-q8
+      - name: Run application tests before inspecting publisher websites
+        run: npm test
       - name: Preserve the incoming metadata for nonregression checks
         run: |
           mkdir -p work/photo-maintenance
@@ -131,8 +133,6 @@ jobs:
           writeFileSync("work/photo-maintenance/summary.json", JSON.stringify(summary, null, 2) + "\n");
           console.log(JSON.stringify(summary));
           NODE
-      - name: Run application tests
-        run: npm test
       - name: Build the production application with prepared photos
         run: npm run build
       - run: npx playwright install --with-deps chromium
@@ -213,9 +213,10 @@ jobs:
           current_sha=$(git rev-parse HEAD)
           if [ "$current_sha" != "$VERIFIED_BASE_SHA" ]; then
             git fetch --no-tags --depth=1 origin "$VERIFIED_BASE_SHA"
-            changed_files=$(git diff --name-only "$VERIFIED_BASE_SHA" "$current_sha")
-            if [ "$changed_files" != "src/providers/data/regions/england.json.gz" ]; then
-              echo "Main advanced beyond the independent England metadata import. The candidate is retained; rerun preparation against the new revision." | tee -a "$GITHUB_STEP_SUMMARY"
+            if ! git diff --quiet "$VERIFIED_BASE_SHA" "$current_sha" -- . \
+              ':!src/providers/data/regions/england.json.gz' \
+              ':!src/providers/data/geograph-venue-matches.json.gz'; then
+              echo "Main advanced beyond independent source metadata imports. The candidate is retained; rerun preparation against the new revision." | tee -a "$GITHUB_STEP_SUMMARY"
               exit 1
             fi
           fi

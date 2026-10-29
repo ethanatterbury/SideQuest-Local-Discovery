@@ -266,7 +266,11 @@ export function createLocalPhotoReviewer(deps = {}) {
       !query?.name?.trim() ||
       !identity?.matchedName ||
       !identity.branchSpecific ||
-      !(identity.matchedArea || identity.matchedAddress) ||
+      !(
+        identity.matchedArea ||
+        identity.matchedAddress ||
+        identity.matchedCoordinates
+      ) ||
       !safeOfficialPhotoUrl(officialResult.pageUrl || "")
     )
       return finish("ineligible", "unconfirmed-official-identity");

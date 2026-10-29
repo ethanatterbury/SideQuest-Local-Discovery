@@ -2,6 +2,7 @@ import { expect, it, vi } from "vitest";
 import { createHash } from "node:crypto";
 import { createLocalPhotoReviewer } from "../scripts/photo-vision/resolver.mjs";
 import { approvedPhoto } from "../src/providers/photo-policy";
+import { parseOfficialPhotoHtml } from "../src/providers/official-photo";
 import sharp from "sharp";
 
 const imageUrl = "https://acornplay.co.uk/media/1729.jpg";
@@ -106,6 +107,59 @@ it("records an honest model decision tied to the original external image bytes a
     "model classification",
   );
   expect(output.image?.confidence).toBeLessThanOrEqual(0.8);
+});
+
+it("reviews coordinates-only official identity without requiring a named area", async () => {
+  const coordinatesEvidence = [
+    "venue name in page title, heading or business schema",
+    "venue coordinates matched",
+  ];
+  const input = result();
+  const output = await reviewer()(
+    { ...query, area: "Nearby" },
+    {
+      ...input,
+      identity: {
+        ...input.identity,
+        matchedArea: false,
+        matchedAddress: false,
+        matchedCoordinates: true,
+        evidence: coordinatesEvidence,
+      },
+      reviewCandidates: [
+        { ...candidate, identityEvidence: coordinatesEvidence },
+      ],
+    },
+  );
+  expect(output.diagnostics.status).toBe("accepted");
+  expect(approvedPhoto(output.image)?.url).toBe(imageUrl);
+  expect(output.image?.preview?.identityEvidence).toEqual(coordinatesEvidence);
+});
+
+it("reviews an opaque official schema image whose coordinates match an unknown-area venue", async () => {
+  const nearby = { ...query, area: "Nearby" };
+  const parsed = parseOfficialPhotoHtml(
+    `<title>Acorn Play</title><script type="application/ld+json">${JSON.stringify(
+      {
+        "@type": "LocalBusiness",
+        name: query.name,
+        url: source,
+        geo: {
+          "@type": "GeoCoordinates",
+          latitude: query.lat,
+          longitude: query.lng,
+        },
+        image: imageUrl,
+      },
+    )}</script>`,
+    source,
+    nearby,
+    { websitePreview: true, collectReviewCandidates: true },
+  );
+  const output = await reviewer()(nearby, { ...parsed, pageUrl: source });
+  expect(parsed.identity.matchedArea).toBe(false);
+  expect(output.diagnostics.status).toBe("accepted");
+  expect(approvedPhoto(output.image)?.url).toBe(imageUrl);
 });
 
 it("abstains on the known construction false-positive range and rejects logos", async () => {

@@ -65,7 +65,8 @@ function validLocalClipReview(preview: NonNullable<Image["preview"]>): boolean {
     !preview.identityEvidence.some(
       (value) =>
         value === "venue area in page metadata, path or business address" ||
-        value === "venue address matched",
+        value === "venue address matched" ||
+        value === "venue coordinates matched",
     )
   )
     return false;

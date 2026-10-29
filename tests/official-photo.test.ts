@@ -441,6 +441,106 @@ describe("official website photo extraction", () => {
     ]);
   });
 
+  it("uses precise official business coordinates to collect an opaque image without inventing area or address proof", () => {
+    const html = `<title>Pirates Landing</title><script type="application/ld+json">{"@type":"LocalBusiness","name":"Pirates Landing","geo":{"latitude":51.41,"longitude":-0.84},"image":"/1729.jpg"}</script>`;
+    const result = parseOfficialPhotoHtml(
+      html,
+      page,
+      { ...query, area: "Nearby" },
+      {
+        websitePreview: true,
+        collectReviewCandidates: true,
+      },
+    );
+    expect(result.identity).toMatchObject({
+      matchedCoordinates: true,
+      matchedArea: false,
+      matchedAddress: false,
+      branchSpecific: true,
+    });
+    expect(result.identity.evidence).toContain("venue coordinates matched");
+    expect(result.candidates).toEqual([]);
+    expect(result.reviewCandidates?.map((image) => image.url)).toEqual([
+      "https://venue.co.uk/1729.jpg",
+    ]);
+  });
+
+  it.each(["Nearby", "Unknown", "UK"])(
+    "never treats generic area %s as local venue proof",
+    (area) => {
+      const result = parseOfficialPhotoHtml(
+        `<title>Pirates Landing ${area}</title><img src="/1729.jpg">`,
+        page,
+        { ...query, area },
+        {
+          websitePreview: true,
+          collectReviewCandidates: true,
+        },
+      );
+      expect(result.identity.matchedArea).toBe(false);
+      expect(result.reviewCandidates).toEqual([]);
+    },
+  );
+
+  it("scopes coordinate proof to the chain business image and still refuses shared campaigns", () => {
+    const html = `<title>Pirates Landing</title><nav>Our locations</nav>
+      <script type="application/ld+json">{"@type":"LocalBusiness","name":"Pirates Landing","geo":{"latitude":51.41,"longitude":-0.84},"image":"/1729.jpg"}</script>
+      <img src="/charity-campaign-interior.jpg" alt="Our interior">`;
+    const result = parseOfficialPhotoHtml(
+      html,
+      page,
+      { ...query, area: "Nearby" },
+      {
+        websitePreview: true,
+        collectReviewCandidates: true,
+      },
+    );
+    expect(result.identity).toMatchObject({
+      matchedCoordinates: true,
+      multiBranch: true,
+      branchSpecific: true,
+    });
+    expect(result.candidates).toEqual([]);
+    expect(result.reviewCandidates?.map((image) => image.url)).toEqual([
+      "https://venue.co.uk/1729.jpg",
+    ]);
+  });
+
+  it.each([
+    [51.411, -0.84, true],
+    [51.412, -0.84, false],
+    [52, -0.84, false],
+    [null, -0.84, false],
+    ["", -0.84, false],
+    [91, -0.84, false],
+  ])(
+    "requires finite explicit business coordinates within 150m (%s, %s)",
+    (latitude, longitude, matchedCoordinates) => {
+      const html = `<title>Pirates Landing</title><script type="application/ld+json">${JSON.stringify({ "@type": "LocalBusiness", name: query.name, geo: { latitude, longitude }, image: "/1729.jpg" })}</script>`;
+      const result = parseOfficialPhotoHtml(
+        html,
+        page,
+        { ...query, area: "Nearby" },
+        { websitePreview: true, collectReviewCandidates: true },
+      );
+      expect(!!result.identity.matchedCoordinates).toBe(matchedCoordinates);
+      expect(result.reviewCandidates).toHaveLength(matchedCoordinates ? 1 : 0);
+    },
+  );
+
+  it("quarantines a distant structured branch even when its name and town match", () => {
+    const html = `<title>Pirates Landing Wokingham</title><script type="application/ld+json">{"@type":"LocalBusiness","name":"Pirates Landing","geo":{"latitude":52,"longitude":-0.84},"image":"/wokingham-interior.jpg"}</script>`;
+    const result = parseOfficialPhotoHtml(html, page, query, {
+      websitePreview: true,
+      collectReviewCandidates: true,
+    });
+    expect(result.identity.matchedArea).toBe(true);
+    expect(result.identity.matchedCoordinates).not.toBe(true);
+    expect(result.candidates).toEqual([]);
+    expect(result.reviewCandidates).toEqual([]);
+    expect(result.rejected["conflicting-preview-location"]).toBe(1);
+  });
+
   it("bounds and deduplicates offline review candidates", () => {
     const html = `<title>Pirates Landing Wokingham</title>${Array.from(
       { length: 12 },

@@ -112,7 +112,7 @@ ledger between runs and use one ledger for every job sharing the API key.`);
       refresh: options.refresh === "true",
       maxRuntimeMs: options["max-runtime-ms"],
       reviewVersion:
-        options["local-vision"] === "true" ? "local-clip-v1" : "metadata-v2",
+        options["local-vision"] === "true" ? "local-clip-v2" : "metadata-v2",
       searchEnabled: Boolean(process.env.TAVILY_API_KEY?.trim()),
     },
     {

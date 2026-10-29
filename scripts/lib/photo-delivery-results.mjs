@@ -86,6 +86,8 @@ export function reconcilePhotoDelivery({
     after?.version === 1 && Array.isArray(after.entries),
     "Invalid candidate manifest",
   );
+  const now = Date.parse(checkedAt);
+  assert.ok(Number.isFinite(now), "Invalid photo delivery reconciliation time");
   const specs = report.suites.flatMap(specsIn);
   assert.equal(
     resultFor(specs, INVENTORY).status,
@@ -102,7 +104,7 @@ export function reconcilePhotoDelivery({
     photoDeliveryChecks({
       before,
       after,
-      now: photoDeliverySelectionTime(Date.parse(checkedAt)),
+      now,
     }).map((check) => [websiteDiscoveryIdentity(check.entry.query), check]),
   );
   const summary = {
@@ -225,6 +227,7 @@ if (
     before: read("before"),
     after: read("after"),
     report: read("results"),
+    checkedAt: new Date(photoDeliverySelectionTime()).toISOString(),
   });
   // Compute the complete reconciliation before writing either artifact.
   writeFileSync(

@@ -61,6 +61,22 @@ it("accepts complete conservative local model evidence without granting redistri
   expect(approvedPhoto(image())?.rights).toBe("website-preview");
 });
 
+it("accepts exact coordinate location evidence while still requiring official name proof", () => {
+  const candidate = image();
+  candidate.preview.identityEvidence = [
+    "venue name in page title, heading or business schema",
+    "venue coordinates matched",
+  ];
+  expect(approvedPhoto(candidate)?.rights).toBe("website-preview");
+  candidate.preview.identityEvidence = ["venue coordinates matched"];
+  expect(approvedPhoto(candidate)).toBeUndefined();
+  candidate.preview.identityEvidence = [
+    "venue name in page title, heading or business schema",
+    "coordinates nearby",
+  ];
+  expect(approvedPhoto(candidate)).toBeUndefined();
+});
+
 it("never treats the local method name or subject marker alone as approval", () => {
   const candidate = image();
   Reflect.deleteProperty(candidate.preview.review, "localClip");

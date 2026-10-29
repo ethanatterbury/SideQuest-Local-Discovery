@@ -1,15 +1,17 @@
-import { afterEach, expect, test } from "vitest";
+import { afterEach, expect, test, vi } from "vitest";
+import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { reconcilePhotoDelivery } from "../scripts/lib/photo-delivery-results.mjs";
 
 const folders: string[] = [];
-afterEach(() =>
+afterEach(() => {
+  vi.unstubAllEnvs();
   folders
     .splice(0)
-    .forEach((folder) => rmSync(folder, { recursive: true, force: true })),
-);
+    .forEach((folder) => rmSync(folder, { recursive: true, force: true }));
+});
 
 const image = {
   url: "https://pirateslanding.co.uk/interior.jpg",
@@ -109,7 +111,11 @@ function report(
   const result = (
     title: string,
     resultStatus: string,
-    resultAttachments: { name: string; contentType: string; path: string }[] = [],
+    resultAttachments: {
+      name: string;
+      contentType: string;
+      path: string;
+    }[] = [],
   ) => ({
     title,
     tests: [
@@ -168,6 +174,64 @@ function inventoryOnly() {
   inventory.suites[0].suites[0].specs.splice(1, 1);
   return inventory;
 }
+
+test.each(["2026-10-29T02:50:14.000Z", "invalid"])(
+  "honours an explicit reconciliation time regardless of workflow environment %s",
+  (configuredTime) => {
+    vi.stubEnv("SIDEQUEST_PHOTO_DELIVERY_AT", configuredTime);
+    const prior = { ...entry, deliveryVerifiedAt: "2026-10-29T00:00:00.000Z" };
+    expect(() =>
+      reconcilePhotoDelivery({
+        before: manifest([prior]),
+        after: manifest([prior]),
+        report: inventoryOnly(),
+        checkedAt: image.checkedAt,
+      }),
+    ).toThrow(/missing browser result/i);
+  },
+);
+
+test("the publication CLI uses the same immutable workflow time as browser selection", () => {
+  const folder = mkdtempSync(join(tmpdir(), "photo-delivery-cli-"));
+  folders.push(folder);
+  const configuredTime = "2026-10-29T02:50:14.000Z";
+  const paths = Object.fromEntries(
+    ["before", "after", "results", "summary"].map((key) => [
+      key,
+      join(folder, `${key}.json`),
+    ]),
+  );
+  writeFileSync(paths.before, JSON.stringify(manifest([])));
+  writeFileSync(paths.after, JSON.stringify(manifest([entry])));
+  writeFileSync(paths.results, JSON.stringify(report()));
+  const result = spawnSync(
+    process.execPath,
+    [
+      "scripts/lib/photo-delivery-results.mjs",
+      ...Object.entries(paths).map(([key, path]) => `--${key}=${path}`),
+    ],
+    {
+      cwd: process.cwd(),
+      env: { ...process.env, SIDEQUEST_PHOTO_DELIVERY_AT: configuredTime },
+      encoding: "utf8",
+    },
+  );
+  expect(result.status, result.stderr).toBe(0);
+  const published = JSON.parse(readFileSync(paths.after, "utf8"));
+  expect(published.entries[0].deliveryVerifiedAt).toBe(configuredTime);
+});
+
+test("rejects an invalid explicit reconciliation time before retaining browser proof", () => {
+  const prior = { ...entry, deliveryVerifiedAt: "2026-10-01T00:00:00.000Z" };
+  expect(() =>
+    reconcilePhotoDelivery({
+      before: manifest([prior]),
+      after: manifest([prior]),
+      report: inventoryOnly(),
+      checkedAt: "invalid",
+    }),
+  ).toThrow(/invalid photo delivery reconciliation time/i);
+});
 
 test("retains the original verification for an unchanged recently verified photograph without retesting", () => {
   const prior = { ...entry, deliveryVerifiedAt: "2026-10-01T00:00:00.000Z" };
