@@ -194,5 +194,20 @@ try {
   await classifier?.dispose();
   await rm(ephemeral, { recursive: true, force: true });
   await writeFile(join(outputDir, "report.json"), `${JSON.stringify(report, null, 2)}\n`);
+  // Bounded metadata-only evidence makes completed runs auditable from CI logs.
+  if (report.status === "completed") {
+    for (const row of report.results.slice(0, 50)) {
+      console.log(JSON.stringify({
+        type: "photo-vision-score-evidence",
+        id: row.id.slice(0, 200), name: row.name.slice(0, 200),
+        expectedDecision: row.expectedDecision, split: row.split,
+        accepted: row.decision === "accept", decision: row.decision,
+        reason: row.decision === "accept" ? "venue-score-and-margin-met"
+          : row.decision === "reject" ? "rejection-score-and-margin-met"
+            : "insufficient-score-or-margin",
+        scores: row.scores.slice(0, prompts.length).map(({ id, group, score }) => ({ id, group, score })),
+      }));
+    }
+  }
   console.log(JSON.stringify({ status: report.status, examples: report.results.length, report: join(outputDir, "report.json"), evaluation: report.evaluation?.all, performance: report.performance, error: report.error }));
 }

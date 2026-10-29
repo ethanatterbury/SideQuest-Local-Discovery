@@ -12,7 +12,7 @@ const {
 } = loadProvider("src/providers/photo-policy.ts");
 
 const DAY = 86400000;
-const VERSION = "geograph-commons-v2";
+const VERSION = "geograph-commons-v3";
 const SOURCE_ROOT = "https://data.geograph.org.uk/dumps/";
 const LICENSE_URL = "https://creativecommons.org/licenses/by-sa/2.0/";
 const sleep = (ms) => new Promise((done) => setTimeout(done, ms));

@@ -33,7 +33,7 @@ jobs:
       - name: Verify actual Parquet filtering and bounded HTTP transport offline
         run: python -m unittest discover -s tests -p test_overture_websites.py -v
       - name: Prepare the current default venue catalogue
-        run: npm run prepare:data
+        run: npm run prepare:data && npm run prepare:catalogue
       - name: Measure pinned Overture website candidates under hard byte and runtime quotas
         run: |
           mkdir -p work/overture

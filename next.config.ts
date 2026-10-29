@@ -1,22 +1,19 @@
 import type { NextConfig } from "next";
-const catalogueServerFiles = [
-  "./public/data/venues/*.json.gz",
-  "./public/data/venues/id-index.json",
-  "./public/data/venues/manifest.json",
-];
 const config: NextConfig = {
   poweredByHeader: false,
-  outputFileTracingIncludes: {
-    "/api/places": catalogueServerFiles,
-    "/api/places/\\[id\\]": catalogueServerFiles,
-    "/api/venue-evidence": catalogueServerFiles,
-  },
   outputFileTracingExcludes: {
-    "/api/places": ["./public/data/venues/*_*.json"],
-    "/api/places/\\[id\\]": ["./public/data/venues/*_*.json"],
-    "/api/venue-evidence": ["./public/data/venues/*_*.json"],
+    "/*": [
+      "./public/data/venues/**",
+      "./src/providers/data/regions/**",
+      "./src/providers/data/regional-osm.json",
+      "./src/providers/data/geograph-venue-matches.json.gz",
+      "./src/providers/data/venue-media-assets/**",
+      "./work/**",
+    ],
   },
   images: {
+    // Approved sources already host these images; avoid Vercel transforms/cache copies.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
@@ -43,24 +40,6 @@ const config: NextConfig = {
           {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=(self)",
-          },
-        ],
-      },
-      {
-        source: "/data/venues/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=3600, stale-while-revalidate=86400",
-          },
-        ],
-      },
-      {
-        source: "/data/venues/manifest.json",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=0, s-maxage=60, must-revalidate",
           },
         ],
       },

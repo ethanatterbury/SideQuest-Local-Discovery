@@ -13,6 +13,9 @@ const {
   LOCAL_PHOTO_REVIEW_THRESHOLD: threshold,
   LOCAL_PHOTO_REVIEW_GROUPS: groups,
 } = loadProvider("src/providers/photo-policy.ts");
+const { safeCommonsImageUrl } = loadProvider(
+  "src/providers/commons-image-url.ts",
+);
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const prompts = [
   {
@@ -251,7 +254,7 @@ export function createLocalSceneReviewer(deps = {}) {
       image.rights !== "open" ||
       !approvedPhoto(image) ||
       !image.source.startsWith("https://commons.wikimedia.org/wiki/File:") ||
-      !image.url.startsWith("https://upload.wikimedia.org/wikipedia/commons/")
+      !safeCommonsImageUrl(image.url)
     )
       return finish("ineligible", "unconfirmed-open-photo-source");
     const controller = new AbortController();

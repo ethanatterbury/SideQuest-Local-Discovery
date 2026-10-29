@@ -1,5 +1,6 @@
 import type { PlacePhoto } from "./place-photo";
 import { openPhotoLicense } from "./photo-policy";
+import { safeCommonsImageUrl } from "./commons-image-url";
 
 const ENDPOINT = "https://commons.wikimedia.org/w/api.php";
 const MAX_BODY_BYTES = 512 * 1024;
@@ -29,7 +30,7 @@ type Json = Record<string, unknown>;
 export type GeographCommonsEvidence = {
   geographId: string;
   candidateCount: number;
-  lookup?: "structured-id" | "source-url";
+  lookup?: "structured-id" | "source-url" | "file-title";
   commonsPageId?: number;
   commonsTitle?: string;
   sourceUrl?: string;
@@ -169,6 +170,18 @@ function geographId(value: unknown): string | undefined {
     ? text
     : undefined;
 }
+function guessedFileTitle(title: unknown, id: string): string | undefined {
+  if (
+    typeof title !== "string" ||
+    !title.trim() ||
+    /[|#<>\[\]{}\x00-\x1f\x7f]/.test(title)
+  )
+    return;
+  const filename = `File:${title.trim()} - geograph.org.uk - ${id}.jpg`;
+  return new TextEncoder().encode(filename).byteLength <= 255
+    ? filename
+    : undefined;
+}
 function sourceId(value: string): string | undefined {
   try {
     const url = new URL(value.startsWith("//") ? `https:${value}` : value);
@@ -208,23 +221,10 @@ function sourceIds(metadata: Metadata): string[] {
   return [...ids];
 }
 function cdnUrl(value: unknown): string | undefined {
-  if (
-    typeof value !== "string" ||
-    !value.startsWith("https://upload.wikimedia.org/")
-  )
-    return;
+  if (!safeCommonsImageUrl(value)) return;
   try {
     const url = new URL(value);
-    if (
-      url.hostname !== "upload.wikimedia.org" ||
-      url.username ||
-      url.password ||
-      url.port ||
-      url.hash ||
-      !url.pathname.startsWith("/wikipedia/commons/") ||
-      !/\.(?:jpe?g|png|webp|avif)$/i.test(url.pathname)
-    )
-      return;
+    if (url.hash || !/\.(?:jpe?g|png|webp|avif)$/i.test(url.pathname)) return;
     if (
       [...url.searchParams.keys()].some(
         (key) => !["utm_source", "utm_campaign", "utm_content"].includes(key),
@@ -427,7 +427,7 @@ export async function resolveGeographCommonsPhoto(
   };
   const evaluate = async (
     candidates: CommonsPage[],
-    lookup: "structured-id" | "source-url",
+    lookup: "file-title" | "source-url",
   ): Promise<GeographCommonsResult> => {
     evidence.lookup = lookup;
     evidence.candidateCount = candidates.length;
@@ -483,11 +483,7 @@ export async function resolveGeographCommonsPhoto(
           else ids.push(claimId);
         }
       }
-      if (
-        invalidClaim ||
-        ids.some((value) => value !== normalizedId) ||
-        (lookup === "structured-id" && !ids.length)
-      ) {
+      if (invalidClaim || ids.some((value) => value !== normalizedId)) {
         reason = "conflicting-structured-id";
         continue;
       }
@@ -588,16 +584,23 @@ export async function resolveGeographCommonsPhoto(
     return result("matched", candidate.image);
   };
   try {
-    const search = await request({
-      action: "query",
-      generator: "search",
-      gsrsearch: `haswbstatement:P7384=${normalizedId}`,
-      gsrnamespace: "6",
-      gsrlimit: String(MAX_CANDIDATES),
-      ...mediaParams,
-    });
-    if (search.continue) return result("ambiguous-candidates");
-    const primary = await evaluate(pages(search), "structured-id");
+    // Filename guesses only discover candidates. The URL index covers renamed files without CirrusSearch.
+    const title = guessedFileTitle(options.expectedTitle, normalizedId);
+    let primary = result("not-found");
+    if (title) {
+      const byTitle = await request({
+        action: "query",
+        titles: title,
+        redirects: "1",
+        ...mediaParams,
+      });
+      const candidates = pages(byTitle).filter(
+        (page) => Number.isSafeInteger(page.pageid) && page.pageid! > 0,
+      );
+      primary = await evaluate(candidates, "file-title");
+    } else {
+      evidence.warnings.push("file-title-unavailable");
+    }
     if (
       primary.image ||
       sourceIdentityEstablished ||

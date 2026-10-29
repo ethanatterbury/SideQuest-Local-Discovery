@@ -1,6 +1,7 @@
 import generated from "./data/venue-photo-previews.json";
 import type { PhotoQuery, PlacePhoto } from "./place-photo";
 import { approvedPhoto } from "./photo-policy";
+import { distanceKm } from "./routing";
 
 export type PreparedWebsite = {
   urls: string[];
@@ -56,11 +57,36 @@ const byIdentity = new Map(
     entry,
   ]),
 );
+const byOsmId = new Map<string, PreparedVenuePhotoEntry[]>();
+for (const entry of preparedVenuePhotos.entries) {
+  if (!entry.image || !entry.query.id?.startsWith("osm-")) continue;
+  const group = byOsmId.get(entry.query.id) || [];
+  group.push(entry);
+  byOsmId.set(entry.query.id, group);
+}
 function entryFor(query: PhotoQuery, entries?: PreparedVenuePhotoEntry[]) {
   const key = websiteDiscoveryIdentity(query);
-  return entries
+  const exact = entries
     ? entries.find((entry) => websiteDiscoveryIdentity(entry.query) === key)
     : byIdentity.get(key);
+  if (
+    exact?.image ||
+    !/^osm-(?:node|way|relation)-[1-9]\d*$/.test(query.id || "")
+  )
+    return exact;
+  // Live providers can report slightly different centroids for the same OSM object.
+  // Only a unique approved photo with the same ID/name within 25m can bridge that difference.
+  const candidates = (entries || byOsmId.get(query.id!) || []).filter(
+    (entry) =>
+      entry.query.id === query.id &&
+      normalize(entry.query.name) === normalize(query.name) &&
+      distanceKm(
+        { lat: query.lat, lng: query.lng },
+        { lat: entry.query.lat, lng: entry.query.lng },
+      ) <= 0.025 &&
+      approvedPhoto(entry.image, entry.checkedAt),
+  );
+  return candidates.length === 1 ? candidates[0] : exact;
 }
 function fresh(value: string, ttl: number, now: number) {
   const age = now - Date.parse(value);

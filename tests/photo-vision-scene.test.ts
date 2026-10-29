@@ -38,6 +38,16 @@ const reviewer = (overrides = {}) =>
     ...overrides,
   });
 
+it("inspects actual thumbnails from the official Commons thumbnail host", async () => {
+  const url =
+    "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Acorn_Park.jpg/960px-Acorn_Park.jpg";
+  const output = await reviewer({
+    download: async () => ({ buffer: bytes, contentType: "image/jpeg", url }),
+  })({ ...image, url });
+  expect(output.accepted).toBe(true);
+  expect(output.width).toBe(800);
+});
+
 it("records scene quality without inventing official-site identity or changing rights", async () => {
   const output = await reviewer()(image);
   expect(output).toMatchObject({

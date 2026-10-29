@@ -39,7 +39,7 @@ jobs:
           python-version: "3.12"
       - run: npm ci --ignore-scripts
       - name: Prepare national venue metadata locally
-        run: npm run prepare:data
+        run: npm run prepare:data && npm run prepare:catalogue
       - name: Verify the streaming matcher with tiny offline fixtures
         run: python -m unittest discover -s tests -p test_geograph_venue_matches.py -v
       - name: Stream free metadata under fixed processing quotas

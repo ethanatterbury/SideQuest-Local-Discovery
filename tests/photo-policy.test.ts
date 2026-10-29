@@ -9,6 +9,29 @@ const image = {
 };
 const checkedAt = "2026-10-09T00:00:00Z";
 
+it("excludes a reviewed wrong-business source from both remote and local delivery", () => {
+  const source =
+    "https://archive.org/details/windsor-2018-09-15/Windsor%202018-09-15/DSCN7610.JPG";
+  for (const url of [
+    source.replace("/details/", "/download/"),
+    "/venue-images/osm-way-144158804-fbc2106e3398.webp",
+  ])
+    expect(approvedPhoto({ ...image, url, source }, checkedAt)).toBeUndefined();
+});
+
+it("keeps exact Commons licence and source checks for the official thumbnail CDN", () => {
+  const url =
+    "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Venue.jpg/960px-Venue.jpg";
+  expect(approvedPhoto({ ...image, url }, checkedAt)?.url).toBe(url);
+  for (const unsafe of [
+    url.replace("thumb.wikimedia.org/", "thumb.wikimedia.org.evil.test/"),
+    url.replace("/commons/thumb/", "/en/thumb/"),
+    url.replace("https://", "http://"),
+    url.replace("thumb.wikimedia.org/", "thumb.wikimedia.org:443/"),
+  ])
+    expect(approvedPhoto({ ...image, url: unsafe }, checkedAt)).toBeUndefined();
+});
+
 it("accepts only explicit reusable licenses and retains checked evidence", () => {
   for (const license of [
     "CC0",

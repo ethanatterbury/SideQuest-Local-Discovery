@@ -54,6 +54,44 @@ const entry = {
 it("returns a prepared external photo without network lookup", () => {
   expect(preparedVenuePhoto(query, [entry])?.url).toBe(url);
 });
+it("retains a verified photo across small live-provider coordinate differences for the same OSM identity", () => {
+  expect(
+    preparedVenuePhoto({ ...query, lat: query.lat + 0.00015 }, [entry])?.url,
+  ).toBe(url);
+  expect(
+    preparedVenuePhoto({ ...query, lat: query.lat + 0.0005 }, [entry]),
+  ).toBeUndefined();
+  expect(
+    preparedVenuePhoto(
+      { ...query, id: "osm-node-124", lat: query.lat + 0.00015 },
+      [entry],
+    ),
+  ).toBeUndefined();
+  expect(
+    preparedVenuePhoto(
+      { ...query, name: "Another branch", lat: query.lat + 0.00015 },
+      [entry],
+    ),
+  ).toBeUndefined();
+});
+it("does not guess between conflicting prepared records near a live provider point", () => {
+  const otherUrl = "https://littlelantern.co.uk/another-interior.jpg";
+  const other = {
+    ...entry,
+    query: { ...query, lat: query.lat + 0.0002 },
+    image: {
+      ...image,
+      url: otherUrl,
+      preview: {
+        ...image.preview,
+        review: { ...image.preview.review, imageUrl: otherUrl },
+      },
+    },
+  };
+  expect(
+    preparedVenuePhoto({ ...query, lat: query.lat + 0.0001 }, [entry, other]),
+  ).toBeUndefined();
+});
 it("does not reuse a photo for another identity or relocated venue", () => {
   expect(
     preparedVenuePhoto({ ...query, id: "osm-node-124" }, [entry]),
@@ -186,6 +224,13 @@ it("ships unique approved prepared photos through the normal catalogue index", (
     expect(photo, entry.query.name).toBeDefined();
     expect(indexedPhoto(entry.query)?.image?.url).toBe(photo?.url);
     expect(photo?.url).toMatch(/^https:\/\//);
-    expect(photo?.source).toBe(photo?.preview?.pageUrl);
+    if (photo?.rights === "website-preview")
+      expect(photo.source).toBe(photo.preview?.pageUrl);
+    else {
+      expect(photo?.rights).toBe("open");
+      expect(photo?.source).toMatch(
+        /^https:\/\/commons\.wikimedia\.org\/wiki\/File:/,
+      );
+    }
   }
 });

@@ -103,6 +103,12 @@ test("a visible card retries a temporary photo failure without reloading the pag
       ? route.fulfill({ status: 503, body: "Try later" })
       : route.fulfill({ json: { image } });
   });
+  await page.route(image.url, (route) =>
+    route.fulfill({
+      contentType: "image/png",
+      body: readFileSync("public/icons/icon-192.png"),
+    }),
+  );
   await page.route("**/_next/image?**", (route) =>
     route.fulfill({
       contentType: "image/png",

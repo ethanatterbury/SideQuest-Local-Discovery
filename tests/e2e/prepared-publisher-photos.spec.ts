@@ -26,7 +26,7 @@ test("an open Geograph photo loads directly from Commons with photographer and l
   page,
 }) => {
   const image = {
-    url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Local_Park.jpg",
+    url: "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Local_Park.jpg/960px-Local_Park.jpg",
     source: "https://commons.wikimedia.org/wiki/File:Local_Park.jpg",
     credit: "Local photographer",
     license: "CC BY-SA 2.0",

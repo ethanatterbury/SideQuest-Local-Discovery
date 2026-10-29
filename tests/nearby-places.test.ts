@@ -306,33 +306,43 @@ describe("OSM place normalization", () => {
   });
 });
 describe("nearby discovery", () => {
-  it("serves hundreds of real regional venues without waiting for a public mirror", async () => {
-    const fetcher = vi.fn();
+  it("discovers the requested area live and reuses its bounded cache for details", async () => {
+    const fetcher = vi
+      .fn()
+      .mockResolvedValue(
+        Response.json({
+          elements: [element({}, { id: 881123, lat: 51.347, lon: -0.8 })],
+        }),
+      );
     vi.stubGlobal("fetch", fetcher);
     const result = await getNearbyPlaces({ lat: 51.347, lng: -0.8 }, 18);
-    expect(result.source).toBe("cached");
-    expect(result.places).toHaveLength(300);
-    expect(result.message).toContain("area snapshot");
-    expect(result.places.some((p) => p.category === "Indoor soft play")).toBe(
-      true,
+    expect(result.source).toBe("live");
+    expect(result.places.map((place) => place.id)).toContain("osm-node-881123");
+    expect((await getNearbyPlaces({ lat: 51.347, lng: -0.8 }, 18)).source).toBe(
+      "cached",
     );
-    const imported = result.places.find((p) => p.id.startsWith("osm-"))!;
-    expect(await getLivePlace(imported.id)).toEqual(imported);
-    expect(fetcher).not.toHaveBeenCalled();
+    expect(await getLivePlace("osm-node-881123")).toEqual(result.places[0]);
+    expect(fetcher).toHaveBeenCalledTimes(1);
   });
-  it("retains regional coverage when a background live refresh fails", async () => {
-    const fetcher = vi.fn().mockRejectedValue(new Error("offline"));
+  it("retains the last fetched area when a fresh upstream request fails", async () => {
+    const coords = { lat: 51.236, lng: -0.57 };
+    const fetcher = vi
+      .fn()
+      .mockResolvedValueOnce(
+        Response.json({
+          elements: [
+            element({}, { id: 881124, lat: coords.lat, lon: coords.lng }),
+          ],
+        }),
+      )
+      .mockRejectedValue(new Error("offline"));
     vi.stubGlobal("fetch", fetcher);
-    const result = await getNearbyPlaces(
-      { lat: 51.236, lng: -0.57 },
-      10,
-      false,
-    );
-    expect(result.source).toBe("fallback");
-    expect(result.places.length).toBeGreaterThan(100);
-    expect(result.message).toContain("area snapshot");
-    expect(result.message).toContain("temporarily unavailable");
-    expect(fetcher).toHaveBeenCalledTimes(2);
+    expect((await getNearbyPlaces(coords, 10)).source).toBe("live");
+    const result = await getNearbyPlaces(coords, 10, false);
+    expect(result.source).toBe("cached");
+    expect(result.places.map((place) => place.id)).toContain("osm-node-881124");
+    expect(result.message).toContain("previously fetched");
+    expect(fetcher).toHaveBeenCalledTimes(3);
   });
   it("validates query coordinates without calling the public service", async () => {
     const fetcher = vi.fn();

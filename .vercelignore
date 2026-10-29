@@ -1,0 +1,14 @@
+work/
+.next/
+test-results/
+playwright-report/
+tests/
+docs/
+.github/
+public/data/venues/
+src/providers/data/regions/
+src/providers/data/regional-osm.json
+src/providers/data/geograph-venue-matches.json.gz
+src/providers/data/venue-media-assets/photos-bulk-*
+src/providers/data/venue-media-assets/photos-official-*
+src/providers/data/venue-media-assets/photos-escape-*

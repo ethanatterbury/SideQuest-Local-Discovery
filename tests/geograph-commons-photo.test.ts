@@ -17,6 +17,7 @@ function resolveGeographCommonsPhoto(
 ) {
   let fixtureTime = 0;
   return resolveWithProductionPacing(geographId, {
+    expectedTitle: "Harvest",
     pacing: {
       now: () => fixtureTime,
       pause: async (delayMs: number) => {
@@ -120,7 +121,7 @@ it("identifies a renamed Commons file by agreeing source link and structured ID,
     },
     evidence: {
       geographId: id,
-      lookup: "structured-id",
+      lookup: "file-title",
       commonsPageId: 101,
       sourceUrl: `https://www.geograph.org.uk/photo/${id}`,
       structuredIds: [id],
@@ -146,11 +147,103 @@ it("identifies a renamed Commons file by agreeing source link and structured ID,
       },
     });
   }
-  const search = new URL(String(fetcher.mock.calls[0][0]));
-  expect(search.searchParams.get("gsrsearch")).toBe(
-    `haswbstatement:P7384=${id}`,
+  const discovery = new URL(String(fetcher.mock.calls[0][0]));
+  expect(discovery.searchParams.get("titles")).toBe(
+    `File:Harvest - geograph.org.uk - ${id}.jpg`,
   );
-  expect(search.searchParams.get("gsrnamespace")).toBe("6");
+  expect(discovery.searchParams.get("redirects")).toBe("1");
+  expect(discovery.searchParams.get("generator")).toBeNull();
+  expect(discovery.searchParams.has("gsrsearch")).toBe(false);
+});
+
+it("uses the source URL index directly when a safe filename guess is unavailable", async () => {
+  for (const expectedTitle of [
+    undefined,
+    "",
+    "A|File:Other.jpg",
+    "Bad\nName",
+    "Bad[Name]",
+    "a".repeat(256),
+    "界".repeat(100),
+  ]) {
+    const fetcher = transport([
+      { query: { exturlusage: [usage()] } },
+      { query: { pages: [page()] } },
+      { entities: { M101: entity() } },
+    ]);
+    const result = await resolveGeographCommonsPhoto(id, {
+      fetch: fetcher,
+      expectedTitle,
+    });
+    expect(result).toMatchObject({
+      reason: "matched",
+      requestCount: 3,
+      evidence: { lookup: "source-url" },
+    });
+    expect(result.evidence.warnings).toContain("file-title-unavailable");
+    for (const [url] of fetcher.mock.calls) {
+      const query = new URL(String(url)).searchParams;
+      expect(query.has("titles")).toBe(false);
+      expect(query.has("generator")).toBe(false);
+      expect(query.has("gsrsearch")).toBe(false);
+    }
+  }
+});
+
+it("follows a filename redirect but still requires an exact source link and checks any SDC ID", async () => {
+  const renamed = {
+    query: {
+      redirects: [
+        {
+          from: "File:Harvest - geograph.org.uk - 57771.jpg",
+          to: page().title,
+        },
+      ],
+      pages: [page()],
+    },
+  };
+  const fetcher = transport([
+    renamed,
+    { entities: { M101: { id: "M101", missing: true } } },
+  ]);
+  expect(
+    await resolveGeographCommonsPhoto(id, { fetch: fetcher }),
+  ).toMatchObject({
+    reason: "matched",
+    requestCount: 2,
+    evidence: { lookup: "file-title", structuredIds: [] },
+  });
+  const wrongSource = page();
+  wrongSource.imageinfo[0].extmetadata.Credit.value = "The filename says 57771";
+  expect(
+    await resolveGeographCommonsPhoto(id, { fetch: primary(wrongSource) }),
+  ).toMatchObject({ image: null, reason: "missing-source-evidence" });
+});
+
+it("finds a renamed file through exact source URL lookup after a missing guessed file", async () => {
+  const fetcher = transport([
+    {
+      query: {
+        pages: [
+          {
+            ns: 6,
+            title: "File:Harvest - geograph.org.uk - 57771.jpg",
+            missing: true,
+          },
+        ],
+      },
+    },
+    { query: { exturlusage: [usage()] } },
+    { query: { pages: [page()] } },
+    { entities: { M101: entity() } },
+  ]);
+  expect(
+    await resolveGeographCommonsPhoto(id, { fetch: fetcher }),
+  ).toMatchObject({
+    reason: "matched",
+    requestCount: 4,
+    evidence: { lookup: "source-url", commonsTitle: "File:NS6469 harvest.jpg" },
+  });
 });
 
 it("accepts the observed Minehead Commons payload and strips only its cosmetic UTM parameters", async () => {
@@ -176,6 +269,7 @@ it("accepts the observed Minehead Commons payload and strips only its cosmetic U
   const result = await resolveGeographCommonsPhoto("7319896", {
     fetch: fetcher,
     checkedAt,
+    expectedTitle: "Interior, Minehead Museum",
   });
   expect(result).toMatchObject({
     reason: "matched",
@@ -184,6 +278,66 @@ it("accepts the observed Minehead Commons payload and strips only its cosmetic U
   });
   expect(approvedPhoto(result.image)?.url).toBe(cleanUrl);
   expect(fetcher).toHaveBeenCalledTimes(2);
+  expect(
+    new URL(String(fetcher.mock.calls[0][0])).searchParams.get("titles"),
+  ).toBe("File:Interior, Minehead Museum - geograph.org.uk - 7319896.jpg");
+});
+
+it("accepts the observed scaled Harbour Screen thumbnail on the official Commons thumb host", async () => {
+  const harbour = page();
+  const filename = "The_Harbour_Screen_-_geograph.org.uk_-_6225569.jpg";
+  const originalUrl = `https://upload.wikimedia.org/wikipedia/commons/7/75/${filename}`;
+  const thumbnailUrl = `https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/${filename}/960px-${filename}`;
+  const tracking =
+    "utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=";
+  harbour.title = "File:The Harbour Screen - geograph.org.uk - 6225569.jpg";
+  Object.assign(harbour.imageinfo[0], {
+    url: `${originalUrl}?${tracking}original`,
+    thumburl: `${thumbnailUrl}?${tracking}thumbnail`,
+    descriptionurl: `https://commons.wikimedia.org/wiki/File:${filename}`,
+  });
+  harbour.imageinfo[0].extmetadata.Credit.value =
+    '<a href="https://www.geograph.org.uk/photo/6225569">From Geograph</a>';
+  const fetcher = primary(harbour, entity("6225569"));
+  const result = await resolveGeographCommonsPhoto("6225569", {
+    fetch: fetcher,
+    checkedAt,
+    expectedTitle: "The Harbour Screen",
+  });
+  expect(result).toMatchObject({
+    reason: "matched",
+    requestCount: 2,
+    image: {
+      url: thumbnailUrl,
+      source: `https://commons.wikimedia.org/wiki/File:${filename}`,
+    },
+    evidence: { lookup: "file-title", structuredIds: ["6225569"] },
+  });
+  expect(approvedPhoto(result.image)?.url).toBe(thumbnailUrl);
+});
+
+it("rejects spoofed thumbnail authorities, explicit ports and non-thumbnail paths on the thumb host", async () => {
+  for (const url of [
+    "https://thumb.wikimedia.org.evil.test/wikipedia/commons/thumb/a/ab/Test.jpg/960px-Test.jpg",
+    "https://thumb.wikimedia.org/wikipedia/commons/a/ab/Test.jpg",
+    "http://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Test.jpg/960px-Test.jpg",
+    "https://thumb.wikimedia.org:443/wikipedia/commons/thumb/a/ab/Test.jpg/960px-Test.jpg",
+    "https://user@thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Test.jpg/960px-Test.jpg",
+    "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Test.jpg/960px-Test.jpg?utm_source=commons.wikimedia.org&width=960",
+  ]) {
+    const candidate = page();
+    candidate.imageinfo[0].thumburl = url;
+    expect(
+      await resolveGeographCommonsPhoto(id, {
+        fetch: primary(candidate),
+        checkedAt,
+      }),
+    ).toMatchObject({
+      image: null,
+      reason: "unsafe-image-url",
+      requestCount: 2,
+    });
+  }
 });
 
 it("rejects unknown CDN query parameters without falling back after source identity is established", async () => {
@@ -254,8 +408,16 @@ it("paces every request across concurrent lookups even when fetch is injected", 
     );
   });
   const work = Promise.all([
-    resolveWithProductionPacing(id, { fetch: fetcher, timeoutMs: 5000 }),
-    resolveWithProductionPacing(id, { fetch: fetcher, timeoutMs: 5000 }),
+    resolveWithProductionPacing(id, {
+      fetch: fetcher,
+      timeoutMs: 5000,
+      expectedTitle: "Harvest",
+    }),
+    resolveWithProductionPacing(id, {
+      fetch: fetcher,
+      timeoutMs: 5000,
+      expectedTitle: "Harvest",
+    }),
   ]);
   await vi.advanceTimersByTimeAsync(2100);
   expect((await work).every((result) => result.reason === "matched")).toBe(
@@ -287,11 +449,13 @@ it("cancels a queued lookup at its deadline without issuing a request or breakin
     fetch: fetcher,
     timeoutMs: 5000,
     pacing,
+    expectedTitle: "Harvest",
   });
   const cancelled = resolveWithProductionPacing(id, {
     fetch: fetcher,
     timeoutMs: 50,
     pacing,
+    expectedTitle: "Harvest",
   });
   await vi.advanceTimersByTimeAsync(50);
   expect(await cancelled).toMatchObject({

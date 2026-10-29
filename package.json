@@ -7,7 +7,7 @@
     "audit:catalog": "node scripts/audit-catalog.mjs",
     "predev": "npm run prepare:data",
     "dev": "next dev --hostname 0.0.0.0",
-    "build": "npm run prepare:data && next build",
+    "build": "npm run prepare:data && node scripts/prepare-deployment.mjs --clean && next build && node scripts/prepare-deployment.mjs",
     "start": "next start --hostname 0.0.0.0",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -18,8 +18,9 @@
     "format": "prettier --write src tests scripts *.ts *.mjs *.json",
     "test:visual": "node scripts/visual-matrix.mjs",
     "test:offline": "node scripts/offline-smoke.mjs",
-    "prepare:data": "node scripts/materialize-venue-media.mjs && node scripts/build-venue-cells.mjs",
-    "prepare:photos": "node scripts/prepare-venue-photos.mjs"
+    "prepare:data": "node scripts/materialize-venue-media.mjs",
+    "prepare:photos": "node scripts/prepare-venue-photos.mjs",
+    "prepare:catalogue": "node scripts/build-venue-cells.mjs"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.2.8",

@@ -46,12 +46,7 @@ afterEach(() => {
 });
 
 describe("configured national discovery", () => {
-  it("retains local snapshot venues when every capped provider search succeeds", async () => {
-    const { getNearbyPlaces } = await import("@/providers/nearby-places");
-    const snapshot = await getNearbyPlaces({ lat: 51.18, lng: -0.62 }, 5);
-    expect(snapshot.places.length).toBeGreaterThan(1);
-    const overlapping = snapshot.places[0];
-    const [, osmType, osmId] = overlapping.id.split("-");
+  it("discovers and deduplicates current provider venues without a bundled area snapshot", async () => {
     vi.stubGlobal("fetch", async () =>
       Response.json(
         collection(
@@ -62,21 +57,11 @@ describe("configured national discovery", () => {
               amenity: undefined,
               tourism: "museum",
             },
-            { name: "Provider-only museum", lat: 51.18, lon: -0.62 },
+            { name: "Provider museum", lat: 51.18, lon: -0.62 },
           ),
           feature(
-            {
-              osm_id: Number(osmId),
-              osm_type: osmType,
-              leisure: undefined,
-              amenity: undefined,
-              tourism: "museum",
-            },
-            {
-              name: "Updated provider venue",
-              lat: overlapping.coordinates.lat,
-              lon: overlapping.coordinates.lng,
-            },
+            { osm_id: 987654322 },
+            { name: "Provider play centre", lat: 51.181, lon: -0.62 },
           ),
         ),
       ),
@@ -85,15 +70,10 @@ describe("configured national discovery", () => {
     const result = await getDiscoveryPlaces({ lat: 51.18, lng: -0.62 }, 5);
     expect(result.source).toBe("live");
     expect(result.incomplete).toBeUndefined();
-    expect(
-      result.places.filter((place) => place.id === overlapping.id),
-    ).toHaveLength(1);
-    expect(
-      result.places.some((place) => place.id === snapshot.places[1].id),
-    ).toBe(true);
-    expect(
-      result.places.some((place) => place.id === "osm-way-987654321"),
-    ).toBe(true);
+    expect(result.places.map((place) => place.id).sort()).toEqual([
+      "osm-way-987654321",
+      "osm-way-987654322",
+    ]);
   });
 
   it("does not convert a supplier-marked adult venue into an ordinary cinema", async () => {
@@ -360,7 +340,7 @@ describe("configured national discovery", () => {
     );
     expect(b.places).toEqual(a.places);
     expect(
-      (await getDiscoveryPlaces({ lat: 53.48, lng: -2.24 }, 10, false)).source,
+      (await getDiscoveryPlaces({ lat: 53.48, lng: -2.24 }, 10)).source,
     ).toBe("cached");
     expect(urls).toHaveLength(5);
   });
@@ -423,20 +403,33 @@ describe("configured national discovery", () => {
     },
   );
 
-  it("keeps the existing no-key regional snapshot behavior and rejects non-UK requests without fetching", async () => {
+  it("uses live OpenStreetMap without a key and rejects non-UK requests without another fetch", async () => {
     vi.stubEnv("GEOAPIFY_API_KEY", "");
-    const fetcher = vi.fn();
+    const fetcher = vi.fn().mockResolvedValue(
+      Response.json({
+        elements: [
+          {
+            type: "node",
+            id: 881125,
+            lat: 51.347,
+            lon: -0.8,
+            tags: { name: "Live play centre", leisure: "indoor_play" },
+          },
+        ],
+      }),
+    );
     vi.stubGlobal("fetch", fetcher);
     const { getDiscoveryPlaces } = await import("@/providers/geoapify-places");
     const result = await getDiscoveryPlaces({ lat: 51.347, lng: -0.8 }, 18);
-    expect(result.source).toBe("cached");
-    expect(result.message).toContain("area snapshot");
-    expect(result.places).toHaveLength(300);
+    expect(result.source).toBe("live");
+    expect(result.places.some((place) => place.id === "osm-node-881125")).toBe(
+      true,
+    );
     vi.stubEnv("GEOAPIFY_API_KEY", "server-only-test-secret");
     expect(
       (await getDiscoveryPlaces({ lat: 41.8, lng: -87.6 }, 10)).places,
     ).toEqual([]);
-    expect(fetcher).not.toHaveBeenCalled();
+    expect(fetcher).toHaveBeenCalledTimes(1);
   });
 
   it("never labels an empty Geoapify and Overpass response as live coverage", async () => {
@@ -539,7 +532,7 @@ describe("configured national discovery", () => {
     },
   );
 
-  it("marks a Geoapify failure degraded even when a regional snapshot supplies cached places", async () => {
+  it("marks an upstream failure degraded while retaining nearby curated places", async () => {
     vi.stubGlobal(
       "fetch",
       async () => new Response("unavailable", { status: 503 }),
@@ -551,7 +544,7 @@ describe("configured national discovery", () => {
       ),
     );
     const body = await response.json();
-    expect(body.source).toBe("cached");
+    expect(body.source).toBe("fallback");
     expect(body.places.length).toBeGreaterThan(0);
     expect(body.incomplete).toBe(true);
     expect(response.headers.get("Cache-Control")).toContain("s-maxage=60,");

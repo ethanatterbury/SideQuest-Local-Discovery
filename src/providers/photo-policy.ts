@@ -1,5 +1,7 @@
 import type { Place } from "@/domain/models";
 import { parseArchivePhotoUrl, safeArchivePhotoUrl } from "./archive-photo";
+import { safeCommonsImageUrl } from "./commons-image-url";
+import { rejectedPhotoSource } from "./rejected-photo-sources";
 
 type Image = NonNullable<Place["image"]>;
 export type PhotoPermission = {
@@ -206,7 +208,12 @@ export function approvedPhoto(
   checkedAt?: string,
   allowPermissioned = false,
 ): Image | undefined {
-  if (!image || !image.credit?.trim() || !image.source?.startsWith("https://"))
+  if (
+    !image ||
+    !image.credit?.trim() ||
+    !image.source?.startsWith("https://") ||
+    rejectedPhotoSource(image.source)
+  )
     return;
   if (image.rights === "website-preview")
     return approvedWebsitePreview(image, checkedAt);
@@ -238,14 +245,7 @@ export function approvedPhoto(
           url.port
         )
           return;
-        if (
-          commons &&
-          !(
-            url.hostname === "upload.wikimedia.org" &&
-            url.pathname.startsWith("/wikipedia/commons/")
-          )
-        )
-          return;
+        if (commons && !safeCommonsImageUrl(image.url)) return;
         if (
           archive &&
           !(

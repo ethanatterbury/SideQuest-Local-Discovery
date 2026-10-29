@@ -24,6 +24,22 @@ const info = {
     LicenseShortName: { value: "CC BY-SA 4.0" },
   },
 };
+it("uses the current Commons thumbnail CDN rather than falling back to the full original", () => {
+  const thumbnail =
+    "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Riverside.jpg/960px-Riverside.jpg";
+  expect(
+    licensedPhoto({
+      ...info,
+      thumburl: `${thumbnail}?utm_source=commons.wikimedia.org&utm_content=thumbnail`,
+    })?.url,
+  ).toBe(thumbnail);
+  expect(safePhotoUrl(thumbnail)).toBe(true);
+  expect(
+    safePhotoUrl(
+      thumbnail.replace("thumb.wikimedia.org", "thumb.wikimedia.org.evil.test"),
+    ),
+  ).toBe(false);
+});
 it("requires finite coordinates and validates entity hints without accepting URLs", () => {
   for (const value of [
     "name=Park&lat=&lng=1",

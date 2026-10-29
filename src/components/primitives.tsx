@@ -66,13 +66,6 @@ export function PlaceImage({
   const imageSource = image?.url.startsWith("https://upload.wikimedia.org/")
     ? image.url.split(/[?#]/)[0]
     : image?.url;
-  const optimizeRemoteImage =
-    !!imageSource &&
-    // These prepared URLs already select a bounded Wikimedia thumbnail.
-    // Serve its CDN directly, avoiding a second transform and a cold proxy.
-    image?.strategy !== "geograph-commons-source-id" &&
-    (imageSource.startsWith("https://upload.wikimedia.org/") ||
-      imageSource.startsWith("https://archive.org/download/"));
   const container = useRef<HTMLDivElement>(null);
   const [looking, setLooking] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -143,7 +136,7 @@ export function PlaceImage({
       {image && !failed ? (
         <Image
           src={imageSource!}
-          unoptimized={!optimizeRemoteImage}
+          unoptimized
           sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 800px"
           alt={place.name}
           width={1280}

@@ -74,6 +74,14 @@ async function fixtures(
       },
     }),
   );
+  for (const pattern of [
+    "https://upload.wikimedia.org/**",
+    "https://thumb.wikimedia.org/**",
+    "https://archive.org/download/**",
+  ])
+    await page.route(pattern, async (route) =>
+      route.fulfill({ contentType: "image/png", body: await fixtureImage }),
+    );
   await page.route("**/_next/image?**", async (route) =>
     route.fulfill({ contentType: "image/png", body: await fixtureImage }),
   );
@@ -371,37 +379,23 @@ test("changing company clears child ages, child activity and a stale child searc
   );
 });
 
-test("prepared area data arriving after live discovery preserves fresh venue details", async ({
+test("live discovery displays fresh venue details without requesting a national catalogue", async ({
   page,
 }) => {
-  // Catalogue ordering does not depend on GPU rendering, which has separate cases.
   await fixtures(page, false, ["weather", "map"]);
+  const catalogueRequests: string[] = [];
+  page.on("request", (request) => {
+    if (request.url().includes("/data/venues/"))
+      catalogueRequests.push(request.url());
+  });
   await page.route("**/api/places?**", (route) =>
     route.fulfill({
       json: { places: [{ ...venue, name: "Fresh Museum" }], source: "live" },
     }),
   );
-  await page.route("**/data/venues/manifest.json", (route) =>
-    route.fulfill({ json: { cells: { "205_-3": { hash: "fixture" } } } }),
-  );
-  let release!: () => void;
-  const ready = new Promise<void>((resolve) => {
-    release = resolve;
-  });
-  await page.route("**/data/venues/205_-3.json?**", async (route) => {
-    await ready;
-    await route.fulfill({
-      json: { places: [{ ...venue, name: "Old Museum" }] },
-    });
-  });
-  // Remote image loading must not consume the held prepared-cell deadline.
   await page.goto(`/map?place=${venue.id}`, { waitUntil: "domcontentloaded" });
   await expect(page.locator(".map-selected h2")).toHaveText("Fresh Museum");
-  const response = page.waitForResponse((url) =>
-    url.url().includes("205_-3.json"),
-  );
-  release();
-  expect(await (await response).finished()).toBeNull();
   await page.getByLabel("Search map outings").fill("Fresh Museum");
   await expect(page.locator(".map-selected h2")).toHaveText("Fresh Museum");
+  expect(catalogueRequests).toEqual([]);
 });

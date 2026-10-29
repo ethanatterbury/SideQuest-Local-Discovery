@@ -8,7 +8,7 @@ import type {
   Coordinates,
 } from "@/domain/models";
 import { PLACES } from "./places";
-import { nearbyCells, cellId, inUK } from "@/domain/geo-cells";
+import { cellId, inUK } from "@/domain/geo-cells";
 import { LOAD_BUDGET } from "@/domain/performance";
 import { readArea, writeArea } from "./area-storage";
 import { seedVenueImage, withSeedPhoto } from "./seed-venue-media";
@@ -283,21 +283,15 @@ export function usePlaceCatalog(
         setMessage("Choose a UK starting point to find your next detour.");
         return;
       }
-      let liveCompleted = false;
-      const liveIds = new Set<string>();
       const accepted = new Map<string, Place>();
       const accept = (
         incoming: Place[],
         source: CatalogStatus,
         message: string,
         status = true,
-        kind: "live" | "static" = "live",
       ) => {
         if (controller.signal.aborted) return;
-        const valid = incoming
-          .filter(isPlace)
-          .filter((place) => kind !== "static" || !liveIds.has(place.id));
-        if (kind === "live") valid.forEach((place) => liveIds.add(place.id));
+        const valid = incoming.filter(isPlace);
         setPlaces((previous) =>
           mergeCatalog(previous, valid, pinned.current, { lat, lng }),
         );
@@ -307,11 +301,11 @@ export function usePlaceCatalog(
           setMessage(message);
         }
       };
-      // Live discovery starts alongside cells; a large or slow cell never consumes its deadline.
+      // Discover only the requested area; no national catalogue is shipped or downloaded.
       const liveTask = (async () => {
         try {
           const response = await fetch(
-            `/api/places?lat=${lat}&lng=${lng}&radius=${radius}&refresh=1`,
+            `/api/places?lat=${(Math.round(lat * 50) / 50).toFixed(2)}&lng=${(Math.round(lng * 50) / 50).toFixed(2)}&radius=${Math.ceil(radius / 5) * 5}`,
             { signal },
           );
           if (!response.ok) throw Error("Discovery unavailable");
@@ -338,52 +332,8 @@ export function usePlaceCatalog(
               "Showing available area data. Live discovery is unavailable; try again when you’re ready.",
             );
           }
-        } finally {
-          liveCompleted = true;
         }
       })();
-      // Static geographic cells deliver candidates before any live enrichment.
-      try {
-        const areaSignal = AbortSignal.any([
-          signal,
-          AbortSignal.timeout(LOAD_BUDGET.area),
-        ]);
-        const response = await fetch("/data/venues/manifest.json", {
-          signal: areaSignal,
-        });
-        const manifest = response.ok ? await response.json() : null;
-        const ids = nearbyCells({ lat, lng }, radius).filter(
-          (id) => manifest?.cells?.[id],
-        );
-        let cursor = 0;
-        const chunks: Place[] = [];
-        await Promise.all(
-          Array.from({ length: Math.min(4, ids.length) }, async () => {
-            while (cursor < ids.length && !areaSignal.aborted) {
-              const id = ids[cursor++];
-              const result = await fetch(
-                `/data/venues/${id}.json?v=${manifest.cells[id].hash}`,
-                { signal: areaSignal },
-              );
-              if (result.ok) {
-                const body = await result.json();
-                if (Array.isArray(body.places)) {
-                  chunks.push(...body.places);
-                  accept(
-                    chunks,
-                    "cached",
-                    "OpenStreetMap area snapshot · checking for fresh places.",
-                    !liveCompleted,
-                    "static",
-                  );
-                }
-              }
-            }
-          }),
-        );
-      } catch {
-        /* Continue with cached data and bounded live discovery. */
-      }
       if (controller.signal.aborted) return;
       await liveTask;
       if (!controller.signal.aborted)

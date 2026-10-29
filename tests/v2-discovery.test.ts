@@ -6,6 +6,7 @@ import {
   type Place,
 } from "../src/domain/models";
 import { PLACES } from "../src/providers/places";
+import regionalFixture from "../src/providers/data/regional-osm.json";
 import { venueSuitability } from "../src/domain/venue-suitability";
 import { emptyState } from "../src/providers/persistence";
 
@@ -78,9 +79,16 @@ const rank = (places: Place[], query = DEFAULT_QUERY, state = emptyState()) =>
 
 describe("V2 eligibility and relevance", () => {
   it("finds the mapped Godalming cafe by its written name in the capped Kids catalogue", async () => {
-    const { getNearbyPlaces } = await import("@/providers/nearby-places");
+    const { normalizeOsmResponse, selectNearbyPlaces } =
+      await import("@/providers/nearby-places");
     const location = { name: "Godalming", lat: 51.18, lng: -0.62 };
-    const catalogue = await getNearbyPlaces(location, 25);
+    const catalogue = {
+      places: selectNearbyPlaces(
+        normalizeOsmResponse(regionalFixture),
+        location,
+        25,
+      ),
+    };
     expect(catalogue.places).toHaveLength(300);
     const result = rankPlaces(
       catalogue.places,

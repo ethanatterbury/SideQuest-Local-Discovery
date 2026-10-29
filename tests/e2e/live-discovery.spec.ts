@@ -33,7 +33,16 @@ function fixture(index: number, patch: Partial<Place> = {}): Place {
   };
 }
 async function source(page: import("@playwright/test").Page, places: Place[]) {
-  // These journeys exercise live delivery; geographic delivery has its own fixture suite.
+  // Keep image bytes deterministic; production serves approved remote URLs directly.
+  for (const pattern of [
+    "https://upload.wikimedia.org/**",
+    "https://thumb.wikimedia.org/**",
+    "https://archive.org/download/**",
+  ])
+    await page.route(pattern, (route) =>
+      route.fulfill({ contentType: "image/png", body: icon }),
+    );
+  // These journeys exercise live delivery.
   await page.route("**/data/venues/manifest.json", (route) =>
     route.fulfill({ json: { cells: {} } }),
   );
@@ -79,7 +88,7 @@ test("an inherited food preference can be cleared", async ({ page }) => {
     page.getByRole("link", { name: museum.name, exact: true }),
   ).toBeVisible();
 });
-test("a live Archive photo reaches the optimized image and credited place detail", async ({
+test("a live Archive photo loads from its source without a Vercel transformation and retains credits", async ({
   page,
 }) => {
   const place = fixture(5, { name: "Test Archive Museum" });
@@ -106,10 +115,7 @@ test("a live Archive photo reaches the optimized image and credited place detail
   await card.scrollIntoViewIfNeeded();
   const photo = card.getByRole("img", { name: place.name, exact: true });
   await expect(photo).toBeVisible();
-  await expect(photo).toHaveAttribute(
-    "src",
-    /\/_next\/image\?url=https%3A%2F%2Farchive\.org%2Fdownload/,
-  );
+  await expect(photo).toHaveAttribute("src", image.url);
   await expect
     .poll(() => photo.evaluate((img) => (img as HTMLImageElement).naturalWidth))
     .toBeGreaterThan(0);

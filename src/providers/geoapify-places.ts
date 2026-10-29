@@ -4,15 +4,12 @@ import { inUK } from "@/domain/geo-cells";
 import { optionalCategory } from "@/domain/venue-suitability";
 import {
   getLivePlace,
-  getSnapshotPlace,
   distanceKm,
-  snapshotSourceDate,
   getNearbyPlaces,
   getRememberedLivePlace,
   normalizeOsmElement,
   rememberLivePlaces,
   selectNearbyPlaces,
-  snapshotArea,
   validCoordinates,
   type NearbyResult,
 } from "./nearby-places";
@@ -173,14 +170,6 @@ export function mergeRecentSnapshotPlace(
       : {}),
   };
 }
-async function withRecentSnapshot(place: Place): Promise<Place> {
-  const snapshot = await getSnapshotPlace(place.id);
-  return mergeRecentSnapshotPlace(
-    place,
-    snapshot,
-    (snapshot && snapshotSourceDate(snapshot)) || undefined,
-  );
-}
 
 function storeResult(key: string, result: ProviderResult, failed = false) {
   cache.set(key, { ...result, at: Date.now(), failed });
@@ -259,11 +248,11 @@ async function requestPlaces(url: URL, signal: AbortSignal): Promise<Place[]> {
 export async function getDiscoveryPlaces(
   coords: Coordinates,
   radiusKm = 25,
-  preferSnapshot = true,
+  preferCached = true,
 ): Promise<NearbyResult> {
   const apiKey = process.env.GEOAPIFY_API_KEY?.trim();
   if (!apiKey || !inUK(coords))
-    return getNearbyPlaces(coords, radiusKm, preferSnapshot);
+    return getNearbyPlaces(coords, radiusKm, preferCached);
   if (!validCoordinates(coords) || !Number.isFinite(radiusKm))
     throw new Error("Invalid location or radius");
   const radius = Math.min(100, Math.max(3, radiusKm));
@@ -277,6 +266,7 @@ export async function getDiscoveryPlaces(
   if (
     entry &&
     !entry.failed &&
+    preferCached &&
     Date.now() - entry.at < (entry.partial ? failureTtl : ttl)
   )
     return {
@@ -358,7 +348,7 @@ export async function getDiscoveryPlaces(
             const fallback = await getNearbyPlaces(
               coords,
               radiusKm,
-              preferSnapshot,
+              preferCached,
             );
             places = [
               ...new Map(
@@ -372,28 +362,6 @@ export async function getDiscoveryPlaces(
             source = fallback.source;
             message = `${sourceMessage(true)} Geoapify activity results are unavailable. ${fallback.message || (fallback.source === "live" ? "Outings supplied by live OpenStreetMap / Overpass discovery." : "Showing available OpenStreetMap outing data.")}`;
           }
-          // Capped provider results retain local coverage. Only a recent,
-          // individually owned source record can replace a nearby provider identity.
-          const snapshots = await snapshotArea(center, bucket + 2);
-          const canonical = new Map(
-            snapshots.map((place) => [place.id, place]),
-          );
-          places = [
-            ...new Map([
-              ...snapshots.map((place) => [place.id, place] as const),
-              ...places.map((place) => {
-                const snapshot = canonical.get(place.id);
-                return [
-                  place.id,
-                  mergeRecentSnapshotPlace(
-                    place,
-                    snapshot,
-                    snapshot && snapshotSourceDate(snapshot),
-                  ),
-                ] as const;
-              }),
-            ]).values(),
-          ];
           rememberLivePlaces(places);
           const result = { places, partial, source, message };
           storeResult(key, result);
@@ -414,7 +382,7 @@ export async function getDiscoveryPlaces(
       pending.delete(key);
     }
   }
-  const fallback = await getNearbyPlaces(coords, radiusKm, preferSnapshot);
+  const fallback = await getNearbyPlaces(coords, radiusKm, preferCached);
   return {
     ...fallback,
     incomplete: true,
@@ -430,8 +398,11 @@ export async function getDiscoveryPlace(
   const match = /^osm-(node|way|relation)-([1-9]\d{0,15})$/.exec(id);
   if (!match || !Number.isSafeInteger(Number(match[2]))) return null;
   const remembered = getRememberedLivePlace(id);
-  if (remembered && !options.refreshDetails)
-    return withRecentSnapshot(remembered);
+  if (remembered && !options.refreshDetails) return remembered;
+  if (options.refreshDetails) {
+    const current = await getLivePlace(id, true);
+    if (current) return current;
+  }
   const apiKey = process.env.GEOAPIFY_API_KEY?.trim();
   const key = `detail:${id}`;
   const entry = cache.get(key);
@@ -458,9 +429,8 @@ export async function getDiscoveryPlace(
         (candidate) => candidate.id === id,
       );
       if (place && inUK(place.coordinates)) {
-        const canonical = await withRecentSnapshot(place);
-        rememberLivePlaces([canonical]);
-        return canonical;
+        rememberLivePlaces([place]);
+        return place;
       }
       storeResult(key, { places: [], partial: false }, true);
     } catch {

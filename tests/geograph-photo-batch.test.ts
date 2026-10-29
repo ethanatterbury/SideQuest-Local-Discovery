@@ -299,7 +299,7 @@ test("negative cache does not overwrite official-site evidence and source change
   expect(deps.resolveGeographCommonsPhoto).toHaveBeenCalledTimes(2);
 });
 
-test("rechecks a recent v1 unsafe-image-url miss immediately after source review changes to v2", async () => {
+test("rechecks a recent unsafe-image-url miss after the source review version changes", async () => {
   const paths = await setup();
   const data = input();
   const oldFingerprint = createHash("sha256")
@@ -339,7 +339,7 @@ test("rechecks a recent v1 unsafe-image-url miss immediately after source review
   ).toMatchObject({ processed: 1, matched: 1, cached: 0 });
   expect(deps.resolveGeographCommonsPhoto).toHaveBeenCalledOnce();
   expect((await json(paths.output)).entries[0].geograph).toMatchObject({
-    version: "geograph-commons-v2",
+    version: "geograph-commons-v3",
     status: "matched",
   });
 });

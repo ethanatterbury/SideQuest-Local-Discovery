@@ -5,13 +5,10 @@ import {
   inferVenueSuitability,
   isExplicitAdultVenue,
 } from "@/domain/venue-suitability";
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-import { nearbyCells, inUK } from "@/domain/geo-cells";
+import { inUK } from "@/domain/geo-cells";
 import { weeklyHours } from "@/domain/opening-hours";
 import existingEvidence from "./data/venue-evidence.json";
 import { LOAD_BUDGET } from "@/domain/performance";
-import { readPreparedCellJson } from "@/providers/prepared-cell";
 
 export type NearbyResult = {
   places: Place[];
@@ -617,59 +614,6 @@ export function selectNearbyPlaces(
       distanceKm(coords, a.coordinates) - distanceKm(coords, b.coordinates),
   );
 }
-const snapshotMessage =
-  "OpenStreetMap area snapshot · check venue details before going.";
-const cellCache = new Map<string, Place[]>();
-// Per-object provenance is internal: never trust a cell/global newest timestamp.
-const snapshotDates = new WeakMap<Place, string>();
-export function snapshotSourceDate(place: Place): string | undefined {
-  return snapshotDates.get(place);
-}
-let snapshotIndex: Promise<Record<string, string>> | undefined;
-async function readSnapshotIndex(): Promise<Record<string, string>> {
-  snapshotIndex ??= readFile(
-    path.join(process.cwd(), "public/data/venues/id-index.json"),
-    "utf8",
-  ).then((body) => JSON.parse(body));
-  return snapshotIndex;
-}
-/** Local source record only; bypass remembered providers and all live lookups. */
-export async function getSnapshotPlace(id: string): Promise<Place | null> {
-  if (!/^osm-(node|way|relation)-[1-9]\d{0,15}$/.test(id)) return null;
-  try {
-    const index = await readSnapshotIndex();
-    if (typeof index[id] !== "string") return null;
-    return (await readCell(index[id])).find((place) => place.id === id) || null;
-  } catch {
-    snapshotIndex = undefined;
-    return null;
-  }
-}
-async function readCell(id: string): Promise<Place[]> {
-  if (!/^\d+_-?\d+$/.test(id)) return [];
-  if (cellCache.has(id)) return cellCache.get(id)!;
-  try {
-    const data = await readPreparedCellJson(
-      path.join(process.cwd(), "public/data/venues", id + ".json"),
-    );
-    const places = Array.isArray(data.places) ? (data.places as Place[]) : [];
-    for (const place of places) {
-      const sourceAt = data.sourceDates?.[place.id];
-      if (typeof sourceAt === "string") snapshotDates.set(place, sourceAt);
-    }
-    cellCache.set(id, places);
-    if (cellCache.size > 80) cellCache.delete(cellCache.keys().next().value!);
-    return places;
-  } catch {
-    return [];
-  }
-}
-export async function snapshotArea(
-  coords: Coordinates,
-  radius: number,
-): Promise<Place[]> {
-  return (await Promise.all(nearbyCells(coords, radius).map(readCell))).flat();
-}
 async function queryOverpass(query: string): Promise<Place[]> {
   const deadline = AbortSignal.timeout(LOAD_BUDGET.live);
   for (const endpoint of endpoints) {
@@ -707,7 +651,7 @@ export function rememberLivePlaces(places: Place[]) {
 export async function getNearbyPlaces(
   coords: Coordinates,
   radiusKm = 25,
-  preferSnapshot = true,
+  preferCached = true,
 ): Promise<NearbyResult> {
   if (!validCoordinates(coords) || !Number.isFinite(radiusKm))
     throw new Error("Invalid location or radius");
@@ -729,24 +673,21 @@ export async function getNearbyPlaces(
     now = Date.now();
   const within = (places: Place[]) =>
     selectNearbyPlaces(places, coords, radius);
-  if (entry && now - entry.at < (entry.failed ? 60_000 : 1_800_000))
+  if (
+    entry &&
+    (preferCached || entry.failed) &&
+    now - entry.at < (entry.failed ? 60_000 : 1_800_000)
+  )
     return {
       places: within(entry.places),
       source: entry.failed ? "fallback" : "cached",
       ...(entry.failed
         ? {
             message: entry.places.some((place) => place.id.startsWith("osm-"))
-              ? snapshotMessage + " Live discovery is temporarily unavailable."
+              ? "Live discovery is temporarily unavailable. Showing previously fetched places."
               : "Live discovery is unavailable. Showing curated places where available.",
           }
         : {}),
-    };
-  const areaSnapshot = within(await snapshotArea(coords, radius));
-  if (preferSnapshot && areaSnapshot.length)
-    return {
-      places: within([...PLACES, ...areaSnapshot]),
-      source: "cached",
-      message: snapshotMessage,
     };
   try {
     let request = pending.get(key);
@@ -766,11 +707,7 @@ export async function getNearbyPlaces(
     }
     const livePlaces = await request;
     if (!livePlaces.length) throw new Error("No usable live places");
-    const places = [
-      ...new Map(
-        [...areaSnapshot, ...livePlaces].map((place) => [place.id, place]),
-      ).values(),
-    ];
+    const places = livePlaces;
     rememberLivePlaces(places);
     cache.set(key, { places, at: Date.now() });
     if (cache.size > 64) cache.delete(cache.keys().next().value!);
@@ -785,26 +722,26 @@ export async function getNearbyPlaces(
           "Live discovery is unavailable. Showing previously fetched places.",
       };
     }
-    const places = within([...PLACES, ...areaSnapshot]);
+    const places = within(PLACES);
     cache.set(key, { places, at: Date.now(), failed: true });
     if (cache.size > 64) cache.delete(cache.keys().next().value!);
     return {
       places,
       source: "fallback",
-      message: areaSnapshot.length
-        ? snapshotMessage + " Live discovery is temporarily unavailable."
-        : "Live discovery is temporarily unavailable. Try again shortly; curated places are shown where available.",
+      message:
+        "Live discovery is temporarily unavailable. Try again shortly; curated places are shown where available.",
     };
   } finally {
     pending.delete(key);
   }
 }
-export async function getLivePlace(id: string): Promise<Place | null> {
+export async function getLivePlace(
+  id: string,
+  refresh = false,
+): Promise<Place | null> {
   const match = /^osm-(node|way|relation)-([1-9]\d{0,15})$/.exec(id);
   if (!match || !Number.isSafeInteger(Number(match[2]))) return null;
-  if (details.has(id)) return details.get(id)!;
-  const snapshot = await getSnapshotPlace(id);
-  if (snapshot) return snapshot;
+  if (!refresh && details.has(id)) return details.get(id)!;
   const key = `detail:${id}`;
   try {
     let request = pending.get(key);

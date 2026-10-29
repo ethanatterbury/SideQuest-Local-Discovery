@@ -1,5 +1,6 @@
 import { PHOTO_DEADLINE_MS, PHOTO_NEGATIVE_TTL_MS } from "./photo-policy";
 import { TOWNS } from "./geocoding";
+import { safeCommonsImageUrl } from "./commons-image-url";
 import {
   parseArchivePhotoUrl,
   resolveArchivePhoto,
@@ -228,8 +229,7 @@ export function safePhotoUrl(
       (description
         ? u.hostname === "commons.wikimedia.org" &&
           u.pathname.startsWith("/wiki/File:")
-        : u.hostname === "upload.wikimedia.org" &&
-          u.pathname.startsWith("/wikipedia/commons/"))
+        : safeCommonsImageUrl(value))
     );
   } catch {
     return false;
@@ -645,10 +645,7 @@ function commonsReference(value: string | undefined): string | null {
           /^Special:FilePath\//i,
           "File:",
         );
-      } else if (
-        url.hostname === "upload.wikimedia.org" &&
-        safePhotoUrl(reference)
-      ) {
+      } else if (safeCommonsImageUrl(reference) && safePhotoUrl(reference)) {
         reference =
           "File:" +
           decodeURIComponent(url.pathname.split("/").at(-1) || "").replace(
