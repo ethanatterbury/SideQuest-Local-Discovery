@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-29T16:03:38.244Z",
+  "generatedAt": "2026-10-29T16:27:21.712Z",
   "entries": [
     {
       "query": {
@@ -13952,6 +13952,318 @@
           }
         ],
         "retryAfter": "2026-10-29T16:03:58.166Z"
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11049060775",
+        "name": "Dinosaur Safari",
+        "lat": 53.8147549,
+        "lng": -3.0113281
+      },
+      "checkedAt": "2026-10-29T16:27:12.460Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "4f885dfc2267651541edf368a1943180bbdfd549c6ddb5fa5399e30e4adaaf09",
+        "checkedAt": "2026-10-29T16:27:12.460Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 2960426,
+            "reason": "dated-or-nonphysical-subject"
+          },
+          {
+            "geographId": 6759400,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11049139152",
+        "name": "The Harbour Screen",
+        "lat": 51.0783404,
+        "lng": 1.1875889
+      },
+      "checkedAt": "2026-10-29T16:27:12.467Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "0731c29a49bb6b7a79b964a3f8146d4462aea83132c7356a1dbb45d315950192",
+        "checkedAt": "2026-10-29T16:27:12.467Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 6225569,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 6225580,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11063449896",
+        "name": "Cobham War Memorial",
+        "lat": 51.3900857,
+        "lng": 0.4043924
+      },
+      "checkedAt": "2026-10-29T16:27:14.551Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "b5069af218c9b603eb2599bb8281f840083e0a5fd6e59f2377bd659f78fe9625",
+        "checkedAt": "2026-10-29T16:27:14.551Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 5079160,
+            "reason": "dated-or-nonphysical-subject"
+          },
+          {
+            "geographId": 3508854,
+            "reason": "dated-or-nonphysical-subject"
+          },
+          {
+            "geographId": 2488429,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11073137143",
+        "name": "Wigfield Farm",
+        "lat": 53.5293918,
+        "lng": -1.4809774
+      },
+      "checkedAt": "2026-10-29T16:27:14.557Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "1451d494e4fa87cc0d3e6fc60934afa9e732fd82950a47c69aaebadd32ecc25f",
+        "checkedAt": "2026-10-29T16:27:14.557Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 7925475,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11086795780",
+        "name": "The Grammar",
+        "lat": 53.3753999,
+        "lng": -2.3503958
+      },
+      "checkedAt": "2026-10-29T16:27:15.890Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "6b59eb92e314afcbcb136d007daa4b042c03eb9268ce9d1c7c884ce8def0e13a",
+        "checkedAt": "2026-10-29T16:27:15.890Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 5330008,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 5147083,
+            "reason": "dated-or-nonphysical-subject"
+          },
+          {
+            "geographId": 4815698,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11101818576",
+        "name": "Seaton Tramway, Colyton Station",
+        "lat": 50.7415202,
+        "lng": -3.0619571
+      },
+      "checkedAt": "2026-10-29T16:27:17.165Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "427e7e4e136f361b0c49cecca3c900aca1d9eb53913281c35b7cb07e2b71aa91",
+        "checkedAt": "2026-10-29T16:27:17.165Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 3688790,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-1110749112",
+        "name": "Boatyard Boulders",
+        "lat": 52.9433128,
+        "lng": -1.1322732
+      },
+      "checkedAt": "2026-10-29T16:27:17.170Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "ec79d38d1f8543befebdbb9ec2798314725e79afce6a5905c39474878fc5f4c0",
+        "checkedAt": "2026-10-29T16:27:17.170Z",
+        "status": "unresolved",
+        "reason": "unsafe-image-url",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 8341843,
+            "reason": "unsafe-image-url"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11115684592",
+        "name": "Ducking Stool",
+        "lat": 50.7346334,
+        "lng": -1.7747921
+      },
+      "checkedAt": "2026-10-29T16:27:18.521Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "unresolved",
+      "retryable": false,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "26919feb3ede6d3fbf1edd50cde6aad763d8f715d5465cafa7230673c685a273",
+        "checkedAt": "2026-10-29T16:27:18.521Z",
+        "status": "unresolved",
+        "reason": "no-eligible-photo",
+        "retryable": false,
+        "attempts": [
+          {
+            "geographId": 3664728,
+            "reason": "dated-or-nonphysical-subject"
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11115815090",
+        "name": "Victory V",
+        "lat": 52.9134954,
+        "lng": 1.2612901
+      },
+      "checkedAt": "2026-10-29T16:27:18.526Z",
+      "image": null,
+      "website": {
+        "urls": [],
+        "status": "no-match",
+        "source": "none"
+      },
+      "status": "retryable",
+      "retryable": true,
+      "geograph": {
+        "version": "geograph-commons-v2",
+        "fingerprint": "b81108d517e5b5b9d17b2b1d204e29086e5d58d463100e620b7f6a3d7b467fba",
+        "checkedAt": "2026-10-29T16:27:18.526Z",
+        "status": "retryable",
+        "reason": "api-cirrussearch-too-busy-error",
+        "retryable": true,
+        "attempts": [
+          {
+            "geographId": 8187808,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 8187815,
+            "reason": "unsafe-image-url"
+          },
+          {
+            "geographId": 7958786,
+            "reason": "api-cirrussearch-too-busy-error"
+          }
+        ],
+        "retryAfter": "2026-10-29T16:28:18.526Z"
       }
     }
   ]
