@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { PLACES } from "@/providers/places";
 import { DynamicPlace } from "@/features/place/dynamic-place";
 import { PlaceDetail } from "@/features/place/place-detail";
+import { withStoredPhoto } from "@/providers/venue-media";
 export function generateStaticParams() {
   return PLACES.map((p) => ({ id: p.id }));
 }
@@ -39,5 +40,5 @@ export default async function Page({
       return <DynamicPlace id={id} />;
     notFound();
   }
-  return <PlaceDetail place={p} />;
+  return <PlaceDetail place={withStoredPhoto(p)} />;
 }

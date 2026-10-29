@@ -12,7 +12,24 @@ import Image from "next/image";
 import { useApp } from "@/components/providers";
 import { findPlacePhoto, photoRetryDelay } from "@/providers/photo-client";
 import type { Place } from "@/domain/models";
-import { seedVenueImage } from "@/providers/seed-venue-media";
+import { approvedPhoto } from "@/providers/photo-policy";
+
+/** Preserve prepared photography when the catalogue only refreshes venue data. */
+export function withRetainedPlacePhoto(
+  current: Place | undefined,
+  supplied: Place,
+): Place {
+  const place = current ?? supplied;
+  const sameVenue =
+    place.id === supplied.id &&
+    place.name === supplied.name &&
+    place.coordinates.lat === supplied.coordinates.lat &&
+    place.coordinates.lng === supplied.coordinates.lng;
+  const image =
+    approvedPhoto(place.image) ||
+    (sameVenue ? approvedPhoto(supplied.image) : undefined);
+  return image === place.image ? place : { ...place, image };
+}
 export function Mark() {
   return (
     <svg
@@ -42,7 +59,10 @@ export function PlaceImage({
   priority?: boolean;
 }) {
   const { places, rememberPhoto } = useApp();
-  const image = seedVenueImage(places.find((p) => p.id === place.id) || place);
+  const image = withRetainedPlacePhoto(
+    places.find((p) => p.id === place.id),
+    place,
+  ).image;
   const imageSource = image?.url.startsWith("https://upload.wikimedia.org/")
     ? image.url.split(/[?#]/)[0]
     : image?.url;

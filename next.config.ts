@@ -1,10 +1,20 @@
 import type { NextConfig } from "next";
+const catalogueServerFiles = [
+  "./public/data/venues/*.json.gz",
+  "./public/data/venues/id-index.json",
+  "./public/data/venues/manifest.json",
+];
 const config: NextConfig = {
   poweredByHeader: false,
   outputFileTracingIncludes: {
-    "/api/places": ["./public/data/venues/**/*.json"],
-    "/api/places/[id]": ["./public/data/venues/**/*.json"],
-    "/api/venue-evidence": ["./public/data/venues/**/*.json"],
+    "/api/places": catalogueServerFiles,
+    "/api/places/\\[id\\]": catalogueServerFiles,
+    "/api/venue-evidence": catalogueServerFiles,
+  },
+  outputFileTracingExcludes: {
+    "/api/places": ["./public/data/venues/*_*.json"],
+    "/api/places/\\[id\\]": ["./public/data/venues/*_*.json"],
+    "/api/venue-evidence": ["./public/data/venues/*_*.json"],
   },
   images: {
     remotePatterns: [

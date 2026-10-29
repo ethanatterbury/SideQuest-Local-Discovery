@@ -16,7 +16,12 @@ import {
   Check,
   ExternalLink,
 } from "lucide-react";
-import { PlaceImage, Modal, shareUrl } from "@/components/primitives";
+import {
+  PlaceImage,
+  Modal,
+  shareUrl,
+  withRetainedPlacePhoto,
+} from "@/components/primitives";
 import { useApp } from "@/components/providers";
 import { rankPlaces, openingStatus } from "@/domain/discovery";
 import { estimatedRouting, directionsUrl } from "@/providers/routing";
@@ -26,7 +31,10 @@ import { track } from "@/providers/analytics";
 import type { Place, Reaction } from "@/domain/models";
 export function PlaceDetail({ place: initialPlace }: { place: Place }) {
   const { places: catalog, env, query, state, update, toast } = useApp();
-  const place = catalog.find((p) => p.id === initialPlace.id) || initialPlace;
+  const place = withRetainedPlacePhoto(
+    catalog.find((p) => p.id === initialPlace.id),
+    initialPlace,
+  );
   const [visit, setVisit] = useState(false),
     [dismiss, setDismiss] = useState(false);
   const saved = state.saved.includes(place.id);

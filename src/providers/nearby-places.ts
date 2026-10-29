@@ -11,6 +11,7 @@ import { nearbyCells, inUK } from "@/domain/geo-cells";
 import { weeklyHours } from "@/domain/opening-hours";
 import existingEvidence from "./data/venue-evidence.json";
 import { LOAD_BUDGET } from "@/domain/performance";
+import { readPreparedCellJson } from "@/providers/prepared-cell";
 
 export type NearbyResult = {
   places: Place[];
@@ -623,11 +624,8 @@ async function readCell(id: string): Promise<Place[]> {
   if (!/^\d+_-?\d+$/.test(id)) return [];
   if (cellCache.has(id)) return cellCache.get(id)!;
   try {
-    const data = JSON.parse(
-      await readFile(
-        path.join(process.cwd(), "public/data/venues", id + ".json"),
-        "utf8",
-      ),
+    const data = await readPreparedCellJson(
+      path.join(process.cwd(), "public/data/venues", id + ".json"),
     );
     const places = Array.isArray(data.places) ? (data.places as Place[]) : [];
     cellCache.set(id, places);

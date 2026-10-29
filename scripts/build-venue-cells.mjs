@@ -1,6 +1,8 @@
 import { writeFile, mkdir, readdir, rm } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import path from "node:path";
+import { gzip } from "node:zlib";
+import { promisify } from "node:util";
 import { loadProvider } from "./lib/provider-loader.mjs";
 import {
   discoverCatalogueSources,
@@ -12,6 +14,7 @@ const { normalizeOsmResponse } = loadProvider("src/providers/nearby-places.ts");
 const { cellId, inUK } = loadProvider("src/domain/geo-cells.ts");
 const { withStoredPhoto } = loadProvider("src/providers/venue-media.ts");
 const output = path.join(root, "public/data/venues");
+const compress = promisify(gzip);
 await mkdir(output, { recursive: true });
 const supplied = process.argv.slice(2);
 const files = await discoverCatalogueSources(root, supplied);
@@ -44,10 +47,17 @@ for (const [id, records] of cells) {
   const body = JSON.stringify({ version: 2, places: [...records.values()] });
   const hash = createHash("sha256").update(body).digest("hex").slice(0, 12);
   await writeFile(path.join(output, id + ".json"), body);
+  await writeFile(
+    path.join(output, id + ".json.gz"),
+    await compress(body, { level: 9 }),
+  );
   manifest.cells[id] = { count: records.size, hash };
 }
 for (const file of await readdir(output))
-  if (/^\d+_-?\d+\.json$/.test(file) && !cells.has(file.slice(0, -5)))
+  if (
+    /^\d+_-?\d+\.json(?:\.gz)?$/.test(file) &&
+    !cells.has(file.replace(/\.json(?:\.gz)?$/, ""))
+  )
     await rm(path.join(output, file));
 await writeFile(path.join(output, "manifest.json"), JSON.stringify(manifest));
 await writeFile(path.join(output, "id-index.json"), JSON.stringify(ids));

@@ -1,6 +1,71 @@
 import { test, expect } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { PLACES } from "../../src/providers/places";
+import { loadProvider } from "../../scripts/lib/provider-loader.mjs";
+import type { Place } from "../../src/domain/models";
+
+test("a prepared seed outside the current area retains its detail photo and attribution without discovery", async ({
+  page,
+}) => {
+  const { withStoredPhoto } = loadProvider("src/providers/venue-media.ts") as {
+    withStoredPhoto: (place: Place) => Place;
+  };
+  const prepared = PLACES.filter((place) => !place.image)
+    .map(withStoredPhoto)
+    .find((place) => place.image);
+  expect(
+    prepared,
+    "a prepared seed photo must be available for this regression",
+  ).toBeTruthy();
+  const place = prepared!;
+  const image = place.image!;
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "sidequest:location:v2",
+      JSON.stringify({
+        name: "York",
+        lat: 53.96,
+        lng: -1.08,
+      }),
+    );
+  });
+  await page.route("**/data/venues/manifest.json", (route) =>
+    route.fulfill({ json: { cells: {} } }),
+  );
+  await page.route("**/api/places?**", (route) =>
+    route.fulfill({ json: { places: [], source: "live" } }),
+  );
+  let photoRequests = 0;
+  await page.route("**/api/photo?**", (route) => {
+    if (new URL(route.request().url()).searchParams.get("id") === place.id)
+      photoRequests++;
+    return route.fulfill({ json: { image: null } });
+  });
+  const png = readFileSync("public/icons/icon-192.png");
+  await page.route(image.url, (route) =>
+    route.fulfill({ contentType: "image/png", body: png }),
+  );
+  await page.route("**/_next/image?**", (route) =>
+    route.fulfill({ contentType: "image/png", body: png }),
+  );
+  await page.goto(`/place/${place.id}`);
+  const hero = page.locator(".detail-hero img");
+  await expect(hero).toBeVisible();
+  await expect
+    .poll(() =>
+      hero.evaluate(
+        (img: HTMLImageElement) => img.complete && img.naturalWidth > 0,
+      ),
+    )
+    .toBe(true);
+  await expect(page.locator(".image-credit a").first()).toHaveAttribute(
+    "href",
+    image.source,
+  );
+  await expect(page.locator(".image-credit")).toContainText(image.credit);
+  await expect(page.locator(".image-credit")).toContainText(image.license);
+  expect(photoRequests).toBe(0);
+});
 
 test("a visible card retries a temporary photo failure without reloading the page", async ({
   page,
