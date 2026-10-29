@@ -1,0 +1,17 @@
+{
+  "name": "sidequest-photo-vision-pilot",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Isolated offline CPU photograph classification evaluation; not part of the application runtime",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "validate": "node pilot.mjs --validate",
+    "benchmark": "node pilot.mjs"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "3.8.1"
+  }
+}

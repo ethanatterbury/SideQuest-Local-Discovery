@@ -1,0 +1,60 @@
+name: Offline photograph vision pilot
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/photo-vision-pilot.yml
+      - scripts/photo-vision/**
+      - docs/photo-vision-pilot.md
+
+permissions:
+  contents: read
+
+concurrency:
+  group: photo-vision-pilot-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: scripts/photo-vision/package-lock.json
+      - name: Install isolated CPU evaluation dependencies
+        env:
+          ONNXRUNTIME_NODE_INSTALL_CUDA: skip
+        run: npm ci --prefix scripts/photo-vision
+      - name: Verify reviewed archive bytes without network requests
+        run: npm run validate --prefix scripts/photo-vision
+      - uses: actions/cache@v4
+        with:
+          path: work/photo-vision-model-cache
+          key: photo-vision-${{ runner.os }}-transformers-3.8.1-clip-d15189d7028b43f1d3e65039190477f6af591c2a-q8
+      - name: Benchmark archived photographs on CPU
+        run: npm run benchmark --prefix scripts/photo-vision
+      - name: Add measured pilot result to run summary
+        if: always()
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, appendFileSync, existsSync } from 'node:fs';
+          const path = 'work/photo-vision-pilot/report.json';
+          if (!existsSync(path)) process.exit(0);
+          const report = JSON.parse(readFileSync(path));
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY, `Offline photo vision pilot: **${report.status}**, ${report.results.length} images. No production approvals or publishing.\n\n\`\`\`json\n${JSON.stringify({ evaluation: report.evaluation?.all, performance: report.performance, error: report.error }, null, 2)}\n\`\`\`\n`);
+          NODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: photo-vision-pilot-${{ github.sha }}
+          path: work/photo-vision-pilot/report.json
+          if-no-files-found: warn
+          retention-days: 14
