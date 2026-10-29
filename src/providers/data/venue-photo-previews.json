@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-28T20:19:19.885Z",
+  "generatedAt": "2026-10-29T15:36:04.876Z",
   "entries": [
     {
       "query": {
@@ -78,14 +78,7 @@
         },
         "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
       },
-      "deliveryFailure": {
-        "checkedAt": "2026-10-28T20:21:50.919Z",
-        "imageUrl": "https://pirateslanding.co.uk/wp-content/uploads/2025/03/IMG_0959.jpeg",
-        "testStatus": "timedOut",
-        "reason": "publisher-image-delivery-failed",
-        "elapsedMs": 37867,
-        "failures": []
-      }
+      "deliveryVerifiedAt": "2026-10-29T15:29:52.000Z"
     },
     {
       "query": {
@@ -163,7 +156,8 @@
           "finding": "Dedicated web open/click returned image content marker for the exact publisher URL. MCP exposed only a text marker, so actual visual review used the existing local rendition."
         },
         "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
-      }
+      },
+      "deliveryVerifiedAt": "2026-10-29T15:29:52.000Z"
     },
     {
       "query": {
@@ -241,7 +235,8 @@
           "finding": "Dedicated web open/click returned image content marker for the exact publisher URL. MCP exposed only a text marker, so actual visual review used the existing local rendition."
         },
         "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
-      }
+      },
+      "deliveryVerifiedAt": "2026-10-29T15:29:52.000Z"
     },
     {
       "query": {
@@ -319,7 +314,8 @@
           "finding": "Dedicated web open/click returned image content marker for the exact publisher URL. MCP exposed only a text marker, so actual visual review used the existing local rendition."
         },
         "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
-      }
+      },
+      "deliveryVerifiedAt": "2026-10-29T15:29:52.000Z"
     },
     {
       "query": {
@@ -384,7 +380,8 @@
         },
         "scope": "Single-venue official homepage; exact external image URL linked to this publisher by image search and described by external image analysis.",
         "limitation": "MCP tool serializes image content as text-only ImageDisplayed markers; no image bytes were exposed to this agent for personal visual review. Current text rendition of the homepage may omit this image; image_query ties this exact URL to that official publisher page."
-      }
+      },
+      "deliveryVerifiedAt": "2026-10-29T15:29:52.000Z"
     },
     {
       "query": {
@@ -393,11 +390,13 @@
         "lat": 50.8803838,
         "lng": -1.0321404,
         "area": "Waterlooville",
-        "address": "25 Wellington Way",
+        "address": "Wellington Way",
         "postcode": "PO7 7ED",
+        "category": "Indoor soft play",
         "website": "https://www.minitownroleplay.co.uk/"
       },
-      "checkedAt": "2026-10-28T15:40:39.732Z",
+      "checkedAt": "2026-10-29T15:30:12.873Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.minitownroleplay.co.uk/"
@@ -407,24 +406,37 @@
       },
       "image": null,
       "retryable": false,
-      "status": "needs-branch-review",
+      "status": "unresolved",
       "evidence": {
-        "method": "External image-specific generated description from dedicated web image_query; not HTML alt text, and not personally visually inspected.",
-        "imageQuery": {
-          "webReference": "turn650458image0",
-          "sourceUrl": "https://www.minitownroleplay.co.uk/",
-          "imageUrl": "https://static.wixstatic.com/media/d77a28_e60be0d701534889827082bf2609bb68~mv2.jpeg/v1/fill/w_640%2Ch_636%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/d77a28_e60be0d701534889827082bf2609bb68~mv2.jpeg",
-          "description": "Child-sized pink hair salon play station with a striped awning, mannequin hairdressing heads, white styling stations and a checkerboard floor."
-        },
-        "officialPage": {
-          "webReference": "turn290163view0",
-          "url": "https://www.minitownroleplay.co.uk/",
-          "identity": "Official page lists its Waterlooville branch at 25 Wellington Way, Waterlooville PO7 7ED."
-        },
-        "scope": "Multi-branch operator: retained as a candidate until image-specific branch evidence can be reproduced independently.",
-        "limitation": "MCP tool serializes image content as text-only ImageDisplayed markers; no image bytes were exposed to this agent for personal visual review. Current text rendition of the homepage may omit this image; image_query ties this exact URL to that official publisher page.",
-        "candidateImageUrl": "https://static.wixstatic.com/media/d77a28_e60be0d701534889827082bf2609bb68~mv2.jpeg/v1/fill/w_640%2Ch_636%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/d77a28_e60be0d701534889827082bf2609bb68~mv2.jpeg",
-        "reason": "branch-review-required"
+        "attempts": [
+          {
+            "website": "https://www.minitownroleplay.co.uk/",
+            "pageUrl": "https://www.minitownroleplay.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-image-branch": 27,
+              "small-or-banner-art": 7,
+              "unconfirmed-photo-subject": 12,
+              "unscoped-image-context": 23
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
       }
     },
     {
@@ -502,7 +514,8 @@
           "finding": "Dedicated web open returned image content marker for the exact publisher URL. MCP exposed only a text marker, so actual visual review used the existing local rendition."
         },
         "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
-      }
+      },
+      "deliveryVerifiedAt": "2026-10-29T15:29:52.000Z"
     },
     {
       "query": {
@@ -579,7 +592,8 @@
           "finding": "Dedicated web open returned image content marker for the exact publisher URL. MCP exposed only a text marker, so actual visual review used the existing local rendition."
         },
         "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
-      }
+      },
+      "deliveryVerifiedAt": "2026-10-29T15:29:52.000Z"
     },
     {
       "query": {
@@ -656,7 +670,8 @@
           "finding": "Dedicated web open returned image content marker for the exact publisher URL. MCP exposed only a text marker, so actual visual review used the existing local rendition."
         },
         "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
-      }
+      },
+      "deliveryVerifiedAt": "2026-10-29T15:29:52.000Z"
     },
     {
       "query": {
@@ -734,7 +749,8 @@
           "finding": "Dedicated web open returned image content marker for the exact publisher URL. MCP exposed only a text marker, so actual visual review used the existing local rendition."
         },
         "rights": "External publisher-hosted preview only; no reuse permission inferred; no new hosted image asset."
-      }
+      },
+      "deliveryVerifiedAt": "2026-10-29T15:29:52.000Z"
     },
     {
       "query": {
@@ -747,7 +763,8 @@
         "aliases": [],
         "website": "https://www.surreyheath.gov.uk/parks-and-countryside/lightwater-country-park"
       },
-      "checkedAt": "2026-10-28T20:16:54.050Z",
+      "checkedAt": "2026-10-29T15:30:13.240Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.surreyheath.gov.uk/parks-and-countryside/lightwater-country-park"
@@ -792,7 +809,8 @@
         "aliases": [],
         "website": "https://www.surreyheath.gov.uk/parks-and-countryside/frimley-lodge-park"
       },
-      "checkedAt": "2026-10-28T20:16:55.099Z",
+      "checkedAt": "2026-10-29T15:30:14.427Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.surreyheath.gov.uk/parks-and-countryside/frimley-lodge-park"
@@ -837,7 +855,8 @@
         "aliases": [],
         "website": "https://www.bracknell-forest.gov.uk/leisure-and-events/look-out-discovery-centre"
       },
-      "checkedAt": "2026-10-28T20:16:55.853Z",
+      "checkedAt": "2026-10-29T15:30:14.694Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.bracknell-forest.gov.uk/leisure-and-events/look-out-discovery-centre"
@@ -965,7 +984,8 @@
           }
         ],
         "reason": null
-      }
+      },
+      "deliveryVerifiedAt": "2026-10-29T15:29:52.000Z"
     },
     {
       "query": {
@@ -978,7 +998,8 @@
         "aliases": [],
         "website": "https://rural-life.org.uk/"
       },
-      "checkedAt": "2026-10-28T20:16:57.457Z",
+      "checkedAt": "2026-10-29T15:30:14.908Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://rural-life.org.uk/"
@@ -1027,7 +1048,8 @@
         "aliases": [],
         "website": "https://www.farnhamcastle.com/"
       },
-      "checkedAt": "2026-10-28T20:16:58.232Z",
+      "checkedAt": "2026-10-29T15:30:16.083Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.farnhamcastle.com/"
@@ -1063,6 +1085,13 @@
               "unconfirmed-venue-scene": 1,
               "food-or-drink-subject": 1
             },
+            "vision": {
+              "status": "ineligible",
+              "modelStatus": "not-loaded",
+              "reason": "unconfirmed-official-identity",
+              "considered": 0,
+              "attempted": 0
+            },
             "candidates": []
           }
         ],
@@ -1080,7 +1109,8 @@
         "aliases": [],
         "website": "https://www.surreycc.gov.uk/culture-and-leisure/countryside/sites/visitor-information/newlands-corner"
       },
-      "checkedAt": "2026-10-28T20:17:01.492Z",
+      "checkedAt": "2026-10-29T15:30:19.323Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.surreycc.gov.uk/culture-and-leisure/countryside/sites/visitor-information/newlands-corner"
@@ -1129,7 +1159,8 @@
         "aliases": [],
         "website": "https://www.forestryengland.uk/alice-holt-forest"
       },
-      "checkedAt": "2026-10-28T20:17:02.203Z",
+      "checkedAt": "2026-10-29T15:30:20.064Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.forestryengland.uk/alice-holt-forest"
@@ -1179,7 +1210,8 @@
         "aliases": [],
         "website": "https://www.wokingham.gov.uk/parks-and-countryside/california-country-park"
       },
-      "checkedAt": "2026-10-28T20:17:03.108Z",
+      "checkedAt": "2026-10-29T15:30:21.059Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.wokingham.gov.uk/parks-and-countryside/california-country-park"
@@ -1224,7 +1256,8 @@
         "aliases": [],
         "website": "https://www.southhillpark.org.uk/"
       },
-      "checkedAt": "2026-10-28T20:17:04.370Z",
+      "checkedAt": "2026-10-29T15:30:22.025Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.southhillpark.org.uk/"
@@ -1269,7 +1302,8 @@
         "aliases": [],
         "website": "https://www.readingmuseum.org.uk/"
       },
-      "checkedAt": "2026-10-28T20:17:04.839Z",
+      "checkedAt": "2026-10-29T15:30:22.605Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.readingmuseum.org.uk/"
@@ -1318,7 +1352,8 @@
         "aliases": [],
         "website": "https://merl.reading.ac.uk/"
       },
-      "checkedAt": "2026-10-28T20:17:05.261Z",
+      "checkedAt": "2026-10-29T15:30:23.277Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://merl.reading.ac.uk/"
@@ -1367,7 +1402,8 @@
         "aliases": [],
         "website": "https://www.brooklandsmuseum.com/"
       },
-      "checkedAt": "2026-10-28T20:17:06.260Z",
+      "checkedAt": "2026-10-29T15:30:24.767Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.brooklandsmuseum.com/"
@@ -1375,9 +1411,37 @@
         "status": "found",
         "source": "mapped"
       },
-      "image": null,
-      "retryable": true,
-      "status": "delivery-unavailable",
+      "image": {
+        "url": "https://www.brooklandsmuseum.com/media/xeaftddp/brk_100_weblanding_landscape_001.webp?rxy=0.5026214568197004%2C0.6001684054630254&rmode=crop&width=3840&height=2160&quality=80",
+        "source": "https://www.brooklandsmuseum.com/",
+        "credit": "Brooklands Museum",
+        "license": "Website preview — rights reserved",
+        "rights": "website-preview",
+        "strategy": "official-website-preview",
+        "checkedAt": "2026-10-29T15:30:25.896Z",
+        "width": 3840,
+        "height": 2150,
+        "confidence": 0.8999999999999999,
+        "matched": [
+          "body",
+          "venue name in page title, heading or business schema",
+          "physical venue scene in image metadata",
+          "image occurs in page content"
+        ],
+        "preview": {
+          "pageUrl": "https://www.brooklandsmuseum.com/",
+          "publisher": "Brooklands Museum",
+          "kind": "venue-image",
+          "identityEvidence": [
+            "venue name in page title, heading or business schema"
+          ],
+          "subjectEvidence": [
+            "physical venue scene in image metadata"
+          ]
+        }
+      },
+      "retryable": false,
+      "status": "matched",
       "evidence": {
         "attempts": [
           {
@@ -1422,14 +1486,7 @@
         ],
         "reason": null
       },
-      "deliveryFailure": {
-        "checkedAt": "2026-10-28T20:21:50.919Z",
-        "imageUrl": "https://www.brooklandsmuseum.com/media/xeaftddp/brk_100_weblanding_landscape_001.webp?rxy=0.5026214568197004%2C0.6001684054630254&rmode=crop&width=3840&height=2160&quality=80",
-        "testStatus": "failed",
-        "reason": "publisher-image-delivery-failed",
-        "elapsedMs": 16001,
-        "failures": []
-      }
+      "deliveryVerifiedAt": "2026-10-29T15:29:52.000Z"
     },
     {
       "query": {
@@ -1444,7 +1501,8 @@
         ],
         "website": "https://www.guildford.gov.uk/castle"
       },
-      "checkedAt": "2026-10-28T20:17:07.182Z",
+      "checkedAt": "2026-10-29T15:30:25.899Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.guildford.gov.uk/castle"
@@ -1494,7 +1552,8 @@
         "aliases": [],
         "website": "https://norden.farm/"
       },
-      "checkedAt": "2026-10-28T20:17:09.163Z",
+      "checkedAt": "2026-10-29T15:30:28.031Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://norden.farm/"
@@ -1541,7 +1600,8 @@
         "aliases": [],
         "website": "https://oxygenactiveplay.co.uk/activity-parks/reading/"
       },
-      "checkedAt": "2026-10-28T20:17:09.822Z",
+      "checkedAt": "2026-10-29T15:30:28.596Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://oxygenactiveplay.co.uk/activity-parks/reading/"
@@ -1591,7 +1651,8 @@
         "aliases": [],
         "website": "https://spiderclimbing.com/blue-spider/"
       },
-      "checkedAt": "2026-10-28T20:17:10.715Z",
+      "checkedAt": "2026-10-29T15:30:29.730Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://spiderclimbing.com/blue-spider/"
@@ -1638,7 +1699,8 @@
         ],
         "website": "https://www.everymancinema.com/venues-list/x11nv-everyman-wokingham/"
       },
-      "checkedAt": "2026-10-28T20:17:11.095Z",
+      "checkedAt": "2026-10-29T15:30:30.181Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.everymancinema.com/venues-list/x11nv-everyman-wokingham/"
@@ -1688,7 +1750,8 @@
         "aliases": [],
         "website": "https://www.escapereading.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:17:11.372Z",
+      "checkedAt": "2026-10-29T15:30:30.816Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.escapereading.co.uk/"
@@ -1737,7 +1800,8 @@
         "aliases": [],
         "website": "https://www.painshill.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:17:12.881Z",
+      "checkedAt": "2026-10-29T15:30:31.935Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.painshill.co.uk/"
@@ -1745,9 +1809,37 @@
         "status": "found",
         "source": "mapped"
       },
-      "image": null,
-      "retryable": true,
-      "status": "delivery-unavailable",
+      "image": {
+        "url": "https://www.painshill.co.uk/wp-content/uploads/2021/03/Stroll_around_the_serpentine_Lake.jpg",
+        "source": "https://www.painshill.co.uk/",
+        "credit": "Painshill",
+        "license": "Website preview — rights reserved",
+        "rights": "website-preview",
+        "strategy": "official-website-preview",
+        "checkedAt": "2026-10-29T15:30:32.314Z",
+        "width": 1200,
+        "height": 1200,
+        "confidence": 0.8999999999999999,
+        "matched": [
+          "body",
+          "venue name in page title, heading or business schema",
+          "physical venue scene in image metadata",
+          "image occurs in page content"
+        ],
+        "preview": {
+          "pageUrl": "https://www.painshill.co.uk/",
+          "publisher": "Painshill",
+          "kind": "venue-image",
+          "identityEvidence": [
+            "venue name in page title, heading or business schema"
+          ],
+          "subjectEvidence": [
+            "physical venue scene in image metadata"
+          ]
+        }
+      },
+      "retryable": false,
+      "status": "matched",
       "evidence": {
         "attempts": [
           {
@@ -1768,8 +1860,8 @@
             },
             "rejected": {
               "unsafe-or-unsupported-image": 54,
-              "unconfirmed-photo-subject": 58,
-              "small-or-banner-art": 24,
+              "unconfirmed-photo-subject": 62,
+              "small-or-banner-art": 20,
               "branding-map-or-stock": 10,
               "unscoped-image-context": 34
             },
@@ -1793,14 +1885,7 @@
         ],
         "reason": null
       },
-      "deliveryFailure": {
-        "checkedAt": "2026-10-28T20:21:50.919Z",
-        "imageUrl": "https://www.painshill.co.uk/wp-content/uploads/2021/03/Stroll_around_the_serpentine_Lake.jpg",
-        "testStatus": "failed",
-        "reason": "publisher-image-delivery-failed",
-        "elapsedMs": 15849,
-        "failures": []
-      }
+      "deliveryVerifiedAt": "2026-10-29T15:29:52.000Z"
     },
     {
       "query": {
@@ -1812,7 +1897,8 @@
         "category": "sports centre",
         "website": "https://reading-canoe.org.uk/"
       },
-      "checkedAt": "2026-10-28T20:17:13.132Z",
+      "checkedAt": "2026-10-29T15:30:32.318Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://reading-canoe.org.uk/"
@@ -1864,7 +1950,8 @@
         "wikidata": "Q41019517",
         "website": "https://www.odeon.co.uk/cinemas/maidenhead/"
       },
-      "checkedAt": "2026-10-28T20:17:14.138Z",
+      "checkedAt": "2026-10-29T15:30:33.598Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.odeon.co.uk/cinemas/maidenhead/"
@@ -1912,7 +1999,8 @@
         "wikipedia": "en:The Fat Duck",
         "website": "https://thefatduck.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:17:14.204Z",
+      "checkedAt": "2026-10-29T15:30:33.660Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://thefatduck.co.uk/"
@@ -1961,7 +2049,8 @@
         "category": "Restaurant",
         "website": "https://www.spiceloungewarfield.com/"
       },
-      "checkedAt": "2026-10-28T20:17:14.803Z",
+      "checkedAt": "2026-10-29T15:30:34.181Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.spiceloungewarfield.com/"
@@ -2011,7 +2100,8 @@
         "wikipedia": "en:Cole Museum of Zoology",
         "website": "https://collections.reading.ac.uk/cole-museum/"
       },
-      "checkedAt": "2026-10-28T20:17:15.227Z",
+      "checkedAt": "2026-10-29T15:30:34.561Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://collections.reading.ac.uk/cole-museum/"
@@ -2019,9 +2109,106 @@
         "status": "found",
         "source": "mapped"
       },
-      "image": null,
+      "image": {
+        "url": "https://collections.reading.ac.uk/cole-museum/wp-content/uploads/sites/3/2021/10/IMG_4705-1-2048x1536.jpg",
+        "source": "https://collections.reading.ac.uk/cole-museum/",
+        "credit": "Cole Museum of Zoology",
+        "license": "Website preview — rights reserved",
+        "rights": "website-preview",
+        "strategy": "official-website-preview",
+        "checkedAt": "2026-10-29T15:30:37.194Z",
+        "width": 2048,
+        "height": 1536,
+        "confidence": 0.8,
+        "matched": [
+          "venue name in page title, heading or business schema",
+          "venue area in page metadata, path or business address",
+          "physical venue scene classified by local model"
+        ],
+        "preview": {
+          "pageUrl": "https://collections.reading.ac.uk/cole-museum/",
+          "publisher": "Cole Museum of Zoology",
+          "kind": "venue-image",
+          "identityEvidence": [
+            "venue name in page title, heading or business schema",
+            "venue area in page metadata, path or business address"
+          ],
+          "subjectEvidence": [
+            "physical venue scene classified by local model"
+          ],
+          "review": {
+            "method": "image-analysis:local-clip",
+            "imageUrl": "https://collections.reading.ac.uk/cole-museum/wp-content/uploads/sites/3/2021/10/IMG_4705-1-2048x1536.jpg",
+            "checkedAt": "2026-10-29T15:30:37.194Z",
+            "description": "Offline model classification: generic physical venue scene similarity exceeds the fixed scene threshold and rejection margin. This is not a personal visual review, caption, or verification of venue identity.",
+            "sha256": "8a32f1b92d1e9b6958d55790ae3636757041ad1366188a5e57bbb802a03d8b4c",
+            "localClip": {
+              "model": {
+                "id": "Xenova/clip-vit-base-patch32",
+                "revision": "d15189d7028b43f1d3e65039190477f6af591c2a",
+                "dtype": "q8",
+                "device": "cpu",
+                "library": "@huggingface/transformers",
+                "libraryVersion": "3.8.1"
+              },
+              "minScore": 0.8,
+              "minMargin": 0.5,
+              "bestVenueScore": 0.8213934302330017,
+              "bestRejectScore": 0.03333789110183716,
+              "margin": 0.7880555391311646,
+              "scores": [
+                {
+                  "id": "venue-exterior",
+                  "group": "venue",
+                  "score": 0.8213934302330017
+                },
+                {
+                  "id": "venue-interior",
+                  "group": "venue",
+                  "score": 0.0886981338262558
+                },
+                {
+                  "id": "document",
+                  "group": "reject",
+                  "score": 0.03333789110183716
+                },
+                {
+                  "id": "construction",
+                  "group": "reject",
+                  "score": 0.021208442747592926
+                },
+                {
+                  "id": "logo-illustration",
+                  "group": "reject",
+                  "score": 0.018953485414385796
+                },
+                {
+                  "id": "ancillary-parking",
+                  "group": "reject",
+                  "score": 0.010438698343932629
+                },
+                {
+                  "id": "portrait-event",
+                  "group": "reject",
+                  "score": 0.0023716280702501535
+                },
+                {
+                  "id": "product-food",
+                  "group": "reject",
+                  "score": 0.0019696245435625315
+                },
+                {
+                  "id": "outdoor-place",
+                  "group": "venue",
+                  "score": 0.0016286582686007023
+                }
+              ]
+            }
+          }
+        }
+      },
       "retryable": false,
-      "status": "unresolved",
+      "status": "matched",
       "evidence": {
         "attempts": [
           {
@@ -2047,11 +2234,19 @@
               "unsafe-or-unsupported-image": 8,
               "small-or-banner-art": 9
             },
+            "vision": {
+              "status": "accepted",
+              "modelStatus": "ready",
+              "reason": "scene-threshold-met",
+              "considered": 2,
+              "attempted": 2
+            },
             "candidates": []
           }
         ],
         "reason": null
-      }
+      },
+      "deliveryVerifiedAt": "2026-10-29T15:29:52.000Z"
     },
     {
       "query": {
@@ -2065,7 +2260,8 @@
         "category": "Restaurant",
         "website": "http://www.royaltandoorireading.com/"
       },
-      "checkedAt": "2026-10-28T20:17:15.999Z",
+      "checkedAt": "2026-10-29T15:30:37.201Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.royaltandoorireading.com/"
@@ -2099,6 +2295,13 @@
               "branding-map-or-stock": 2,
               "unconfirmed-photo-subject": 4
             },
+            "vision": {
+              "status": "ineligible",
+              "modelStatus": "not-loaded",
+              "reason": "unconfirmed-official-identity",
+              "considered": 0,
+              "attempted": 0
+            },
             "candidates": []
           }
         ],
@@ -2121,7 +2324,8 @@
         ],
         "website": "https://www.clayskitchen.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:17:17.362Z",
+      "checkedAt": "2026-10-29T15:30:38.595Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.clayskitchen.co.uk/"
@@ -2171,7 +2375,8 @@
         "category": "Restaurant",
         "website": "https://www.spiceoven.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:17:18.294Z",
+      "checkedAt": "2026-10-29T15:30:39.042Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.spiceoven.co.uk/"
@@ -2187,9 +2392,9 @@
           {
             "website": "https://www.spiceoven.co.uk/",
             "pageUrl": null,
-            "reason": "timeout-or-abort",
+            "reason": "website-unavailable",
             "retryable": true,
-            "requestCount": 1,
+            "requestCount": 0,
             "identity": {
               "matchedName": false,
               "matchedArea": false,
@@ -2215,7 +2420,8 @@
         "category": "Local attraction",
         "website": "https://goape.co.uk/locations/bracknell"
       },
-      "checkedAt": "2026-10-28T20:17:30.303Z",
+      "checkedAt": "2026-10-29T15:30:51.050Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://goape.co.uk/locations/bracknell"
@@ -2231,7 +2437,7 @@
           {
             "website": "https://goape.co.uk/locations/bracknell",
             "pageUrl": "https://goape.co.uk/locations/bracknell/",
-            "reason": "unconfirmed-venue-or-branch",
+            "reason": "no-venue-photo",
             "retryable": false,
             "requestCount": 2,
             "identity": {
@@ -2239,14 +2445,24 @@
               "matchedArea": false,
               "matchedAddress": false,
               "multiBranch": true,
-              "branchSpecific": false,
+              "branchSpecific": true,
               "evidence": [
                 "venue name in page title, heading or business schema",
+                "venue coordinates matched",
                 "multi-branch operator"
               ]
             },
             "rejected": {
-              "unconfirmed-preview-location": 191
+              "unconfirmed-photo-subject": 1,
+              "unconfirmed-image-branch": 83,
+              "unsafe-or-unsupported-image": 107
+            },
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 1,
+              "attempted": 1
             },
             "candidates": []
           }
@@ -2264,7 +2480,8 @@
         "category": "Local attraction",
         "website": "https://www.wasing.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:17:30.706Z",
+      "checkedAt": "2026-10-29T15:30:51.890Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.wasing.co.uk/"
@@ -2315,7 +2532,8 @@
         "category": "Café",
         "website": "https://workhousecoffee.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:17:35.704Z",
+      "checkedAt": "2026-10-29T15:30:54.091Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://workhousecoffee.co.uk/"
@@ -2324,15 +2542,15 @@
         "source": "mapped"
       },
       "image": null,
-      "retryable": false,
-      "status": "unresolved",
+      "retryable": true,
+      "status": "retryable",
       "evidence": {
         "attempts": [
           {
             "website": "https://workhousecoffee.co.uk/",
             "pageUrl": "https://workhousecoffee.co.uk/",
             "reason": "no-venue-photo",
-            "retryable": false,
+            "retryable": true,
             "requestCount": 1,
             "identity": {
               "matchedName": true,
@@ -2349,6 +2567,13 @@
               "branding-map-or-stock": 27,
               "unconfirmed-photo-subject": 9,
               "unsafe-or-unsupported-image": 1
+            },
+            "vision": {
+              "status": "unavailable",
+              "modelStatus": "ready",
+              "reason": "image-download-incomplete",
+              "considered": 2,
+              "attempted": 2
             },
             "candidates": []
           }
@@ -2369,7 +2594,8 @@
         "wikidata": "Q7773745",
         "website": "http://www.waterside-inn.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:17:36.068Z",
+      "checkedAt": "2026-10-29T15:30:54.741Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.waterside-inn.co.uk/"
@@ -2404,6 +2630,13 @@
               "unsafe-or-unsupported-image": 2,
               "branding-map-or-stock": 3
             },
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 2,
+              "attempted": 2
+            },
             "candidates": []
           }
         ],
@@ -2422,7 +2655,8 @@
         "category": "fitness centre",
         "website": "https://www.thegymgroup.com/find-a-gym/reading-gyms/reading-west/"
       },
-      "checkedAt": "2026-10-28T20:17:36.428Z",
+      "checkedAt": "2026-10-29T15:30:55.853Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.thegymgroup.com/find-a-gym/reading-gyms/reading-west/"
@@ -2450,7 +2684,8 @@
               "evidence": [
                 "venue name in page title, heading or business schema",
                 "venue area in page metadata, path or business address",
-                "venue address matched"
+                "venue address matched",
+                "venue coordinates matched"
               ]
             },
             "rejected": {
@@ -2480,7 +2715,8 @@
         "category": "Restaurant",
         "website": "https://lumpini2.com/"
       },
-      "checkedAt": "2026-10-28T20:17:36.654Z",
+      "checkedAt": "2026-10-29T15:30:55.974Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://lumpini2.com/"
@@ -2526,7 +2762,8 @@
         "category": "Restaurant",
         "website": "https://www.panrestaurant.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:17:36.695Z",
+      "checkedAt": "2026-10-29T15:30:56.043Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.panrestaurant.co.uk/"
@@ -2572,7 +2809,8 @@
         "category": "Café",
         "website": "http://www.jennerscafe.com/"
       },
-      "checkedAt": "2026-10-28T20:17:36.736Z",
+      "checkedAt": "2026-10-29T15:30:56.103Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.jennerscafe.com/"
@@ -2620,7 +2858,8 @@
         "category": "Restaurant",
         "website": "https://www.emperorofindia.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:17:37.375Z",
+      "checkedAt": "2026-10-29T15:30:56.771Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.emperorofindia.co.uk/"
@@ -2630,28 +2869,62 @@
       },
       "image": null,
       "retryable": true,
-      "status": "retryable",
+      "status": "delivery-unavailable",
       "evidence": {
         "attempts": [
           {
             "website": "https://www.emperorofindia.co.uk/",
-            "pageUrl": null,
-            "reason": "timeout-or-abort",
-            "retryable": true,
+            "pageUrl": "https://www.emperorofindia.co.uk/",
+            "reason": null,
+            "retryable": false,
             "requestCount": 1,
             "identity": {
-              "matchedName": false,
-              "matchedArea": false,
-              "matchedAddress": false,
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": true,
               "multiBranch": false,
-              "branchSpecific": false,
-              "evidence": []
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "venue address matched"
+              ]
             },
-            "rejected": {},
-            "candidates": []
+            "rejected": {
+              "unconfirmed-photo-subject": 7,
+              "small-or-banner-art": 3,
+              "branding-map-or-stock": 12,
+              "food-or-drink-subject": 2
+            },
+            "candidates": [
+              {
+                "url": "https://www.emperorofindia.co.uk/wp-content/uploads/outside-dinning.jpg",
+                "source": "https://www.emperorofindia.co.uk/",
+                "photoScore": 90,
+                "evidence": [
+                  "background",
+                  "venue name in page title, heading or business schema",
+                  "venue area in page metadata, path or business address",
+                  "venue address matched",
+                  "physical venue scene in image metadata",
+                  "image occurs in page content"
+                ],
+                "subjectEvidence": [
+                  "physical venue scene in image metadata"
+                ]
+              }
+            ]
           }
         ],
         "reason": null
+      },
+      "deliveryFailure": {
+        "checkedAt": "2026-10-29T15:29:52.000Z",
+        "imageUrl": "https://www.emperorofindia.co.uk/wp-content/uploads/outside-dinning.jpg",
+        "testStatus": "failed",
+        "reason": "publisher-image-delivery-failed",
+        "elapsedMs": 13543,
+        "failures": []
       }
     },
     {
@@ -2666,7 +2939,8 @@
         "category": "Café",
         "website": "http://finchampstead.com/"
       },
-      "checkedAt": "2026-10-28T20:17:49.390Z",
+      "checkedAt": "2026-10-29T15:30:57.612Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://finchampstead.com/"
@@ -2759,7 +3033,8 @@
         "category": "Café",
         "website": "https://www.starbucks.com/store-locator/store/19001/membury-west-welcome-break-m-4-motorway-westbound-junction-14-15-berkshire-en"
       },
-      "checkedAt": "2026-10-28T20:18:02.162Z",
+      "checkedAt": "2026-10-29T15:30:58.405Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.starbucks.com/store-locator/store/19001/membury-west-welcome-break-m-4-motorway-westbound-junction-14-15-berkshire-en"
@@ -2814,7 +3089,8 @@
         ],
         "website": "https://www.masakali.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:02.310Z",
+      "checkedAt": "2026-10-29T15:30:58.795Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.masakali.co.uk/"
@@ -2864,7 +3140,8 @@
         "category": "Café",
         "website": "https://www.starbucks.com/store-locator/store/1013147/reading-king-street-1-buttermarket-and-6-king-street-reading-eng-rg-1-"
       },
-      "checkedAt": "2026-10-28T20:18:02.540Z",
+      "checkedAt": "2026-10-29T15:30:58.980Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.starbucks.com/store-locator/store/1013147/reading-king-street-1-buttermarket-and-6-king-street-reading-eng-rg-1-"
@@ -2917,7 +3194,8 @@
         "category": "Restaurant",
         "website": "https://www.thecoconut-tree.com/reading"
       },
-      "checkedAt": "2026-10-28T20:18:02.654Z",
+      "checkedAt": "2026-10-29T15:30:59.337Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.thecoconut-tree.com/reading"
@@ -2954,6 +3232,13 @@
               "unsafe-or-unsupported-image": 10,
               "small-or-banner-art": 1
             },
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 2,
+              "attempted": 2
+            },
             "candidates": []
           }
         ],
@@ -2970,7 +3255,8 @@
         "category": "Restaurant",
         "website": "https://spitiko.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:07.229Z",
+      "checkedAt": "2026-10-29T15:31:05.406Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://spitiko.uk/"
@@ -3020,7 +3306,8 @@
         "category": "Restaurant",
         "website": "https://www.pathaansrestaurant.co.uk/reading/"
       },
-      "checkedAt": "2026-10-28T20:18:07.486Z",
+      "checkedAt": "2026-10-29T15:31:05.908Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.pathaansrestaurant.co.uk/reading/"
@@ -3073,7 +3360,8 @@
         "category": "Restaurant",
         "website": "https://fenixiarestaurant.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:08.148Z",
+      "checkedAt": "2026-10-29T15:31:06.395Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://fenixiarestaurant.co.uk/"
@@ -3108,6 +3396,13 @@
               "branding-map-or-stock": 8,
               "unscoped-image-context": 2
             },
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 2,
+              "attempted": 2
+            },
             "candidates": []
           }
         ],
@@ -3126,7 +3421,8 @@
         "category": "Restaurant",
         "website": "https://www.pizzaexpress.com/maidenhead-bridge-street"
       },
-      "checkedAt": "2026-10-28T20:18:10.670Z",
+      "checkedAt": "2026-10-29T15:31:08.829Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.pizzaexpress.com/maidenhead-bridge-street"
@@ -3160,8 +3456,16 @@
             },
             "rejected": {
               "food-or-drink-subject": 10,
-              "unconfirmed-photo-subject": 3,
-              "unsafe-or-unsupported-image": 10
+              "unconfirmed-photo-subject": 1,
+              "unsafe-or-unsupported-image": 10,
+              "unconfirmed-image-branch": 2
+            },
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 1,
+              "attempted": 1
             },
             "candidates": []
           }
@@ -3180,7 +3484,8 @@
         "wikidata": "Q40473855",
         "website": "https://www.readingfilmtheatre.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:11.453Z",
+      "checkedAt": "2026-10-29T15:31:09.402Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.readingfilmtheatre.co.uk/"
@@ -3230,7 +3535,8 @@
         "category": "Café",
         "website": "https://www.fidgetandbob.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:12.089Z",
+      "checkedAt": "2026-10-29T15:31:10.520Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.fidgetandbob.co.uk/"
@@ -3279,7 +3585,8 @@
         "category": "Restaurant",
         "website": "https://www.caldesi.com/"
       },
-      "checkedAt": "2026-10-28T20:18:12.633Z",
+      "checkedAt": "2026-10-29T15:31:11.058Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.caldesi.com/"
@@ -3330,7 +3637,8 @@
         "category": "Restaurant",
         "website": "https://forburys.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:13.315Z",
+      "checkedAt": "2026-10-29T15:31:11.825Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://forburys.co.uk/"
@@ -3346,9 +3654,9 @@
           {
             "website": "https://forburys.co.uk/",
             "pageUrl": null,
-            "reason": "timeout-or-abort",
+            "reason": "website-unavailable",
             "retryable": true,
-            "requestCount": 1,
+            "requestCount": 0,
             "identity": {
               "matchedName": false,
               "matchedArea": false,
@@ -3376,7 +3684,8 @@
         "category": "Restaurant",
         "website": "https://sushimania.co.uk/location/reading/"
       },
-      "checkedAt": "2026-10-28T20:18:25.320Z",
+      "checkedAt": "2026-10-29T15:31:23.832Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://sushimania.co.uk/location/reading/"
@@ -3413,6 +3722,13 @@
               "unconfirmed-photo-subject": 4,
               "unsafe-or-unsupported-image": 3
             },
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 2,
+              "attempted": 2
+            },
             "candidates": []
           }
         ],
@@ -3431,7 +3747,8 @@
         "category": "escape game",
         "website": "https://escapereading.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:27.049Z",
+      "checkedAt": "2026-10-29T15:31:26.572Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://escapereading.co.uk/"
@@ -3465,6 +3782,13 @@
             "rejected": {
               "unconfirmed-photo-subject": 27
             },
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 2,
+              "attempted": 2
+            },
             "candidates": []
           }
         ],
@@ -3483,7 +3807,8 @@
         "category": "Restaurant",
         "website": "https://www.pepesale.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:27.484Z",
+      "checkedAt": "2026-10-29T15:31:27.919Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.pepesale.co.uk/"
@@ -3533,7 +3858,8 @@
         ],
         "website": "https://www.lincolncoffeehouse.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:27.947Z",
+      "checkedAt": "2026-10-29T15:31:28.976Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.lincolncoffeehouse.co.uk/"
@@ -3583,7 +3909,8 @@
         "category": "Restaurant",
         "website": "https://www.tobycarvery.co.uk/restaurants/south-east/lowerearleyreading"
       },
-      "checkedAt": "2026-10-28T20:18:28.217Z",
+      "checkedAt": "2026-10-29T15:31:29.145Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.tobycarvery.co.uk/restaurants/south-east/lowerearleyreading"
@@ -3629,7 +3956,8 @@
         "category": "Café",
         "website": "https://www.henrystreet.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:28.303Z",
+      "checkedAt": "2026-10-29T15:31:29.179Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.henrystreet.co.uk/"
@@ -3667,6 +3995,13 @@
               "artwork-or-promotion": 4,
               "unsafe-or-unsupported-image": 3
             },
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 2,
+              "attempted": 2
+            },
             "candidates": []
           }
         ],
@@ -3685,7 +4020,8 @@
         "wikipedia": "en:California Country Park",
         "website": "https://www.wokinghamcountryside.co.uk/california-country-park"
       },
-      "checkedAt": "2026-10-28T20:18:29.412Z",
+      "checkedAt": "2026-10-29T15:31:31.342Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.wokinghamcountryside.co.uk/california-country-park"
@@ -3735,7 +4071,8 @@
         "category": "Restaurant",
         "website": "https://www.tobycarvery.co.uk/restaurants/south-east/oldwindsorberkshire"
       },
-      "checkedAt": "2026-10-28T20:18:30.004Z",
+      "checkedAt": "2026-10-29T15:31:32.188Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.tobycarvery.co.uk/restaurants/south-east/oldwindsorberkshire"
@@ -3781,7 +4118,8 @@
         "category": "Restaurant",
         "website": "https://www.quattro-restaurant.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:30.047Z",
+      "checkedAt": "2026-10-29T15:31:32.222Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.quattro-restaurant.co.uk/"
@@ -3816,6 +4154,13 @@
               "unconfirmed-photo-subject": 16,
               "unsafe-or-unsupported-image": 7
             },
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 2,
+              "attempted": 2
+            },
             "candidates": []
           }
         ],
@@ -3837,7 +4182,8 @@
         ],
         "website": "https://geo-cafe.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:40.528Z",
+      "checkedAt": "2026-10-29T15:31:40.216Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://geo-cafe.co.uk/"
@@ -3871,6 +4217,13 @@
               "unconfirmed-photo-subject": 32,
               "unsafe-or-unsupported-image": 66
             },
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 1,
+              "attempted": 1
+            },
             "candidates": []
           }
         ],
@@ -3889,7 +4242,8 @@
         "category": "Restaurant",
         "website": "https://bills-website.co.uk/restaurants/reading"
       },
-      "checkedAt": "2026-10-28T20:18:40.726Z",
+      "checkedAt": "2026-10-29T15:31:41.020Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://bills-website.co.uk/restaurants/reading"
@@ -3939,7 +4293,8 @@
         ],
         "website": "https://boswellsgroup.com/"
       },
-      "checkedAt": "2026-10-28T20:18:40.874Z",
+      "checkedAt": "2026-10-29T15:31:41.087Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://boswellsgroup.com/"
@@ -3973,6 +4328,13 @@
               "unconfirmed-photo-subject": 27,
               "small-or-banner-art": 9
             },
+            "vision": {
+              "status": "ineligible",
+              "modelStatus": "not-loaded",
+              "reason": "unconfirmed-official-identity",
+              "considered": 0,
+              "attempted": 0
+            },
             "candidates": []
           }
         ],
@@ -3989,7 +4351,8 @@
         "category": "Restaurant",
         "website": "https://theshenaisandhurst.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:41.864Z",
+      "checkedAt": "2026-10-29T15:31:42.077Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://theshenaisandhurst.co.uk/"
@@ -4040,7 +4403,8 @@
         "category": "Restaurant",
         "website": "https://www.gigglingsquid.com/restaurant/billericay/"
       },
-      "checkedAt": "2026-10-28T20:18:42.082Z",
+      "checkedAt": "2026-10-29T15:31:42.459Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.gigglingsquid.com/restaurant/billericay/"
@@ -4089,7 +4453,8 @@
         "category": "Café",
         "website": "https://www.artichoke.cafe/"
       },
-      "checkedAt": "2026-10-28T20:18:42.603Z",
+      "checkedAt": "2026-10-29T15:31:43.048Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.artichoke.cafe/"
@@ -4140,7 +4505,8 @@
         "category": "Café",
         "website": "https://www.picnicfoods.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:43.388Z",
+      "checkedAt": "2026-10-29T15:31:44.180Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.picnicfoods.co.uk/"
@@ -4186,7 +4552,8 @@
         "category": "fitness centre",
         "website": "https://www.monkeymuaythai.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:43.986Z",
+      "checkedAt": "2026-10-29T15:31:44.964Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.monkeymuaythai.co.uk/"
@@ -4232,7 +4599,8 @@
         "category": "Restaurant",
         "website": "https://leedynasty.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:44.477Z",
+      "checkedAt": "2026-10-29T15:31:45.832Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://leedynasty.uk/"
@@ -4269,6 +4637,13 @@
               "small-or-banner-art": 1,
               "unsafe-or-unsupported-image": 3
             },
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 2,
+              "attempted": 2
+            },
             "candidates": []
           }
         ],
@@ -4287,7 +4662,8 @@
         "category": "Café",
         "website": "https://www.caffenero.com/uk/stores/maidenhead"
       },
-      "checkedAt": "2026-10-28T20:18:44.981Z",
+      "checkedAt": "2026-10-29T15:31:47.814Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.caffenero.com/uk/stores/maidenhead"
@@ -4339,7 +4715,8 @@
         "category": "Restaurant",
         "website": "https://thegreekhouse.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:46.478Z",
+      "checkedAt": "2026-10-29T15:31:49.150Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://thegreekhouse.uk/"
@@ -4385,7 +4762,8 @@
         "category": "sports centre",
         "website": "https://www.davidlloyd.co.uk/clubs/maidenhead/"
       },
-      "checkedAt": "2026-10-28T20:18:46.646Z",
+      "checkedAt": "2026-10-29T15:31:49.340Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.davidlloyd.co.uk/clubs/maidenhead/"
@@ -4394,14 +4772,14 @@
         "source": "mapped"
       },
       "image": null,
-      "retryable": true,
-      "status": "delivery-unavailable",
+      "retryable": false,
+      "status": "unresolved",
       "evidence": {
         "attempts": [
           {
             "website": "https://www.davidlloyd.co.uk/clubs/maidenhead/",
             "pageUrl": "https://www.davidlloyd.co.uk/clubs/maidenhead/",
-            "reason": null,
+            "reason": "no-venue-photo",
             "retryable": false,
             "requestCount": 1,
             "identity": {
@@ -4418,38 +4796,12 @@
             },
             "rejected": {
               "unsafe-or-unsupported-image": 5,
-              "unconfirmed-photo-subject": 56,
-              "branding-map-or-stock": 8
+              "unconfirmed-image-branch": 72
             },
-            "candidates": [
-              {
-                "url": "https://www.davidlloyd.co.uk/cms/images/softwire-david-lloyd/image/upload/f_auto/v1/Reception/kz6edqq0sbbgkz9wvqj9.jpg",
-                "source": "https://www.davidlloyd.co.uk/clubs/maidenhead/",
-                "photoScore": 90,
-                "evidence": [
-                  "body",
-                  "venue name in page title, heading or business schema",
-                  "venue area in page metadata, path or business address",
-                  "multi-branch operator",
-                  "physical venue scene in image metadata",
-                  "image occurs in page content"
-                ],
-                "subjectEvidence": [
-                  "physical venue scene in image metadata"
-                ]
-              }
-            ]
+            "candidates": []
           }
         ],
         "reason": null
-      },
-      "deliveryFailure": {
-        "checkedAt": "2026-10-28T20:21:50.919Z",
-        "imageUrl": "https://www.davidlloyd.co.uk/cms/images/softwire-david-lloyd/image/upload/f_auto/v1/Reception/kz6edqq0sbbgkz9wvqj9.jpg",
-        "testStatus": "timedOut",
-        "reason": "publisher-image-delivery-failed",
-        "elapsedMs": 44781,
-        "failures": []
       }
     },
     {
@@ -4464,7 +4816,8 @@
         "category": "Café",
         "website": "http://harris-arcade.com/shops/unit1.asp?expand=Cafes%20%26%20Sandwiches"
       },
-      "checkedAt": "2026-10-28T20:18:48.670Z",
+      "checkedAt": "2026-10-29T15:31:51.300Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://harris-arcade.com/shops/unit1.asp?expand=Cafes%20%26%20Sandwiches"
@@ -4509,7 +4862,8 @@
         "wikidata": "Q113370137",
         "website": "http://www.royalberkshire.nhs.uk/wards__departments/m/medical_museum.aspx?theme=Patient"
       },
-      "checkedAt": "2026-10-28T20:18:48.692Z",
+      "checkedAt": "2026-10-29T15:31:51.321Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.royalberkshire.nhs.uk/wards__departments/m/medical_museum.aspx?theme=Patient"
@@ -4555,7 +4909,8 @@
         "category": "fitness centre",
         "website": "https://www.cavershamhealthclub.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:48.907Z",
+      "checkedAt": "2026-10-29T15:31:51.580Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.cavershamhealthclub.co.uk/"
@@ -4563,9 +4918,106 @@
         "status": "found",
         "source": "mapped"
       },
-      "image": null,
+      "image": {
+        "url": "https://www.cavershamhealthclub.co.uk/assets/img/og-image-caversham-health-club.jpg",
+        "source": "https://www.cavershamhealthclub.co.uk/",
+        "credit": "Caversham Health Club",
+        "license": "Website preview — rights reserved",
+        "rights": "website-preview",
+        "strategy": "official-website-preview",
+        "checkedAt": "2026-10-29T15:31:53.065Z",
+        "width": 1200,
+        "height": 630,
+        "confidence": 0.8,
+        "matched": [
+          "venue name in page title, heading or business schema",
+          "venue area in page metadata, path or business address",
+          "physical venue scene classified by local model"
+        ],
+        "preview": {
+          "pageUrl": "https://www.cavershamhealthclub.co.uk/",
+          "publisher": "Caversham Health Club",
+          "kind": "venue-image",
+          "identityEvidence": [
+            "venue name in page title, heading or business schema",
+            "venue area in page metadata, path or business address"
+          ],
+          "subjectEvidence": [
+            "physical venue scene classified by local model"
+          ],
+          "review": {
+            "method": "image-analysis:local-clip",
+            "imageUrl": "https://www.cavershamhealthclub.co.uk/assets/img/og-image-caversham-health-club.jpg",
+            "checkedAt": "2026-10-29T15:31:53.065Z",
+            "description": "Offline model classification: generic physical venue scene similarity exceeds the fixed scene threshold and rejection margin. This is not a personal visual review, caption, or verification of venue identity.",
+            "sha256": "ee8712fb88670b59e6c31177d97c2132ec5e0b137c08da453c0b547f57837f19",
+            "localClip": {
+              "model": {
+                "id": "Xenova/clip-vit-base-patch32",
+                "revision": "d15189d7028b43f1d3e65039190477f6af591c2a",
+                "dtype": "q8",
+                "device": "cpu",
+                "library": "@huggingface/transformers",
+                "libraryVersion": "3.8.1"
+              },
+              "minScore": 0.8,
+              "minMargin": 0.5,
+              "bestVenueScore": 0.9944787621498108,
+              "bestRejectScore": 0.002016704063862562,
+              "margin": 0.9924620580859482,
+              "scores": [
+                {
+                  "id": "venue-interior",
+                  "group": "venue",
+                  "score": 0.9944787621498108
+                },
+                {
+                  "id": "document",
+                  "group": "reject",
+                  "score": 0.002016704063862562
+                },
+                {
+                  "id": "portrait-event",
+                  "group": "reject",
+                  "score": 0.001336279441602528
+                },
+                {
+                  "id": "logo-illustration",
+                  "group": "reject",
+                  "score": 0.0006421403377316892
+                },
+                {
+                  "id": "venue-exterior",
+                  "group": "venue",
+                  "score": 0.0005455983337014914
+                },
+                {
+                  "id": "product-food",
+                  "group": "reject",
+                  "score": 0.00041067827260121703
+                },
+                {
+                  "id": "construction",
+                  "group": "reject",
+                  "score": 0.00034966610837727785
+                },
+                {
+                  "id": "outdoor-place",
+                  "group": "venue",
+                  "score": 0.00018697796622291207
+                },
+                {
+                  "id": "ancillary-parking",
+                  "group": "reject",
+                  "score": 0.000033188622182933614
+                }
+              ]
+            }
+          }
+        }
+      },
       "retryable": false,
-      "status": "unresolved",
+      "status": "matched",
       "evidence": {
         "attempts": [
           {
@@ -4591,11 +5043,19 @@
               "unsafe-or-unsupported-image": 4,
               "food-or-drink-subject": 1
             },
+            "vision": {
+              "status": "accepted",
+              "modelStatus": "ready",
+              "reason": "scene-threshold-met",
+              "considered": 2,
+              "attempted": 1
+            },
             "candidates": []
           }
         ],
         "reason": null
-      }
+      },
+      "deliveryVerifiedAt": "2026-10-29T15:29:52.000Z"
     },
     {
       "query": {
@@ -4612,7 +5072,8 @@
         ],
         "website": "https://blacksheepcoffee.co.uk/blogs/locations/queen-victoria-street"
       },
-      "checkedAt": "2026-10-28T20:18:49.353Z",
+      "checkedAt": "2026-10-29T15:31:53.069Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://blacksheepcoffee.co.uk/blogs/locations/queen-victoria-street"
@@ -4647,6 +5108,13 @@
               "unconfirmed-photo-subject": 4,
               "branding-map-or-stock": 3
             },
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 2,
+              "attempted": 2
+            },
             "candidates": []
           }
         ],
@@ -4663,7 +5131,8 @@
         "category": "Restaurant",
         "website": "https://www.gigglingsquid.com/restaurant/wokingham"
       },
-      "checkedAt": "2026-10-28T20:18:49.626Z",
+      "checkedAt": "2026-10-29T15:31:54.668Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.gigglingsquid.com/restaurant/wokingham"
@@ -4694,9 +5163,7 @@
             },
             "rejected": {
               "invalid-schema": 1,
-              "unconfirmed-photo-subject": 41,
-              "unsafe-or-unsupported-image": 2,
-              "branding-map-or-stock": 2
+              "unconfirmed-preview-location": 45
             },
             "candidates": []
           }
@@ -4716,7 +5183,8 @@
         "category": "Café",
         "website": "https://www.starbucks.com/store-locator/store/1053718/reading-station-p-7-station-road-reading-eng-rg-1-1-lz-gb"
       },
-      "checkedAt": "2026-10-28T20:18:50.110Z",
+      "checkedAt": "2026-10-29T15:31:55.146Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.starbucks.com/store-locator/store/1053718/reading-station-p-7-station-road-reading-eng-rg-1-1-lz-gb"
@@ -4769,7 +5237,8 @@
         "category": "Restaurant",
         "website": "https://www.wagamama.com/restaurants/reading/reading"
       },
-      "checkedAt": "2026-10-28T20:18:50.300Z",
+      "checkedAt": "2026-10-29T15:31:55.494Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.wagamama.com/restaurants/reading/reading"
@@ -4802,9 +5271,16 @@
               ]
             },
             "rejected": {
-              "unconfirmed-photo-subject": 9,
+              "unconfirmed-photo-subject": 1,
               "unsafe-or-unsupported-image": 4,
-              "food-or-drink-subject": 3
+              "unconfirmed-image-branch": 11
+            },
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 1,
+              "attempted": 1
             },
             "candidates": []
           }
@@ -4824,7 +5300,8 @@
         "category": "Restaurant",
         "website": "https://www.zizzi.co.uk/italian/restaurants/reading-oracle"
       },
-      "checkedAt": "2026-10-28T20:18:52.183Z",
+      "checkedAt": "2026-10-29T15:31:57.633Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.zizzi.co.uk/italian/restaurants/reading-oracle"
@@ -4833,8 +5310,8 @@
         "source": "mapped"
       },
       "image": null,
-      "retryable": false,
-      "status": "needs-image-branch-review",
+      "retryable": true,
+      "status": "delivery-unavailable",
       "evidence": {
         "attempts": [
           {
@@ -4853,15 +5330,14 @@
                 "venue name in page title, heading or business schema",
                 "venue area in page metadata, path or business address",
                 "venue address matched",
+                "venue coordinates matched",
                 "multi-branch operator"
               ]
             },
             "rejected": {
-              "unconfirmed-photo-subject": 130,
+              "unconfirmed-photo-subject": 34,
               "unsafe-or-unsupported-image": 12,
-              "small-or-banner-art": 18,
-              "food-or-drink-subject": 20,
-              "branding-map-or-stock": 12
+              "unconfirmed-image-branch": 146
             },
             "candidates": [
               {
@@ -4873,7 +5349,9 @@
                   "venue name in page title, heading or business schema",
                   "venue area in page metadata, path or business address",
                   "venue address matched",
+                  "venue coordinates matched",
                   "multi-branch operator",
+                  "image attributed to the local branch",
                   "physical venue scene in image metadata",
                   "image occurs in page content"
                 ],
@@ -4884,8 +5362,15 @@
             ]
           }
         ],
-        "reason": "image-specific-branch-review-required",
-        "candidateImageUrl": "https://www.zizzi.co.uk/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fysupxjc9%2Fproduction%2Fc030c83047de8ee7c7416bd9bf45c88208d1246f-1920x1080.png&w=3840&q=75"
+        "reason": null
+      },
+      "deliveryFailure": {
+        "checkedAt": "2026-10-29T15:29:52.000Z",
+        "imageUrl": "https://www.zizzi.co.uk/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fysupxjc9%2Fproduction%2Fc030c83047de8ee7c7416bd9bf45c88208d1246f-1920x1080.png&w=3840&q=75",
+        "testStatus": "timedOut",
+        "reason": "publisher-image-delivery-failed",
+        "elapsedMs": 44676,
+        "failures": []
       }
     },
     {
@@ -4900,7 +5385,8 @@
         "category": "Restaurant",
         "website": "https://www.nandos.co.uk/restaurants/reading-oracle-centre"
       },
-      "checkedAt": "2026-10-28T20:18:53.348Z",
+      "checkedAt": "2026-10-29T15:31:58.959Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.nandos.co.uk/restaurants/reading-oracle-centre"
@@ -4929,14 +5415,22 @@
                 "venue name in page title, heading or business schema",
                 "venue area in page metadata, path or business address",
                 "venue address matched",
+                "venue coordinates matched",
                 "multi-branch operator"
               ]
             },
             "rejected": {
               "different-schema-venue": 1,
-              "unconfirmed-photo-subject": 10,
+              "unconfirmed-photo-subject": 3,
               "unsafe-or-unsupported-image": 11,
-              "food-or-drink-subject": 8
+              "unconfirmed-image-branch": 15
+            },
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 1,
+              "attempted": 1
             },
             "candidates": []
           }
@@ -4956,7 +5450,8 @@
         "category": "Café",
         "website": "https://www.caffenero.com/uk/stores/reading-oracle"
       },
-      "checkedAt": "2026-10-28T20:18:53.794Z",
+      "checkedAt": "2026-10-29T15:32:00.301Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.caffenero.com/uk/stores/reading-oracle"
@@ -5008,7 +5503,8 @@
         "category": "Restaurant",
         "website": "https://www.bellaitalia.co.uk/restaurants/reading/the-oracle"
       },
-      "checkedAt": "2026-10-28T20:18:54.998Z",
+      "checkedAt": "2026-10-29T15:32:02.060Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.bellaitalia.co.uk/restaurants/reading/the-oracle"
@@ -5035,7 +5531,8 @@
               "branchSpecific": true,
               "evidence": [
                 "venue name in page title, heading or business schema",
-                "venue area in page metadata, path or business address"
+                "venue area in page metadata, path or business address",
+                "venue coordinates matched"
               ]
             },
             "rejected": {
@@ -5059,7 +5556,8 @@
         "category": "Restaurant",
         "website": "https://www.pizzaexpress.com/reading-oracle-shopping-centre"
       },
-      "checkedAt": "2026-10-28T20:18:55.683Z",
+      "checkedAt": "2026-10-29T15:32:02.556Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.pizzaexpress.com/reading-oracle-shopping-centre"
@@ -5067,9 +5565,112 @@
         "status": "found",
         "source": "mapped"
       },
-      "image": null,
+      "image": {
+        "url": "https://a.mktgcdn.com/p/8nOb1wS1BKWG7ES0K3FnzHiBIWZqW2CmO4jfbs8Xpyg/1500x1000.jpg",
+        "source": "https://locations.pizzaexpress.com/reading-oracle-shopping-centre",
+        "credit": "PizzaExpress",
+        "license": "Website preview — rights reserved",
+        "rights": "website-preview",
+        "strategy": "official-website-preview",
+        "checkedAt": "2026-10-29T15:32:03.184Z",
+        "width": 1500,
+        "height": 1000,
+        "confidence": 0.8,
+        "matched": [
+          "venue name in page title, heading or business schema",
+          "venue area in page metadata, path or business address",
+          "venue address matched",
+          "multi-branch operator",
+          "image attributed to the local branch",
+          "physical venue scene classified by local model"
+        ],
+        "preview": {
+          "pageUrl": "https://locations.pizzaexpress.com/reading-oracle-shopping-centre",
+          "publisher": "PizzaExpress",
+          "kind": "venue-image",
+          "identityEvidence": [
+            "venue name in page title, heading or business schema",
+            "venue area in page metadata, path or business address",
+            "venue address matched",
+            "multi-branch operator",
+            "image attributed to the local branch"
+          ],
+          "subjectEvidence": [
+            "physical venue scene classified by local model"
+          ],
+          "review": {
+            "method": "image-analysis:local-clip",
+            "imageUrl": "https://a.mktgcdn.com/p/8nOb1wS1BKWG7ES0K3FnzHiBIWZqW2CmO4jfbs8Xpyg/1500x1000.jpg",
+            "checkedAt": "2026-10-29T15:32:03.184Z",
+            "description": "Offline model classification: generic physical venue scene similarity exceeds the fixed scene threshold and rejection margin. This is not a personal visual review, caption, or verification of venue identity.",
+            "sha256": "2bf2b32c262e32e529043c70626073af914e131d1dce30a9fcf63853151383b0",
+            "localClip": {
+              "model": {
+                "id": "Xenova/clip-vit-base-patch32",
+                "revision": "d15189d7028b43f1d3e65039190477f6af591c2a",
+                "dtype": "q8",
+                "device": "cpu",
+                "library": "@huggingface/transformers",
+                "libraryVersion": "3.8.1"
+              },
+              "minScore": 0.8,
+              "minMargin": 0.5,
+              "bestVenueScore": 0.8199241161346436,
+              "bestRejectScore": 0.05409234017133713,
+              "margin": 0.7658317759633064,
+              "scores": [
+                {
+                  "id": "venue-interior",
+                  "group": "venue",
+                  "score": 0.8199241161346436
+                },
+                {
+                  "id": "venue-exterior",
+                  "group": "venue",
+                  "score": 0.08202693611383438
+                },
+                {
+                  "id": "product-food",
+                  "group": "reject",
+                  "score": 0.05409234017133713
+                },
+                {
+                  "id": "portrait-event",
+                  "group": "reject",
+                  "score": 0.015075059607625008
+                },
+                {
+                  "id": "construction",
+                  "group": "reject",
+                  "score": 0.012758702971041203
+                },
+                {
+                  "id": "logo-illustration",
+                  "group": "reject",
+                  "score": 0.008626270107924938
+                },
+                {
+                  "id": "ancillary-parking",
+                  "group": "reject",
+                  "score": 0.005080048460513353
+                },
+                {
+                  "id": "document",
+                  "group": "reject",
+                  "score": 0.0019590414594858885
+                },
+                {
+                  "id": "outdoor-place",
+                  "group": "venue",
+                  "score": 0.00045749396667815745
+                }
+              ]
+            }
+          }
+        }
+      },
       "retryable": false,
-      "status": "unresolved",
+      "status": "matched",
       "evidence": {
         "attempts": [
           {
@@ -5093,14 +5694,23 @@
             },
             "rejected": {
               "food-or-drink-subject": 6,
-              "unconfirmed-photo-subject": 3,
-              "unsafe-or-unsupported-image": 10
+              "unconfirmed-photo-subject": 1,
+              "unsafe-or-unsupported-image": 10,
+              "unconfirmed-image-branch": 2
+            },
+            "vision": {
+              "status": "accepted",
+              "modelStatus": "ready",
+              "reason": "scene-threshold-met",
+              "considered": 1,
+              "attempted": 1
             },
             "candidates": []
           }
         ],
         "reason": null
-      }
+      },
+      "deliveryVerifiedAt": "2026-10-29T15:29:52.000Z"
     },
     {
       "query": {
@@ -5118,7 +5728,8 @@
         "commons": "Category:Creperie Doux Sourire, The Oracle, Reading",
         "website": "https://www.creperiedouxsourire.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:56.235Z",
+      "checkedAt": "2026-10-29T15:32:03.191Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.creperiedouxsourire.co.uk/"
@@ -5127,15 +5738,15 @@
         "source": "mapped"
       },
       "image": null,
-      "retryable": false,
-      "status": "unresolved",
+      "retryable": true,
+      "status": "retryable",
       "evidence": {
         "attempts": [
           {
             "website": "https://www.creperiedouxsourire.co.uk/",
             "pageUrl": "https://www.creperiedouxsourire.co.uk/",
             "reason": "no-venue-photo",
-            "retryable": false,
+            "retryable": true,
             "requestCount": 1,
             "identity": {
               "matchedName": true,
@@ -5155,6 +5766,13 @@
               "person-subject": 6,
               "unconfirmed-photo-subject": 30
             },
+            "vision": {
+              "status": "timeout",
+              "modelStatus": "ready",
+              "reason": "image-download-incomplete",
+              "considered": 2,
+              "attempted": 2
+            },
             "candidates": []
           }
         ],
@@ -5173,7 +5791,8 @@
         "category": "Café",
         "website": "https://www.starbucks.com/store-locator/store/3103/reading-oracle-upper-mall-the-oracle-shopping-centre-reading-eng-rg-1-2-ag-g"
       },
-      "checkedAt": "2026-10-28T20:18:56.490Z",
+      "checkedAt": "2026-10-29T15:32:13.426Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.starbucks.com/store-locator/store/3103/reading-oracle-upper-mall-the-oracle-shopping-centre-reading-eng-rg-1-2-ag-g"
@@ -5226,7 +5845,8 @@
         "category": "Restaurant",
         "website": "http://house-of-flavours.com/"
       },
-      "checkedAt": "2026-10-28T20:18:56.706Z",
+      "checkedAt": "2026-10-29T15:32:13.951Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://house-of-flavours.com/"
@@ -5272,7 +5892,8 @@
         "category": "sports centre",
         "website": "https://www.pe-newbury.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:57.481Z",
+      "checkedAt": "2026-10-29T15:32:14.813Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.pe-newbury.co.uk/"
@@ -5324,7 +5945,8 @@
         "category": "fitness centre",
         "website": "https://www.puregym.com/gyms/reading-caversham-road/"
       },
-      "checkedAt": "2026-10-28T20:18:57.672Z",
+      "checkedAt": "2026-10-29T15:32:15.109Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.puregym.com/gyms/reading-caversham-road/"
@@ -5376,7 +5998,8 @@
         "category": "Café",
         "website": "https://gails.com/pages/reading"
       },
-      "checkedAt": "2026-10-28T20:18:58.341Z",
+      "checkedAt": "2026-10-29T15:32:16.150Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://gails.com/pages/reading"
@@ -5386,13 +6009,13 @@
       },
       "image": null,
       "retryable": false,
-      "status": "needs-image-branch-review",
+      "status": "unresolved",
       "evidence": {
         "attempts": [
           {
             "website": "https://gails.com/pages/reading",
             "pageUrl": "https://gails.com/pages/reading",
-            "reason": null,
+            "reason": "no-venue-photo",
             "retryable": false,
             "requestCount": 1,
             "identity": {
@@ -5410,34 +6033,20 @@
             "rejected": {
               "unscoped-image-context": 1,
               "unsafe-or-unsupported-image": 1,
-              "unconfirmed-photo-subject": 23,
-              "branding-map-or-stock": 8
+              "unconfirmed-image-branch": 27,
+              "unconfirmed-photo-subject": 8
             },
-            "candidates": [
-              {
-                "url": "https://gails.com/cdn/shop/files/gails-charity-3-1.jpg?v=1686140163&width=1500",
-                "source": "https://gails.com/pages/reading",
-                "photoScore": 90,
-                "evidence": [
-                  "body",
-                  "venue name in page title, heading or business schema",
-                  "venue area in page metadata, path or business address",
-                  "multi-branch operator",
-                  "physical venue scene in image metadata",
-                  "image occurs in page content"
-                ],
-                "subjectEvidence": [
-                  "physical venue scene in image metadata"
-                ]
-              }
-            ]
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 2,
+              "attempted": 2
+            },
+            "candidates": []
           }
         ],
-        "reason": null,
-        "branchReview": {
-          "imageUrl": "https://gails.com/cdn/shop/files/gails-charity-3-1.jpg?v=1686140163&width=1500",
-          "reason": "Shared brand campaign image does not establish the Reading branch."
-        }
+        "reason": null
       }
     },
     {
@@ -5452,7 +6061,8 @@
         "category": "Restaurant",
         "website": "https://www.harvester.co.uk/restaurants/southeast/themansionhousereading"
       },
-      "checkedAt": "2026-10-28T20:18:58.654Z",
+      "checkedAt": "2026-10-29T15:32:17.234Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.harvester.co.uk/restaurants/southeast/themansionhousereading"
@@ -5498,7 +6108,8 @@
         "category": "Restaurant",
         "website": "https://www.cote.co.uk/restaurant/windsor"
       },
-      "checkedAt": "2026-10-28T20:18:58.847Z",
+      "checkedAt": "2026-10-29T15:32:17.460Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.cote.co.uk/restaurant/windsor"
@@ -5527,14 +6138,22 @@
                 "venue name in page title, heading or business schema",
                 "venue area in page metadata, path or business address",
                 "venue address matched",
+                "venue coordinates matched",
                 "multi-branch operator"
               ]
             },
             "rejected": {
-              "unconfirmed-photo-subject": 42,
+              "unconfirmed-photo-subject": 35,
               "unsafe-or-unsupported-image": 11,
-              "small-or-banner-art": 10,
-              "branding-map-or-stock": 16
+              "small-or-banner-art": 3,
+              "unconfirmed-image-branch": 24
+            },
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 1,
+              "attempted": 1
             },
             "candidates": []
           }
@@ -5554,7 +6173,8 @@
         "category": "Café",
         "website": "http://www.costa.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:18:59.407Z",
+      "checkedAt": "2026-10-29T15:32:18.932Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.costa.co.uk/"
@@ -5570,9 +6190,9 @@
           {
             "website": "https://www.costa.co.uk/",
             "pageUrl": null,
-            "reason": "timeout-or-abort",
+            "reason": "website-unavailable",
             "retryable": true,
-            "requestCount": 1,
+            "requestCount": 0,
             "identity": {
               "matchedName": false,
               "matchedArea": false,
@@ -5600,7 +6220,8 @@
         "category": "Restaurant",
         "website": "https://www.tobycarvery.co.uk/restaurants/south-east/langleyslough"
       },
-      "checkedAt": "2026-10-28T20:19:11.423Z",
+      "checkedAt": "2026-10-29T15:32:30.949Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.tobycarvery.co.uk/restaurants/south-east/langleyslough"
@@ -5646,7 +6267,8 @@
         "category": "Restaurant",
         "website": "https://www.chowasiankitchen.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:19:11.464Z",
+      "checkedAt": "2026-10-29T15:32:30.975Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.chowasiankitchen.co.uk/"
@@ -5700,7 +6322,8 @@
         ],
         "website": "https://dolphinscuisine.com/"
       },
-      "checkedAt": "2026-10-28T20:19:11.652Z",
+      "checkedAt": "2026-10-29T15:32:32.300Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://dolphinscuisine.com/"
@@ -5750,7 +6373,8 @@
         "category": "Restaurant",
         "website": "https://www.coconutbarkitchen.co.uk/"
       },
-      "checkedAt": "2026-10-28T20:19:12.383Z",
+      "checkedAt": "2026-10-29T15:32:32.695Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.coconutbarkitchen.co.uk/"
@@ -5791,6 +6415,13 @@
               "food-or-drink-subject": 6,
               "person-subject": 2
             },
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 2,
+              "attempted": 2
+            },
             "candidates": []
           }
         ],
@@ -5809,7 +6440,8 @@
         "category": "Restaurant",
         "website": "https://www.pizzaexpress.com/wokingham-broad-street"
       },
-      "checkedAt": "2026-10-28T20:19:14.352Z",
+      "checkedAt": "2026-10-29T15:32:36.974Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.pizzaexpress.com/wokingham-broad-street"
@@ -5842,7 +6474,7 @@
             },
             "rejected": {
               "food-or-drink-subject": 19,
-              "unconfirmed-photo-subject": 3,
+              "unconfirmed-image-branch": 3,
               "unsafe-or-unsupported-image": 10
             },
             "candidates": []
@@ -5863,7 +6495,8 @@
         "category": "Restaurant",
         "website": "https://www.zizzi.co.uk/italian/restaurants/wokingham"
       },
-      "checkedAt": "2026-10-28T20:19:14.819Z",
+      "checkedAt": "2026-10-29T15:32:37.408Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://www.zizzi.co.uk/italian/restaurants/wokingham"
@@ -5892,15 +6525,21 @@
                 "venue name in page title, heading or business schema",
                 "venue area in page metadata, path or business address",
                 "venue address matched",
+                "venue coordinates matched",
                 "multi-branch operator"
               ]
             },
             "rejected": {
-              "unconfirmed-photo-subject": 130,
+              "unconfirmed-photo-subject": 38,
               "unsafe-or-unsupported-image": 12,
-              "small-or-banner-art": 18,
-              "food-or-drink-subject": 24,
-              "branding-map-or-stock": 12
+              "unconfirmed-image-branch": 146
+            },
+            "vision": {
+              "status": "rejected",
+              "modelStatus": "ready",
+              "reason": "no-acceptable-venue-scene",
+              "considered": 2,
+              "attempted": 2
             },
             "candidates": []
           }
@@ -5919,7 +6558,8 @@
         "category": "Café",
         "website": "https://muffinbreak.co.uk/store/reading-broad-street-mall/"
       },
-      "checkedAt": "2026-10-28T20:19:15.720Z",
+      "checkedAt": "2026-10-29T15:32:40.873Z",
+      "reviewVersion": "local-clip-v2",
       "website": {
         "urls": [
           "https://muffinbreak.co.uk/store/reading-broad-street-mall/"
@@ -5928,14 +6568,14 @@
         "source": "mapped"
       },
       "image": null,
-      "retryable": true,
-      "status": "delivery-unavailable",
+      "retryable": false,
+      "status": "unresolved",
       "evidence": {
         "attempts": [
           {
             "website": "https://muffinbreak.co.uk/store/reading-broad-street-mall/",
             "pageUrl": "https://muffinbreak.co.uk/store/reading-broad-street-mall/",
-            "reason": null,
+            "reason": "no-venue-photo",
             "retryable": false,
             "requestCount": 1,
             "identity": {
@@ -5951,41 +6591,702 @@
               ]
             },
             "rejected": {
-              "unconfirmed-photo-subject": 12,
-              "food-or-drink-subject": 1,
-              "small-or-banner-art": 2,
-              "unsafe-or-unsupported-image": 1,
-              "branding-map-or-stock": 3
+              "unconfirmed-image-branch": 20,
+              "unsafe-or-unsupported-image": 1
             },
-            "candidates": [
-              {
-                "url": "https://muffinbreak.co.uk/wp-content/uploads/2017/09/Detail-Interior-Chester0041-500x350.jpg",
-                "source": "https://muffinbreak.co.uk/store/reading-broad-street-mall/",
-                "photoScore": 90,
-                "evidence": [
-                  "body",
-                  "venue name in page title, heading or business schema",
-                  "venue area in page metadata, path or business address",
-                  "multi-branch operator",
-                  "physical venue scene in image metadata",
-                  "image occurs in page content"
-                ],
-                "subjectEvidence": [
-                  "physical venue scene in image metadata"
-                ]
-              }
-            ]
+            "candidates": []
           }
         ],
         "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-3823120377",
+        "name": "Odeon",
+        "lat": 51.4157235,
+        "lng": -0.7542612,
+        "area": "Nearby",
+        "category": "Cinema",
+        "website": "https://www.odeon.co.uk/cinemas/bracknell/"
       },
-      "deliveryFailure": {
-        "checkedAt": "2026-10-28T20:21:50.919Z",
-        "imageUrl": "https://muffinbreak.co.uk/wp-content/uploads/2017/09/Detail-Interior-Chester0041-500x350.jpg",
-        "testStatus": "failed",
-        "reason": "publisher-image-delivery-failed",
-        "elapsedMs": 16664,
-        "failures": []
+      "checkedAt": "2026-10-29T15:32:49.802Z",
+      "reviewVersion": "local-clip-v2",
+      "website": {
+        "urls": [
+          "https://www.odeon.co.uk/cinemas/bracknell/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.odeon.co.uk/cinemas/bracknell/",
+            "pageUrl": null,
+            "reason": "website-http-403",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-4341725243",
+        "name": "The Old Ticket Hall",
+        "lat": 51.4855487,
+        "lng": -0.6064827,
+        "area": "Nearby",
+        "category": "Theatre",
+        "website": "https://oldtickethall.co.uk/"
+      },
+      "checkedAt": "2026-10-29T15:32:49.834Z",
+      "reviewVersion": "local-clip-v2",
+      "website": {
+        "urls": [
+          "https://oldtickethall.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://oldtickethall.co.uk/",
+            "pageUrl": "https://oldtickethall.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 4
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-4723649719",
+        "name": "The Ure Museum of Greek Archaeology",
+        "lat": 51.4412092,
+        "lng": -0.9453854,
+        "area": "Nearby",
+        "category": "Museum",
+        "wikidata": "Q7900347",
+        "wikipedia": "en:Ure Museum of Greek Archaeology",
+        "website": "https://collections.reading.ac.uk/ure-museum/"
+      },
+      "checkedAt": "2026-10-29T15:32:51.726Z",
+      "reviewVersion": "local-clip-v2",
+      "website": {
+        "urls": [
+          "https://collections.reading.ac.uk/ure-museum/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://collections.reading.ac.uk/ure-museum/",
+            "pageUrl": "https://collections.reading.ac.uk/ure-museum/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 25
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-4775831121",
+        "name": "Sub89",
+        "lat": 51.4565472,
+        "lng": -0.9743382,
+        "area": "Reading",
+        "address": "Friar Street",
+        "postcode": "RG1 1EP",
+        "category": "Theatre",
+        "website": "https://www.sub89.com/"
+      },
+      "checkedAt": "2026-10-29T15:32:52.739Z",
+      "reviewVersion": "local-clip-v2",
+      "website": {
+        "urls": [
+          "https://www.sub89.com/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.sub89.com/",
+            "pageUrl": "https://www.sub89.com/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": true,
+              "matchedAddress": true,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "venue area in page metadata, path or business address",
+                "venue address matched",
+                "venue coordinates matched"
+              ]
+            },
+            "rejected": {
+              "not-image-url": 1,
+              "artwork-or-promotion": 2,
+              "unconfirmed-photo-subject": 9
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-5319203683",
+        "name": "Reading Amateur Boxing & Fitness Club",
+        "lat": 51.4565607,
+        "lng": -0.9817126,
+        "area": "Nearby",
+        "category": "sports centre",
+        "website": "https://www.readingboxingclub.co.uk/"
+      },
+      "checkedAt": "2026-10-29T15:32:53.335Z",
+      "reviewVersion": "local-clip-v2",
+      "website": {
+        "urls": [
+          "https://www.readingboxingclub.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.readingboxingclub.co.uk/",
+            "pageUrl": null,
+            "reason": "website-http-403",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-5656148404",
+        "name": "Wokingham Superbowl",
+        "lat": 51.4076049,
+        "lng": -0.8394321,
+        "area": "wokingham",
+        "address": "Wellington Road",
+        "postcode": "RG40 2NJ",
+        "category": "bowling alley",
+        "website": "https://www.wokinghamsuperbowl.com/"
+      },
+      "checkedAt": "2026-10-29T15:32:54.097Z",
+      "reviewVersion": "local-clip-v2",
+      "website": {
+        "urls": [
+          "https://www.wokinghamsuperbowl.com/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.wokinghamsuperbowl.com/",
+            "pageUrl": null,
+            "reason": "website-http-403",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-6017673262",
+        "name": "Parthian Climbing Reading",
+        "lat": 51.4424799,
+        "lng": -0.9701714,
+        "area": "Nearby",
+        "category": "sports centre",
+        "website": "https://www.parthianclimbing.com/reading/"
+      },
+      "checkedAt": "2026-10-29T15:32:54.558Z",
+      "reviewVersion": "local-clip-v2",
+      "website": {
+        "urls": [
+          "https://www.parthianclimbing.com/reading/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.parthianclimbing.com/reading/",
+            "pageUrl": "https://parthianclimbing.com/reading/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 2,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 15
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-6262515933",
+        "name": "Oxygen",
+        "lat": 51.460392,
+        "lng": -1.0068464,
+        "area": "Nearby",
+        "category": "sports centre",
+        "website": "https://oxygenactiveplay.co.uk/activity-parks/reading/"
+      },
+      "checkedAt": "2026-10-29T15:32:56.257Z",
+      "reviewVersion": "local-clip-v2",
+      "website": {
+        "urls": [
+          "https://oxygenactiveplay.co.uk/activity-parks/reading/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://oxygenactiveplay.co.uk/activity-parks/reading/",
+            "pageUrl": "https://oxygenactiveplay.co.uk/activity-parks/reading/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 132,
+              "unscoped-image-context": 4
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-6298975414",
+        "name": "Cineworld",
+        "lat": 51.4171477,
+        "lng": -0.7507235,
+        "area": "Bracknell",
+        "postcode": "RG12 1BG",
+        "category": "Cinema",
+        "website": "https://www.cineworld.co.uk/cinemas/bracknell/107"
+      },
+      "checkedAt": "2026-10-29T15:32:56.480Z",
+      "reviewVersion": "local-clip-v2",
+      "website": {
+        "urls": [
+          "https://www.cineworld.co.uk/cinemas/bracknell/107"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.cineworld.co.uk/cinemas/bracknell/107",
+            "pageUrl": null,
+            "reason": "website-http-403",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-8948639879",
+        "name": "Openhand",
+        "lat": 51.4586319,
+        "lng": -1.0039552,
+        "area": "Nearby",
+        "category": "Art gallery",
+        "website": "https://www.ohos.org.uk/"
+      },
+      "checkedAt": "2026-10-29T15:32:56.527Z",
+      "reviewVersion": "local-clip-v2",
+      "website": {
+        "urls": [
+          "https://www.ohos.org.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.ohos.org.uk/",
+            "pageUrl": "https://ohos.org.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 2,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unscoped-image-context": 1,
+              "unconfirmed-preview-location": 9
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-9088351041",
+        "name": "Reading Biscuit Factory",
+        "lat": 51.4550957,
+        "lng": -0.9774048,
+        "area": "Reading",
+        "address": "Oxford Road",
+        "postcode": "RG1 7QG",
+        "category": "Cinema",
+        "website": "https://readingbiscuitfactory.co.uk/"
+      },
+      "checkedAt": "2026-10-29T15:32:57.179Z",
+      "reviewVersion": "local-clip-v2",
+      "website": {
+        "urls": [
+          "https://readingbiscuitfactory.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://readingbiscuitfactory.co.uk/",
+            "pageUrl": "https://www.readingbiscuitfactory.co.uk/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 2,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": true,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": [
+                "venue area in page metadata, path or business address"
+              ]
+            },
+            "rejected": {
+              "small-or-banner-art": 1,
+              "unconfirmed-venue": 1
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-9118245704",
+        "name": "LaplandUK",
+        "lat": 51.4083412,
+        "lng": -0.7083987,
+        "area": "Ascot",
+        "address": "Whitmoor Forest, Swinley Road, Winkfield Row",
+        "postcode": "SL5 8BD",
+        "category": "Theme park",
+        "website": "https://laplanduk.freshdesk.com/support/home"
+      },
+      "checkedAt": "2026-10-29T15:32:57.458Z",
+      "reviewVersion": "local-clip-v2",
+      "website": {
+        "urls": [
+          "https://laplanduk.freshdesk.com/support/home"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://laplanduk.freshdesk.com/support/home",
+            "pageUrl": null,
+            "reason": "website-http-404",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": false,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": false,
+              "evidence": []
+            },
+            "rejected": {},
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11218342628",
+        "name": "The Atrium Health Club",
+        "lat": 51.4652824,
+        "lng": -1.0091577,
+        "area": "Nearby",
+        "category": "sports centre",
+        "website": "https://www.theatriumhealthclub.co.uk/"
+      },
+      "checkedAt": "2026-10-29T15:32:57.792Z",
+      "reviewVersion": "local-clip-v2",
+      "website": {
+        "urls": [
+          "https://www.theatriumhealthclub.co.uk/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.theatriumhealthclub.co.uk/",
+            "pageUrl": "https://www.theatriumhealthclub.co.uk/",
+            "reason": "no-venue-photo",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": false,
+              "branchSpecific": true,
+              "evidence": [
+                "venue name in page title, heading or business schema"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 29,
+              "unscoped-image-context": 26
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
+      }
+    },
+    {
+      "query": {
+        "id": "osm-node-11645785178",
+        "name": "Oakwood Climbing Centre",
+        "lat": 51.4034605,
+        "lng": -0.7989744,
+        "area": "Wokingham",
+        "address": "Waterloo Road",
+        "postcode": "RG40 3DA",
+        "category": "sports centre",
+        "website": "https://www.oakwoodclimbingcentre.com/"
+      },
+      "checkedAt": "2026-10-29T15:32:58.020Z",
+      "reviewVersion": "local-clip-v2",
+      "website": {
+        "urls": [
+          "https://www.oakwoodclimbingcentre.com/"
+        ],
+        "status": "found",
+        "source": "mapped"
+      },
+      "image": null,
+      "retryable": false,
+      "status": "unresolved",
+      "evidence": {
+        "attempts": [
+          {
+            "website": "https://www.oakwoodclimbingcentre.com/",
+            "pageUrl": "https://www.oakwoodclimbingcentre.com/",
+            "reason": "unconfirmed-venue-or-branch",
+            "retryable": false,
+            "requestCount": 1,
+            "identity": {
+              "matchedName": true,
+              "matchedArea": false,
+              "matchedAddress": false,
+              "multiBranch": true,
+              "branchSpecific": false,
+              "evidence": [
+                "venue name in page title, heading or business schema",
+                "multi-branch operator"
+              ]
+            },
+            "rejected": {
+              "unconfirmed-preview-location": 92
+            },
+            "candidates": []
+          }
+        ],
+        "reason": null
       }
     }
   ]
