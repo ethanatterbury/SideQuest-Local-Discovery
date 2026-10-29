@@ -4,6 +4,7 @@ import { openPhotoLicense } from "./photo-policy";
 const ENDPOINT = "https://commons.wikimedia.org/w/api.php";
 const MAX_BODY_BYTES = 512 * 1024;
 const MAX_CANDIDATES = 6;
+const REQUEST_INTERVAL_MS = 650;
 const USER_AGENT =
   "SideQuest/1.0 (https://sidequest-local-discovery.vercel.app; contact https://github.com/ethanatterbury/SideQuest-Local-Discovery/issues)";
 
@@ -53,6 +54,11 @@ export type GeographCommonsOptions = {
   checkedAt?: string;
   expectedTitle?: string;
   expectedPhotographer?: string;
+  /** Deterministic clock and cancellable pause for tests; fetch injection alone keeps production pacing. */
+  pacing?: {
+    now: () => number;
+    pause: (delayMs: number, signal: AbortSignal) => Promise<void>;
+  };
 };
 
 class LookupError extends Error {
@@ -63,6 +69,55 @@ class LookupError extends Error {
   ) {
     super(reason);
   }
+}
+
+type Pacing = NonNullable<GeographCommonsOptions["pacing"]>;
+const defaultPacing: Pacing = {
+  now: () => Date.now(),
+  pause: (delayMs, signal) =>
+    new Promise((resolve, reject) => {
+      const finish = () => {
+        signal.removeEventListener("abort", abort);
+        resolve();
+      };
+      const abort = () => {
+        clearTimeout(timer);
+        signal.removeEventListener("abort", abort);
+        reject(new LookupError("deadline-exceeded", true));
+      };
+      const timer = setTimeout(finish, delayMs);
+      signal.addEventListener("abort", abort, { once: true });
+      if (signal.aborted) abort();
+    }),
+};
+const requestSchedules = new WeakMap<
+  Pacing["now"],
+  { lastStartedAt?: number; tail: Promise<void> }
+>();
+
+async function paceRequest(pacing: Pacing, signal: AbortSignal): Promise<void> {
+  let schedule = requestSchedules.get(pacing.now);
+  if (!schedule) {
+    schedule = { tail: Promise.resolve() };
+    requestSchedules.set(pacing.now, schedule);
+  }
+  const gate = schedule;
+  const admitted = gate.tail.then(async () => {
+    if (signal.aborted) throw new LookupError("deadline-exceeded", true);
+    const delay =
+      gate.lastStartedAt === undefined
+        ? 0
+        : Math.max(
+            0,
+            REQUEST_INTERVAL_MS - (pacing.now() - gate.lastStartedAt),
+          );
+    if (delay > 0) await abortable(pacing.pause(delay, signal), signal);
+    if (signal.aborted) throw new LookupError("deadline-exceeded", true);
+    gate.lastStartedAt = pacing.now();
+  });
+  // A cancelled waiter stays in this chain until its predecessor releases the gate.
+  gate.tail = admitted.catch(() => {});
+  await abortable(admitted, signal);
 }
 
 function record(value: unknown): Json | undefined {
@@ -152,26 +207,34 @@ function sourceIds(metadata: Metadata): string[] {
   }
   return [...ids];
 }
-function cdnUrl(value: unknown): value is string {
+function cdnUrl(value: unknown): string | undefined {
   if (
     typeof value !== "string" ||
     !value.startsWith("https://upload.wikimedia.org/")
   )
-    return false;
+    return;
   try {
     const url = new URL(value);
-    return (
-      url.hostname === "upload.wikimedia.org" &&
-      !url.username &&
-      !url.password &&
-      !url.port &&
-      !url.search &&
-      !url.hash &&
-      url.pathname.startsWith("/wikipedia/commons/") &&
-      /\.(?:jpe?g|png|webp|avif)$/i.test(url.pathname)
-    );
+    if (
+      url.hostname !== "upload.wikimedia.org" ||
+      url.username ||
+      url.password ||
+      url.port ||
+      url.hash ||
+      !url.pathname.startsWith("/wikipedia/commons/") ||
+      !/\.(?:jpe?g|png|webp|avif)$/i.test(url.pathname)
+    )
+      return;
+    if (
+      [...url.searchParams.keys()].some(
+        (key) => !["utm_source", "utm_campaign", "utm_content"].includes(key),
+      )
+    )
+      return;
+    url.search = "";
+    return url.href;
   } catch {
-    return false;
+    return;
   }
 }
 function descriptionUrl(value: unknown, title: string): value is string {
@@ -277,6 +340,7 @@ export async function resolveGeographCommonsPhoto(
     warnings: [],
   };
   let requestCount = 0;
+  let sourceIdentityEstablished = false;
   const result = (
     reason: string,
     image: PlacePhoto | null = null,
@@ -306,6 +370,7 @@ export async function resolveGeographCommonsPhoto(
     if (controller.signal.aborted)
       throw new LookupError("deadline-exceeded", true);
     if (requestCount >= 7) throw new LookupError("request-limit", true);
+    await paceRequest(options.pacing || defaultPacing, controller.signal);
     const query = new URLSearchParams({
       format: "json",
       formatversion: "2",
@@ -342,7 +407,14 @@ export async function resolveGeographCommonsPhoto(
           : "unknown";
       throw new LookupError(
         `api-${code}`,
-        ["maxlag", "ratelimited", "readonly", "timeout"].includes(code),
+        [
+          "maxlag",
+          "ratelimited",
+          "readonly",
+          "timeout",
+          "cirrussearch-too-busy-error",
+        ].includes(code),
+        code === "cirrussearch-too-busy-error" ? 60000 : undefined,
       );
     }
     return data;
@@ -383,6 +455,7 @@ export async function resolveGeographCommonsPhoto(
       description: string;
     }[] = [];
     let reason = "missing-source-evidence";
+    let identityRejection: string | undefined;
     for (const page of eligible) {
       const entity = record(entities[`M${page.pageid}`]);
       // Missing MediaInfo is normal for older files; a malformed response is not absence of claims.
@@ -427,24 +500,31 @@ export async function resolveGeographCommonsPhoto(
           : "missing-source-evidence";
         continue;
       }
+      sourceIdentityEstablished = true;
+      const originalUrl = cdnUrl(info?.url);
+      const thumbnailUrl =
+        info?.thumburl === undefined ? undefined : cdnUrl(info.thumburl);
       if (
         !info ||
-        !cdnUrl(info.url) ||
-        (info.thumburl !== undefined && !cdnUrl(info.thumburl)) ||
+        !originalUrl ||
+        (info.thumburl !== undefined && !thumbnailUrl) ||
         !descriptionUrl(info.descriptionurl, page.title!) ||
         !/^image\/(?:jpeg|png|webp|avif)$/.test(info.mime || "")
       ) {
         reason = "unsafe-image-url";
+        identityRejection = reason;
         continue;
       }
       const credit = plain(metadata.Artist?.value).slice(0, 300);
       const license = plain(metadata.LicenseShortName?.value);
       if (!credit) {
         reason = "missing-credit";
+        identityRejection = reason;
         continue;
       }
       if (!openPhotoLicense(license)) {
         reason = "non-open-license";
+        identityRejection = reason;
         continue;
       }
       const description = plain(metadata.ImageDescription?.value);
@@ -455,7 +535,7 @@ export async function resolveGeographCommonsPhoto(
         ids: [...new Set(ids)],
         description,
         image: {
-          url: info.thumburl || info.url,
+          url: thumbnailUrl || originalUrl,
           source: info.descriptionurl,
           credit,
           license,
@@ -472,7 +552,7 @@ export async function resolveGeographCommonsPhoto(
       });
     }
     if (accepted.length > 1) return result("ambiguous-candidates");
-    if (!accepted.length) return result(reason);
+    if (!accepted.length) return result(identityRejection || reason);
     const candidate = accepted[0];
     Object.assign(evidence, {
       commonsPageId: candidate.page.pageid,
@@ -518,7 +598,16 @@ export async function resolveGeographCommonsPhoto(
     });
     if (search.continue) return result("ambiguous-candidates");
     const primary = await evaluate(pages(search), "structured-id");
-    if (primary.image || primary.reason === "ambiguous-candidates")
+    if (
+      primary.image ||
+      sourceIdentityEstablished ||
+      ![
+        "not-found",
+        "conflicting-structured-id",
+        "conflicting-source-id",
+        "missing-source-evidence",
+      ].includes(primary.reason)
+    )
       return primary;
     // exturlusage is a prefix index: filter the returned URL by its complete numeric path.
     const found = new Map<number, string>();
@@ -561,7 +650,9 @@ export async function resolveGeographCommonsPhoto(
         throw new LookupError("invalid-continuation");
     }
     if (!found.size)
-      return primary.reason === "not-found" ? result("not-found") : primary;
+      return primary.reason === "not-found"
+        ? result("not-found")
+        : { ...primary, requestCount };
     const files = await request({
       action: "query",
       pageids: [...found.keys()].join("|"),

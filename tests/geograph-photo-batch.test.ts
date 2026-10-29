@@ -3,6 +3,7 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { gzipSync } from "node:zlib";
+import { createHash } from "node:crypto";
 import {
   readGeographCandidates,
   runGeographPhotoBatch,
@@ -298,6 +299,51 @@ test("negative cache does not overwrite official-site evidence and source change
   expect(deps.resolveGeographCommonsPhoto).toHaveBeenCalledTimes(2);
 });
 
+test("rechecks a recent v1 unsafe-image-url miss immediately after source review changes to v2", async () => {
+  const paths = await setup();
+  const data = input();
+  const oldFingerprint = createHash("sha256")
+    .update(
+      JSON.stringify({
+        version: "geograph-commons-v1",
+        query: data.entries[0].query,
+        candidates: data.entries[0].candidates,
+      }),
+    )
+    .digest("hex");
+  await writeFile(
+    paths.output,
+    JSON.stringify({
+      version: 1,
+      entries: [
+        {
+          query,
+          checkedAt: image.checkedAt,
+          image: null,
+          website: { urls: [], status: "no-match", source: "none" },
+          geograph: {
+            version: "geograph-commons-v1",
+            fingerprint: oldFingerprint,
+            checkedAt: image.checkedAt,
+            status: "unresolved",
+            retryable: false,
+            reason: "unsafe-image-url",
+          },
+        },
+      ],
+    }),
+  );
+  const deps = providers();
+  expect(
+    await runGeographPhotoBatch({ ...paths, candidates: data }, deps),
+  ).toMatchObject({ processed: 1, matched: 1, cached: 0 });
+  expect(deps.resolveGeographCommonsPhoto).toHaveBeenCalledOnce();
+  expect((await json(paths.output)).entries[0].geograph).toMatchObject({
+    version: "geograph-commons-v2",
+    status: "matched",
+  });
+});
+
 test.each([
   { ...candidate, coordinates: { lat: 52, lng: -0.8 } },
   { ...candidate, subjectPrecision: { digits: 6, metres: 100 } },
@@ -425,6 +471,51 @@ test("honors rate limiting by checkpointing a retryable result and stopping the 
   expect((await json(paths.output)).entries[0].geograph).toMatchObject({
     retryable: true,
     retryAfter: "2026-10-29T12:05:00.000Z",
+  });
+});
+
+test("stops the batch on CirrusSearch busy without requesting a second venue", async () => {
+  const paths = await setup();
+  const second = { ...query, id: "osm-node-124", name: "Cedarwood Garden" };
+  const data = input();
+  data.entries.push({
+    query: second,
+    identity: websiteDiscoveryIdentity(second),
+    candidates: [
+      {
+        ...candidate,
+        title: second.name,
+        evidence: {
+          ...candidate.evidence,
+          normalizedVenueName: "cedarwood garden",
+        },
+      },
+    ],
+  });
+  const deps = providers({
+    resolveGeographCommonsPhoto: vi.fn(async () => ({
+      ...missing(),
+      reason: "api-cirrussearch-too-busy-error",
+      retryable: true,
+      requestCount: 1,
+    })),
+  });
+  expect(
+    await runGeographPhotoBatch({ ...paths, candidates: data }, deps),
+  ).toMatchObject({
+    processed: 1,
+    matched: 0,
+    retryable: 1,
+    rateLimited: true,
+    requests: 1,
+  });
+  expect(deps.resolveGeographCommonsPhoto).toHaveBeenCalledOnce();
+  const after = await json(paths.output);
+  expect(after.entries).toHaveLength(1);
+  expect(after.entries[0].geograph).toMatchObject({
+    reason: "api-cirrussearch-too-busy-error",
+    retryable: true,
+    retryAfter: "2026-10-29T12:01:00.000Z",
   });
 });
 

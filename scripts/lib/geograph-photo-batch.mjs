@@ -12,7 +12,7 @@ const {
 } = loadProvider("src/providers/photo-policy.ts");
 
 const DAY = 86400000;
-const VERSION = "geograph-commons-v1";
+const VERSION = "geograph-commons-v2";
 const SOURCE_ROOT = "https://data.geograph.org.uk/dumps/";
 const LICENSE_URL = "https://creativecommons.org/licenses/by-sa/2.0/";
 const sleep = (ms) => new Promise((done) => setTimeout(done, ms));
@@ -625,7 +625,7 @@ export async function runGeographPhotoBatch(options, providers) {
         if (response?.image) reason = "candidate-metadata-rejected";
         if (
           response?.retryAfterMs ||
-          /^(?:http-(?:429|503)|api-(?:maxlag|ratelimited|readonly))$/.test(
+          /^(?:http-(?:429|503)|api-(?:maxlag|ratelimited|readonly|cirrussearch-too-busy-error))$/.test(
             reason,
           )
         ) {

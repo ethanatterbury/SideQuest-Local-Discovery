@@ -1,5 +1,8 @@
 import { afterEach, expect, it, vi } from "vitest";
-import { resolveGeographCommonsPhoto } from "../src/providers/geograph-commons-photo";
+import {
+  resolveGeographCommonsPhoto as resolveWithProductionPacing,
+  type GeographCommonsOptions,
+} from "../src/providers/geograph-commons-photo";
 import { approvedPhoto } from "../src/providers/photo-policy";
 
 const id = "57771";
@@ -8,6 +11,21 @@ const original =
   "https://upload.wikimedia.org/wikipedia/commons/a/ab/NS6469_harvest.jpg";
 const thumb =
   "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/NS6469_harvest.jpg/960px-NS6469_harvest.jpg";
+function resolveGeographCommonsPhoto(
+  geographId: number | string,
+  options: GeographCommonsOptions = {},
+) {
+  let fixtureTime = 0;
+  return resolveWithProductionPacing(geographId, {
+    pacing: {
+      now: () => fixtureTime,
+      pause: async (delayMs: number) => {
+        fixtureTime += delayMs;
+      },
+    },
+    ...options,
+  });
+}
 function page(pageid = 101) {
   return {
     pageid,
@@ -133,6 +151,159 @@ it("identifies a renamed Commons file by agreeing source link and structured ID,
     `haswbstatement:P7384=${id}`,
   );
   expect(search.searchParams.get("gsrnamespace")).toBe("6");
+});
+
+it("accepts the observed Minehead Commons payload and strips only its cosmetic UTM parameters", async () => {
+  const minehead = page();
+  const filename =
+    "Interior%2C_Minehead_Museum_-_geograph.org.uk_-_7319896.jpg";
+  const cleanUrl = `https://upload.wikimedia.org/wikipedia/commons/4/4a/${filename}`;
+  minehead.title =
+    "File:Interior, Minehead Museum - geograph.org.uk - 7319896.jpg";
+  Object.assign(minehead.imageinfo[0], {
+    url: `${cleanUrl}?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original`,
+    thumburl: `${cleanUrl}?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled`,
+    descriptionurl:
+      "https://commons.wikimedia.org/wiki/File:Interior,_Minehead_Museum_-_geograph.org.uk_-_7319896.jpg",
+    width: 640,
+    height: 480,
+    thumbwidth: 640,
+    thumbheight: 480,
+  });
+  minehead.imageinfo[0].extmetadata.Credit.value =
+    '<a href="https://www.geograph.org.uk/photo/7319896">From Geograph</a>';
+  const fetcher = primary(minehead, entity("7319896"));
+  const result = await resolveGeographCommonsPhoto("7319896", {
+    fetch: fetcher,
+    checkedAt,
+  });
+  expect(result).toMatchObject({
+    reason: "matched",
+    requestCount: 2,
+    image: { url: cleanUrl, width: 640, height: 480, license: "CC BY-SA 2.0" },
+  });
+  expect(approvedPhoto(result.image)?.url).toBe(cleanUrl);
+  expect(fetcher).toHaveBeenCalledTimes(2);
+});
+
+it("rejects unknown CDN query parameters without falling back after source identity is established", async () => {
+  for (const query of [
+    "width=960",
+    "utm_source=commons.wikimedia.org&url=https://evil.test",
+    "utm_content=original&token=secret",
+  ]) {
+    const candidate = page();
+    candidate.imageinfo[0].thumburl += `?${query}`;
+    const fetcher = primary(candidate);
+    expect(
+      await resolveGeographCommonsPhoto(id, { fetch: fetcher, checkedAt }),
+    ).toMatchObject({
+      image: null,
+      reason: "unsafe-image-url",
+      requestCount: 2,
+    });
+    expect(fetcher).toHaveBeenCalledTimes(2);
+  }
+});
+
+it("does not repeat discovery after finding an exact source with unusable credit or license", async () => {
+  for (const [field, reason] of [
+    ["Artist", "missing-credit"],
+    ["LicenseShortName", "non-open-license"],
+  ] as const) {
+    const candidate = page();
+    candidate.imageinfo[0].extmetadata[field].value = "";
+    const fetcher = primary(candidate);
+    expect(
+      await resolveGeographCommonsPhoto(id, { fetch: fetcher, checkedAt }),
+    ).toMatchObject({ image: null, reason, requestCount: 2 });
+    expect(fetcher).toHaveBeenCalledTimes(2);
+  }
+});
+
+it("reports CirrusSearch overload as retryable with a bounded backoff and no fallback requests", async () => {
+  const fetcher = transport([
+    {
+      error: {
+        code: "cirrussearch-too-busy-error",
+        info: "Query service overloaded",
+      },
+    },
+  ]);
+  expect(
+    await resolveGeographCommonsPhoto(id, { fetch: fetcher }),
+  ).toMatchObject({
+    image: null,
+    reason: "api-cirrussearch-too-busy-error",
+    retryable: true,
+    retryAfterMs: 60000,
+    requestCount: 1,
+  });
+  expect(fetcher).toHaveBeenCalledTimes(1);
+});
+
+it("paces every request across concurrent lookups even when fetch is injected", async () => {
+  vi.useFakeTimers();
+  const starts: number[] = [];
+  const fetcher = vi.fn<typeof fetch>().mockImplementation(async (url) => {
+    starts.push(Date.now());
+    return Response.json(
+      new URL(String(url)).searchParams.get("action") === "wbgetentities"
+        ? { entities: { M101: entity() } }
+        : { query: { pages: [page()] } },
+    );
+  });
+  const work = Promise.all([
+    resolveWithProductionPacing(id, { fetch: fetcher, timeoutMs: 5000 }),
+    resolveWithProductionPacing(id, { fetch: fetcher, timeoutMs: 5000 }),
+  ]);
+  await vi.advanceTimersByTimeAsync(2100);
+  expect((await work).every((result) => result.reason === "matched")).toBe(
+    true,
+  );
+  expect(starts).toHaveLength(4);
+  expect(starts.slice(1).map((value, index) => value - starts[index])).toEqual([
+    650, 650, 650,
+  ]);
+});
+
+it("cancels a queued lookup at its deadline without issuing a request or breaking the shared pace", async () => {
+  vi.useFakeTimers();
+  const pacing = {
+    now: () => Date.now(),
+    pause: (delayMs: number) =>
+      new Promise<void>((resolve) => setTimeout(resolve, delayMs)),
+  };
+  const starts: number[] = [];
+  const fetcher = vi.fn<typeof fetch>().mockImplementation(async (url) => {
+    starts.push(Date.now());
+    return Response.json(
+      new URL(String(url)).searchParams.get("action") === "wbgetentities"
+        ? { entities: { M101: entity() } }
+        : { query: { pages: [page()] } },
+    );
+  });
+  const first = resolveWithProductionPacing(id, {
+    fetch: fetcher,
+    timeoutMs: 5000,
+    pacing,
+  });
+  const cancelled = resolveWithProductionPacing(id, {
+    fetch: fetcher,
+    timeoutMs: 50,
+    pacing,
+  });
+  await vi.advanceTimersByTimeAsync(50);
+  expect(await cancelled).toMatchObject({
+    image: null,
+    reason: "deadline-exceeded",
+    retryable: true,
+    requestCount: 0,
+  });
+  expect(fetcher).toHaveBeenCalledTimes(1);
+  await vi.advanceTimersByTimeAsync(600);
+  expect(await first).toMatchObject({ reason: "matched", requestCount: 2 });
+  expect(starts[1] - starts[0]).toBe(650);
 });
 
 it("uses exturlusage with bounded continuation, rejects prefix collisions and accepts a file without SDC", async () => {

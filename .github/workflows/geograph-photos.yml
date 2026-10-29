@@ -1,6 +1,13 @@
 name: Maintain Geograph venue photographs
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/geograph-photos.yml
+      - scripts/prepare-geograph-photos.mjs
+      - scripts/lib/geograph-photo-batch.mjs
+      - src/providers/geograph-commons-photo.ts
   workflow_dispatch:
     inputs:
       limit:
