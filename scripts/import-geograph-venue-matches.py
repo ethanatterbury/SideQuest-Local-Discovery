@@ -96,7 +96,7 @@ def integer(value, label, minimum=None, maximum=None):
     return number
 
 
-def tsv_rows(path, columns, max_uncompressed_bytes=4 * 1024**3, encoding='utf-8'):
+def tsv_rows(path, columns, max_uncompressed_bytes=4 * 1024**3, encoding='latin-1'):
     """MySQL TSV with optional exact first-line header; split before unescaping."""
     total = 0
     with gzip.open(path, 'rb') as source:
@@ -188,7 +188,7 @@ def file_evidence(path, table):
 
 
 def build_matches(venues_dir, base_path, geo_path, output, *, max_uncompressed_bytes=4 * 1024**3,
-                  max_candidates=250_000, encoding='utf-8'):
+                  max_candidates=250_000, encoding='latin-1'):
     started = time.monotonic()
     grid, queries = load_venues(venues_dir)
     output = Path(output)
@@ -335,7 +335,7 @@ def main():
     parser.add_argument('--geo-tsv', type=Path)
     parser.add_argument('--max-file-mb', type=int, default=512)
     parser.add_argument('--max-total-mb', type=int, default=1024)
-    parser.add_argument('--encoding', choices=('utf-8', 'latin-1'), default='utf-8')
+    parser.add_argument('--encoding', choices=('utf-8', 'latin-1'), default='latin-1')
     args = parser.parse_args()
     if min(args.max_file_mb, args.max_total_mb) <= 0:
         parser.error('Download quotas must be positive')

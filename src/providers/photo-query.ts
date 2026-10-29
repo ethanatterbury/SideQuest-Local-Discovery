@@ -6,7 +6,9 @@ export function placePhotoQuery(place: Place): PhotoQuery {
     name: place.name,
     lat: place.coordinates.lat,
     lng: place.coordinates.lng,
-    area: place.area,
+    // Display labels append suburbs/counties; identity checks need the actual
+    // locality rather than requiring that whole comma-separated label verbatim.
+    area: place.area.split(",")[0].trim() || undefined,
     address: place.street,
     postcode: place.postcode,
     category: place.category,

@@ -36,7 +36,7 @@ class GeographMatchingTests(unittest.TestCase):
         if hasattr(self, 'temp'):
             self.temp.cleanup()
 
-    def run_import(self, bases=None, geos=None, places=None, headed=False, **kwargs):
+    def run_import(self, bases=None, geos=None, places=None, headed=False, fixture_encoding='utf-8', **kwargs):
         places = places or [dict(id='osm-way-1', name='Wellington Country Park',
                                  coordinates=dict(lat=51.35, lng=-0.8))]
         (self.venues / '200_1.json').write_text(json.dumps(dict(version=2, places=places)))
@@ -46,7 +46,7 @@ class GeographMatchingTests(unittest.TestCase):
                 rows = [module.BASE_COLUMNS if name == 'base' else module.GEO_COLUMNS, *rows]
             path = self.root / (name + '.tsv.gz')
             text = ''.join('\t'.join(row) + '\n' for row in rows)
-            path.write_bytes(gzip.compress(text.encode('utf-8'), mtime=0))
+            path.write_bytes(gzip.compress(text.encode(fixture_encoding), mtime=0))
             paths.append(path)
         return module.build_matches(self.venues, *paths, self.output, **kwargs)
 
@@ -70,6 +70,15 @@ class GeographMatchingTests(unittest.TestCase):
         self.assertEqual(candidate['status'], 'candidate')
         self.assertNotIn('imageUrl', candidate)
         self.assertNotIn('approved', candidate)
+
+    def test_live_latin1_photographer_credit_is_preserved_without_skipping_row(self):
+        row = base()
+        row[2] = 'François Dûpont'
+        self.run_import(bases=[row], headed=True, fixture_encoding='latin-1')
+        candidate = self.read()['entries'][0]['candidates'][0]
+        self.assertEqual(candidate['photographer'], 'François Dûpont')
+        self.run_import(bases=[row], fixture_encoding='utf-8', encoding='utf-8')
+        self.assertEqual(self.read()['entries'][0]['candidates'][0]['photographer'], 'François Dûpont')
 
     def test_exact_first_line_headers_and_headerless_tsv_produce_same_candidates(self):
         self.run_import()

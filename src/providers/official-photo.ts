@@ -120,7 +120,7 @@ function decode(value: string): string {
   );
 }
 function plain(value: string): string {
-  return decode(value.replace(/<[^>]*>/g, " "))
+  return decode(value.replace(/<(?:(?:"[^"]*"|'[^']*')|[^<>"'])*>/g, " "))
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -157,12 +157,81 @@ function contains(text: string, value: string): boolean {
 }
 function attributes(tag: string): Record<string, string> {
   const result: Record<string, string> = {};
-  const pattern = /([^\s=<>/]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/g;
-  for (const match of tag.matchAll(pattern))
-    result[match[1].toLowerCase()] = decode(
-      match[2] ?? match[3] ?? match[4] ?? "",
-    );
+  let cursor = 0;
+  while (cursor < tag.length) {
+    while (cursor < tag.length && /[\s=<>/]/.test(tag[cursor])) cursor++;
+    const start = cursor;
+    while (cursor < tag.length && !/[\s=<>/]/.test(tag[cursor])) cursor++;
+    const name = tag.slice(start, cursor);
+    while (cursor < tag.length && /\s/.test(tag[cursor])) cursor++;
+    if (tag[cursor] !== "=") continue;
+    cursor++;
+    while (cursor < tag.length && /\s/.test(tag[cursor])) cursor++;
+    const quote = tag[cursor];
+    let value: string;
+    if (quote === '"' || quote === "'") {
+      const end = tag.indexOf(quote, cursor + 1);
+      if (end < 0) break;
+      value = tag.slice(cursor + 1, end);
+      cursor = end + 1;
+    } else {
+      const valueStart = cursor;
+      while (cursor < tag.length && !/[\s>]/.test(tag[cursor])) cursor++;
+      value = tag.slice(valueStart, cursor);
+    }
+    if (name && name.length <= 128 && !/["']/.test(name))
+      result[name.toLowerCase()] = decode(value);
+  }
   return result;
+}
+
+type HtmlSpan = {
+  name: string;
+  start: number;
+  end: number;
+  attributes: string;
+  content: string;
+  closed: boolean;
+};
+/** Each consumed element advances past its closing tag; missing closers scan once. */
+function pairedElements(html: string, names: string[]): HtmlSpan[] {
+  const opening = new RegExp(
+    `<(${names.join("|")})\\b((?:"[^"]*"|'[^']*'|[^<>"'])*)>`,
+    "gi",
+  );
+  const lower = html.toLowerCase();
+  const elements: HtmlSpan[] = [];
+  for (let match; (match = opening.exec(html));) {
+    const name = match[1].toLowerCase();
+    const closing = `</${name}>`;
+    const endStart = lower.indexOf(closing, opening.lastIndex);
+    const closed = endStart >= 0;
+    const end = closed ? endStart + closing.length : html.length;
+    elements.push({
+      name,
+      start: match.index,
+      end,
+      attributes: match[2],
+      content: html.slice(opening.lastIndex, closed ? endStart : html.length),
+      closed,
+    });
+    opening.lastIndex = end;
+    if (!closed) break;
+  }
+  return elements;
+}
+function maskElements(html: string, elements: HtmlSpan[]): string {
+  const chunks: string[] = [];
+  let cursor = 0;
+  for (const element of elements) {
+    chunks.push(
+      html.slice(cursor, element.start),
+      " ".repeat(element.end - element.start),
+    );
+    cursor = element.end;
+  }
+  chunks.push(html.slice(cursor));
+  return chunks.join("");
 }
 function object(value: unknown): Record<string, unknown> | null {
   return value !== null && typeof value === "object" && !Array.isArray(value)
@@ -380,13 +449,14 @@ export function parseOfficialPhotoHtml(
   };
   const raw: RawImage[] = [];
   const businesses: Record<string, unknown>[] = [];
-  const headings = [
-    ...html.matchAll(/<(?:title|h1)\b[^>]*>([\s\S]*?)<\/(?:title|h1)>/gi),
-  ]
-    .map((match) => plain(match[1]))
+  const blocks = pairedElements(html, ["script", "style"]);
+  const scripts = blocks.filter((element) => element.name === "script");
+  const headings = pairedElements(html, ["title", "h1"])
+    .filter((element) => element.closed)
+    .map((element) => plain(element.content))
     .join(" ");
   const metas: Record<string, string> = {};
-  for (const match of html.matchAll(/<meta\b[^>]*>/gi)) {
+  for (const match of html.matchAll(/<meta\b(?:"[^"]*"|'[^']*'|[^<>"'])*>/gi)) {
     const attr = attributes(match[0]);
     const key = (attr.property ?? attr.name ?? "").toLowerCase();
     if (attr.content && !metas[key]) metas[key] = attr.content;
@@ -448,13 +518,14 @@ export function parseOfficialPhotoHtml(
     for (const [key, child] of Object.entries(node))
       if (key !== "image" && key !== "logo") walk(child, depth + 1);
   }
-  for (const match of html.matchAll(
-    /<script\b([^>]*)>([\s\S]*?)<\/script>/gi,
-  )) {
-    if (!/application\/ld\+json/i.test(attributes(match[1]).type ?? ""))
+  for (const script of scripts) {
+    if (
+      !script.closed ||
+      !/application\/ld\+json/i.test(attributes(script.attributes).type ?? "")
+    )
       continue;
     try {
-      walk(JSON.parse(match[2]));
+      walk(JSON.parse(script.content));
     } catch {
       reject("invalid-schema");
     }
@@ -526,11 +597,7 @@ export function parseOfficialPhotoHtml(
     names.some((name) => contains(primary, name)) || matchedBusiness.length > 0;
   const matchedArea =
     !!area && (contains(primary, area) || contains(businessText, area));
-  const visible = plain(
-    html
-      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
-      .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " "),
-  );
+  const visible = plain(maskElements(html, blocks));
   const multiBranch =
     chainNames.test(normalized(query.name)) ||
     /\b(?:find (?:a|your) (?:store|branch|restaurant|gym)|our (?:locations|branches|restaurants|cinemas)|store locator|location finder|across (?:the )?(?:uk|united kingdom)|nationwide)\b/i.test(
@@ -582,11 +649,10 @@ export function parseOfficialPhotoHtml(
         height: dimension(metas["og:image:height"]),
       });
   }
-  const withoutScripts = html.replace(
-    /<script\b[^>]*>[\s\S]*?<\/script>/gi,
-    (value) => " ".repeat(value.length),
-  );
-  for (const match of withoutScripts.matchAll(/<(?:img|source)\b[^>]*>/gi)) {
+  const withoutScripts = maskElements(html, scripts);
+  for (const match of withoutScripts.matchAll(
+    /<(?:img|source)\b(?:"[^"]*"|'[^']*'|[^<>"'])*>/gi,
+  )) {
     const attr = attributes(match[0]);
     const before = withoutScripts.slice(
       Math.max(0, match.index! - 800),
@@ -663,8 +729,14 @@ export function parseOfficialPhotoHtml(
           });
   }
   for (const match of withoutScripts.matchAll(
-    /<[^>]+\bdata-(?:background(?:-image)?|bg|bgset|lazy-background)\s*=[^>]*>/gi,
+    /<[a-z](?:"[^"]*"|'[^']*'|[^<>"'])*>/gi,
   )) {
+    if (
+      !/\bdata-(?:background(?:-image)?|bg|bgset|lazy-background)\s*=/i.test(
+        match[0],
+      )
+    )
+      continue;
     const attr = attributes(match[0]);
     const context = `${attr.class ?? ""} ${attr.id ?? ""} ${attr["aria-label"] ?? ""} background`;
     for (const key of [
@@ -678,23 +750,31 @@ export function parseOfficialPhotoHtml(
       for (const image of srcset(attr["data-bgset"]).slice(0, 3))
         raw.push({ ...image, kind: "background", context });
   }
+  const backgroundAttributes = new Map<number, Record<string, string>>();
   for (const match of withoutScripts.matchAll(
-    /(?:background(?:-image)?\s*:)[^;{}<>]{0,500}?url\(\s*(["']?)([^)'"\s]+)\1\s*\)/gi,
+    /(?:background(?:-image)?\s*:)[^;{}<>]{0,500}?url\(\s*(["']?)([^)'"\s]{1,4096})\1\s*\)/gi,
   )) {
     const start = withoutScripts.lastIndexOf("<", match.index);
-    const end = withoutScripts.indexOf(">", match.index);
-    const attr = attributes(withoutScripts.slice(start, end + 1));
+    const end = withoutScripts.indexOf(">", start);
+    let attr = backgroundAttributes.get(start);
+    if (!attr) {
+      // A stylesheet's text is not the attributes of its <style> element.
+      attr =
+        start >= 0 && end >= match.index!
+          ? attributes(withoutScripts.slice(start, end + 1))
+          : {};
+      backgroundAttributes.set(start, attr);
+    }
     const context = `${attr.class ?? ""} ${attr.id ?? ""} ${attr.title ?? ""} ${attr["aria-label"] ?? ""}`;
     raw.push({ raw: match[2], kind: "background", context });
   }
   // Wix/Squarespace hydration often contains originals absent from <img src>.
   // JSON-LD images were already extracted with their owning business attached.
-  const hydrationHtml = html.replace(
-    /<script\b([^>]*)>[\s\S]*?<\/script>/gi,
-    (script, attrs: string) =>
-      /application\/ld\+json/i.test(attributes(attrs).type ?? "")
-        ? " ".repeat(script.length)
-        : script,
+  const hydrationHtml = maskElements(
+    html,
+    scripts.filter((script) =>
+      /application\/ld\+json/i.test(attributes(script.attributes).type ?? ""),
+    ),
   );
   for (const match of hydrationHtml.matchAll(
     /"(?:imageUrl|imageURL|image_url|originalUrl|contentUrl|assetUrl|fullUrl|url)"\s*:\s*"(https?(?:[^"\\]|\\.){1,2048})"/g,
@@ -777,10 +857,27 @@ export function parseOfficialPhotoHtml(
     string,
     { candidate: OfficialPhotoReviewCandidate; rank: number }
   >();
+  // Build ownership evidence once, including contradictions outside the selected
+  // candidate window. Cache URL parsing instead of repeating it per candidate.
+  const imageUrls = new Map<string, string | null>();
+  const urlFor = (value: string) => {
+    if (!imageUrls.has(value)) imageUrls.set(value, imageUrl(value, pageUrl));
+    return imageUrls.get(value)!;
+  };
+  const bodyContexts = new Map<string, string[]>();
+  for (const item of raw) {
+    if (item.kind !== "body") continue;
+    const url = urlFor(item.raw);
+    if (url) {
+      let contexts = bodyContexts.get(url);
+      if (!contexts) bodyContexts.set(url, (contexts = []));
+      contexts.push(item.context);
+    }
+  }
   const bodyUrls = new Set(
     raw
       .filter((item) => item.kind === "body" || item.kind === "background")
-      .map((item) => imageUrl(item.raw, pageUrl))
+      .map((item) => urlFor(item.raw))
       .filter(Boolean),
   );
   const otherBusinessUrls = new Set(
@@ -788,7 +885,7 @@ export function parseOfficialPhotoHtml(
       .filter(
         (item) => item.business && !scopedBusinesses.includes(item.business),
       )
-      .map((item) => imageUrl(item.raw, pageUrl))
+      .map((item) => urlFor(item.raw))
       .filter(Boolean),
   );
   const imageLocationMatched = (text: string) =>
@@ -808,20 +905,25 @@ export function parseOfficialPhotoHtml(
               `${item.business.name ?? ""} ${JSON.stringify(item.business.address ?? "")} ${item.business.url ?? ""}`,
             )),
       )
-      .map((item) => imageUrl(item.raw, pageUrl))
+      .map((item) => urlFor(item.raw))
       .filter(Boolean),
   );
   const ownedImageText = new Map<string, string>();
   for (const item of raw) {
     // Hydration windows and Organization schema have no reliable image-level owner.
     if (["gallery-data", "schema"].includes(item.kind)) continue;
-    const url = imageUrl(item.raw, pageUrl);
+    const url = urlFor(item.raw);
     if (url)
       ownedImageText.set(
         url,
         `${ownedImageText.get(url) ?? ""} ${item.ownershipContext ?? item.context}`,
       );
   }
+  const localContent = `${headings} ${metas["og:title"] ?? ""} ${metas["og:description"] ?? ""} ${metas.description ?? ""} ${businessText}`;
+  const locationMatched =
+    matchedAddress ||
+    matchedCoordinates ||
+    !!(area && contains(`${localContent} ${multiBranch ? "" : visible}`, area));
   for (const item of raw.slice(0, 1200)) {
     if (websitePreview && ["gallery-data", "schema"].includes(item.kind)) {
       // Nearby hydration captions and Organization art have no image-specific venue ownership.
@@ -834,18 +936,11 @@ export function parseOfficialPhotoHtml(
     )
       continue;
     // Multi-branch footers and URL paths cannot prove the image's local branch.
-    const localContent = `${headings} ${metas["og:title"] ?? ""} ${metas["og:description"] ?? ""} ${metas.description ?? ""} ${businessText}`;
-    const locationMatched =
-      matchedAddress ||
-      matchedCoordinates ||
-      !!(
-        area && contains(`${localContent} ${multiBranch ? "" : visible}`, area)
-      );
     if (websitePreview && !locationMatched) {
       reject("unconfirmed-preview-location");
       continue;
     }
-    const url = imageUrl(item.raw, pageUrl);
+    const url = urlFor(item.raw);
     if (!url) {
       reject("unsafe-or-unsupported-image");
       continue;
@@ -919,16 +1014,7 @@ export function parseOfficialPhotoHtml(
         // Some publishers omit og:image:alt but caption that exact image in the body.
         // Never borrow a description from a different image on the same page.
         context: websitePreview
-          ? [
-              item.context,
-              ...raw
-                .filter(
-                  (other) =>
-                    other.kind === "body" &&
-                    imageUrl(other.raw, pageUrl) === url,
-                )
-                .map((other) => other.context),
-            ].join(" ")
+          ? [item.context, ...(bodyContexts.get(url) ?? [])].join(" ")
           : item.context,
         kind: item.kind,
         width: item.width,
