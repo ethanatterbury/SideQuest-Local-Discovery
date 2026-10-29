@@ -24,8 +24,12 @@ jobs:
           const url = new URL("https://commons.wikimedia.org/w/api.php");
           url.search = new URLSearchParams({
             action: "query", format: "json", formatversion: "2", maxlag: "5",
-            generator: "search", gsrsearch: "haswbstatement:P7384=7319896",
-            gsrnamespace: "6", gsrlimit: "3", prop: "imageinfo",
+            titles: [
+              "File:The Harbour Screen - geograph.org.uk - 6225569.jpg",
+              "File:Wigfield Farm, Barnsley - geograph.org.uk - 7925475.jpg",
+              "File:Altrincham Grammar School for Boys - geograph.org.uk - 5330008.jpg",
+              "File:Boatyard Boulders - geograph.org.uk - 8341843.jpg",
+            ].join("|"), redirects: "1", prop: "imageinfo",
             iiprop: "url|size|mime|extmetadata", iiurlwidth: "960",
             iiextmetadatalanguage: "en",
           });
