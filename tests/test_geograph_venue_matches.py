@@ -36,12 +36,14 @@ class GeographMatchingTests(unittest.TestCase):
         if hasattr(self, 'temp'):
             self.temp.cleanup()
 
-    def run_import(self, bases=None, geos=None, places=None, **kwargs):
+    def run_import(self, bases=None, geos=None, places=None, headed=False, **kwargs):
         places = places or [dict(id='osm-way-1', name='Wellington Country Park',
                                  coordinates=dict(lat=51.35, lng=-0.8))]
         (self.venues / '200_1.json').write_text(json.dumps(dict(version=2, places=places)))
         paths = []
         for name, rows in [('base', bases or [base()]), ('geo', geos or [geo()])]:
+            if headed:
+                rows = [module.BASE_COLUMNS if name == 'base' else module.GEO_COLUMNS, *rows]
             path = self.root / (name + '.tsv.gz')
             text = ''.join('\t'.join(row) + '\n' for row in rows)
             path.write_bytes(gzip.compress(text.encode('utf-8'), mtime=0))
@@ -68,6 +70,30 @@ class GeographMatchingTests(unittest.TestCase):
         self.assertEqual(candidate['status'], 'candidate')
         self.assertNotIn('imageUrl', candidate)
         self.assertNotIn('approved', candidate)
+
+    def test_exact_first_line_headers_and_headerless_tsv_produce_same_candidates(self):
+        self.run_import()
+        expected = self.read()['entries']
+        self.run_import(headed=True)
+        self.assertEqual(self.read()['entries'], expected)
+
+    def test_wrong_and_duplicate_headers_fail_closed(self):
+        self.run_import()
+        before = self.output.read_bytes()
+        wrong_base = list(module.BASE_COLUMNS)
+        wrong_base[3] = 'wrong_title'
+        wrong_geo = list(module.GEO_COLUMNS)
+        wrong_geo[3] = 'wrong_precision'
+        for bases, geos in [
+            ([wrong_base, base()], [geo()]),
+            ([list(module.BASE_COLUMNS), base(), list(module.BASE_COLUMNS)], [geo()]),
+            ([base()], [wrong_geo, geo()]),
+            ([base()], [list(module.GEO_COLUMNS), geo(), list(module.GEO_COLUMNS)]),
+        ]:
+            with self.subTest(bases=bases, geos=geos):
+                with self.assertRaises(ValueError):
+                    self.run_import(bases=bases, geos=geos)
+                self.assertEqual(self.output.read_bytes(), before)
 
     def test_rejects_generic_names_and_optional_categories(self):
         for name, extras in [('Country Park', {}), ('The Playground', {}), ('The Castle', {}), ('Aquarium', {}),

@@ -97,7 +97,7 @@ def integer(value, label, minimum=None, maximum=None):
 
 
 def tsv_rows(path, columns, max_uncompressed_bytes=4 * 1024**3, encoding='utf-8'):
-    """Headerless MySQL TSV; split before unescaping embedded tabs/newlines."""
+    """MySQL TSV with optional exact first-line header; split before unescaping."""
     total = 0
     with gzip.open(path, 'rb') as source:
         for line_number in range(1, 12_000_001):
@@ -111,6 +111,8 @@ def tsv_rows(path, columns, max_uncompressed_bytes=4 * 1024**3, encoding='utf-8'
                 values = line.rstrip(b'\n').rstrip(b'\r').decode(encoding).split('\t')
             except UnicodeDecodeError as exc:
                 raise ValueError(f'{path}:{line_number}: invalid {encoding}; select documented encoding explicitly') from exc
+            if line_number == 1 and tuple(values) == tuple(columns):
+                continue
             if len(values) != len(columns):
                 raise ValueError(f'{path}:{line_number}: expected {len(columns)} columns, received {len(values)}')
             row = dict(zip(columns, (unescape_mysql(x) for x in values)))
