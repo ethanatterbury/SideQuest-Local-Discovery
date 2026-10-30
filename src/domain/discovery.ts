@@ -359,77 +359,96 @@ export function diversifyRecommendations(
   ranked: Recommendation[],
   query: DiscoveryQuery,
 ): Recommendation[] {
-  const remaining = ranked.filter(
-    (candidate, index) =>
-      !ranked.slice(0, index).some((other) => {
-        if (candidate.place.id === other.place.id) return true;
-        const a = candidate.place,
-          b = other.place;
-        if (
-          a.parentId === b.id ||
-          b.parentId === a.id ||
-          (a.parentId && a.parentId === b.parentId)
-        )
-          return true;
-        return (
-          a.name.trim().toLowerCase() === b.name.trim().toLowerCase() &&
-          a.category.toLowerCase() === b.category.toLowerCase() &&
-          JSON.stringify(a.ageRange) === JSON.stringify(b.ageRange) &&
-          JSON.stringify(a.familyFeatures) ===
-            JSON.stringify(b.familyFeatures) &&
-          distanceKm(a.coordinates, b.coordinates) < 0.15
-        );
-      }),
-  );
+  type Kind = ReturnType<typeof venueSuitability>["kind"];
+  type Queue = { kind: Kind; items: Recommendation[]; offset: number };
+  const byIntent = new Map<number, Map<Kind, Queue>>();
+  const seenIds = new Set<string>(),
+    seenParents = new Set<string>();
+  const named = new Map<string, Place[]>();
+  for (const candidate of ranked) {
+    const place = candidate.place,
+      parent = place.parentId;
+    const key = JSON.stringify([
+      place.name.trim().toLowerCase(),
+      place.category.toLowerCase(),
+      JSON.stringify(place.ageRange),
+      JSON.stringify(place.familyFeatures),
+    ]);
+    const previous = named.get(key) ?? [];
+    const duplicate =
+      seenIds.has(place.id) ||
+      seenParents.has(place.id) ||
+      (!!parent && (seenIds.has(parent) || seenParents.has(parent))) ||
+      previous.some(
+        (other) => distanceKm(place.coordinates, other.coordinates) < 0.15,
+      );
+    // Even a duplicate was an earlier record under the deployed deduplication rules.
+    seenIds.add(place.id);
+    if (parent) seenParents.add(parent);
+    previous.push(place);
+    named.set(key, previous);
+    if (duplicate) continue;
+    const intent = candidate.components.intent ?? 0;
+    const groups = byIntent.get(intent) ?? new Map<Kind, Queue>();
+    const kind = venueSuitability(place).kind;
+    const queue = groups.get(kind) ?? { kind, items: [], offset: 0 };
+    queue.items.push(candidate);
+    groups.set(kind, queue);
+    byIntent.set(intent, groups);
+  }
   const result: Recommendation[] = [];
+  const recent: Kind[] = [],
+    counts = new Map<Kind, number>();
+  let firstSixNature = 0;
   const natureRequested =
     [query.intent, ...(query.interests ?? [])].some(
       (intent) => intent === "walk" || intent === "scenic",
     ) ||
     query.activity === "walk" ||
     query.activity === "gardens";
-  const kind = (item: Recommendation) => venueSuitability(item.place).kind;
-  while (remaining.length) {
-    const bestIntent = Math.max(
-      ...remaining.map((item) => item.components.intent ?? 0),
-    );
-    const peers = remaining.filter(
-      (item) => (item.components.intent ?? 0) === bestIntent,
-    );
-    const bestScore = Math.max(...peers.map((item) => item.score));
-    let pool = peers.filter((item) => item.score >= bestScore - 12);
-    const natureCount = result
-      .slice(0, 6)
-      .filter((item) => kind(item) === "nature").length;
-    if (
-      !natureRequested &&
-      result.length < 6 &&
-      natureCount >= (result.length < 3 ? 1 : 2) &&
-      peers.some((item) => kind(item) !== "nature")
-    ) {
-      // The nature cap is a presentation constraint among equally relevant,
-      // already eligible candidates. Weather/distance/evidence score gaps must
-      // not silently disable it after the strongest alternative is selected.
-      const alternatives = peers.filter((item) => kind(item) !== "nature");
-      const bestAlternative = Math.max(
-        ...alternatives.map((item) => item.score),
+  for (const intent of [...byIntent.keys()].sort((a, b) => b - a)) {
+    const queues = [...byIntent.get(intent)!.values()];
+    for (const queue of queues)
+      queue.items.sort(
+        (a, b) => b.score - a.score || a.place.id.localeCompare(b.place.id),
       );
-      pool = alternatives.filter((item) => item.score >= bestAlternative - 12);
+    while (true) {
+      let heads = queues.filter((queue) => queue.offset < queue.items.length);
+      if (!heads.length) break;
+      if (
+        !natureRequested &&
+        result.length < 6 &&
+        firstSixNature >= (result.length < 3 ? 1 : 2) &&
+        heads.some((queue) => queue.kind !== "nature")
+      )
+        heads = heads.filter((queue) => queue.kind !== "nature");
+      const bestScore = Math.max(
+        ...heads.map((queue) => queue.items[queue.offset].score),
+      );
+      const pool = heads.filter(
+        (queue) => queue.items[queue.offset].score >= bestScore - 12,
+      );
+      pool.sort((a, b) => {
+        const x = a.items[a.offset],
+          y = b.items[b.offset];
+        return (
+          y.score -
+            (counts.get(b.kind) ?? 0) * 7 -
+            (x.score - (counts.get(a.kind) ?? 0) * 7) ||
+          y.score - x.score ||
+          x.place.id.localeCompare(y.place.id)
+        );
+      });
+      const queue = pool[0];
+      result.push(queue.items[queue.offset++]);
+      if (result.length <= 6 && queue.kind === "nature") firstSixNature++;
+      recent.push(queue.kind);
+      counts.set(queue.kind, (counts.get(queue.kind) ?? 0) + 1);
+      if (recent.length > 6) {
+        const expired = recent.shift()!;
+        counts.set(expired, counts.get(expired)! - 1);
+      }
     }
-    const adjusted = (item: Recommendation) =>
-      item.score -
-      result.slice(-6).filter((previous) => kind(previous) === kind(item))
-        .length *
-        7;
-    pool.sort(
-      (a, b) =>
-        adjusted(b) - adjusted(a) ||
-        b.score - a.score ||
-        a.place.id.localeCompare(b.place.id),
-    );
-    const selected = pool[0];
-    result.push(selected);
-    remaining.splice(remaining.indexOf(selected), 1);
   }
   return result;
 }

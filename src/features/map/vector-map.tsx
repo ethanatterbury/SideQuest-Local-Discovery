@@ -18,11 +18,13 @@ import {
   OPEN_MAP_STYLE,
   UK_MAP_BOUNDS,
   SATELLITE_SOURCE,
+  RASTER_FALLBACK_STYLE,
   type Basemap,
 } from "./map-style";
 import styles from "./vector-map.module.css";
 import type { MapCamera } from "./map-camera";
 import { markerGlyph } from "./marker-glyph";
+import { mapPixelRatio } from "./render-budget";
 type Props = {
   basemap?: Basemap;
   places: Place[];
@@ -38,6 +40,7 @@ type Props = {
   onSelect(id: string): void;
   onMove(c: Coordinates): void;
   onStatus(s: RasterStatus): void;
+  onBasemapError?(): void;
 };
 export const VectorMap = forwardRef<RasterHandle, Props>(
   function VectorMap(props, ref) {
@@ -45,9 +48,17 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
       map = useRef<maplibregl.Map | null>(null);
     const markerCache = useRef(new Map<string, maplibregl.Marker>());
     const sourceSignature = useRef("");
+    const cameraMemory = useRef<{
+      center: [number, number];
+      zoom: number;
+    } | null>(null);
+    const originMemory = useRef("");
+    const selectionMemory = useRef("");
+    const satelliteFailed = useRef(false);
     const baseStyle = useRef<{
       original: StyleSpecification;
       landscape: StyleSpecification;
+      visibility?: Map<string, unknown>;
     } | null>(null);
     const latest = useRef(props);
     latest.current = props;
@@ -75,17 +86,37 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
       let disposed = false;
       let instance: maplibregl.Map | undefined;
       let failed = false;
-      const deadline = setTimeout(() => {
+      let fallbackUsed = false;
+      let rasterDecoded = false;
+      const checkDeadline = () => {
+        if (disposed || document.hidden) return;
         const geography =
           instance?.isStyleLoaded() &&
-          instance
-            .queryRenderedFeatures()
-            .some(
-              (f) => !["sidequest", "sq-route", "sq-range"].includes(f.source),
-            );
+          (rasterDecoded ||
+            instance
+              .queryRenderedFeatures()
+              .some(
+                (f) =>
+                  !["sidequest", "sq-route", "sq-range"].includes(f.source),
+              ));
+        if (!geography && instance && !fallbackUsed) {
+          fallbackUsed = true;
+          failed = false;
+          rasterDecoded = false;
+          baseStyle.current = {
+            original: RASTER_FALLBACK_STYLE,
+            landscape: RASTER_FALLBACK_STYLE,
+            visibility: new Map([["sq-base-raster", "visible"]]),
+          };
+          latest.current.onStatus("loading");
+          instance.setStyle(RASTER_FALLBACK_STYLE);
+          deadline = setTimeout(checkDeadline, 12000);
+          return;
+        }
         latest.current.onStatus(geography ? "partial" : "unavailable");
         if (!instance) abort.abort();
-      }, 10000);
+      };
+      let deadline = setTimeout(checkDeadline, 10000);
       latest.current.onStatus("loading");
       async function start() {
         try {
@@ -98,25 +129,47 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
                   }
                 ).__SIDEQUEST_MAP_STYLE__
               : undefined;
-          const response = fixture
-            ? null
-            : await fetch(process.env.NEXT_PUBLIC_MAP_STYLE || OPEN_MAP_STYLE, {
-                signal: AbortSignal.any([
-                  abort.signal,
-                  AbortSignal.timeout(9000),
-                ]),
-              });
-          if (response && !response.ok)
-            throw new Error("Map style unavailable");
-          const original = fixture ?? (await response!.json());
+          let original: StyleSpecification;
+          try {
+            const response = fixture
+              ? null
+              : await fetch(
+                  process.env.NEXT_PUBLIC_MAP_STYLE || OPEN_MAP_STYLE,
+                  {
+                    signal: AbortSignal.any([
+                      abort.signal,
+                      AbortSignal.timeout(9000),
+                    ]),
+                  },
+                );
+            if (response && !response.ok)
+              throw new Error("Map style unavailable");
+            original = fixture ?? (await response!.json());
+          } catch {
+            if (abort.signal.aborted) throw Error("Map load cancelled");
+            original = RASTER_FALLBACK_STYLE;
+            fallbackUsed = true;
+          }
           const style = landscapeStyle(original);
-          baseStyle.current = { original, landscape: style };
+          baseStyle.current = {
+            original,
+            landscape: style,
+            visibility: new Map(
+              style.layers.map((layer) => [
+                layer.id,
+                layer.layout?.visibility ?? "visible",
+              ]),
+            ),
+          };
           if (disposed || !root.current) return;
           const m = new maplibregl.Map({
             container: root.current,
             style,
-            center: [latest.current.origin.lng, latest.current.origin.lat],
-            zoom: 11,
+            center: cameraMemory.current?.center ?? [
+              latest.current.origin.lng,
+              latest.current.origin.lat,
+            ],
+            zoom: cameraMemory.current?.zoom ?? 11,
             minZoom: 4,
             maxZoom: 18,
             maxBounds: UK_MAP_BOUNDS,
@@ -126,6 +179,11 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
                 'Places: <a href="https://www.geoapify.com/" target="_blank" rel="noreferrer">Geoapify</a>',
             },
             canvasContextAttributes: { antialias: false },
+            pixelRatio: mapPixelRatio(
+              root.current.clientWidth,
+              root.current.clientHeight,
+              window.devicePixelRatio,
+            ),
           });
           instance = m;
           map.current = m;
@@ -136,18 +194,30 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
           const settle = () => {
             // Style load alone does not mean geography loaded. Require source tiles and a rendered geographic feature.
             if (!m.isStyleLoaded()) return;
-            const hasGeography = m
-              .queryRenderedFeatures()
-              .some(
-                (f) =>
-                  !["sidequest", "sq-route", "sq-range"].includes(f.source),
-              );
+            const hasGeography =
+              rasterDecoded ||
+              m
+                .queryRenderedFeatures()
+                .some(
+                  (f) =>
+                    !["sidequest", "sq-route", "sq-range"].includes(f.source),
+                );
             if (hasGeography && m.areTilesLoaded()) {
               clearTimeout(deadline);
               latest.current.onStatus(failed ? "partial" : "ready");
             }
           };
-          m.on("error", () => {
+          m.on("error", (event) => {
+            if (
+              (event as typeof event & { sourceId?: string }).sourceId ===
+              "sq-satellite"
+            ) {
+              if (!satelliteFailed.current) {
+                satelliteFailed.current = true;
+                latest.current.onBasemapError?.();
+              }
+              return;
+            }
             failed = true;
           });
           let lastCamera = 0;
@@ -207,50 +277,25 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
           m.on("moveend", camera);
           m.on("idle", camera);
           m.on("idle", settle);
-          m.on("sourcedata", settle);
-          m.on("load", () => {
-            m.addSource("sidequest", {
-              type: "geojson",
-              data: { type: "FeatureCollection", features: [] },
-              cluster: true,
-              clusterRadius: 48,
-              clusterMaxZoom: 13,
-            });
-            m.addLayer({
-              id: "sq-clusters",
-              type: "circle",
-              source: "sidequest",
-              filter: ["has", "point_count"],
-              paint: {
-                "circle-color": "#36543f",
-                "circle-radius": [
-                  "step",
-                  ["get", "point_count"],
-                  18,
-                  20,
-                  23,
-                  100,
-                  28,
-                ],
-                "circle-stroke-color": "#f6f6ef",
-                "circle-stroke-width": 2,
-              },
-            });
-            // Transparent point layer keeps source features queryable; native button markers provide keyboard access.
-            m.addLayer({
-              id: "sq-points",
-              type: "circle",
-              source: "sidequest",
-              filter: ["!", ["has", "point_count"]],
-              paint: { "circle-radius": 12, "circle-opacity": 0 },
-            });
-            m.on("click", "sq-clusters", async (e) => {
-              const feature = e.features?.[0];
-              if (!feature) return;
-              const zoom = await (
-                m.getSource("sidequest") as GeoJSONSource
-              ).getClusterExpansionZoom(Number(feature.properties?.cluster_id));
-              if (disposed) return;
+          m.on("sourcedata", (event) => {
+            if (
+              event.sourceId === "sq-base-raster" &&
+              event.tile?.state === "loaded"
+            )
+              rasterDecoded = true;
+            settle();
+          });
+          const expandCluster = async (e: maplibregl.MapLayerMouseEvent) => {
+            const feature = e.features?.[0];
+            if (!feature) return;
+            if (!m.style) return;
+            const source = m.getSource("sidequest") as
+              GeoJSONSource | undefined;
+            if (!source) return;
+            const zoom = await source.getClusterExpansionZoom(
+              Number(feature.properties?.cluster_id),
+            );
+            if (!disposed)
               m.easeTo({
                 center: (feature.geometry as GeoJSON.Point).coordinates as [
                   number,
@@ -259,7 +304,51 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
                 zoom,
                 duration: latest.current.reducedMotion ? 0 : 450,
               });
-            });
+          };
+          m.on("click", "sq-clusters", expandCluster);
+          m.on("style.load", () => {
+            rasterDecoded = false;
+            cachedMarkers.forEach((marker) => marker.remove());
+            cachedMarkers.clear();
+            sourceSignature.current = "";
+            if (!m.getSource("sidequest"))
+              m.addSource("sidequest", {
+                type: "geojson",
+                data: { type: "FeatureCollection", features: [] },
+                cluster: true,
+                clusterRadius: 48,
+                clusterMaxZoom: 13,
+              });
+            if (!m.getLayer("sq-clusters"))
+              m.addLayer({
+                id: "sq-clusters",
+                type: "circle",
+                source: "sidequest",
+                filter: ["has", "point_count"],
+                paint: {
+                  "circle-color": "#36543f",
+                  "circle-radius": [
+                    "step",
+                    ["get", "point_count"],
+                    18,
+                    20,
+                    23,
+                    100,
+                    28,
+                  ],
+                  "circle-stroke-color": "#f6f6ef",
+                  "circle-stroke-width": 2,
+                },
+              });
+            // Transparent point layer keeps source features queryable; native button markers provide keyboard access.
+            if (!m.getLayer("sq-points"))
+              m.addLayer({
+                id: "sq-points",
+                type: "circle",
+                source: "sidequest",
+                filter: ["!", ["has", "point_count"]],
+                paint: { "circle-radius": 12, "circle-opacity": 0 },
+              });
             setLoaded((n) => n + 1);
             settle();
           });
@@ -268,15 +357,46 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
             if (e.originalEvent) userMoved = true;
           });
           m.on("moveend", (e) => {
+            const position = m.getCenter();
+            cameraMemory.current = {
+              center: [position.lng, position.lat],
+              zoom: m.getZoom(),
+            };
             if (e.originalEvent || userMoved) {
               userMoved = false;
               const c = m.getCenter();
               latest.current.onMove({ lat: c.lat, lng: c.lng });
             }
           });
-          const resize = new ResizeObserver(() => m.resize());
+          const resize = new ResizeObserver(() => {
+            if (root.current)
+              m.setPixelRatio(
+                mapPixelRatio(
+                  root.current.clientWidth,
+                  root.current.clientHeight,
+                  window.devicePixelRatio,
+                ),
+              );
+            m.resize();
+          });
           resize.observe(root.current);
-          m.once("remove", () => resize.disconnect());
+          const resume = () => {
+            if (document.hidden || disposed) return;
+            m.resize();
+            m.triggerRepaint();
+            settle();
+            clearTimeout(deadline);
+            deadline = setTimeout(checkDeadline, 10000);
+          };
+          document.addEventListener("visibilitychange", resume);
+          window.addEventListener("online", resume);
+          m.on("webglcontextlost", () => latest.current.onStatus("loading"));
+          m.on("webglcontextrestored", resume);
+          m.once("remove", () => {
+            resize.disconnect();
+            document.removeEventListener("visibilitychange", resume);
+            window.removeEventListener("online", resume);
+          });
         } catch {
           if (!disposed) latest.current.onStatus("unavailable");
         }
@@ -296,8 +416,17 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
     useEffect(() => {
       const m = map.current,
         base = baseStyle.current;
-      if (!m || !loaded || !base || !m.isStyleLoaded()) return;
+      if (!m?.style || !loaded || !base) return;
       const mode = props.basemap ?? "landscape";
+      if (
+        mode === "satellite" &&
+        satelliteFailed.current &&
+        m.getSource("sq-satellite")
+      ) {
+        m.removeLayer("sq-satellite");
+        m.removeSource("sq-satellite");
+        satelliteFailed.current = false;
+      }
       if (mode === "satellite" && !m.getSource("sq-satellite")) {
         m.addSource("sq-satellite", SATELLITE_SOURCE);
         m.addLayer(
@@ -312,35 +441,24 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
           mode === "satellite" ? "visible" : "none",
         );
       for (let i = 0; i < base.original.layers.length; i++) {
-        const original = base.original.layers[i],
-          layer = (mode === "street" ? base.original : base.landscape).layers[
-            i
-          ];
+        const original = base.original.layers[i];
         if (!m.getLayer(original.id)) continue;
         m.setLayoutProperty(
           original.id,
           "visibility",
           mode === "satellite" && original.type !== "symbol"
             ? "none"
-            : (original.layout?.visibility ?? "visible"),
+            : (base.visibility?.get(original.id) ?? "visible"),
         );
-        const properties = new Set([
-          ...Object.keys(original.paint ?? {}),
-          ...Object.keys(base.landscape.layers[i].paint ?? {}),
-        ]);
-        for (const property of properties)
-          m.setPaintProperty(
-            original.id,
-            property,
-            (layer.paint as Record<string, unknown> | undefined)?.[property] ??
-              null,
-          );
       }
     }, [props.basemap, loaded]);
     useEffect(() => {
-      const m = map.current,
-        source = m?.getSource("sidequest") as GeoJSONSource | undefined;
-      if (!m || !source) return;
+      const m = map.current;
+      // MapLibre clears its style during WebGL loss. Props may still change
+      // while restoration is pending; wait for style.load to rebuild sources.
+      if (!m?.style) return;
+      const source = m.getSource("sidequest") as GeoJSONSource | undefined;
+      if (!source) return;
       const signature =
         `${loaded}:` +
         props.places
@@ -371,7 +489,7 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
       const savedIds = new Set(props.saved),
         visitedIds = new Set(props.visited);
       function sync() {
-        if (!m) return;
+        if (!m?.style) return;
         const bounds = m.getBounds();
         const features = m
           .querySourceFeatures("sidequest")
@@ -508,7 +626,9 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
     }, [props.places, props.selected, props.saved, props.visited, loaded]);
     useEffect(() => {
       const m = map.current;
-      if (!m) return;
+      const key = `${props.origin.lat},${props.origin.lng}`;
+      if (!m || !loaded || originMemory.current === key) return;
+      originMemory.current = key;
       m.easeTo({
         center: [props.origin.lng, props.origin.lat],
         duration: props.reducedMotion ? 0 : 500,
@@ -519,13 +639,19 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
       selectedLng = props.selected?.coordinates.lng;
     useEffect(() => {
       const m = map.current;
+      const key = `${selectedId},${selectedLat},${selectedLng}`;
+      if (selectionMemory.current === key) return;
       if (
         !m ||
+        !loaded ||
         !selectedId ||
         selectedLat === undefined ||
         selectedLng === undefined
-      )
+      ) {
+        if (!selectedId) selectionMemory.current = "";
         return;
+      }
+      selectionMemory.current = key;
       m.easeTo({
         center: [selectedLng, selectedLat],
         duration: props.reducedMotion ? 0 : 500,
@@ -533,7 +659,7 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
     }, [selectedId, selectedLat, selectedLng, props.reducedMotion, loaded]);
     useEffect(() => {
       const m = map.current;
-      if (!m?.getSource("sidequest")) return;
+      if (!m?.style || !m.getSource("sidequest")) return;
       const ring = Array.from({ length: 65 }, (_, i) => {
         const angle = (i * Math.PI) / 32;
         return [
@@ -605,7 +731,7 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
     }, [props.origin, props.radiusKm, loaded]);
     useEffect(() => {
       const m = map.current;
-      if (!m?.getSource("sidequest")) return;
+      if (!m?.style || !m.getSource("sidequest")) return;
       const coordinates = props.itinerary
         ? props.itinerary.stops.map((s) => [
             s.coordinates.lng,

@@ -22,6 +22,8 @@ import {
   optionalCategory,
 } from "@/domain/venue-suitability";
 import { PlaceImage } from "@/components/primitives";
+import { PlaceSearch } from "@/components/place-search";
+import { groupAttractionPlaces } from "@/domain/attraction-groups";
 import { Refinement } from "@/features/discover/refinement";
 import { WeatherAtmosphere } from "./weather-atmosphere";
 import { isMapFoodPlace, rankMapPlaces } from "./map-food";
@@ -50,6 +52,21 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
     toast,
   } = useApp();
   const includeFood = categoryRequested(query, "food");
+  const [showInside, setShowInside] = useState(false);
+  const attractionGroups = useMemo(
+    () => groupAttractionPlaces(catalog),
+    [catalog],
+  );
+  const revealInside = showInside || !!query.text.trim();
+  const candidates = useMemo(
+    () =>
+      revealInside
+        ? catalog.map((place) =>
+            place.parentId ? { ...place, parentId: undefined } : place,
+          )
+        : attractionGroups.overview,
+    [catalog, attractionGroups, revealInside],
+  );
   const setIncludeFood = (included: boolean) => {
     const categories = query.includeCategories ?? [];
     setQuery({
@@ -73,8 +90,8 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
     });
   };
   const ranked = useMemo(
-    () => rankMapPlaces(catalog, query, env, state),
-    [catalog, query, env, state],
+    () => rankMapPlaces(candidates, query, env, state),
+    [candidates, query, env, state],
   );
   const [selectedId, setSelectedId] = useState(""),
     [rasterStatus, setRasterStatus] = useState<RasterStatus>("loading"),
@@ -172,8 +189,9 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
       ...eligible,
       ...catalog.filter(
         (p) =>
-          state.saved.includes(p.id) ||
-          state.visits.some((v) => v.id === p.id) ||
+          ((revealInside || !attractionGroups.parentByChild.has(p.id)) &&
+            (state.saved.includes(p.id) ||
+              state.visits.some((v) => v.id === p.id))) ||
           (p.id === selectedId && p.id === linkedPlaceId),
       ),
     ].filter((p) => {
@@ -184,7 +202,16 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
         (p.id === selectedId && p.id === linkedPlaceId)
       );
     });
-  }, [catalog, ranked, state, query, selectedId, linkedPlaceId]);
+  }, [
+    catalog,
+    ranked,
+    state,
+    query,
+    selectedId,
+    linkedPlaceId,
+    revealInside,
+    attractionGroups,
+  ]);
   const night = isDark(env.now, env.weather.sunrise, env.weather.sunset);
   const unavailable = failure || rasterStatus === "unavailable";
   const saved = !!activePlace && state.saved.includes(activePlace.id);
@@ -230,32 +257,37 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
         <div id="map-browse-content" className={styles.browseContent}>
           <div className="map-sidebar-heading">
             <h1 className="sr-only">Find your next outing</h1>
-            <form
+            <PlaceSearch
               className="map-search"
-              role="search"
-              onSubmit={(event) => {
-                event.preventDefault();
+              value={query.text}
+              label="Search map outings"
+              buttonLabel="Search map"
+              map
+              onSearch={(text) => {
+                setQuery({ ...query, text });
                 setSelectionCleared(true);
                 setSelectedId("");
                 setLinkedPlaceId("");
               }}
-            >
-              <Search size={17} />
-              <input
-                aria-label="Search map outings"
-                placeholder="Search places or activities"
-                value={query.text}
-                onChange={(event) =>
-                  setQuery({ ...query, text: event.target.value })
-                }
-              />
-              <button type="submit" aria-label="Search map">
-                <ArrowUpRight size={17} />
-              </button>
-            </form>
+            />
             <Refinement
               mapFood={{ included: includeFood, onChange: setIncludeFood }}
             />
+            {attractionGroups.inside.length > 0 && (
+              <label className="map-food-filter">
+                <input
+                  type="checkbox"
+                  checked={showInside}
+                  onChange={(event) => {
+                    setShowInside(event.target.checked);
+                    setSelectionCleared(true);
+                    setSelectedId("");
+                    setLinkedPlaceId("");
+                  }}
+                />
+                Places inside attractions
+              </label>
+            )}
           </div>
           <div className="map-results">
             {ranked.slice(0, 12).map((r, index) => (
@@ -300,6 +332,12 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
             ref={raster}
             places={visible}
             basemap={basemap}
+            onBasemapError={() => {
+              setBasemap("landscape");
+              toast(
+                "Satellite imagery is unavailable. Showing the default map.",
+              );
+            }}
             origin={env.location}
             selected={activePlace}
             saved={state.saved}
@@ -460,7 +498,6 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
             aria-expanded={layersOpen}
             aria-controls="map-layer-options"
             onClick={() => setLayersOpen(!layersOpen)}
-            disabled={unavailable}
           >
             <Layers size={19} />
           </button>
@@ -470,8 +507,7 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
             <legend>Map view</legend>
             {(
               [
-                ["landscape", "Landscape"],
-                ["street", "Street"],
+                ["landscape", "Default"],
                 ["satellite", "Satellite"],
               ] as const
             ).map(([value, label]) => (
@@ -481,7 +517,10 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
                   name="basemap"
                   value={value}
                   checked={basemap === value}
-                  onChange={() => setBasemap(value)}
+                  onChange={() => {
+                    setBasemap(value);
+                    if (unavailable) raster.current?.retry();
+                  }}
                 />
                 <span>{label}</span>
               </label>
@@ -532,18 +571,14 @@ function GeographicFallback({
     <div className="geographic-fallback">
       <div className="fallback-map-heading">
         <MapIcon size={25} />
-        <h2>
-          The map can wait.
-          <br />
-          The day doesn’t have to.
-        </h2>
+        <h2>The map couldn’t load.</h2>
         <p>
           Locations plotted by coordinates. Roads and live routes are
           unavailable.
         </p>
         {onRetry && (
           <button className="button secondary" onClick={onRetry}>
-            Retry street map
+            Reload map
           </button>
         )}
       </div>

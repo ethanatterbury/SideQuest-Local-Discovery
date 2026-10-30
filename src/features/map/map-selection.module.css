@@ -33,6 +33,7 @@
   font-weight: 650;
 }
 .layers label {
+  clear: both;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -41,6 +42,7 @@
   font-size: 13px;
 }
 .layers input {
+  flex-shrink: 0;
   accent-color: var(--ink);
 }
 .layers small {

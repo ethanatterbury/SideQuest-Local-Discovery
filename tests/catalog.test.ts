@@ -151,6 +151,14 @@ it("keeps replacement metadata when a duplicate node/way follows it", () => {
   expect(merged).toHaveLength(1);
   expect(merged[0].description).toBe("Fresh description");
 });
+it("retains mapped attraction bounds when duplicate source identities are merged", () => {
+  const original = { ...live(771), category: "Theme park" };
+  const bounds = { south: 51, west: -1, north: 52, east: 0 };
+  const duplicate = { ...original, id: "osm-way-772", bounds };
+  const merged = mergeCatalog([original], [duplicate]);
+  expect(merged).toHaveLength(1);
+  expect(merged[0].bounds).toEqual(bounds);
+});
 it("keeps fresh verified primary play when a later plain café response refreshes the same venue", () => {
   const plain: Place = {
     ...live(444),

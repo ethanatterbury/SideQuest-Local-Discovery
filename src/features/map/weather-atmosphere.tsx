@@ -6,6 +6,7 @@ import { atmosphereMetrics } from "@/domain/atmosphere";
 import { createAtmosphereRenderer } from "./atmosphere-renderer";
 import styles from "./weather-atmosphere.module.css";
 import type { MapCamera } from "./map-camera";
+import { weatherPixelRatio } from "./render-budget";
 export function WeatherAtmosphere() {
   const { env, overrides } = useApp();
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -98,7 +99,11 @@ export function WeatherAtmosphere() {
             golden: phase === "golden-hour" ? 1 : phase === "sunset" ? 0.6 : 0,
             motion: env.reducedMotion ? 0 : 1,
           },
-          low ? 0.65 : Math.min(window.devicePixelRatio, 1.25),
+          weatherPixelRatio(
+            element!.clientWidth,
+            element!.clientHeight,
+            low ? 0.65 : Math.min(window.devicePixelRatio, 1.25),
+          ),
         );
       }
       // Reduced motion draws a static density field, including precipitation.

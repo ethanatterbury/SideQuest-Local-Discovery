@@ -53,8 +53,9 @@ test("wide map layout stays on screen and a partial name searches the results", 
     )
     .toBeLessThan(2);
   await page.getByRole("button", { name: "Map layers", exact: true }).click();
-  await expect(page.getByRole("radio", { name: "Street" })).toBeVisible();
-  await page.getByRole("radio", { name: "Street" }).check();
+  await expect(page.getByRole("radio", { name: "Default" })).toBeVisible();
+  await expect(page.getByRole("radio", { name: "Street" })).toHaveCount(0);
+  await page.getByRole("radio", { name: "Default" }).check();
   await expect(page.locator(".map-result-row")).toHaveCount(1);
 });
 test("planning controls change time and weather on the main map and return to live", async ({

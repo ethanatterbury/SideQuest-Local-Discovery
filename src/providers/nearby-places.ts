@@ -22,6 +22,12 @@ type Element = {
   lat?: unknown;
   lon?: unknown;
   center?: { lat?: unknown; lon?: unknown };
+  bounds?: {
+    minlat?: unknown;
+    minlon?: unknown;
+    maxlat?: unknown;
+    maxlon?: unknown;
+  };
   tags?: Record<string, unknown>;
 };
 const endpoints = [
@@ -193,8 +199,22 @@ export function normalizeOsmElementWithEvidence(
   const t = e.tags;
   if (!t || typeof t !== "object") return null;
   const name = clean(t.name) || clean(t["name:en"]);
-  const lat = e.lat ?? e.center?.lat,
-    lng = e.lon ?? e.center?.lon;
+  const mappedBounds = e.bounds;
+  // `out bb` supplies actual extents for ways/relations instead of a center.
+  const lat =
+      e.lat ??
+      e.center?.lat ??
+      (typeof mappedBounds?.minlat === "number" &&
+      typeof mappedBounds.maxlat === "number"
+        ? (mappedBounds.minlat + mappedBounds.maxlat) / 2
+        : undefined),
+    lng =
+      e.lon ??
+      e.center?.lon ??
+      (typeof mappedBounds?.minlon === "number" &&
+      typeof mappedBounds.maxlon === "number"
+        ? (mappedBounds.minlon + mappedBounds.maxlon) / 2
+        : undefined);
   if (
     !name ||
     typeof lat !== "number" ||
@@ -421,6 +441,34 @@ export function normalizeOsmElementWithEvidence(
         .filter(Boolean)
         .join(", ") || "Nearby",
     coordinates: { lat, lng },
+    ...(mappedBounds &&
+    typeof mappedBounds.minlat === "number" &&
+    Number.isFinite(mappedBounds.minlat) &&
+    mappedBounds.minlat >= -90 &&
+    typeof mappedBounds.maxlat === "number" &&
+    Number.isFinite(mappedBounds.maxlat) &&
+    mappedBounds.maxlat <= 90 &&
+    typeof mappedBounds.minlon === "number" &&
+    Number.isFinite(mappedBounds.minlon) &&
+    mappedBounds.minlon >= -180 &&
+    typeof mappedBounds.maxlon === "number" &&
+    Number.isFinite(mappedBounds.maxlon) &&
+    mappedBounds.maxlon <= 180 &&
+    mappedBounds.minlat < mappedBounds.maxlat &&
+    mappedBounds.minlon < mappedBounds.maxlon &&
+    lat >= mappedBounds.minlat &&
+    lat <= mappedBounds.maxlat &&
+    lng >= mappedBounds.minlon &&
+    lng <= mappedBounds.maxlon
+      ? {
+          bounds: {
+            south: mappedBounds.minlat,
+            west: mappedBounds.minlon,
+            north: mappedBounds.maxlat,
+            east: mappedBounds.maxlon,
+          },
+        }
+      : {}),
     category,
     // Estimated experience depth, not a rating or claim of visitor satisfaction.
     quality: [
@@ -697,7 +745,7 @@ export async function getNearbyPlaces(
       const query = `[out:json][timeout:3];
         nwr${around}[name][leisure~"^(playground|indoor_play|soft_play|trampoline_park|water_park)$"];out center tags 350;
         nwr${around}[name][leisure~"^(park|garden|nature_reserve)$"];out center tags 350;
-        nwr${around}[name][tourism~"^(museum|gallery|attraction|zoo|theme_park|aquarium|viewpoint)$"];out center tags 500;
+        nwr${around}[name][tourism~"^(museum|gallery|attraction|zoo|theme_park|aquarium|viewpoint)$"];out bb tags 500;
         nwr${around}[name][amenity~"^(cafe|restaurant|ice_cream|pub|bar)$"];out center tags 300;
         nwr${around}[name][shop];out center tags 100;
         nwr${around}[name][amenity~"^(cinema|theatre|arts_centre)$"];out center tags 200;

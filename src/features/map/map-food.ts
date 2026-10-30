@@ -55,6 +55,12 @@ export function rankMapPlaces(
     : effectiveDiscoveryQuery(query, places);
   const primary = rankPlaces(candidates, effective, env, state);
   if (text) return primary;
+  if (
+    !(["food", "pubs", "fitness", "shops"] as const).some((category) =>
+      categoryRequested(query, category),
+    )
+  )
+    return primary;
   const extras = rankPlaces(
     places,
     { ...effective, activity: "any", intent: "any", text: "", interests: [] },

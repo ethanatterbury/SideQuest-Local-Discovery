@@ -1,5 +1,20 @@
 import type { StyleSpecification } from "maplibre-gl";
-export type Basemap = "landscape" | "street" | "satellite";
+export type Basemap = "landscape" | "satellite";
+/** Independent geographic tile fallback; no key, prefetch or local tile storage. */
+export const RASTER_FALLBACK_STYLE: StyleSpecification = {
+  version: 8,
+  sources: {
+    "sq-base-raster": {
+      type: "raster",
+      tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+      tileSize: 256,
+      maxzoom: 19,
+      attribution:
+        '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
+    },
+  },
+  layers: [{ id: "sq-base-raster", type: "raster", source: "sq-base-raster" }],
+};
 /** Public CC BY 4.0 Sentinel mosaic; retain its date and 10m resolution in the UI. */
 export const SATELLITE_SOURCE = {
   type: "raster" as const,

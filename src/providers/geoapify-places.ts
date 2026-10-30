@@ -120,11 +120,20 @@ export function normalizeGeoapifyResponse(value: unknown): Place[] {
     }))
       if (tags[key] === undefined && fallback !== undefined)
         tags[key] = fallback;
+    const bbox = object(properties.bbox);
     const place = normalizeOsmElement({
       type,
       id: raw.osm_id,
       lat: properties.lat,
       lon: properties.lon,
+      bounds: bbox
+        ? {
+            minlat: bbox.lat1,
+            minlon: bbox.lon1,
+            maxlat: bbox.lat2,
+            maxlon: bbox.lon2,
+          }
+        : undefined,
       tags,
     });
     if (!place) continue;

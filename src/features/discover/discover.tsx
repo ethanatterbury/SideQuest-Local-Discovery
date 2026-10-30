@@ -1,15 +1,10 @@
 "use client";
 import Link from "next/link";
 import { useMemo, useState, useEffect, useRef } from "react";
-import {
-  ArrowRight,
-  Shuffle,
-  Route,
-  Search,
-  Map as MapIcon,
-} from "lucide-react";
+import { ArrowRight, Shuffle, Route, Map as MapIcon } from "lucide-react";
 import { useApp } from "@/components/providers";
 import { EmptyState } from "@/components/primitives";
+import { PlaceSearch } from "@/components/place-search";
 import { TOWNS } from "@/providers/geocoding";
 import {
   rankPlaces,
@@ -121,29 +116,19 @@ export function Discover({ explore = false }: { explore?: boolean }) {
           </div>
         </section>
         <section className="workspace-filters" aria-label="Find outings">
-          <form
+          <PlaceSearch
             className="discovery-search"
-            onSubmit={(event) => {
-              event.preventDefault();
+            value={query.text}
+            label="Find something to do"
+            buttonLabel="Find outings"
+            onSearch={(text) => {
+              setQuery({ ...query, text });
               document.getElementById("your-options")?.scrollIntoView({
                 behavior: env.reducedMotion ? "instant" : "smooth",
                 block: "start",
               });
             }}
-          >
-            <Search size={19} aria-hidden="true" />
-            <input
-              aria-label="Find something to do"
-              placeholder="Search places or activities"
-              value={query.text}
-              onChange={(event) =>
-                setQuery({ ...query, text: event.target.value })
-              }
-            />
-            <button aria-label="Find outings" type="submit">
-              <ArrowRight size={20} />
-            </button>
-          </form>
+          />
           <Refinement />
           {query.intent !== "any" && (
             <div className="active-intent">

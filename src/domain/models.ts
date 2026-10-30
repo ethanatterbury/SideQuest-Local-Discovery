@@ -126,6 +126,8 @@ export type Place = {
   postcode?: string;
   street?: string;
   coordinates: Coordinates;
+  /** Actual mapped extent, never an estimated radius around the venue. */
+  bounds?: { south: number; west: number; north: number; east: number };
   category: string;
   optionalCategory?: OptionalCategory;
   /** Primary experiences need mapped/official evidence; a venue name is not evidence. */

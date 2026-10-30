@@ -85,10 +85,9 @@ async function ready(page: Page) {
   await expect(
     page.locator('[data-map-engine="maplibre"] .maplibregl-canvas'),
   ).toBeVisible({ timeout: 30000 });
-  await expect(page.locator("[data-map-status]")).toHaveText(
-    /Map ready/,
-    { timeout: 30000 },
-  );
+  await expect(page.locator("[data-map-status]")).toHaveText(/Map ready/, {
+    timeout: 30000,
+  });
 }
 
 test("MapLibre renders local geography and style load alone fails with a recoverable retry", async ({
@@ -116,7 +115,7 @@ test("MapLibre renders local geography and style load alone fails with a recover
   await page.route("https://tiles.openfreemap.org/styles/**", (route) =>
     route.fulfill({ json: fixture }),
   );
-  await page.getByRole("button", { name: "Retry street map" }).click();
+  await page.getByRole("button", { name: "Reload map" }).click();
   await ready(page);
   await expect(page.locator(".geographic-fallback")).toHaveCount(0);
   await expect(page.locator(".leaflet-container")).toHaveCount(0);

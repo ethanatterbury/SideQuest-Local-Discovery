@@ -89,6 +89,7 @@ export function mergeCatalog(
         wikipedia: duplicate.wikipedia || p.wikipedia,
         osmImage: duplicate.osmImage || p.osmImage,
         commons: duplicate.commons || p.commons,
+        bounds: duplicate.bounds || p.bounds,
         aliases: [
           ...new Set([...(duplicate.aliases || []), ...(p.aliases || [])]),
         ].slice(0, 12),

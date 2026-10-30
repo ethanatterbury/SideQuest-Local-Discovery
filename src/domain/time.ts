@@ -1,11 +1,17 @@
+const londonClock = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Europe/London",
+  weekday: "short",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+});
+const londonTime = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Europe/London",
+  hour: "2-digit",
+  minute: "2-digit",
+});
 export function londonParts(date: string) {
-  const p = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Europe/London",
-    weekday: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(new Date(date));
+  const p = londonClock.formatToParts(new Date(date));
   const value = (t: string) => p.find((x) => x.type === t)?.value || "";
   return {
     day: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(
@@ -15,11 +21,7 @@ export function londonParts(date: string) {
   };
 }
 export function formatTime(date: string) {
-  return new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Europe/London",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(date));
+  return londonTime.format(new Date(date));
 }
 export function durationLabel(minutes: number) {
   return minutes < 60

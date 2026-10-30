@@ -74,6 +74,7 @@ test("place buttons stay anchored to geography after cluster expansion, zoom and
   page,
 }) => {
   await page.setViewportSize({ width: 1366, height: 768 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await localMapFixture(page);
   await page.addInitScript(() => {
     sessionStorage.setItem(
@@ -105,6 +106,9 @@ test("place buttons stay anchored to geography after cluster expansion, zoom and
   );
   await page.route("**/api/photo?**", (route) =>
     route.fulfill({ json: { image: null, source: "unavailable" } }),
+  );
+  await page.route("https://api.open-meteo.com/**", (route) =>
+    route.fulfill({ status: 503 }),
   );
   await page.goto("/map?q=Stability%20Museum");
   await expect(page.locator("[data-map-status]")).toContainText("Map ready", {
@@ -144,6 +148,9 @@ test("place buttons stay anchored to geography after cluster expansion, zoom and
   await expect(page.locator(".map-selected h2")).toHaveText(
     "Stability Museum 7",
   );
-  await page.waitForTimeout(350);
-  await assertProjectedMarkers(page);
+  // Production uses the real motion preference, not the development override.
+  // Wait for the selection camera animation to settle before comparing positions.
+  await expect(async () => assertProjectedMarkers(page)).toPass({
+    timeout: 5000,
+  });
 });

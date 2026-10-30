@@ -198,6 +198,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
   const update = useCallback((fn: (s: LocalState) => LocalState) => {
     setState((s) => {
       const next = fn(s);
+      if (next === s) return s;
       const ok = persistence.current?.write(next) ?? false;
       setStorageAvailable(ok);
       return next;
@@ -206,13 +207,22 @@ export function AppProviders({ children }: { children: ReactNode }) {
   const setQuery = useCallback(
     (q: DiscoveryQuery) => {
       setQueryState(q);
-      update((s) => ({ ...s, preferences: { ...q, text: "" } }));
+      const preferences = { ...q, text: "" };
+      update((s) =>
+        JSON.stringify(s.preferences) === JSON.stringify(preferences)
+          ? s
+          : { ...s, preferences },
+      );
       const url = new URL(window.location.href);
-      for (const k of ["intent", "minutes", "travel", "budget"] as const)
-        url.searchParams.set(k, String(q[k]));
-      if (q.text) url.searchParams.set("q", q.text);
-      else url.searchParams.delete("q");
-      window.history.replaceState(null, "", url);
+      // Incoming shared links still work. Explicit changes clear obsolete filters;
+      // search text and preferences are never written into the address bar.
+      let changed = false;
+      for (const key of ["q", "intent", "minutes", "travel", "budget"]) {
+        if (!url.searchParams.has(key)) continue;
+        url.searchParams.delete(key);
+        changed = true;
+      }
+      if (changed) window.history.replaceState(null, "", url);
     },
     [update],
   );

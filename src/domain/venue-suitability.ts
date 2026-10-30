@@ -275,6 +275,12 @@ export function isSuitableForQuery(
   const suitability = venueSuitability(place);
   const children = query.company === "family" || childActivityRequested(query);
   const ages = children ? (query.childrenAges ?? []) : [];
+  // Whole-park admission is distinct from eligibility to participate in its rides.
+  // Use the mapped category, never a venue name or incidental play facilities.
+  const wholeThemeParkVisit =
+    /^(?:theme|amusement)[ _-]park$/i.test(place.category.trim()) &&
+    (!query.activity || query.activity === "any") &&
+    primaryExperienceActivities(place).length === 0;
   const optional = optionalCategory(place);
   if (optional && !categoryRequested(query, optional)) return false;
   if (place.access?.public === false) return false;
@@ -306,7 +312,8 @@ export function isSuitableForQuery(
     );
     const familyVisit =
       !participating &&
-      ["nature", "culture", "animals", "food"].includes(visitKind);
+      (wholeThemeParkVisit ||
+        ["nature", "culture", "animals", "food"].includes(visitKind));
     const verifiedInfantActivity =
       ["child-play", "cinema", "general"].includes(suitability.kind) &&
       infantExperience;
@@ -331,6 +338,7 @@ export function isSuitableForQuery(
   if (
     children &&
     suitability.requiresAgeCheck &&
+    !wholeThemeParkVisit &&
     (!ages.length || !place.ageRange || place.ageRange[0] === 0)
   )
     return false;
