@@ -7,10 +7,48 @@
 
 .sidebar.sidebar.sidebar {
   min-height: 0;
-  padding: 25px 22px;
+  padding: 16px 18px;
   overscroll-behavior: contain;
   scrollbar-width: thin;
   border-right: 1px solid var(--line);
+}
+.layers {
+  position: absolute;
+  top: 202px;
+  right: 20px;
+  z-index: 7;
+  width: 230px;
+  margin: 0;
+  padding: 16px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow: 0 8px 28px #203d3029;
+}
+.layers legend {
+  float: left;
+  width: 100%;
+  padding: 0 0 9px;
+  font-size: 14px;
+  font-weight: 650;
+}
+.layers label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.layers input {
+  accent-color: var(--ink);
+}
+.layers small {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: 8px;
 }
 
 .sidebar :global(.map-sidebar-heading) h1 {

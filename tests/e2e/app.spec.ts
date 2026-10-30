@@ -156,7 +156,7 @@ test("lab overrides share context and map failure preserves decisions", async ({
   await page.getByLabel("Time of day").selectOption("midnight");
   await page.getByLabel("Map provider unavailable").check();
   await expect(
-    page.getByText("Location overview · map unavailable"),
+    page.getByText("Map unavailable"),
   ).toBeVisible();
   await page.getByRole("button", { name: "Discovery", exact: true }).click();
   await expect(
@@ -226,7 +226,7 @@ test("landscape map connects selection and mobile sheet", async ({ page }) => {
   await simulate(page, { failures: ["weather"] });
   await localMapFixture(page);
   await page.goto("/map");
-  await expect(page.locator(".map-status")).toContainText("Landscape map", {
+  await expect(page.locator("[data-map-status]")).toContainText("Map ready", {
     timeout: 20000,
   });
   const row = page.locator(".map-result-row").nth(1);

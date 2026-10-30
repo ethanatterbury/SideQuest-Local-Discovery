@@ -119,7 +119,9 @@ function approvedWebsitePreview(
     !preview ||
     preview.pageUrl !== image.source ||
     preview.publisher !== image.credit ||
-    !["open-graph", "twitter", "venue-image"].includes(preview.kind) ||
+    !["open-graph", "twitter", "venue-image", "brand-logo"].includes(
+      preview.kind,
+    ) ||
     !timestamp ||
     !Number.isFinite(Date.parse(timestamp))
   )
@@ -135,8 +137,17 @@ function approvedWebsitePreview(
   if (!evidence(preview.identityEvidence) || !evidence(preview.subjectEvidence))
     return;
   if (
+    preview.kind !== "brand-logo" &&
     preview.identityEvidence.includes("multi-branch operator") &&
     !preview.identityEvidence.includes("image attributed to the local branch")
+  )
+    return;
+  if (
+    preview.kind === "brand-logo" &&
+    (!preview.identityEvidence.includes(
+      "venue name in page title, heading or business schema",
+    ) ||
+      !preview.subjectEvidence.includes("publisher-declared brand logo"))
   )
     return;
   const review = preview.review;

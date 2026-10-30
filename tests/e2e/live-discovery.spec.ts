@@ -296,7 +296,7 @@ test("a browser without WebGL keeps accessible geographic fallback and static we
     page.getByRole("link", { name: "Powered by Geoapify" }),
   ).toHaveCount(0);
   await expect(page.locator(".geographic-fallback")).toBeVisible();
-  await expect(page.locator(".map-status")).toContainText("map unavailable");
+  await expect(page.locator("[data-map-status]")).toContainText("Map unavailable");
   await expect(
     page.getByRole("button", { name: "Zoom in", exact: true }),
   ).toBeDisabled();
@@ -463,7 +463,7 @@ test("a photo update preserves the chosen map place and camera", async ({
     route.fulfill({ contentType: "image/png", body: icon }),
   );
   await page.goto("/map?place=osm-node-900000");
-  await expect(page.locator(".map-status")).toContainText("Landscape map", {
+  await expect(page.locator("[data-map-status]")).toContainText("Map ready", {
     timeout: 15000,
   });
   const chosen = page
@@ -473,7 +473,7 @@ test("a photo update preserves the chosen map place and camera", async ({
   await expect(chosen).toHaveClass(/selected/);
   await page.locator(".map-selected .place-image").scrollIntoViewIfNeeded();
   await expect.poll(() => started).toBe(true);
-  await expect(page.locator(".map-status")).toContainText("Landscape map", {
+  await expect(page.locator("[data-map-status]")).toContainText("Map ready", {
     timeout: 15000,
   });
   await observeCamera(page);

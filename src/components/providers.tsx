@@ -7,6 +7,7 @@ import {
   useEffect,
   useCallback,
   useRef,
+  useMemo,
   type ReactNode,
 } from "react";
 import {
@@ -23,6 +24,8 @@ import { TOWNS } from "@/providers/geocoding";
 import { openMeteo } from "@/providers/weather";
 import { applyOverrides, unavailableWeather } from "@/domain/environment";
 import { usePlaceCatalog } from "@/providers/place-catalog";
+import type { OutingPlan } from "@/domain/planning";
+import { WEATHER_PRESETS } from "@/domain/environment";
 const labEnabled = true;
 export const LAB_ENABLED = labEnabled;
 type AppContext = ReturnType<typeof usePlaceCatalog> & {
@@ -37,6 +40,9 @@ type AppContext = ReturnType<typeof usePlaceCatalog> & {
   toast: (s: string) => void;
   storageAvailable: boolean;
   ready: boolean;
+  liveNow: string;
+  plan: OutingPlan;
+  setPlan: (plan: OutingPlan) => void;
 };
 const Context = createContext<AppContext | null>(null);
 export function useApp() {
@@ -54,6 +60,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
   const persistence = useRef<LocalPersistence | null>(null);
   const [location, setLocationState] = useState(TOWNS[0]);
   const [overrides, setOverridesState] = useState<EnvironmentOverrides>({});
+  const [plan, setPlanState] = useState<OutingPlan>({});
   const [now, setNow] = useState("");
   const [weather, setWeather] = useState(
     unavailableWeather("2026-10-07T12:00:00Z"),
@@ -77,6 +84,25 @@ export function AppProviders({ children }: { children: ReactNode }) {
       /* A starting location is optional. */
     }
     setState(saved);
+    try {
+      const restored = JSON.parse(
+        sessionStorage.getItem("sidequest:outing-plan:v1") || "{}",
+      );
+      if (restored && typeof restored === "object")
+        setPlanState({
+          ...(typeof restored.at === "string" &&
+          Number.isFinite(Date.parse(restored.at)) &&
+          Math.abs(Date.parse(restored.at) - Date.now()) < 7 * 86400000
+            ? { at: restored.at }
+            : {}),
+          ...(typeof restored.weather === "string" &&
+          Object.hasOwn(WEATHER_PRESETS, restored.weather)
+            ? { weather: restored.weather }
+            : {}),
+        });
+    } catch {
+      /* Planning is optional session state. */
+    }
     setStorageAvailable(persistence.current.available);
     setNow(new Date().toISOString());
     setWeather(unavailableWeather());
@@ -141,16 +167,20 @@ export function AppProviders({ children }: { children: ReactNode }) {
     if (text !== null)
       setQueryState((q) => ({ ...q, text: text.slice(0, 200) }));
   }, [pathname, ready]);
-  const activeOverrides =
-    process.env.NODE_ENV !== "production" || pathname === "/dev/environment"
-      ? overrides
-      : {};
+  const activeOverrides = useMemo(
+    () =>
+      process.env.NODE_ENV !== "production" || pathname === "/dev/environment"
+        ? overrides
+        : {},
+    [overrides, pathname],
+  );
   const activeLocation = activeOverrides.location || location;
+  const plannedAt = pathname === "/dev/environment" ? undefined : plan.at;
   useEffect(() => {
     if (!ready) return;
     const controller = new AbortController();
     const refresh = () =>
-      openMeteo.get(activeLocation, controller.signal).then((w) => {
+      openMeteo.get(activeLocation, controller.signal, plannedAt).then((w) => {
         if (!controller.signal.aborted) setWeather(w);
       });
     refresh();
@@ -159,7 +189,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
       clearInterval(timer);
       controller.abort();
     };
-  }, [activeLocation, ready]);
+  }, [activeLocation, ready, plannedAt]);
   useEffect(() => {
     if (!message) return;
     const t = setTimeout(() => setMessage(""), 4000);
@@ -204,14 +234,41 @@ export function AppProviders({ children }: { children: ReactNode }) {
       sessionStorage.setItem("sidequest:environment", JSON.stringify(o));
     } catch {}
   }, []);
-  const base: Environment = {
-    location,
-    now: now || "2026-10-07T12:00:00Z",
-    weather,
-    reducedMotion,
-    failures: offline ? ["offline"] : [],
-  };
-  const env = applyOverrides(base, activeOverrides);
+  const setPlan = useCallback(
+    (next: OutingPlan) => {
+      setPlanState(next);
+      if (next.at !== plan.at) setWeather(unavailableWeather(next.at));
+      try {
+        sessionStorage.setItem(
+          "sidequest:outing-plan:v1",
+          JSON.stringify(next),
+        );
+      } catch {
+        /* Session-only in private mode. */
+      }
+    },
+    [plan.at],
+  );
+  const base = useMemo<Environment>(
+    () => ({
+      location,
+      now: plannedAt || now || "2026-10-07T12:00:00Z",
+      weather,
+      reducedMotion,
+      failures: offline ? ["offline"] : [],
+    }),
+    [location, plannedAt, now, weather, reducedMotion, offline],
+  );
+  const env = useMemo(
+    () =>
+      applyOverrides(base, {
+        ...(pathname !== "/dev/environment" && plan.weather
+          ? { weather: plan.weather }
+          : {}),
+        ...activeOverrides,
+      }),
+    [base, pathname, plan.weather, activeOverrides],
+  );
   const catalog = usePlaceCatalog(env, query, ready, state);
   return (
     <Context.Provider
@@ -228,6 +285,9 @@ export function AppProviders({ children }: { children: ReactNode }) {
         toast: setMessage,
         storageAvailable,
         ready,
+        liveNow: now || "2026-10-07T12:00:00Z",
+        plan,
+        setPlan,
       }}
     >
       <div

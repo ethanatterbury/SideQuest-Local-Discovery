@@ -1,7 +1,7 @@
 "use client";
 import type { Place } from "@/domain/models";
 import { placePhotoQuery, photoIdentity } from "./photo-query";
-import { storedPhotoLink } from "./photo-link-storage";
+import { storedPhotoLink, forgetPhotoLink } from "./photo-link-storage";
 import {
   approvedPhoto,
   PHOTO_REQUEST_DEADLINE_MS,
@@ -28,12 +28,19 @@ function next() {
     queue.shift()!();
   }
 }
-export function findPlacePhoto(place: Place): Promise<Image | null> {
-  const query = placePhotoQuery(place);
+export function findPlacePhoto(
+  place: Place,
+  excludeUrl?: string,
+): Promise<Image | null> {
+  const query = {
+    ...placePhotoQuery(place),
+    ...(excludeUrl ? { excludeUrl } : {}),
+  };
+  if (excludeUrl) forgetPhotoLink(query, excludeUrl);
   const prepared = approvedPhoto(place.image);
-  if (prepared) return Promise.resolve(prepared);
+  if (prepared && prepared.url !== excludeUrl) return Promise.resolve(prepared);
   const saved = storedPhotoLink(query);
-  if (saved) return Promise.resolve(saved);
+  if (saved && saved.url !== excludeUrl) return Promise.resolve(saved);
   const key = photoIdentity(query);
   const cached = cache.get(key);
   if (cached && cached.until > Date.now()) return Promise.resolve(cached.image);
@@ -119,7 +126,8 @@ export function findPlacePhoto(place: Place): Promise<Image | null> {
             typeof value.license === "string" &&
             typeof value.source === "string"
           ) {
-            image = approvedPhoto(value) || null;
+            image =
+              value.url !== excludeUrl ? approvedPhoto(value) || null : null;
           }
         }
       } catch {

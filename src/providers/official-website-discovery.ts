@@ -54,13 +54,141 @@ function candidate(value: unknown): URL | null {
     return null;
   }
 }
-/** Public browsing only reads durable prepared hints; a configured key cannot trigger spend. */
+/** Prepared hints first, then the optional free search product. Never falls back to Tavily. */
 export async function discoverOfficialWebsite(
   query: WebsiteDiscoveryQuery,
   options: { signal?: AbortSignal; timeoutMs?: number } = {},
 ): Promise<WebsiteDiscoveryResult> {
   if (options.signal?.aborted) return { urls: [], status: "unavailable" };
-  return preparedWebsiteCandidates(query) || { urls: [], status: "disabled" };
+  return preparedWebsiteCandidates(query) || searchFreeWebsite(query, options);
+}
+
+const freeCache = new Map<
+  string,
+  { until: number; result: WebsiteDiscoveryResult }
+>();
+const freePending = new Map<string, Promise<WebsiteDiscoveryResult>>();
+let freeCooldown = 0;
+const freeRequests: number[] = [];
+async function searchFreeWebsite(
+  query: WebsiteDiscoveryQuery,
+  options: { signal?: AbortSignal; timeoutMs?: number },
+): Promise<WebsiteDiscoveryResult> {
+  const apiKey = process.env.TINYFISH_API_KEY?.trim();
+  if (!apiKey) return { urls: [], status: "disabled" };
+  if (
+    !query.name.trim() ||
+    query.name.length > 200 ||
+    !Number.isFinite(query.lat) ||
+    !Number.isFinite(query.lng)
+  )
+    return { urls: [], status: "no-match" };
+  const key = websiteDiscoveryIdentity(query);
+  const cached = freeCache.get(key);
+  if (cached && cached.until > Date.now()) return cached.result;
+  const pending = freePending.get(key);
+  if (pending) return pending;
+  const now = Date.now();
+  while (freeRequests.length && freeRequests[0] <= now - 3600000)
+    freeRequests.shift();
+  if (
+    options.signal?.aborted ||
+    freeCooldown > now ||
+    freePending.size >= 3 ||
+    freeRequests.length >= 500 ||
+    freeRequests.filter((at) => at > now - 60000).length >= 30
+  )
+    return { urls: [], status: "unavailable" };
+  freeRequests.push(now);
+  const task = (async (): Promise<WebsiteDiscoveryResult> => {
+    try {
+      const url = new URL("https://api.search.tinyfish.ai");
+      url.search = new URLSearchParams({
+        query: `${query.name} ${query.area && query.area !== "Nearby" ? query.area.slice(0, 120) : ""} UK official website`,
+        location: "GB",
+        language: "en",
+      }).toString();
+      const response = await fetch(url.href, {
+        headers: { "X-API-Key": apiKey },
+        cache: "no-store",
+        signal: AbortSignal.any([
+          AbortSignal.timeout(
+            Math.max(1, Math.min(3000, options.timeoutMs ?? 2200)),
+          ),
+          ...(options.signal ? [options.signal] : []),
+        ]),
+      });
+      if (!response.ok) {
+        if ([401, 402, 429, 503].includes(response.status)) {
+          const seconds = Number(response.headers.get("retry-after"));
+          freeCooldown =
+            Date.now() +
+            (Number.isFinite(seconds) && seconds > 0
+              ? Math.min(seconds, 86400) * 1000
+              : response.status === 402
+                ? 3600000
+                : 60000);
+        }
+        return { urls: [], status: "unavailable" };
+      }
+      const reader = response.body?.getReader();
+      if (!reader) return { urls: [], status: "unavailable" };
+      let bytes = 0,
+        body = "";
+      const decoder = new TextDecoder();
+      try {
+        while (true) {
+          const part = await reader.read();
+          if (part.done) break;
+          bytes += part.value.byteLength;
+          if (bytes > 262144) throw Error("search-size");
+          body += decoder.decode(part.value, { stream: true });
+        }
+      } finally {
+        await reader.cancel().catch(() => {});
+      }
+      const data = JSON.parse(body);
+      const names = [query.name, ...(query.aliases ?? []).slice(0, 12)]
+        .map(normalize)
+        .filter(Boolean);
+      const urls: string[] = [],
+        hosts = new Set<string>();
+      for (const row of Array.isArray(data.results)
+        ? data.results.slice(0, 10)
+        : []) {
+        const site = candidate(row?.url);
+        if (!site || hosts.has(site.hostname.replace(/^www\./, ""))) continue;
+        const context = normalize(
+          `${typeof row.title === "string" ? row.title : ""} ${typeof row.snippet === "string" ? row.snippet.slice(0, 4000) : ""}`,
+        );
+        if (!names.some((name) => context.includes(name))) continue;
+        hosts.add(site.hostname.replace(/^www\./, ""));
+        urls.push(site.href);
+        if (urls.length === 3) break;
+      }
+      return { urls, status: urls.length ? "found" : "no-match" };
+    } catch {
+      return { urls: [], status: "unavailable" };
+    }
+  })()
+    .then((result) => {
+      freeCache.set(key, {
+        result,
+        until:
+          Date.now() +
+          (result.status === "found"
+            ? 7 * 86400000
+            : result.status === "no-match"
+              ? 3600000
+              : 60000),
+      });
+      if (freeCache.size > 512)
+        freeCache.delete(freeCache.keys().next().value!);
+      return result;
+    })
+    .finally(() => freePending.delete(key));
+  freePending.set(key, task);
+  return task;
 }
 /** Explicit offline maintenance only. Callers must reserve their persistent search budget first. */
 export async function searchOfficialWebsite(

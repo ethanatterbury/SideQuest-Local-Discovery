@@ -37,6 +37,7 @@ import type {
 import type { RasterHandle, RasterStatus } from "./raster-map";
 import { VectorMap } from "./vector-map";
 import styles from "./map-selection.module.css";
+import type { Basemap } from "./map-style";
 export function MapView({ itinerary }: { itinerary?: Itinerary }) {
   const {
     places: catalog,
@@ -81,6 +82,8 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
     [sheetOpen, setSheetOpen] = useState(false),
     [selectionCleared, setSelectionCleared] = useState(false);
   const [center, setCenter] = useState<Coordinates>(env.location);
+  const [basemap, setBasemap] = useState<Basemap>("landscape");
+  const [layersOpen, setLayersOpen] = useState(false);
   const raster = useRef<RasterHandle>(null);
   const page = useRef<HTMLDivElement>(null);
   const selectionTrigger = useRef<HTMLElement | null>(null);
@@ -164,6 +167,7 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
   const failure = env.failures.includes("map");
   const visible = useMemo(() => {
     const eligible = ranked.map((r) => r.place);
+    const seen = new Set<string>();
     return [
       ...eligible,
       ...catalog.filter(
@@ -172,12 +176,14 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
           state.visits.some((v) => v.id === p.id) ||
           (p.id === selectedId && p.id === linkedPlaceId),
       ),
-    ].filter(
-      (p, i, a) =>
-        a.findIndex((x) => x.id === p.id) === i &&
-        (mapCategoryAllowed(p, query) ||
-          (p.id === selectedId && p.id === linkedPlaceId)),
-    );
+    ].filter((p) => {
+      if (seen.has(p.id)) return false;
+      seen.add(p.id);
+      return (
+        mapCategoryAllowed(p, query) ||
+        (p.id === selectedId && p.id === linkedPlaceId)
+      );
+    });
   }, [catalog, ranked, state, query, selectedId, linkedPlaceId]);
   const night = isDark(env.now, env.weather.sunrise, env.weather.sunset);
   const unavailable = failure || rasterStatus === "unavailable";
@@ -223,9 +229,17 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
         </button>
         <div id="map-browse-content" className={styles.browseContent}>
           <div className="map-sidebar-heading">
-            <h1>Go somewhere good.</h1>
-            <p>Find your next outing around {env.location.name}.</p>
-            <label className="map-search">
+            <h1 className="sr-only">Find your next outing</h1>
+            <form
+              className="map-search"
+              role="search"
+              onSubmit={(event) => {
+                event.preventDefault();
+                setSelectionCleared(true);
+                setSelectedId("");
+                setLinkedPlaceId("");
+              }}
+            >
               <Search size={17} />
               <input
                 aria-label="Search map outings"
@@ -235,7 +249,10 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
                   setQuery({ ...query, text: event.target.value })
                 }
               />
-            </label>
+              <button type="submit" aria-label="Search map">
+                <ArrowUpRight size={17} />
+              </button>
+            </form>
             <Refinement
               mapFood={{ included: includeFood, onChange: setIncludeFood }}
             />
@@ -266,7 +283,9 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
             ))}
             {!ranked.length && (
               <p className="notice">
-                No suitable results. Try more time or a wider travel range.
+                {query.text
+                  ? `No matches for “${query.text}” in this area. Try another name or search a different map area.`
+                  : "No suitable results. Try another time or a wider travel range."}
               </p>
             )}
           </div>
@@ -280,6 +299,7 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
           <VectorMap
             ref={raster}
             places={visible}
+            basemap={basemap}
             origin={env.location}
             selected={activePlace}
             saved={state.saved}
@@ -390,16 +410,13 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
           </article>
         )}
         <div className="map-edge-controls">
-          <div className="map-status" role="status">
-            <Layers size={15} />
+          <span className="sr-only" role="status" data-map-status>
             {unavailable
-              ? "Location overview · map unavailable"
+              ? "Map unavailable"
               : rasterStatus === "ready"
-                ? "Landscape map · your next detour"
-                : rasterStatus === "partial"
-                  ? "Street map · some tiles unavailable"
-                  : "Opening the map…"}
-          </div>
+                ? "Map ready"
+                : "Opening the map…"}
+          </span>
           {moved && !unavailable && (
             <button
               className="search-area"
@@ -438,7 +455,44 @@ export function MapView({ itinerary }: { itinerary?: Itinerary }) {
           >
             <LocateFixed size={19} />
           </button>
+          <button
+            aria-label="Map layers"
+            aria-expanded={layersOpen}
+            aria-controls="map-layer-options"
+            onClick={() => setLayersOpen(!layersOpen)}
+            disabled={unavailable}
+          >
+            <Layers size={19} />
+          </button>
         </div>
+        {layersOpen && (
+          <fieldset className={styles.layers} id="map-layer-options">
+            <legend>Map view</legend>
+            {(
+              [
+                ["landscape", "Landscape"],
+                ["street", "Street"],
+                ["satellite", "Satellite"],
+              ] as const
+            ).map(([value, label]) => (
+              <label key={value}>
+                <input
+                  type="radio"
+                  name="basemap"
+                  value={value}
+                  checked={basemap === value}
+                  onChange={() => setBasemap(value)}
+                />
+                <span>{label}</span>
+              </label>
+            ))}
+            <small>
+              {basemap === "satellite"
+                ? "Sentinel imagery · 10m · 2016. Landscape detail, not live aerial photography."
+                : "Your places and map position stay the same."}
+            </small>
+          </fieldset>
+        )}
         <div className="map-legend">
           <span className="origin-dot" />
           Starting point

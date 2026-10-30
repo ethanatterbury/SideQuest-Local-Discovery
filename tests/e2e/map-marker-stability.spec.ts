@@ -107,7 +107,7 @@ test("place buttons stay anchored to geography after cluster expansion, zoom and
     route.fulfill({ json: { image: null, source: "unavailable" } }),
   );
   await page.goto("/map?q=Stability%20Museum");
-  await expect(page.locator(".map-status")).toContainText("Landscape map", {
+  await expect(page.locator("[data-map-status]")).toContainText("Map ready", {
     timeout: 30000,
   });
   await observeCamera(page);

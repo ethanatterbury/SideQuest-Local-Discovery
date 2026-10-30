@@ -1,0 +1,95 @@
+.control {
+  position: relative;
+  flex-shrink: 0;
+}
+.control summary {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  min-height: 36px;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+  padding: 0 10px;
+  border-radius: 6px;
+}
+.control summary::-webkit-details-marker {
+  display: none;
+}
+.control summary:hover,
+.active {
+  background: #e0e6d7;
+}
+.panel {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 330px;
+  padding: 23px;
+  border-radius: 13px;
+  background: var(--paper);
+  box-shadow: 0 10px 40px #203d3033;
+  color: var(--ink);
+  font-size: 13px;
+}
+.panel strong {
+  font-size: 17px;
+}
+.panel p {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 10px 0 17px;
+}
+.panel label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 600;
+}
+.panel label span {
+  float: right;
+  font-weight: 400;
+  color: var(--muted);
+}
+.panel input,
+.panel select {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px 10px;
+  margin-top: 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.tomorrow {
+  font-size: 12px;
+  padding: 10px 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+}
+.actions button {
+  min-height: 44px;
+  font-size: 12px;
+}
+.actions .button {
+  padding: 10px 15px;
+}
+@media (max-width: 700px) {
+  .panel {
+    position: fixed;
+    top: 126px;
+    right: 12px;
+    width: min(330px, calc(100vw - 24px));
+    max-height: calc(100dvh - 215px);
+    overflow: auto;
+  }
+}

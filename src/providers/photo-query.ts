@@ -41,5 +41,6 @@ export function photoIdentity(query: PhotoQuery): string {
     query.area,
     query.address,
     query.postcode,
+    query.excludeUrl,
   ]);
 }

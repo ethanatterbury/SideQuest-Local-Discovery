@@ -22,6 +22,7 @@ export interface PhotoQuery {
   osmImage?: string;
   commons?: string;
   website?: string;
+  excludeUrl?: string;
 }
 export interface PlacePhoto {
   url: string;
@@ -157,11 +158,15 @@ export function parsePhotoQuery(params: URLSearchParams): PhotoQuery | null {
     "osmImage",
     "commons",
     "website",
+    "excludeUrl",
   ] as const) {
     const value = params.get(key)?.trim();
-    const maxLength = ["osmImage", "commons", "website"].includes(key)
-      ? 2048
-      : 500;
+    const maxLength =
+      key === "excludeUrl"
+        ? 4096
+        : ["osmImage", "commons", "website"].includes(key)
+          ? 2048
+          : 500;
     if (value && (value.length > maxLength || /[\x00-\x1f]/.test(value)))
       return null;
     if (value) optional[key] = value;
@@ -960,6 +965,7 @@ async function resolve(
           (name && area)
         );
         const photo = licensedPhoto(page.imageinfo?.[0] || {}, { allowSmall });
+        if (query.excludeUrl && photo?.url === query.excludeUrl) continue;
         if (!photo) {
           rejected("license-or-quality");
           continue;
@@ -1453,6 +1459,7 @@ export async function lookupPlacePhoto(
     query.osmImage,
     query.commons,
     query.category,
+    query.excludeUrl,
   ]);
   const present = (result: PhotoResult): PhotoResult =>
     options.debug

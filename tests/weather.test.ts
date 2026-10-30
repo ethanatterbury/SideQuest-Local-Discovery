@@ -109,3 +109,68 @@ it("network failures never reject discovery", async () => {
     "unavailable",
   );
 });
+it("uses the planned hour and that day's solar times, not current conditions", async () => {
+  const epoch = (value: string) => Date.parse(value) / 1000;
+  const at = "2026-10-31T14:00:00Z";
+  const fetcher = vi.fn(async () =>
+    Response.json({
+      hourly: {
+        time: [epoch("2026-10-30T22:00:00Z"), epoch(at)],
+        temperature_2m: [9, 19],
+        precipitation: [4, 0],
+        weather_code: [65, 0],
+        wind_speed_10m: [20, 8],
+        visibility: [6000, 20000],
+        cloud_cover: [100, 5],
+        wind_direction_10m: [100, 225],
+        wind_gusts_10m: [30, 12],
+        snowfall: [0, 0],
+        precipitation_probability: [100, 0],
+      },
+      daily: {
+        time: [epoch("2026-10-30T00:00:00Z"), epoch("2026-10-31T00:00:00Z")],
+        sunrise: [epoch("2026-10-30T07:00:00Z"), epoch("2026-10-31T07:02:00Z")],
+        sunset: [epoch("2026-10-30T16:30:00Z"), epoch("2026-10-31T16:28:00Z")],
+      },
+    }),
+  );
+  vi.stubGlobal("fetch", fetcher);
+  expect(
+    await openMeteo.get({ lat: 52.3, lng: -1.1 }, undefined, at),
+  ).toMatchObject({
+    kind: "clear",
+    temperature: 19,
+    rain: 0,
+    sunrise: "2026-10-31T07:02:00.000Z",
+    sunset: "2026-10-31T16:28:00.000Z",
+  });
+  const request = fetcher.mock.calls[0] as unknown as [string];
+  expect(String(request[0])).toContain("timeformat=unixtime");
+});
+
+it("selects the London calendar day's sun times for a plan just after midnight during BST", async () => {
+  const epoch = (value: string) => Date.parse(value) / 1000;
+  const at = "2027-06-10T23:30:00Z";
+  vi.stubGlobal("fetch", async () =>
+    Response.json({
+      hourly: {
+        time: [epoch("2027-06-10T23:00:00Z")],
+        temperature_2m: [16],
+        precipitation: [0],
+        weather_code: [0],
+        wind_speed_10m: [8],
+      },
+      daily: {
+        time: [epoch("2027-06-10T00:00:00Z"), epoch("2027-06-11T00:00:00Z")],
+        sunrise: [epoch("2027-06-10T03:45:00Z"), epoch("2027-06-11T03:44:00Z")],
+        sunset: [epoch("2027-06-10T20:15:00Z"), epoch("2027-06-11T20:16:00Z")],
+      },
+    }),
+  );
+  expect(
+    await openMeteo.get({ lat: 52.4, lng: -1.2 }, undefined, at),
+  ).toMatchObject({
+    sunrise: "2027-06-11T03:44:00.000Z",
+    sunset: "2027-06-11T20:16:00.000Z",
+  });
+});

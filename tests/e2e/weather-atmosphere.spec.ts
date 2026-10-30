@@ -52,8 +52,8 @@ async function lab(page: Page) {
     );
   }, fixture);
   await page.goto("/dev/environment");
-  await expect(page.locator(".map-status")).toHaveText(
-    /Landscape map · your next detour/,
+  await expect(page.locator("[data-map-status]")).toHaveText(
+    /Map ready/,
     { timeout: 60000 },
   );
   await expect(page.locator(".weather-atmosphere")).toHaveAttribute(

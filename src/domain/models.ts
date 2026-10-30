@@ -173,7 +173,7 @@ export type Place = {
     preview?: {
       pageUrl: string;
       publisher: string;
-      kind: "open-graph" | "twitter" | "venue-image";
+      kind: "open-graph" | "twitter" | "venue-image" | "brand-logo";
       identityEvidence: string[];
       subjectEvidence: string[];
       review?: {

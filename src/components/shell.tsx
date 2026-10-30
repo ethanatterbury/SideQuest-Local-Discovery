@@ -21,6 +21,7 @@ import { Mark, Modal } from "./primitives";
 import { LocationPicker } from "./location-picker";
 import { useApp, LAB_ENABLED } from "./providers";
 import { isDark } from "@/domain/time";
+import { PlanningControls } from "./planning-controls";
 const nav = [
   { href: "/", label: "Discover", Icon: Sparkles },
   { href: "/map", label: "Map", Icon: Map },
@@ -29,7 +30,8 @@ const nav = [
 ];
 export function Shell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
-  const { env, ready, state, storageAvailable, toast } = useApp();
+  const { env, ready, state, storageAvailable, toast, plan } = useApp();
+  const mapPage = path === "/map";
   const [locationOpen, setLocationOpen] = useState(false),
     [searchOpen, setSearchOpen] = useState(false),
     [installEvent, setInstallEvent] = useState<Event | null>(null);
@@ -122,10 +124,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
               </span>
               <span className="weather-source">
                 {env.weather.source === "simulation"
-                  ? "Simulated"
+                  ? plan.weather
+                    ? "Weather preview"
+                    : "Simulated"
                   : env.weather.source === "cached"
                     ? "Cached forecast"
-                    : "Local forecast"}
+                    : plan.at
+                      ? "Planned forecast"
+                      : "Local forecast"}
               </span>
             </>
           ) : (
@@ -136,18 +142,25 @@ export function Shell({ children }: { children: React.ReactNode }) {
           )}
         </span>
         <span className="context-date">
-          {ready
-            ? new Intl.DateTimeFormat("en-GB", {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-                timeZone: "Europe/London",
-              }).format(new Date(env.now))
-            : "A good day for a change of scene"}{" "}
-          <span className="context-separator">/</span> A little closer to
-          somewhere good
-          <ArrowUpRight size={14} />
+          {mapPage ? (
+            "Find your next outing"
+          ) : (
+            <>
+              {ready
+                ? new Intl.DateTimeFormat("en-GB", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                    timeZone: "Europe/London",
+                  }).format(new Date(env.now))
+                : "A good day for a change of scene"}{" "}
+              <span className="context-separator">/</span> A little closer to
+              somewhere good
+              <ArrowUpRight size={14} />
+            </>
+          )}
         </span>
+        {path !== "/dev/environment" && <PlanningControls />}
       </div>
       {!storageAvailable && (
         <div className="connection-notice" role="status">
@@ -162,7 +175,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </div>
       )}
       <main id="main">{children}</main>
-      <footer className="footer">
+      <footer className={`footer${mapPage ? " map-footer" : ""}`}>
         <Link className="brand small" href="/">
           <Mark />
           <span>sidequest.</span>

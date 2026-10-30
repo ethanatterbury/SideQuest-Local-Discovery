@@ -51,7 +51,11 @@ async function resolveRequest(request: Request, started: number) {
   // Diagnostics describe public venue/media evidence; cache-bypassing refresh remains private.
   const debug = params.get("debug") === "1";
   const refresh = labEnabled && debug && params.get("refresh") === "1";
-  const entry = refresh ? null : indexedPhoto(query);
+  const indexed = refresh ? null : indexedPhoto(query);
+  const entry =
+    query.excludeUrl && indexed?.image?.url === query.excludeUrl
+      ? null
+      : indexed;
   const venue = query.id ? PLACES.find((place) => place.id === query.id) : null;
   const matchingVenue =
     venue &&
@@ -64,7 +68,7 @@ async function resolveRequest(request: Request, started: number) {
     !refresh &&
     (storedQueryImage(query) ||
       (matchingVenue && storedVenueImage(matchingVenue)));
-  if (stored)
+  if (stored && stored.url !== query.excludeUrl)
     return Response.json(
       {
         image: stored,
@@ -218,7 +222,12 @@ async function officialPreview(
       }
       const preview = await resolveOfficialWebsitePreview(
         { ...query, website },
-        { signal: controller.signal, timeoutMs: remaining, refresh },
+        {
+          signal: controller.signal,
+          timeoutMs: remaining,
+          refresh,
+          excludeUrl: query.excludeUrl,
+        },
       );
       attempts.push({
         website,

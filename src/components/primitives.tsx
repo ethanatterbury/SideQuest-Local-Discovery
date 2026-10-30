@@ -72,6 +72,19 @@ export function PlaceImage({
   const [looking, setLooking] = useState(false);
   const [failed, setFailed] = useState(false);
   const [attempted, setAttempted] = useState(false);
+  const recovery = useRef({ id: place.id, attempts: 0 });
+  async function recoverImage() {
+    setFailed(true);
+    if (!image) return;
+    if (recovery.current.id !== place.id)
+      recovery.current = { id: place.id, attempts: 0 };
+    if (recovery.current.attempts++ >= 1) return;
+    setLooking(true);
+    const replacement = await findPlacePhoto(place, image.url);
+    if (replacement && recovery.current.id === place.id)
+      rememberPhoto(place.id, replacement);
+    setLooking(false);
+  }
   useEffect(() => {
     if (image || !container.current) return;
     let cancelled = false;
@@ -130,7 +143,7 @@ export function PlaceImage({
             ? "loading"
             : "unavailable"
       }
-      className={`place-image ${className} ${!image || failed ? "image-fallback" : ""}`}
+      className={`place-image ${className} ${image?.preview?.kind === "brand-logo" ? "brand-image" : ""} ${!image || failed ? "image-fallback" : ""}`}
       style={{
         backgroundColor: place.environment === "indoor" ? "#dad5c2" : "#ccd3b4",
       }}
@@ -140,16 +153,21 @@ export function PlaceImage({
           src={imageSource!}
           unoptimized
           sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 800px"
-          alt={place.name}
+          alt={
+            image.preview?.kind === "brand-logo"
+              ? `${place.name} official logo`
+              : place.name
+          }
           width={1280}
           height={800}
           loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? "high" : "auto"}
           decoding="async"
+          referrerPolicy="no-referrer"
           placeholder={image.blurDataURL ? "blur" : "empty"}
           blurDataURL={image.blurDataURL}
           onLoad={() => savePhotoLink(placePhotoQuery(place), image)}
-          onError={() => setFailed(true)}
+          onError={() => void recoverImage()}
         />
       ) : (
         <div className="fallback-content">
@@ -169,7 +187,9 @@ export function PlaceImage({
           className="photo-source"
           title={`Published by ${image.credit}. Image rights retained by its owner.`}
         >
-          From {image.credit}
+          {image.preview?.kind === "brand-logo"
+            ? "Official logo"
+            : `From ${image.credit}`}
         </span>
       )}
     </div>

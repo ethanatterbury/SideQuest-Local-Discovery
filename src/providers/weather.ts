@@ -1,7 +1,12 @@
 import type { Coordinates, Weather, WeatherKind } from "@/domain/models";
 import { unavailableWeather } from "@/domain/environment";
+import { londonDateTime } from "@/domain/planning";
 export interface WeatherProvider {
-  get(coordinates: Coordinates, signal?: AbortSignal): Promise<Weather>;
+  get(
+    coordinates: Coordinates,
+    signal?: AbortSignal,
+    at?: string,
+  ): Promise<Weather>;
 }
 export function weatherKind(
   code: number,
@@ -21,7 +26,8 @@ export function weatherKind(
 }
 const cache = new Map<string, { at: number; weather: Weather }>();
 export const openMeteo: WeatherProvider = {
-  async get(c, signal) {
+  async get(c, signal, at) {
+    if (at) return plannedForecast(c, at, signal);
     const key = `${c.lat.toFixed(2)},${c.lng.toFixed(2)}`;
     const stored = cache.get(key);
     if (stored && Date.now() - stored.at < 15 * 60000)
@@ -118,3 +124,94 @@ export const openMeteo: WeatherProvider = {
     }
   },
 };
+
+const forecastCache = new Map<string, { at: number; weather: Weather }>();
+async function plannedForecast(
+  c: Coordinates,
+  at: string,
+  signal?: AbortSignal,
+): Promise<Weather> {
+  const timestamp = Date.parse(at);
+  const key = `${c.lat.toFixed(2)},${c.lng.toFixed(2)},${Math.floor(timestamp / 3600000)}`;
+  const stored = forecastCache.get(key);
+  if (stored && Date.now() - stored.at < 15 * 60000)
+    return { ...stored.weather, source: "cached" };
+  try {
+    if (!Number.isFinite(timestamp)) throw Error("invalid-planned-time");
+    const fields =
+      "temperature_2m,precipitation,weather_code,wind_speed_10m,cloud_cover,wind_direction_10m,wind_gusts_10m,snowfall,precipitation_probability,visibility";
+    const response = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lng}&hourly=${fields}&daily=sunrise,sunset&forecast_days=7&timezone=UTC&timeformat=unixtime`,
+      {
+        signal: AbortSignal.any([
+          AbortSignal.timeout(8000),
+          ...(signal ? [signal] : []),
+        ]),
+      },
+    );
+    if (!response.ok) throw Error("forecast-unavailable");
+    const data = await response.json(),
+      hours = data.hourly,
+      daily = data.daily;
+    const index =
+      hours?.time?.findIndex(
+        (t: number) => t * 1000 <= timestamp && timestamp < t * 1000 + 3600000,
+      ) ?? -1;
+    const day =
+      daily?.time?.findIndex(
+        (t: number) =>
+          new Date(t * 1000).toISOString().slice(0, 10) ===
+          londonDateTime(at).slice(0, 10),
+      ) ?? -1;
+    if (
+      index < 0 ||
+      day < 0 ||
+      ![
+        hours.temperature_2m?.[index],
+        hours.precipitation?.[index],
+        hours.weather_code?.[index],
+        hours.wind_speed_10m?.[index],
+        daily.sunrise?.[day],
+        daily.sunset?.[day],
+      ].every(Number.isFinite)
+    )
+      throw Error("forecast-outside-range");
+    const temperature = hours.temperature_2m[index],
+      rain = hours.precipitation[index],
+      wind = hours.wind_speed_10m[index];
+    if (
+      temperature < -80 ||
+      temperature > 65 ||
+      rain < 0 ||
+      rain > 100 ||
+      wind < 0 ||
+      wind > 300
+    )
+      throw Error("invalid-forecast");
+    const finite = (field: string, fallback: number) =>
+      Number.isFinite(hours[field]?.[index]) ? hours[field][index] : fallback;
+    const weather: Weather = {
+      kind: weatherKind(hours.weather_code[index], temperature, wind),
+      temperature,
+      rain,
+      wind,
+      cloudCover: Math.max(0, Math.min(100, finite("cloud_cover", 50))),
+      windDirection: finite("wind_direction_10m", 225),
+      gusts: finite("wind_gusts_10m", wind),
+      snowfall: finite("snowfall", 0),
+      visibility: Math.max(0, finite("visibility", 10000)) / 1000,
+      sunrise: new Date(daily.sunrise[day] * 1000).toISOString(),
+      sunset: new Date(daily.sunset[day] * 1000).toISOString(),
+      observedAt: new Date(hours.time[index] * 1000).toISOString(),
+      source: "live",
+    };
+    forecastCache.set(key, { at: Date.now(), weather });
+    if (forecastCache.size > 64)
+      forecastCache.delete(forecastCache.keys().next().value!);
+    return weather;
+  } catch {
+    return stored
+      ? { ...stored.weather, source: "cached" }
+      : unavailableWeather(Number.isFinite(timestamp) ? at : undefined);
+  }
+}

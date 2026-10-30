@@ -13,11 +13,18 @@ import maplibregl, {
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { Coordinates, Itinerary, Place } from "@/domain/models";
 import type { RasterHandle, RasterStatus } from "./raster-map";
-import { landscapeStyle, OPEN_MAP_STYLE, UK_MAP_BOUNDS } from "./map-style";
+import {
+  landscapeStyle,
+  OPEN_MAP_STYLE,
+  UK_MAP_BOUNDS,
+  SATELLITE_SOURCE,
+  type Basemap,
+} from "./map-style";
 import styles from "./vector-map.module.css";
 import type { MapCamera } from "./map-camera";
 import { markerGlyph } from "./marker-glyph";
 type Props = {
+  basemap?: Basemap;
   places: Place[];
   origin: Coordinates;
   selected?: Place;
@@ -38,6 +45,10 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
       map = useRef<maplibregl.Map | null>(null);
     const markerCache = useRef(new Map<string, maplibregl.Marker>());
     const sourceSignature = useRef("");
+    const baseStyle = useRef<{
+      original: StyleSpecification;
+      landscape: StyleSpecification;
+    } | null>(null);
     const latest = useRef(props);
     latest.current = props;
     const [revision, setRevision] = useState(0),
@@ -97,7 +108,9 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
               });
           if (response && !response.ok)
             throw new Error("Map style unavailable");
-          const style = landscapeStyle(fixture ?? (await response!.json()));
+          const original = fixture ?? (await response!.json());
+          const style = landscapeStyle(original);
+          baseStyle.current = { original, landscape: style };
           if (disposed || !root.current) return;
           const m = new maplibregl.Map({
             container: root.current,
@@ -282,6 +295,50 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
     }, [revision]);
     useEffect(() => {
       const m = map.current,
+        base = baseStyle.current;
+      if (!m || !loaded || !base || !m.isStyleLoaded()) return;
+      const mode = props.basemap ?? "landscape";
+      if (mode === "satellite" && !m.getSource("sq-satellite")) {
+        m.addSource("sq-satellite", SATELLITE_SOURCE);
+        m.addLayer(
+          { id: "sq-satellite", type: "raster", source: "sq-satellite" },
+          m.getStyle().layers[0]?.id,
+        );
+      }
+      if (m.getLayer("sq-satellite"))
+        m.setLayoutProperty(
+          "sq-satellite",
+          "visibility",
+          mode === "satellite" ? "visible" : "none",
+        );
+      for (let i = 0; i < base.original.layers.length; i++) {
+        const original = base.original.layers[i],
+          layer = (mode === "street" ? base.original : base.landscape).layers[
+            i
+          ];
+        if (!m.getLayer(original.id)) continue;
+        m.setLayoutProperty(
+          original.id,
+          "visibility",
+          mode === "satellite" && original.type !== "symbol"
+            ? "none"
+            : (original.layout?.visibility ?? "visible"),
+        );
+        const properties = new Set([
+          ...Object.keys(original.paint ?? {}),
+          ...Object.keys(base.landscape.layers[i].paint ?? {}),
+        ]);
+        for (const property of properties)
+          m.setPaintProperty(
+            original.id,
+            property,
+            (layer.paint as Record<string, unknown> | undefined)?.[property] ??
+              null,
+          );
+      }
+    }, [props.basemap, loaded]);
+    useEffect(() => {
+      const m = map.current,
         source = m?.getSource("sidequest") as GeoJSONSource | undefined;
       if (!m || !source) return;
       const signature =
@@ -310,10 +367,31 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
         });
       }
       const markers = markerCache.current;
+      const byId = new Map(props.places.map((place) => [place.id, place]));
+      const savedIds = new Set(props.saved),
+        visitedIds = new Set(props.visited);
       function sync() {
         if (!m) return;
-        const features = m.querySourceFeatures("sidequest");
-        const clusters = features.filter((f) => f.properties?.point_count);
+        const bounds = m.getBounds();
+        const features = m
+          .querySourceFeatures("sidequest")
+          .filter(
+            (feature) =>
+              feature.geometry.type === "Point" &&
+              bounds.contains(
+                (feature.geometry as GeoJSON.Point).coordinates as [
+                  number,
+                  number,
+                ],
+              ),
+          );
+        const clusters = [
+          ...new Map(
+            features
+              .filter((f) => f.properties?.point_count)
+              .map((f) => [f.properties?.cluster_id, f]),
+          ).values(),
+        ];
         const visible = new Set(
           features
             .filter((f) => !f.properties?.point_count)
@@ -334,9 +412,8 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
             existingCluster?.getElement() || document.createElement("button");
           // MapLibre owns positioning/state classes on this cached element.
           button.classList.add(styles.cluster);
-          button.textContent = String(
-            cluster.properties?.point_count_abbreviated,
-          );
+          const count = String(cluster.properties?.point_count_abbreviated);
+          if (button.textContent !== count) button.textContent = count;
           button.setAttribute(
             "aria-label",
             `Zoom in to ${cluster.properties?.point_count} places`,
@@ -360,12 +437,10 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
             }
           };
           if (existingCluster) {
-            existingCluster.setLngLat(
-              (cluster.geometry as GeoJSON.Point).coordinates as [
-                number,
-                number,
-              ],
-            );
+            const [lng, lat] = (cluster.geometry as GeoJSON.Point).coordinates;
+            const position = existingCluster.getLngLat();
+            if (position.lng !== lng || position.lat !== lat)
+              existingCluster.setLngLat([lng, lat]);
             continue;
           }
           markers.set(
@@ -380,29 +455,39 @@ export const VectorMap = forwardRef<RasterHandle, Props>(
               .addTo(m),
           );
         }
-        for (const p of props.places) {
-          if (!visible.has(p.id)) continue;
+        for (const id of visible) {
+          const p = byId.get(id);
+          if (!p) continue;
           const existingMarker = markers.get(p.id);
           const button =
             existingMarker?.getElement() || document.createElement("button");
           const selected = props.selected?.id === p.id,
-            saved = props.saved.includes(p.id),
-            visited = props.visited.includes(p.id);
-          button.classList.add(styles.marker);
-          button.classList.toggle(styles.selected, selected);
-          button.classList.toggle(styles.saved, saved);
-          button.classList.toggle(styles.visited, visited);
-          const glyph = markerGlyph(p.category, saved, visited);
-          if (button.innerHTML !== glyph) button.innerHTML = glyph;
-          button.setAttribute(
-            "aria-label",
-            `Select ${p.name}${saved ? ", saved" : ""}${visited ? ", visited" : ""}`,
-          );
-          button.setAttribute("aria-pressed", String(selected));
-          button.title = p.name;
-          button.onclick = () => latest.current.onSelect(p.id);
+            saved = savedIds.has(p.id),
+            visited = visitedIds.has(p.id);
+          const presentation = `${p.name}|${p.category}|${selected}|${saved}|${visited}`;
+          if (button.dataset.presentation !== presentation) {
+            button.dataset.presentation = presentation;
+            button.classList.add(styles.marker);
+            button.classList.toggle(styles.selected, selected);
+            button.classList.toggle(styles.saved, saved);
+            button.classList.toggle(styles.visited, visited);
+            const glyph = markerGlyph(p.category, saved, visited);
+            if (button.innerHTML !== glyph) button.innerHTML = glyph;
+            button.setAttribute(
+              "aria-label",
+              `Select ${p.name}${saved ? ", saved" : ""}${visited ? ", visited" : ""}`,
+            );
+            button.setAttribute("aria-pressed", String(selected));
+            button.title = p.name;
+            button.onclick = () => latest.current.onSelect(p.id);
+          }
           if (existingMarker) {
-            existingMarker.setLngLat([p.coordinates.lng, p.coordinates.lat]);
+            const position = existingMarker.getLngLat();
+            if (
+              position.lng !== p.coordinates.lng ||
+              position.lat !== p.coordinates.lat
+            )
+              existingMarker.setLngLat([p.coordinates.lng, p.coordinates.lat]);
             continue;
           }
           markers.set(

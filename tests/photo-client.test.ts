@@ -5,6 +5,30 @@ afterEach(() => {
   vi.unstubAllGlobals();
   vi.useRealTimers();
 });
+it("resolves a replacement when an approved supplied image fails to load", async () => {
+  const broken = {
+    url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Broken.jpg",
+    source: "https://commons.wikimedia.org/wiki/File:Broken.jpg",
+    credit: "Author",
+    license: "CC0",
+    checkedAt: "2026-10-30",
+  };
+  const replacement = {
+    ...broken,
+    url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Replacement.jpg",
+    source: "https://commons.wikimedia.org/wiki/File:Replacement.jpg",
+  };
+  const fetcher = vi.fn(async () => Response.json({ image: replacement }));
+  vi.stubGlobal("fetch", fetcher);
+  const place = { ...PLACES[0], id: "broken-link-recovery", image: broken };
+  expect(await findPlacePhoto(place, broken.url)).toMatchObject(replacement);
+  const request = fetcher.mock.calls[0] as unknown as [string];
+  expect(
+    new URL(String(request[0]), "https://example.com").searchParams.get(
+      "excludeUrl",
+    ),
+  ).toBe(broken.url);
+});
 it("sends imported media hints and retries a temporary failure instead of recording a permanent absence", async () => {
   vi.useFakeTimers();
   const place = {
@@ -166,7 +190,7 @@ it("bounds active requests and queue waits even when upstream ignores abort", as
     id: `bounded-queue-${i}`,
     image: undefined,
   }));
-  const promises = places.map(findPlacePhoto);
+  const promises = places.map((place) => findPlacePhoto(place));
   expect(fetcher).toHaveBeenCalledTimes(3);
   await vi.advanceTimersByTimeAsync(39000);
   expect(await Promise.all(promises)).toEqual(Array(70).fill(null));

@@ -44,3 +44,17 @@ export function savePhotoLink(query: PhotoQuery, image: PlacePhoto): void {
     /* Private browsing or full storage must not prevent photographs loading. */
   }
 }
+export function forgetPhotoLink(query: PhotoQuery, url: string): void {
+  try {
+    localStorage.setItem(
+      KEY,
+      JSON.stringify(
+        records().filter(
+          (r) => r.key !== identity(query) || r.image.url !== url,
+        ),
+      ),
+    );
+  } catch {
+    /* Optional browser metadata. */
+  }
+}

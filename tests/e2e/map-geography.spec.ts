@@ -85,8 +85,8 @@ async function ready(page: Page) {
   await expect(
     page.locator('[data-map-engine="maplibre"] .maplibregl-canvas'),
   ).toBeVisible({ timeout: 30000 });
-  await expect(page.locator(".map-status")).toHaveText(
-    /Landscape map · your next detour/,
+  await expect(page.locator("[data-map-status]")).toHaveText(
+    /Map ready/,
     { timeout: 30000 },
   );
 }
@@ -99,8 +99,8 @@ test("MapLibre renders local geography and style load alone fails with a recover
   await expect(page.locator(".maplibregl-canvas")).toBeVisible({
     timeout: 30000,
   });
-  await expect(page.locator(".map-status")).toHaveText(
-    /Location overview · map unavailable/,
+  await expect(page.locator("[data-map-status]")).toHaveText(
+    /Map unavailable/,
     // The app deadline remains 10s; allow software-GPU scheduling on CI.
     { timeout: 30000 },
   );

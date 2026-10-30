@@ -151,7 +151,7 @@ for (const viewport of [
       await page.screenshot({
         path: `work/map-selection-${viewport.width}.png`,
       });
-    await expect(page.locator(".map-status")).toContainText("Landscape map", {
+    await expect(page.locator("[data-map-status]")).toContainText("Map ready", {
       timeout: 15000,
     });
     // Native markers outside clusters remain keyboard selectable after closing.
@@ -203,7 +203,7 @@ test("a photo arriving for the selected venue preserves the panned map camera", 
   await fixtures(page, true);
   await page.goto(`/map?place=${venue.id}`);
   await expect(page.locator(".map-selected")).toContainText(venue.name);
-  await expect(page.locator(".map-status")).toContainText("Landscape map", {
+  await expect(page.locator("[data-map-status]")).toContainText("Map ready", {
     timeout: 15000,
   });
   await observeCamera(page);
@@ -234,7 +234,7 @@ for (const viewport of [
     await page.setViewportSize(viewport);
     await fixtures(page);
     await page.goto(`/map?place=${venue.id}`);
-    await expect(page.locator(".map-status")).toContainText("Landscape map");
+    await expect(page.locator("[data-map-status]")).toContainText("Map ready");
     const canvas = page.locator(".maplibregl-canvas");
     await canvas.focus();
     await canvas.press("ArrowRight");
@@ -251,7 +251,6 @@ for (const viewport of [
     expect(button.x + button.width).toBeLessThan(map.x + map.width);
     expect(button.y + button.height).toBeLessThan(map.y + map.height);
     for (const selector of [
-      ".map-status",
       ".map-controls",
       ".map-legend",
       ".map-selected",

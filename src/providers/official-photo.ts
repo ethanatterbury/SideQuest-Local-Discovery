@@ -41,6 +41,7 @@ export interface OfficialPhotoReviewCandidate {
 }
 export interface OfficialPhotoParseResult {
   candidates: OfficialPhotoCandidate[];
+  brandLogo?: PlacePhoto;
   reviewCandidates?: OfficialPhotoReviewCandidate[];
   identity: OfficialPhotoIdentity;
   rejected: Record<string, number>;
@@ -69,6 +70,7 @@ export interface OfficialPhotoOptions {
   /** Offline preparation only; unknown subjects stay unapproved pending image review. */
   collectReviewCandidates?: boolean;
   refresh?: boolean;
+  excludeUrl?: string;
 }
 export interface OfficialPhotoDownload {
   buffer: Buffer;
@@ -1131,6 +1133,55 @@ export function parseOfficialPhotoHtml(
     const previous = photos.get(url);
     if (!previous || candidate.rank > previous.rank) photos.set(url, candidate);
   }
+  let brandLogo: PlacePhoto | undefined;
+  if (websitePreview && matchedName) {
+    for (const match of withoutScripts.matchAll(
+      /<(?:img|link)\b(?:"[^"]*"|'[^']*'|[^<>"'])*>/gi,
+    )) {
+      const attr = attributes(match[0]);
+      const context = `${attr.alt ?? ""} ${attr.class ?? ""} ${attr.id ?? ""} ${attr.rel ?? ""}`;
+      const raw = attr["data-src"] || attr.src || attr.href;
+      if (
+        !raw ||
+        !/\blogo\b|apple-touch-icon/i.test(
+          `${context} ${raw.replace(/[-_]/g, " ")}`,
+        ) ||
+        /sponsor|partner|payment|facebook|instagram|tripadvisor|trustpilot|award/i.test(
+          `${context} ${raw}`,
+        )
+      )
+        continue;
+      try {
+        const url = new URL(decode(raw), pageUrl);
+        if (
+          !safeOfficialPhotoUrl(url.href) ||
+          stockHosts.test(url.hostname) ||
+          !/\.(?:svg|png|webp|jpe?g)(?:$|[?#])/i.test(url.href)
+        )
+          continue;
+        brandLogo = {
+          url: url.href,
+          source: pageUrl,
+          credit: query.name,
+          license: "Website preview — rights reserved",
+          rights: "website-preview",
+          strategy: "official-website-preview",
+          checkedAt: new Date().toISOString(),
+          confidence: 0.7,
+          preview: {
+            pageUrl,
+            publisher: query.name,
+            kind: "brand-logo",
+            identityEvidence: identity.evidence,
+            subjectEvidence: ["publisher-declared brand logo"],
+          },
+        };
+        break;
+      } catch {
+        /* Invalid logo URLs are never returned. */
+      }
+    }
+  }
   return {
     candidates: [...photos.values()]
       .sort((a, b) => b.rank - a.rank)
@@ -1146,6 +1197,7 @@ export function parseOfficialPhotoHtml(
       : {}),
     identity,
     rejected,
+    ...(brandLogo ? { brandLogo } : {}),
   };
 }
 
@@ -1440,15 +1492,23 @@ export async function resolveOfficialPhotos(
     };
     const max = Math.min(MAX_IMAGES, Math.max(1, options.maxCandidates ?? 12));
     for (const candidate of parsed.candidates.slice(0, Math.max(max * 3, 24))) {
-      if (await guardImage(candidate)) verified.push(candidate);
+      if (candidate.url !== options.excludeUrl && (await guardImage(candidate)))
+        verified.push(candidate);
       if (verified.length >= max) break;
     }
     const verifiedReview: OfficialPhotoReviewCandidate[] = [];
     for (const candidate of parsed.reviewCandidates ?? [])
       if (await guardImage(candidate)) verifiedReview.push(candidate);
+    const brandLogo =
+      parsed.brandLogo &&
+      parsed.brandLogo.url !== options.excludeUrl &&
+      (await guardImage(parsed.brandLogo))
+        ? parsed.brandLogo
+        : undefined;
     return {
       ...parsed,
       candidates: verified,
+      brandLogo,
       ...(options.collectReviewCandidates
         ? { reviewCandidates: verifiedReview }
         : {}),
@@ -1613,7 +1673,7 @@ async function resolveWebsitePreview(
         matched: candidate.matched,
         preview: candidate.preview,
       }
-    : null;
+    : (result.brandLogo ?? null);
   return { image, retryable: result.retryable, result };
 }
 
@@ -1640,6 +1700,7 @@ export async function resolveOfficialWebsitePreview(
     query.postcode,
     query.website,
     query.aliases,
+    options.excludeUrl,
   ]);
   const cached = websitePreviewCache.get(key);
   if (!options.refresh && cached && cached.until > Date.now())

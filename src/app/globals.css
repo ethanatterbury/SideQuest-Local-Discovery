@@ -2575,10 +2575,10 @@ textarea {
 }
 @media (min-width: 1550px) {
   .header {
-    padding: 0 calc((100% - 1340px) / 2);
+    padding: 0 48px;
   }
   .context-bar {
-    padding: 0 calc((100% - 1240px) / 2);
+    padding: 0 48px;
   }
   .home-hero {
     padding-top: 62px;
@@ -4378,6 +4378,16 @@ input[type="checkbox"] {
 .header {
   background: var(--paper);
 }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.footer.map-footer { display: none; }
+.context-date { margin-left: auto; }
+.map-search { display: flex; align-items: center; gap: 9px; min-height: 46px; padding: 0 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 9px; }
+.map-search:focus-within { outline: 2px solid #537a3c; outline-offset: 2px; }
+.map-search input { width: 100%; min-width: 0; background: transparent; border: 0; outline: 0; font-size: 13px; }
+.map-search input::placeholder { color: var(--muted); opacity: 1; }
+.map-search button { display: grid; place-items: center; flex-shrink: 0; width: 32px; min-height: 40px; }
+.place-image.brand-image { background: #f1f2ed; }
+.place-image.brand-image img { object-fit: contain; padding: 18%; background: #f1f2ed; }
 .brand {
   letter-spacing: -0.04em;
 }

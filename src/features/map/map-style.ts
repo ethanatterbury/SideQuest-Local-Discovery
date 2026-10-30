@@ -1,4 +1,16 @@
 import type { StyleSpecification } from "maplibre-gl";
+export type Basemap = "landscape" | "street" | "satellite";
+/** Public CC BY 4.0 Sentinel mosaic; retain its date and 10m resolution in the UI. */
+export const SATELLITE_SOURCE = {
+  type: "raster" as const,
+  tiles: [
+    "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg",
+  ],
+  tileSize: 256,
+  maxzoom: 14,
+  attribution:
+    'Sentinel-2 cloudless 2016 © <a href="https://maps.eox.at/">EOX</a> (modified Copernicus Sentinel data 2016/2017), <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>',
+};
 /** Includes Northern Ireland, Scilly, Hebrides, Orkney and Shetland. */
 export const UK_MAP_BOUNDS: [[number, number], [number, number]] = [
   [-11, 49.3],
