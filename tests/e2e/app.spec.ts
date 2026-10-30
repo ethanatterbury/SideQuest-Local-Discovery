@@ -155,8 +155,9 @@ test("lab overrides share context and map failure preserves decisions", async ({
   await page.getByLabel("Weather", { exact: true }).selectOption("heavy-rain");
   await page.getByLabel("Time of day").selectOption("midnight");
   await page.getByLabel("Map provider unavailable").check();
+  await expect(page.locator("[data-map-status]")).toHaveText("Map unavailable");
   await expect(
-    page.getByText("Map unavailable"),
+    page.getByRole("heading", { name: "The map couldn’t load." }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Discovery", exact: true }).click();
   await expect(
@@ -200,9 +201,7 @@ test("320px phone fits with keyboard-accessible primary action", async ({
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).not.toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Pick for me" }),
-  ).toBeFocused();
+  await expect(page.getByRole("button", { name: "Pick for me" })).toBeFocused();
 });
 test("saved map marker can select an ineligible place without fake score", async ({
   page,
