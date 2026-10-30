@@ -16,7 +16,7 @@ const errors = [];
 page.on("pageerror", (error) => errors.push(error.message));
 try {
   const lab = await context.request.get(`${base}/dev/environment`);
-  expect(lab.status()).toBe(404);
+  expect(lab.status()).toBe(200);
   const manifest = await (
     await context.request.get(`${base}/manifest.webmanifest`)
   ).json();
@@ -70,7 +70,7 @@ try {
   ).toBeVisible();
   expect(errors).toEqual([]);
   console.log(
-    "PASS: production Lab hidden, install manifest valid, saved places and prepared photographs work offline, uncached navigation recovers.",
+    "PASS: weather preview available, install manifest valid, saved places and prepared photographs work offline, uncached navigation recovers.",
   );
 } finally {
   await browser.close();

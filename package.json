@@ -7,7 +7,7 @@
     "audit:catalog": "node scripts/audit-catalog.mjs",
     "predev": "npm run prepare:data",
     "dev": "next dev --hostname 0.0.0.0",
-    "build": "npm run prepare:data && node scripts/prepare-deployment.mjs --clean && next build && node scripts/prepare-deployment.mjs",
+    "build": "npm run prepare:data && node scripts/prepare-deployment.mjs --clean && next build && node scripts/prepare-deployment.mjs && node scripts/verify-server-runtime.mjs",
     "start": "next start --hostname 0.0.0.0",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",

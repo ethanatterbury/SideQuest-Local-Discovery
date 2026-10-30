@@ -23,9 +23,7 @@ import { TOWNS } from "@/providers/geocoding";
 import { openMeteo } from "@/providers/weather";
 import { applyOverrides, unavailableWeather } from "@/domain/environment";
 import { usePlaceCatalog } from "@/providers/place-catalog";
-const labEnabled =
-  process.env.NODE_ENV !== "production" ||
-  process.env.NEXT_PUBLIC_ENABLE_ENVIRONMENT_LAB === "true";
+const labEnabled = true;
 export const LAB_ENABLED = labEnabled;
 type AppContext = ReturnType<typeof usePlaceCatalog> & {
   state: LocalState;
@@ -143,7 +141,11 @@ export function AppProviders({ children }: { children: ReactNode }) {
     if (text !== null)
       setQueryState((q) => ({ ...q, text: text.slice(0, 200) }));
   }, [pathname, ready]);
-  const activeLocation = overrides.location || location;
+  const activeOverrides =
+    process.env.NODE_ENV !== "production" || pathname === "/dev/environment"
+      ? overrides
+      : {};
+  const activeLocation = activeOverrides.location || location;
   useEffect(() => {
     if (!ready) return;
     const controller = new AbortController();
@@ -209,7 +211,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
     reducedMotion,
     failures: offline ? ["offline"] : [],
   };
-  const env = applyOverrides(base, overrides);
+  const env = applyOverrides(base, activeOverrides);
   const catalog = usePlaceCatalog(env, query, ready, state);
   return (
     <Context.Provider
@@ -229,7 +231,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
       }}
     >
       <div
-        className={`app-root${env.reducedMotion ? " reduce-motion" : overrides.reducedMotion === false ? " normal-motion" : ""}`}
+        className={`app-root${env.reducedMotion ? " reduce-motion" : activeOverrides.reducedMotion === false ? " normal-motion" : ""}`}
         data-weather={env.weather.kind}
       >
         {children}

@@ -12,6 +12,33 @@ const live = (i: number): Place => ({
   coordinates: { lat: 51.4 + i * 0.00001, lng: -0.59 },
   image: undefined,
 });
+it("retains validated external photo links when restoring a recently visited area", () => {
+  const place = {
+    ...live(999997),
+    image: {
+      url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Museum.jpg",
+      source: "https://commons.wikimedia.org/wiki/File:Museum.jpg",
+      credit: "Photographer",
+      license: "CC BY-SA 4.0",
+      checkedAt: new Date().toISOString(),
+    },
+  };
+  expect(revalidateStoredPhotos([place])[0].image?.url).toBe(place.image.url);
+});
+it("does not transfer a former business photograph to a renamed place at the same OSM address", () => {
+  const previous = {
+    ...live(999996),
+    image: {
+      url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Former_business.jpg",
+      source: "https://commons.wikimedia.org/wiki/File:Former_business.jpg",
+      credit: "Photographer",
+      license: "CC BY-SA 4.0",
+      checkedAt: new Date().toISOString(),
+    },
+  };
+  const renamed = { ...previous, name: "New business", image: undefined };
+  expect(mergeCatalog([previous], [renamed])[0].image).toBeUndefined();
+});
 it("merges ampersand/and spellings of one venue without losing separate branches", () => {
   const museum = {
     ...live(1),

@@ -1,6 +1,7 @@
 "use client";
 import type { Place } from "@/domain/models";
 import { placePhotoQuery, photoIdentity } from "./photo-query";
+import { storedPhotoLink } from "./photo-link-storage";
 import {
   approvedPhoto,
   PHOTO_REQUEST_DEADLINE_MS,
@@ -31,6 +32,8 @@ export function findPlacePhoto(place: Place): Promise<Image | null> {
   const query = placePhotoQuery(place);
   const prepared = approvedPhoto(place.image);
   if (prepared) return Promise.resolve(prepared);
+  const saved = storedPhotoLink(query);
+  if (saved) return Promise.resolve(saved);
   const key = photoIdentity(query);
   const cached = cache.get(key);
   if (cached && cached.until > Date.now()) return Promise.resolve(cached.image);

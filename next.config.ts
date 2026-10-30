@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 const config: NextConfig = {
   poweredByHeader: false,
+  outputFileTracingIncludes: {
+    "/*": ["./node_modules/next/dist/lib/framework/*.js"],
+  },
   outputFileTracingExcludes: {
     "/*": [
       "./public/data/venues/**",

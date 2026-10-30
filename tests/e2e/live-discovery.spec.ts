@@ -292,6 +292,9 @@ test("a browser without WebGL keeps accessible geographic fallback and static we
     } as typeof native;
   });
   await page.goto("/dev/environment");
+  await expect(
+    page.getByRole("link", { name: "Powered by Geoapify" }),
+  ).toHaveCount(0);
   await expect(page.locator(".geographic-fallback")).toBeVisible();
   await expect(page.locator(".map-status")).toContainText("map unavailable");
   await expect(
@@ -371,7 +374,7 @@ test("visible live places resolve a photo and revalidate it across reload", asyn
     .click();
   await page.reload();
   await expect(page.locator('img[alt="Test Museum 0"]').first()).toBeVisible();
-  expect(lookups).toBe(2);
+  expect(lookups).toBe(1);
 });
 
 test("a shared live afternoon loads the sender's area before building", async ({

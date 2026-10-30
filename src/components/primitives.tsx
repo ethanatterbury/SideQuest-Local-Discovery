@@ -13,6 +13,8 @@ import { useApp } from "@/components/providers";
 import { findPlacePhoto, photoRetryDelay } from "@/providers/photo-client";
 import type { Place } from "@/domain/models";
 import { approvedPhoto } from "@/providers/photo-policy";
+import { savePhotoLink } from "@/providers/photo-link-storage";
+import { placePhotoQuery } from "@/providers/photo-query";
 
 /** Preserve prepared photography when the catalogue only refreshes venue data. */
 export function withRetainedPlacePhoto(
@@ -146,6 +148,7 @@ export function PlaceImage({
           decoding="async"
           placeholder={image.blurDataURL ? "blur" : "empty"}
           blurDataURL={image.blurDataURL}
+          onLoad={() => savePhotoLink(placePhotoQuery(place), image)}
           onError={() => setFailed(true)}
         />
       ) : (

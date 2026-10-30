@@ -77,7 +77,7 @@ export function EnvironmentLab() {
         <div>
           <FlaskConical size={23} />
           <h1>Environment Lab</h1>
-          <span>Private development tool</span>
+          <span>Weather & map preview</span>
         </div>
         <button className="button secondary" onClick={() => setOverrides({})}>
           <RotateCcw size={16} />

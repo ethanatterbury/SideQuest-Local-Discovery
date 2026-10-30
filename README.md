@@ -56,7 +56,7 @@ npm run test:e2e
 npm run test:visual
 ```
 
-For the real offline check, run `npm run build` and `npm start -- --port 3001` in one terminal, then `npm run test:offline` in another. It checks the production Lab guard, install manifest, saved/history access after disconnecting and uncached navigation recovery. `TEST_BASE_URL` can target a different production server.
+For the real offline check, run `npm run build` and `npm start -- --port 3001` in one terminal, then `npm run test:offline` in another. It checks the weather preview, install manifest, saved/history access after disconnecting and uncached navigation recovery. `TEST_BASE_URL` can target a different production server.
 
 `npm run check` combines lint, types, unit tests and production build. Browser tests start development automatically unless a server is running. On a fresh computer, first run `npx playwright install chromium`; an installed `/usr/bin/chromium` or `CHROMIUM_PATH` is also supported. `TEST_BASE_URL` targets an already-running server. Visual captures need the development server running and save under `work/visual-matrix`.
 

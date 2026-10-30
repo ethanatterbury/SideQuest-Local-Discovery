@@ -183,9 +183,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
             </button>
           )}
           <Link href="/about">Good to know</Link>
-          <a href="https://www.geoapify.com/" target="_blank" rel="noreferrer">
-            Powered by Geoapify
-          </a>
           {LAB_ENABLED && (
             <Link href="/dev/environment" aria-label="Environment Lab">
               <FlaskConical size={16} />

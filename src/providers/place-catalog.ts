@@ -11,6 +11,7 @@ import { PLACES } from "./places";
 import { cellId, inUK } from "@/domain/geo-cells";
 import { LOAD_BUDGET } from "@/domain/performance";
 import { readArea, writeArea } from "./area-storage";
+import { approvedPhoto } from "./photo-policy";
 import { seedVenueImage, withSeedPhoto } from "./seed-venue-media";
 import { distanceKm } from "./routing";
 import { selectVenueEnrichmentCandidates } from "./venue-enrichment-candidates";
@@ -24,7 +25,7 @@ export function revalidateStoredPhotos(stored: Place[]): Place[] {
     image:
       PLACES.find((seed) => seed.id === place.id)?.image ||
       seedVenueImage({ ...place, image: undefined }) ||
-      undefined,
+      approvedPhoto(place.image),
   }));
 }
 function isPlace(value: unknown): value is Place {
@@ -134,7 +135,13 @@ export function mergeCatalog(
             notes: [...new Set([...p.notes, ...previous.notes])],
           }
         : {}),
-      image: p.image || previous?.image,
+      image:
+        p.image ||
+        (previous &&
+        normalized(previous.name) === normalized(p.name) &&
+        distanceKm(previous.coordinates, p.coordinates) <= 0.025
+          ? approvedPhoto(previous.image)
+          : undefined),
     };
     merged.set(p.id, next);
     if (previous && normalized(previous.name) !== normalized(next.name))
