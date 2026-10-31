@@ -120,6 +120,17 @@ export function rankPlaces(
         query.company === "family" || childActivityRequested(query);
       const ages = family ? (query.childrenAges ?? []) : [];
       const suitability = venueSuitability(place);
+      // OSM's generic tourism=attraction fallback is not evidence of an
+      // unusual experience. Keep it discoverable without letting its default
+      // intent outrank a specifically mapped outing.
+      const genericAttraction =
+        suitability.kind === "general" &&
+        /^(?:local[ _-]+)?attraction$/i.test(place.category.trim());
+      const matchedInterests = interests.filter(
+        (interest) =>
+          place.intents.includes(interest) &&
+          !(genericAttraction && interest === "unusual"),
+      );
       const softPlay = suitability.activities.includes("soft-play");
       const playground = suitability.activities.includes("playground");
       const museum = suitability.activities.includes("museum");
@@ -218,17 +229,14 @@ export function rankPlaces(
         opening: opening.status === "unknown" ? 5 : 12,
         intent: !interests.length
           ? 10
-          : interests.some((intent) => place.intents.includes(intent))
-            ? 36 +
-              Math.min(
-                6,
-                Math.max(
-                  0,
-                  interests.filter((intent) => place.intents.includes(intent))
-                    .length - 1,
-                ) * 3,
-              )
-            : 0,
+          : matchedInterests.length
+            ? 36 + Math.min(6, Math.max(0, matchedInterests.length - 1) * 3)
+            : genericAttraction &&
+                interests.includes("unusual") &&
+                place.intents.includes("unusual")
+              ? 18
+              : 0,
+        categoryEvidence: genericAttraction ? -6 : 0,
         // Supplied experience-depth estimates are a small signal, never a visitor rating.
         // Missing estimates and photo coverage are neutral.
         quality: Number.isFinite(place.quality)
@@ -307,9 +315,6 @@ export function rankPlaces(
                 : `Venue age guidance: ${place.ageRange[0]}–${place.ageRange[1]} years; includes all entered ages`
             : "Check age suitability with the venue",
         );
-      const matchedInterests = interests.filter((interest) =>
-        place.intents.includes(interest),
-      );
       const interestLabels = {
         any: "",
         scenic: "scenery",

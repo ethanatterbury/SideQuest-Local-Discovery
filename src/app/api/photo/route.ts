@@ -17,9 +17,14 @@ export const runtime = "nodejs";
 export const maxDuration = 10;
 export async function GET(request: Request) {
   let deadline: ReturnType<typeof setTimeout> | undefined;
+  const work = new AbortController();
   try {
     return await Promise.race([
-      resolveRequest(request, Date.now()),
+      resolveRequest(
+        request,
+        Date.now(),
+        AbortSignal.any([request.signal, work.signal]),
+      ),
       new Promise<Response>((resolve) => {
         deadline = setTimeout(
           () =>
@@ -34,10 +39,15 @@ export async function GET(request: Request) {
       }),
     ]);
   } finally {
+    work.abort();
     if (deadline) clearTimeout(deadline);
   }
 }
-async function resolveRequest(request: Request, started: number) {
+async function resolveRequest(
+  request: Request,
+  started: number,
+  signal: AbortSignal,
+) {
   const params = new URL(request.url).searchParams;
   const query = parsePhotoQuery(params);
   if (!query)
@@ -93,35 +103,72 @@ async function resolveRequest(request: Request, started: number) {
     );
   // Publisher-selected external previews have a separate rights contract from reusable photos.
   // An indexed Commons absence says nothing about a venue's own published link preview.
-  let result: PhotoResult | undefined;
-  if (!entry?.image)
-    result = await officialPreview(
-      query,
-      started,
-      request.signal,
-      debug,
-      refresh,
+  const attempts: PhotoResult[] = [];
+  const collect = async (
+    task: Promise<PhotoResult | undefined>,
+  ): Promise<PhotoResult> => {
+    const value = await task.catch(() => ({
+      image: null,
+      source: "unavailable" as const,
+      retryable: true,
+    }));
+    const result: PhotoResult = {
+      ...value,
+      source: value?.source ?? "unavailable",
+      image: approvedPhoto(value?.image) || null,
+    };
+    attempts.push(result);
+    return result;
+  };
+  const cached: PhotoResult | undefined = entry
+    ? {
+        image: approvedPhoto(entry.image) || null,
+        source: "cached",
+        ...(debug && entry.diagnostics
+          ? { diagnostics: { ...entry.diagnostics, cacheHit: true } }
+          : {}),
+      }
+    : undefined;
+  let result: PhotoResult;
+  if (cached?.image) result = cached;
+  else {
+    const sources = [
+      collect(officialPreview(query, started, signal, debug, refresh)),
+    ];
+    if (cached) attempts.push(cached);
+    else
+      sources.push(
+        collect(
+          lookupPlacePhoto(query, {
+            debug,
+            refresh,
+            signal,
+            timeoutMs: Math.max(
+              1,
+              PHOTO_REQUEST_DEADLINE_MS - (Date.now() - started) - 50,
+            ),
+          }),
+        ),
+      );
+    // Each source verifies venue identity independently. Return the first real
+    // photograph; a logo remains a fallback while an actual photo is available.
+    const realPhoto = Promise.any(
+      sources.map(async (task) => {
+        const value = await task;
+        if (!value.image || value.image.preview?.kind === "brand-logo")
+          throw Error("No photograph from this source");
+        return value;
+      }),
     );
-  const previewRetryable = result?.retryable;
-  const officialDiagnostics = result?.diagnostics?.officialWebsite;
-  if (!result?.image)
-    result = entry
-      ? {
-          image: entry.image,
-          source: "cached",
-          ...(result?.retryable ? { retryable: true } : {}),
-          ...(debug && entry.diagnostics
-            ? { diagnostics: { ...entry.diagnostics, cacheHit: true } }
-            : {}),
-        }
-      : await lookupPlacePhoto(query, {
-          debug,
-          refresh,
-          timeoutMs: Math.max(
-            1,
-            PHOTO_REQUEST_DEADLINE_MS - (Date.now() - started) - 50,
-          ),
-        });
+    result = await realPhoto.catch(async () => {
+      await Promise.all(sources);
+      return attempts.find((value) => value.image) ?? attempts.at(-1)!;
+    });
+  }
+  const previewRetryable = attempts.some((value) => value.retryable);
+  const officialDiagnostics = attempts.find(
+    (value) => value.diagnostics?.officialWebsite,
+  )?.diagnostics?.officialWebsite;
   if (debug && officialDiagnostics) {
     result = {
       ...result,

@@ -15,6 +15,7 @@ import { PlaceCard } from "./place-card";
 import { Refinement } from "./refinement";
 import { Signature } from "./signature";
 import { ItineraryDialog } from "@/features/itinerary/itinerary";
+import styles from "./discover.module.css";
 export function Discover({ explore = false }: { explore?: boolean }) {
   const {
     places: catalog,
@@ -34,8 +35,8 @@ export function Discover({ explore = false }: { explore?: boolean }) {
     ),
     [plan, setPlan] = useState(false),
     [collection, setCollection] = useState("Good right now");
-  const [visibleCount, setVisibleCount] = useState(12);
-  useEffect(() => setVisibleCount(12), [query, collection]);
+  const [visibleCount, setVisibleCount] = useState(6);
+  useEffect(() => setVisibleCount(6), [query, collection]);
   const effective = useMemo(() => {
     let q = effectiveDiscoveryQuery(query, catalog);
     if (collection === "Actually free") q = { ...q, budget: 0 };
@@ -99,7 +100,7 @@ export function Discover({ explore = false }: { explore?: boolean }) {
     if (town) setLocation(town);
   }, [query.text, ready, setLocation]);
   return (
-    <div className="discovery-page workspace-page">
+    <div className={`${styles.page} discovery-page workspace-page`}>
       <div className="page-container">
         <section className="workspace-intro">
           <div>
@@ -130,27 +131,16 @@ export function Discover({ explore = false }: { explore?: boolean }) {
             }}
           />
           <Refinement />
-          {query.intent !== "any" && (
-            <div className="active-intent">
-              <span>
-                Active preference: <strong>{query.intent}</strong>
-              </span>
-              <button
-                type="button"
-                onClick={() => setQuery({ ...query, intent: "any" })}
-              >
-                Clear preference
-              </button>
-            </div>
-          )}
         </section>
         <section className="results-section" id="your-options">
           <div className="section-heading">
             <div>
-              <h2>{query.text ? "Search results" : "Places for your day"}</h2>
+              <h2>
+                {query.text ? "Search results" : "Worth a little adventure"}
+              </h2>
               <p>
                 {results.length} {results.length === 1 ? "idea" : "ideas"} near{" "}
-                {env.location.name} · Journey times are estimates
+                {env.location.name} · Matched to your preferences
               </p>
             </div>
             <div className="result-actions">
@@ -175,7 +165,7 @@ export function Discover({ explore = false }: { explore?: boolean }) {
                 : `Ideas for “${query.text}” · ${effective.environment === "any" ? "indoors or outdoors" : effective.environment === "indoor" ? "indoors" : "outdoors"} · based on your preferences.`}
             </p>
           )}
-          <div className="discovery-source" role="status">
+          <div className="discovery-source" role="status" aria-live="polite">
             <span
               className={`tiny-dot ${placesStatus === "loading" ? "loading-dot" : ""}`}
             />
@@ -191,6 +181,21 @@ export function Discover({ explore = false }: { explore?: boolean }) {
               {results.slice(0, visibleCount).map((r) => (
                 <PlaceCard key={r.place.id} item={r} />
               ))}
+            </div>
+          ) : placesStatus === "loading" ? (
+            <div
+              className={styles.loadingGrid}
+              role="status"
+              aria-label="Finding outings nearby"
+            >
+              {[0, 1, 2].map((key) => (
+                <div key={key} className={styles.skeleton}>
+                  <div />
+                  <span />
+                  <span />
+                </div>
+              ))}
+              <span className="sr-only">Finding outings nearby…</span>
             </div>
           ) : (
             <EmptyState
@@ -211,12 +216,13 @@ export function Discover({ explore = false }: { explore?: boolean }) {
             />
           )}
           <p className="results-footnote">
-            Opening times and admission need checking before you go.
+            Journey times are estimates. Check opening times and admission
+            before you go.
           </p>
           {results.length > visibleCount && (
             <button
               className="button secondary browse-more"
-              onClick={() => setVisibleCount((n) => n + 12)}
+              onClick={() => setVisibleCount((n) => n + 6)}
             >
               Show more ideas <ArrowRight size={17} />
             </button>

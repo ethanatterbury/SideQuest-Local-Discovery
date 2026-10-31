@@ -41,6 +41,15 @@ export type VenueSuitability = {
 export function inferVenueSuitability(
   place: Pick<Place, "category" | "intents" | "familyFeatures" | "ageRange">,
 ): VenueSuitability {
+  // Facilities do not redefine a museum, park or café as a children's venue.
+  // Retain feature-based inference for otherwise unclassified records.
+  if (place.familyFeatures?.length) {
+    const primary = inferVenueSuitability({
+      ...place,
+      familyFeatures: undefined,
+    });
+    if (primary.kind !== "general") return primary;
+  }
   const category = place.category
     .toLowerCase()
     .normalize("NFD")
@@ -193,11 +202,15 @@ export function venueSuitability(place: Classification): VenueSuitability {
     intents: place.intents ?? [],
   });
   // Cached/provider classifications cannot remove a restriction required by the current category rules.
-  return place.suitability
+  const cached = place.suitability;
+  const classification =
+    cached && (inferred.kind === "general" || cached.kind === inferred.kind)
+      ? cached
+      : inferred;
+  return cached
     ? {
-        ...place.suitability,
-        requiresAgeCheck:
-          place.suitability.requiresAgeCheck || inferred.requiresAgeCheck,
+        ...classification,
+        requiresAgeCheck: cached.requiresAgeCheck || inferred.requiresAgeCheck,
       }
     : inferred;
 }

@@ -6,9 +6,14 @@ import type {
   Itinerary,
   ItineraryStop,
 } from "./models";
-import { rankPlaces, openingStatus } from "./discovery";
+import {
+  effectiveDiscoveryQuery,
+  rankPlaces,
+  openingStatus,
+} from "./discovery";
 import { estimatedRouting, distanceKm } from "../providers/routing";
 import { addMinutes, isDark } from "./time";
+
 function visitWindow(place: Place, arrival: string, env: Environment): number {
   const opening = openingStatus(place, arrival);
   if (opening.status === "closed" || opening.status === "opens-later") return 0;
@@ -18,13 +23,13 @@ function visitWindow(place: Place, arrival: string, env: Environment): number {
     remaining = Math.min(
       remaining,
       Math.floor(
-        (new Date(env.weather.sunset).getTime() - new Date(arrival).getTime()) /
-          60000,
+        (Date.parse(env.weather.sunset) - Date.parse(arrival)) / 60000,
       ),
     );
   }
   return remaining;
 }
+
 export function buildItinerary(
   places: Place[],
   query: DiscoveryQuery,
@@ -33,14 +38,54 @@ export function buildItinerary(
   options: { food: boolean; skip?: string[]; start?: string },
 ): Itinerary | null {
   const start = options.start || env.now;
-  const ranked = rankPlaces(
-    places,
-    query,
-    { ...env, now: start },
+  query = effectiveDiscoveryQuery(query, places);
+  const available = places.filter((p) => !options.skip?.includes(p.id));
+  const ranked = rankPlaces(available, query, { ...env, now: start }, state);
+  const first = ranked.find(
+    (r) =>
+      visitWindow(r.place, addMinutes(start, r.travel), env) >=
+      r.place.duration[0],
+  );
+  if (!first) return null;
+  const route = (from: Place["coordinates"], to: Place["coordinates"]) =>
+    estimatedRouting.estimate(from, to, query.travelMode).minutes;
+  const firstArrival = addMinutes(start, first.travel);
+  const firstMinimum = first.place.duration[0];
+  const afterFirst = first.travel + firstMinimum;
+  const firstHome = route(first.place.coordinates, env.location);
+  // A break is optional: never discard a worthwhile visit just because it cannot fit.
+  const reserve =
+    options.food &&
+    afterFirst + firstHome + 30 <= query.minutes &&
+    visitWindow(first.place, addMinutes(start, afterFirst), env) >= 30
+      ? 30
+      : 0;
+  const second = rankPlaces(
+    available.filter((p) => p.id !== first.place.id),
+    {
+      ...query,
+      // Discovery assumes a return to its origin. This leg continues toward
+      // home instead; enforce the actual remaining journey in the check below.
+      minutes: Infinity,
+      budget: query.budget - (first.place.cost ?? 0),
+    },
+    {
+      ...env,
+      location: { ...first.place.coordinates, name: first.place.name },
+      now: addMinutes(start, afterFirst),
+    },
     state,
-  ).filter((r) => !options.skip?.includes(r.place.id));
-  if (!ranked.length) return null;
-  const first = ranked[0];
+  ).find((r) => {
+    const home = route(r.place.coordinates, env.location);
+    const arrival = addMinutes(start, afterFirst + r.travel);
+    return (
+      home <= query.travel &&
+      distanceKm(first.place.coordinates, r.place.coordinates) < 8 &&
+      afterFirst + r.travel + r.place.duration[0] + home + reserve <=
+        query.minutes &&
+      visitWindow(r.place, arrival, env) >= r.place.duration[0] + reserve
+    );
+  });
   const stops: ItineraryStop[] = [
     {
       type: "leave",
@@ -52,10 +97,6 @@ export function buildItinerary(
     },
   ];
   let elapsed = first.travel;
-  let cost = first.place.cost || 0;
-  let unknownCost = first.place.cost === null;
-  let current = first.place.coordinates;
-  let currentPlace = first.place;
   const pushPlace = (p: Place, visit: number) => {
     stops.push({
       type: "place",
@@ -63,75 +104,68 @@ export function buildItinerary(
       placeId: p.id,
       at: addMinutes(start, elapsed),
       minutes: visit,
-      cost: p.cost || 0,
+      cost: p.cost ?? 0,
       unknownCost: p.cost === null,
       coordinates: p.coordinates,
     });
     elapsed += visit;
   };
-  const reserve = options.food ? 30 : 0;
-  const visit = Math.min(
-    first.place.duration[1],
-    visitWindow(first.place, addMinutes(start, elapsed), env),
-    Math.max(
-      first.place.duration[0],
-      query.minutes - first.travel * 2 - reserve,
-    ),
-  );
-  if (visit < first.place.duration[0]) return null;
-  pushPlace(first.place, visit);
-  const second = ranked.slice(1).find((r) => {
-    const leg = estimatedRouting.estimate(
-        current,
-        r.place.coordinates,
-        query.travelMode,
-      ).minutes,
-      back = estimatedRouting.estimate(
-        r.place.coordinates,
-        env.location,
-        query.travelMode,
-      ).minutes;
-    const arrival = addMinutes(start, elapsed + leg);
-    return (
-      distanceKm(current, r.place.coordinates) < 8 &&
-      elapsed + leg + r.place.duration[0] + back + reserve <= query.minutes &&
-      cost + (r.place.cost || 0) <= query.budget &&
-      visitWindow(r.place, arrival, env) >= r.place.duration[0]
-    );
-  });
+  let current = first.place;
   if (second) {
-    elapsed += estimatedRouting.estimate(
-      current,
-      second.place.coordinates,
-      query.travelMode,
-    ).minutes;
-    pushPlace(second.place, second.place.duration[0]);
-    cost += second.place.cost || 0;
-    unknownCost ||= second.place.cost === null;
-    current = second.place.coordinates;
-    currentPlace = second.place;
+    // Book meaningful minimum visits first; share spare time across both stops.
+    const home = route(second.place.coordinates, env.location);
+    const spare =
+      query.minutes -
+      afterFirst -
+      second.travel -
+      second.place.duration[0] -
+      home -
+      reserve;
+    const firstExtra = Math.min(
+      Math.floor(spare / 2),
+      first.place.duration[1] - firstMinimum,
+      visitWindow(first.place, firstArrival, env) - firstMinimum,
+      visitWindow(
+        second.place,
+        addMinutes(start, afterFirst + second.travel),
+        env,
+      ) -
+        second.place.duration[0] -
+        reserve,
+    );
+    pushPlace(first.place, firstMinimum + Math.max(0, firstExtra));
+    elapsed += second.travel;
+    const secondVisit = Math.min(
+      second.place.duration[1],
+      query.minutes - elapsed - home - reserve,
+      visitWindow(second.place, addMinutes(start, elapsed), env) - reserve,
+    );
+    pushPlace(second.place, secondVisit);
+    current = second.place;
+  } else {
+    const visit = Math.min(
+      first.place.duration[1],
+      query.minutes - first.travel - firstHome - reserve,
+      visitWindow(first.place, firstArrival, env) - reserve,
+    );
+    if (visit < firstMinimum) return null;
+    pushPlace(first.place, visit);
   }
-  const home = estimatedRouting.estimate(
-    current,
-    env.location,
-    query.travelMode,
-  ).minutes;
+  const home = route(current.coordinates, env.location);
   if (
-    options.food &&
-    elapsed + 30 + home <= query.minutes &&
-    visitWindow(currentPlace, addMinutes(start, elapsed), env) >= 30
+    reserve &&
+    visitWindow(current, addMinutes(start, elapsed), env) >= reserve &&
+    elapsed + reserve + home <= query.minutes
   ) {
-    const allowance = Math.min(12, Math.max(0, query.budget - cost));
     stops.push({
       type: "break",
-      name: allowance ? "A coffee or picnic break" : "Bring a picnic",
+      name: "Bring-your-own picnic break",
       at: addMinutes(start, elapsed),
-      minutes: 30,
-      cost: allowance,
-      coordinates: current,
+      minutes: reserve,
+      cost: 0,
+      coordinates: current.coordinates,
     });
-    cost += allowance;
-    elapsed += 30;
+    elapsed += reserve;
   }
   elapsed += home;
   stops.push({
@@ -143,13 +177,13 @@ export function buildItinerary(
     coordinates: env.location,
   });
   return {
-    id: `plan-${new Date(start).getTime()}-${first.place.id}`,
+    id: `plan-${Date.parse(start)}-${first.place.id}`,
     created: env.now,
     start,
     stops,
     minutes: elapsed,
-    cost,
-    unknownCost,
+    cost: stops.reduce((sum, stop) => sum + stop.cost, 0),
+    unknownCost: stops.some((stop) => stop.unknownCost),
     query,
     origin: env.location,
   };

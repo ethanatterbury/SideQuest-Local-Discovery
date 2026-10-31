@@ -8,11 +8,13 @@ import {
   Check,
   Footprints,
   X,
+  ChevronDown,
 } from "lucide-react";
 import type { Recommendation } from "@/domain/models";
 import { PlaceImage } from "@/components/primitives";
 import { useApp } from "@/components/providers";
 import { track } from "@/providers/analytics";
+import styles from "./place-card.module.css";
 export function PlaceCard({
   item,
   compact = false,
@@ -24,6 +26,9 @@ export function PlaceCard({
   const p = item.place;
   const saved = state.saved.includes(p.id),
     visited = state.visits.some((v) => v.id === p.id);
+  // The ranker owns evidence and semantic-query interpretation. Its first
+  // sentence gives the same honest fit on the collapsed and expanded card.
+  const matchReason = item.explanation.split(/\.\s+/)[0].replace(/\.$/, "");
   function save() {
     update((s) => ({
       ...s,
@@ -35,14 +40,13 @@ export function PlaceCard({
     );
   }
   return (
-    <article className={`place-card ${compact ? "compact" : ""}`}>
+    <article
+      className={`${styles.card} place-card ${compact ? `compact ${styles.compact}` : ""}`}
+    >
       <div className="card-visual">
         <Link href={`/place/${p.id}`} aria-label={`See ${p.name}`}>
           <PlaceImage place={p} />
         </Link>
-        <span className="match-badge">
-          <span /> Fits your plans
-        </span>
         <button
           className={`save-button ${saved ? "saved" : ""}`}
           onClick={save}
@@ -65,6 +69,9 @@ export function PlaceCard({
           <h3>{p.name}</h3>
           <ArrowUpRight size={21} />
         </Link>
+        {!compact && (
+          <p className={styles.description}>{p.tagline || p.description}</p>
+        )}
         <div className="place-meta">
           <span>
             {query.travelMode === "walk" ? (
@@ -83,7 +90,16 @@ export function PlaceCard({
             min
           </span>
         </div>
-        {!compact && <p className="card-reason">{item.explanation}</p>}
+        {!compact && (
+          <details className={styles.reason}>
+            <summary>
+              <Check size={14} aria-hidden="true" />
+              <span>{matchReason}</span>
+              <ChevronDown size={13} aria-hidden="true" />
+            </summary>
+            <p>{item.explanation}</p>
+          </details>
+        )}
         {!compact &&
           (query.accessNeeds?.wheelchair ||
             query.accessNeeds?.stepFree ||
@@ -100,7 +116,7 @@ export function PlaceCard({
                 ? "Indoors"
                 : "Outdoors"}
           </span>
-          <span>
+          <span title={item.opening.label}>
             {item.opening.status === "unknown"
               ? "Check hours"
               : item.opening.label}
@@ -125,7 +141,7 @@ export function PlaceCard({
             }}
             aria-label={`Not interested in ${p.name}`}
           >
-            <X size={13} />
+            <X size={13} aria-hidden="true" />
             Not for me
           </button>
         )}

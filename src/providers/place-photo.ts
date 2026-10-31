@@ -90,32 +90,44 @@ type ImageInfo = {
   extmetadata?: Record<string, { value?: string }>;
 };
 const cache = new Map<string, { expires: number; result: PhotoResult }>();
-const pending = new Map<string, Promise<PhotoResult>>();
+type SharedTask<T> = {
+  task: Promise<T>;
+  controller: AbortController;
+  consumers: number;
+};
+const pending = new Map<string, SharedTask<PhotoResult>>();
 let active = 0;
 const waiting: { grant: () => void }[] = [];
-type Admission = "acquired" | "concurrency-limit" | "queue-timeout";
-function acquirePhotoSlot(timeoutMs: number): Promise<Admission> {
+type Admission =
+  "acquired" | "concurrency-limit" | "queue-timeout" | "cancelled";
+function acquirePhotoSlot(
+  timeoutMs: number,
+  signal: AbortSignal,
+): Promise<Admission> {
+  if (signal.aborted) return Promise.resolve("cancelled");
   if (active < 3) {
     active++;
     return Promise.resolve("acquired");
   }
   if (waiting.length >= 9) return Promise.resolve("concurrency-limit");
   return new Promise((resolve) => {
+    const finish = (admission: Admission) => {
+      clearTimeout(timer);
+      signal.removeEventListener("abort", cancelled);
+      const index = waiting.indexOf(waiter);
+      if (index >= 0) waiting.splice(index, 1);
+      resolve(admission);
+    };
+    const cancelled = () => finish("cancelled");
     const waiter = {
-      grant: () => {
-        clearTimeout(timer);
-        resolve("acquired");
-      },
+      grant: () => finish("acquired"),
     };
     const timer = setTimeout(
-      () => {
-        const index = waiting.indexOf(waiter);
-        if (index >= 0) waiting.splice(index, 1);
-        resolve("queue-timeout");
-      },
+      () => finish("queue-timeout"),
       Math.max(1, timeoutMs),
     );
     waiting.push(waiter);
+    signal.addEventListener("abort", cancelled, { once: true });
   });
 }
 function releasePhotoSlot(): void {
@@ -372,7 +384,7 @@ const metadataCache = new Map<
   string,
   { expires: number; bytes: number; data: WikimediaResponse }
 >();
-const metadataPending = new Map<string, Promise<WikimediaResponse>>();
+const metadataPending = new Map<string, SharedTask<WikimediaResponse>>();
 const cooldowns = new Map<string, { until: number; reason: string }>();
 let metadataBytes = 0;
 let currentTransport: typeof fetch | undefined;
@@ -382,6 +394,7 @@ function resetChangedTransport(): void {
   if (currentTransport === fetch) return;
   currentTransport = fetch;
   metadataCache.clear();
+  for (const job of metadataPending.values()) job.controller.abort();
   metadataPending.clear();
   cooldowns.clear();
   metadataBytes = 0;
@@ -397,6 +410,22 @@ function abortable<T>(promise: Promise<T>, signal: AbortSignal): Promise<T> {
   return Promise.race([promise, canceled]).finally(() =>
     signal.removeEventListener("abort", onAbort),
   );
+}
+async function consumeShared<T>(
+  job: SharedTask<T>,
+  signal: AbortSignal | undefined,
+  abandoned: () => void,
+): Promise<T> {
+  job.consumers++;
+  try {
+    return await (signal ? abortable(job.task, signal) : job.task);
+  } finally {
+    job.consumers--;
+    if (!job.consumers) {
+      job.controller.abort();
+      abandoned();
+    }
+  }
 }
 function retryAfter(response: Response, fallback: number): number {
   const raw = response.headers.get("retry-after");
@@ -419,6 +448,7 @@ function coolDown(host: string, reason: string, duration: number): void {
 }
 async function readWikimedia(
   response: Response,
+  signal: AbortSignal,
 ): Promise<{ text: string; bytes: number }> {
   const declaredSize = Number(response.headers.get("content-length"));
   if (declaredSize > maxResponseBytes) {
@@ -431,7 +461,7 @@ async function readWikimedia(
   let bytes = 0;
   try {
     while (true) {
-      const chunk = await reader.read();
+      const chunk = await abortable(reader.read(), signal);
       if (chunk.done) break;
       bytes += chunk.value.byteLength;
       if (bytes > maxResponseBytes) {
@@ -441,6 +471,7 @@ async function readWikimedia(
       chunks.push(chunk.value);
     }
   } finally {
+    void reader.cancel().catch(() => {});
     reader.releaseLock();
   }
   const body = new Uint8Array(bytes);
@@ -473,9 +504,10 @@ function storeMetadata(
 async function api(
   host: string,
   params: Record<string, string>,
-  signal: AbortSignal,
+  callerSignal: AbortSignal,
   diagnostics?: PhotoDiagnostics,
 ): Promise<WikimediaResponse> {
+  callerSignal.throwIfAborted();
   resetChangedTransport();
   const adapter = fetch;
   const url = new URL(`https://${host}/w/api.php`);
@@ -502,7 +534,11 @@ async function api(
   if (shared) {
     if (diagnostics)
       diagnostics.transportShared = (diagnostics.transportShared || 0) + 1;
-    return structuredClone(await abortable(shared, signal));
+    return structuredClone(
+      await consumeShared(shared, callerSignal, () => {
+        if (metadataPending.get(key) === shared) metadataPending.delete(key);
+      }),
+    );
   }
   const cooldown = cooldowns.get(host);
   if (cooldown && cooldown.until > Date.now())
@@ -513,6 +549,9 @@ async function api(
   if (cooldown) cooldowns.delete(host);
   if (diagnostics)
     diagnostics.networkRequests = (diagnostics.networkRequests || 0) + 1;
+  const controller = new AbortController();
+  const signal = controller.signal;
+  const deadline = setTimeout(() => controller.abort(), PHOTO_DEADLINE_MS);
   const work = (async (): Promise<WikimediaResponse> => {
     let response: Response;
     try {
@@ -530,6 +569,10 @@ async function api(
         signal.aborted ? "deadline-exceeded" : "network",
       );
     }
+    if (signal.aborted) {
+      void response.body?.cancel().catch(() => {});
+      throw new WikimediaError("deadline-exceeded");
+    }
     if (!response.ok) {
       const reason = `http-${response.status}`;
       const defaultDelay =
@@ -545,7 +588,7 @@ async function api(
     }
     let body: { text: string; bytes: number };
     try {
-      body = await readWikimedia(response);
+      body = await readWikimedia(response, signal);
     } catch (error) {
       throw error instanceof WikimediaError
         ? error
@@ -594,10 +637,16 @@ async function api(
     return data;
   })();
   const task = abortable(work, signal).finally(() => {
-    if (metadataPending.get(key) === task) metadataPending.delete(key);
+    clearTimeout(deadline);
+    if (metadataPending.get(key) === job) metadataPending.delete(key);
   });
-  metadataPending.set(key, task);
-  return structuredClone(await task);
+  const job = { task, controller, consumers: 0 };
+  metadataPending.set(key, job);
+  return structuredClone(
+    await consumeShared(job, callerSignal, () => {
+      if (metadataPending.get(key) === job) metadataPending.delete(key);
+    }),
+  );
 }
 
 type Claim = { rank?: string; mainsnak?: { datavalue?: { value?: unknown } } };
@@ -824,7 +873,9 @@ function betterPhoto(
 async function resolve(
   query: PhotoQuery,
   timeoutMs: number,
+  callerSignal: AbortSignal,
 ): Promise<PhotoResult> {
+  callerSignal.throwIfAborted();
   const recAliases = /\brec\.?$/i.test(query.name)
     ? [
         query.name.replace(/\brec\.?$/i, "Recreation Ground"),
@@ -847,7 +898,7 @@ async function resolve(
   }
   const started = Date.now();
   const controller = new AbortController();
-  const signal = controller.signal;
+  const signal = AbortSignal.any([controller.signal, callerSignal]);
   const deadline = setTimeout(() => controller.abort(), Math.max(1, timeoutMs));
   try {
     const diagnostics: PhotoDiagnostics = {
@@ -871,6 +922,7 @@ async function resolve(
       params: Record<string, string>,
       strategy: string,
     ) => {
+      callerSignal.throwIfAborted();
       attempted(strategy);
       if (signal.aborted || diagnostics.requestCount >= 8) {
         hadError = true;
@@ -891,6 +943,7 @@ async function resolve(
           aborted,
         ]);
       } catch (error) {
+        if (callerSignal.aborted) throw error;
         hadError = true;
         const reason = signal.aborted
           ? "deadline-exceeded"
@@ -1127,9 +1180,11 @@ async function resolve(
       [query.commons, "osm-commons-file", "osm-commons-category"],
     ]) {
       if (!value) continue;
+      callerSignal.throwIfAborted();
       if (fileStrategy === "osm-image" && parseArchivePhotoUrl(value)) {
         attempted("osm-archive");
         const result = await resolveArchivePhoto(value, { signal });
+        callerSignal.throwIfAborted();
         diagnostics.requestCount += result.requestCount;
         diagnostics.networkRequests =
           (diagnostics.networkRequests || 0) + result.requestCount;
@@ -1445,8 +1500,19 @@ async function resolve(
 
 export async function lookupPlacePhoto(
   query: PhotoQuery,
-  options: { refresh?: boolean; debug?: boolean; timeoutMs?: number } = {},
+  options: {
+    refresh?: boolean;
+    debug?: boolean;
+    timeoutMs?: number;
+    signal?: AbortSignal;
+  } = {},
 ): Promise<PhotoResult> {
+  const cancelled = (): PhotoResult => ({
+    image: null,
+    source: "unavailable",
+    retryable: true,
+  });
+  if (options.signal?.aborted) return cancelled();
   const key = JSON.stringify([
     normalize(query.name),
     query.lat.toFixed(4),
@@ -1480,14 +1546,30 @@ export async function lookupPlacePhoto(
       },
     });
   const existing = pending.get(key);
-  if (existing) return present(await existing);
+  const consume = async (
+    job: SharedTask<PhotoResult>,
+  ): Promise<PhotoResult> => {
+    try {
+      return present(
+        await consumeShared(job, options.signal, () => {
+          if (pending.get(key) === job) pending.delete(key);
+        }),
+      );
+    } catch (error) {
+      if (options.signal?.aborted) return cancelled();
+      throw error;
+    }
+  };
+  if (existing) return consume(existing);
   const started = Date.now();
+  const controller = new AbortController();
+  const signal = controller.signal;
   const promise = (async (): Promise<PhotoResult> => {
     const budgetMs = Math.min(
       PHOTO_DEADLINE_MS,
       options.timeoutMs ?? PHOTO_DEADLINE_MS,
     );
-    const admission = await acquirePhotoSlot(budgetMs);
+    const admission = await acquirePhotoSlot(budgetMs, signal);
     const queuedMs = Date.now() - started;
     if (admission !== "acquired") {
       // Admission failures are transient and never become negative cache entries.
@@ -1507,7 +1589,12 @@ export async function lookupPlacePhoto(
       };
     }
     try {
-      const result = await resolve(query, Math.max(1, budgetMs - queuedMs));
+      const result = await resolve(
+        query,
+        Math.max(1, budgetMs - queuedMs),
+        signal,
+      );
+      if (signal.aborted) return cancelled();
       if (result.diagnostics) {
         result.diagnostics.queuedMs = queuedMs;
         result.diagnostics.elapsedMs += queuedMs;
@@ -1524,13 +1611,17 @@ export async function lookupPlacePhoto(
               : PHOTO_NEGATIVE_TTL_MS),
       });
       return result;
+    } catch (error) {
+      if (signal.aborted) return cancelled();
+      throw error;
     } finally {
       releasePhotoSlot();
     }
   })().finally(() => {
-    pending.delete(key);
+    if (pending.get(key) === job) pending.delete(key);
   });
+  const job = { task: promise, controller, consumers: 0 };
   // Include queued lookups so duplicate viewport requests share their queue slot.
-  pending.set(key, promise);
-  return present(await promise);
+  pending.set(key, job);
+  return consume(job);
 }

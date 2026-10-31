@@ -96,6 +96,8 @@ export function findPlacePhoto(
       let retryable = false;
       try {
         const params = new URLSearchParams({
+          // Separate this resolver from older browser/CDN-cached absences.
+          resolver: "venue-v2",
           name: place.name,
           lat: String(place.coordinates.lat),
           lng: String(place.coordinates.lng),

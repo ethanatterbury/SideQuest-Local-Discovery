@@ -71,7 +71,7 @@ test("plan stays within window and can be saved", async ({ page }) => {
     .first()
     .click();
   await expect(page.getByRole("dialog")).toContainText("Back home");
-  await page.getByRole("button", { name: "Save this afternoon" }).click();
+  await page.getByRole("button", { name: "Save day plan" }).click();
   await page.getByRole("button", { name: "Close", exact: true }).click();
   await page.goto("/saved");
   await expect(page.getByText("Afternoons in your pocket.")).toBeVisible();
@@ -85,10 +85,10 @@ test("reopened plan food and time adjustments retain its original context", asyn
     .getByRole("button", { name: "Plan my day", exact: true })
     .first()
     .click();
-  await expect(page.locator(".timeline")).toContainText(
-    /coffee or picnic|Bring a picnic/,
+  await expect(page.getByRole("dialog").locator("ol")).toContainText(
+    /Bring-your-own picnic break/,
   );
-  await page.getByRole("button", { name: "Save this afternoon" }).click();
+  await page.getByRole("button", { name: "Save day plan" }).click();
   const initial = await page.evaluate(
     () => JSON.parse(localStorage.getItem("sidequest:v1")!).plans[0],
   );
@@ -97,13 +97,15 @@ test("reopened plan food and time adjustments retain its original context", asyn
   await page.getByRole("button", { name: /Change starting location/ }).click();
   await page.getByRole("button", { name: "Windsor", exact: true }).click();
   await page.locator(".saved-plans > div > button").first().click();
-  await page.getByRole("button", { name: "Remove food break" }).click();
-  await expect(page.locator(".timeline")).not.toContainText(
-    /coffee or picnic|Bring a picnic/,
+  await page.getByRole("button", { name: "Remove picnic break" }).click();
+  await expect(page.getByRole("dialog").locator("ol")).not.toContainText(
+    /Bring-your-own picnic break/,
   );
-  await page.getByRole("button", { name: "Make it shorter" }).click();
-  await expect(page.locator(".timeline")).toContainText("Leave Sandhurst");
-  await page.getByRole("button", { name: "Save this afternoon" }).click();
+  await page.getByRole("button", { name: "One hour shorter" }).click();
+  await expect(page.getByRole("dialog").locator("ol")).toContainText(
+    "Leave Sandhurst",
+  );
+  await page.getByRole("button", { name: "Save day plan" }).click();
   const changed = await page.evaluate(
     () => JSON.parse(localStorage.getItem("sidequest:v1")!).plans[0],
   );
@@ -123,7 +125,7 @@ test("shared afternoon preserves the sender's intent", async ({ page }) => {
     `/afternoon?plan=${encodeURIComponent(JSON.stringify(data))}`,
   );
   await expect(page.getByRole("dialog")).toBeVisible();
-  await page.getByRole("button", { name: "Save this afternoon" }).click();
+  await page.getByRole("button", { name: "Save day plan" }).click();
   expect(
     await page.evaluate(
       () =>

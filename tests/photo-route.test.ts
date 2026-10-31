@@ -32,6 +32,11 @@ import { lookupPlacePhoto } from "@/providers/place-photo";
 import { GET } from "@/app/api/photo/route";
 
 beforeEach(() => {
+  vi.mocked(indexedPhoto).mockReset().mockReturnValue(null);
+  vi.mocked(lookupPlacePhoto)
+    .mockReset()
+    .mockResolvedValue({ image: null, source: "unavailable" });
+  vi.mocked(resolveOfficialWebsitePreview).mockReset();
   vi.mocked(resolveOfficialWebsitePreview).mockResolvedValue({
     image: null,
     retryable: false,
@@ -53,6 +58,74 @@ beforeEach(() => {
       elapsedMs: 0,
     },
   });
+});
+it("returns a verified reusable photo without waiting for a stalled publisher", async () => {
+  vi.useFakeTimers();
+  const image = {
+    url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Venue.jpg",
+    source: "https://commons.wikimedia.org/wiki/File:Venue.jpg",
+    credit: "Author",
+    license: "CC0",
+    checkedAt: "2026-10-30",
+  };
+  vi.mocked(resolveOfficialWebsitePreview).mockImplementationOnce(
+    () => new Promise(() => {}),
+  );
+  vi.mocked(lookupPlacePhoto).mockImplementationOnce(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    return { image, source: "live" };
+  });
+  let result: { image?: unknown } | undefined;
+  const request = GET(
+    new Request("https://sidequest.example/api/photo?name=Venue&lat=51&lng=-1"),
+  );
+  void request.then(async (response) => {
+    result = await response.json();
+  });
+  await vi.advanceTimersByTimeAsync(200);
+  expect(result).toMatchObject({ image: { url: image.url } });
+});
+it("cancels unused reusable work when an approved publisher photograph wins", async () => {
+  const image = {
+    url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Publisher.jpg",
+    source: "https://commons.wikimedia.org/wiki/File:Publisher.jpg",
+    credit: "Author",
+    license: "CC0",
+    checkedAt: "2026-10-30",
+  };
+  vi.mocked(resolveOfficialWebsitePreview).mockResolvedValueOnce({
+    image,
+    retryable: false,
+    result: {
+      candidates: [],
+      identity: {
+        matchedName: true,
+        matchedArea: true,
+        matchedAddress: false,
+        multiBranch: false,
+        branchSpecific: true,
+        evidence: [],
+      },
+      rejected: {},
+      pageUrl: "https://littlelantern.co.uk/fleet/",
+      reason: null,
+      requestCount: 1,
+      retryable: false,
+      elapsedMs: 0,
+    },
+  });
+  let signal: AbortSignal | undefined;
+  vi.mocked(lookupPlacePhoto).mockImplementationOnce(
+    async (_query, options) => {
+      signal = options?.signal;
+      return new Promise(() => {});
+    },
+  );
+  const response = await GET(
+    new Request("https://sidequest.example/api/photo?name=Venue&lat=51&lng=-1"),
+  );
+  expect(await response.json()).toMatchObject({ image: { url: image.url } });
+  expect(signal?.aborted).toBe(true);
 });
 afterEach(() => {
   vi.useRealTimers();

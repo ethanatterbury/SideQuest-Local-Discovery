@@ -5,6 +5,30 @@ afterEach(() => {
   vi.unstubAllGlobals();
   vi.useRealTimers();
 });
+it("bypasses previously cached misses after the venue resolver changes", async () => {
+  const image = {
+    url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Recovered.jpg",
+    source: "https://commons.wikimedia.org/wiki/File:Recovered.jpg",
+    credit: "Author",
+    license: "CC0",
+    checkedAt: "2026-10-30",
+  };
+  vi.stubGlobal("fetch", async (input: string) => {
+    // A browser/CDN may still retain the old URL's definitive absence.
+    const revised =
+      new URL(input, "https://sidequest.example").searchParams.get(
+        "resolver",
+      ) === "venue-v2";
+    return Response.json({ image: revised ? image : null });
+  });
+  expect(
+    await findPlacePhoto({
+      ...PLACES[0],
+      id: "resolver-cache-refresh",
+      image: undefined,
+    }),
+  ).toMatchObject({ url: image.url });
+});
 it("resolves a replacement when an approved supplied image fails to load", async () => {
   const broken = {
     url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Broken.jpg",

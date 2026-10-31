@@ -6,11 +6,15 @@ import {
   Car,
   Wallet,
   Footprints,
+  X,
+  RotateCcw,
 } from "lucide-react";
 import { useState } from "react";
 import { useApp } from "@/components/providers";
 import type { DiscoveryQuery, Intent, OptionalCategory } from "@/domain/models";
 import { changeActivity, changeCompany } from "@/domain/venue-suitability";
+import { DEFAULT_QUERY } from "@/domain/models";
+import styles from "./refinement.module.css";
 export function Refinement({
   expanded = false,
   mapFood,
@@ -24,8 +28,84 @@ export function Refinement({
   const ages = query.childrenAges ?? [];
   const set = (patch: Partial<DiscoveryQuery>) =>
     setQuery({ ...query, ...patch });
+  const active: { label: string; clear: Partial<DiscoveryQuery> }[] = [];
+  if (query.intent !== "any")
+    active.push({ label: query.intent, clear: { intent: "any" } });
+  if (query.activity && query.activity !== "any")
+    active.push({
+      label: query.activity.replaceAll("-", " "),
+      clear: { activity: "any" },
+    });
+  if (query.environment !== "any")
+    active.push({
+      label: query.environment === "indoor" ? "Indoors" : "Outdoors",
+      clear: { environment: "any" },
+    });
+  if (query.budget !== DEFAULT_QUERY.budget)
+    active.push({
+      label: query.budget === 0 ? "Free entry" : `Up to £${query.budget}`,
+      clear: { budget: DEFAULT_QUERY.budget },
+    });
+  if (query.travelMode === "walk")
+    active.push({ label: "Walking", clear: { travelMode: "drive" } });
+  for (const interest of query.interests ?? [])
+    active.push({
+      label:
+        (
+          {
+            culture: "Art & culture",
+            unusual: "Something different",
+            active: "Get moving",
+            scenic: "Beautiful places",
+            relax: "Take it slowly",
+            walk: "A good walk",
+          } as Record<string, string>
+        )[interest] ?? interest,
+      clear: {
+        interests: query.interests?.filter((value) => value !== interest),
+      },
+    });
+  for (const category of query.includeCategories ?? []) {
+    if (mapFood && category === "food") continue;
+    active.push({
+      label: {
+        food: "Food & coffee",
+        pubs: "Pubs & bars",
+        fitness: "Fitness",
+        shops: "Shops",
+      }[category],
+      clear: {
+        includeCategories: query.includeCategories?.filter(
+          (value) => value !== category,
+        ),
+      },
+    });
+  }
+  for (const [need, label] of [
+    ["wheelchair", "Wheelchair access"],
+    ["stepFree", "Step-free access"],
+    ["dogs", "Dogs welcome"],
+  ] as const) {
+    if (query.accessNeeds?.[need])
+      active.push({
+        label,
+        clear: { accessNeeds: { ...query.accessNeeds, [need]: false } },
+      });
+  }
+  if (query.strictSuitability)
+    active.push({
+      label: "Reported age suitability",
+      clear: { strictSuitability: false },
+    });
+  const activeCount = active.length + (mapFood?.included ? 1 : 0);
+  const changed =
+    activeCount > 0 ||
+    query.company !== DEFAULT_QUERY.company ||
+    query.minutes !== DEFAULT_QUERY.minutes ||
+    query.travel !== DEFAULT_QUERY.travel ||
+    ages.length > 0;
   return (
-    <div className="refinement">
+    <div className={`${styles.refinement} refinement`}>
       <div className="quick-controls">
         <label>
           <Users size={16} />
@@ -70,7 +150,11 @@ export function Refinement({
           </select>
         </label>
         <label>
-          <Car size={16} />
+          {query.travelMode === "walk" ? (
+            <Footprints size={16} />
+          ) : (
+            <Car size={16} />
+          )}
           <select
             disabled={!ready}
             aria-label="Maximum travel time"
@@ -92,6 +176,7 @@ export function Refinement({
           onClick={() => setOpen(!open)}
         >
           <SlidersHorizontal size={16} />
+          <span>Preferences{activeCount ? ` (${activeCount})` : ""}</span>
         </button>
       </div>
       <div className="activity-filter">
@@ -150,6 +235,41 @@ export function Refinement({
           </label>
         )}
       </div>
+      {changed && (
+        <div className={styles.activeFilters} aria-label="Active preferences">
+          {active.map(({ label, clear }, index) => (
+            <button
+              key={`${label}-${index}`}
+              disabled={!ready}
+              onClick={() => set(clear)}
+              aria-label={`Remove ${label} preference`}
+            >
+              {label}
+              <X size={13} aria-hidden="true" />
+            </button>
+          ))}
+          {mapFood?.included && (
+            <button
+              disabled={!ready}
+              onClick={() => mapFood.onChange(false)}
+              aria-label="Remove food and coffee preference"
+            >
+              Food &amp; coffee
+              <X size={13} aria-hidden="true" />
+            </button>
+          )}
+          <button
+            disabled={!ready}
+            className={styles.reset}
+            onClick={() => {
+              setQuery({ ...DEFAULT_QUERY, text: query.text });
+              setAddingChild(false);
+            }}
+          >
+            <RotateCcw size={13} aria-hidden="true" /> Reset filters
+          </button>
+        </div>
+      )}
       {query.company === "family" && (
         <fieldset className="family-ages">
           <legend>Children’s ages</legend>

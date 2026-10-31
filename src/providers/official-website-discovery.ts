@@ -4,6 +4,7 @@ import {
 } from "./prepared-venue-photos";
 export { websiteDiscoveryIdentity };
 import { isIP } from "node:net";
+import { distanceKm } from "./routing";
 export type WebsiteDiscoveryQuery = {
   id?: string;
   name: string;
@@ -11,6 +12,7 @@ export type WebsiteDiscoveryQuery = {
   lng: number;
   area?: string;
   aliases?: string[];
+  wikidata?: string;
 };
 export type WebsiteDiscoveryResult = {
   urls: string[];
@@ -54,13 +56,259 @@ function candidate(value: unknown): URL | null {
     return null;
   }
 }
-/** Prepared hints first, then the optional free search product. Never falls back to Tavily. */
+/** Prepared hints, an explicitly mapped public entity, then optional free search. */
 export async function discoverOfficialWebsite(
   query: WebsiteDiscoveryQuery,
   options: { signal?: AbortSignal; timeoutMs?: number } = {},
 ): Promise<WebsiteDiscoveryResult> {
   if (options.signal?.aborted) return { urls: [], status: "unavailable" };
-  return preparedWebsiteCandidates(query) || searchFreeWebsite(query, options);
+  const prepared = preparedWebsiteCandidates(query);
+  if (prepared) return prepared;
+  if (!/^Q[1-9]\d{0,14}$/.test(query.wikidata ?? ""))
+    return searchFreeWebsite(query, options);
+  const started = Date.now();
+  const budget = Number.isFinite(options.timeoutMs)
+    ? Math.max(0, options.timeoutMs!)
+    : 2000;
+  if (!budget) return { urls: [], status: "unavailable" };
+  const mapped = await mappedWebsite(query, {
+    ...options,
+    timeoutMs: Math.min(2000, budget),
+  });
+  if (mapped.status === "found") return mapped;
+  if (options.signal?.aborted) return { urls: [], status: "unavailable" };
+  const remaining = budget - (Date.now() - started);
+  if (!process.env.TINYFISH_API_KEY?.trim() || remaining <= 0) return mapped;
+  return searchFreeWebsite(query, { ...options, timeoutMs: remaining });
+}
+
+type MappedRequest = {
+  task: Promise<WebsiteDiscoveryResult>;
+  controller: AbortController;
+  consumers: number;
+};
+const mappedCache = new Map<
+  string,
+  { until: number; result: WebsiteDiscoveryResult }
+>();
+const mappedPending = new Map<string, MappedRequest>();
+const object = (value: unknown): Record<string, unknown> | undefined =>
+  value !== null && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : undefined;
+const nameTokens = (value: string) =>
+  value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .replace(/[&+]/g, " and ")
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter(Boolean)
+    .sort()
+    .join(" ");
+
+/** Settle locally on abort too: the time bound does not depend on a compliant transport. */
+function abortable<T>(task: Promise<T>, signal: AbortSignal): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const aborted = () => reject(Error("mapped-website-aborted"));
+    if (signal.aborted) {
+      aborted();
+      return;
+    }
+    signal.addEventListener("abort", aborted, { once: true });
+    task
+      .then(resolve, reject)
+      .finally(() => signal.removeEventListener("abort", aborted));
+  });
+}
+function statementValues(claims: unknown, property: string): unknown[] {
+  const rows = object(claims)?.[property];
+  return (Array.isArray(rows) ? rows.slice(0, 64) : []).flatMap((row) => {
+    const statement = object(row),
+      snak = object(statement?.mainsnak);
+    return statement?.rank !== "deprecated" && snak?.snaktype === "value"
+      ? [object(snak.datavalue)?.value]
+      : [];
+  });
+}
+function mappedCandidates(
+  data: unknown,
+  query: WebsiteDiscoveryQuery,
+): string[] {
+  const entity = object(object(object(data)?.entities)?.[query.wikidata!]);
+  if (!entity || entity.id !== query.wikidata || entity.missing !== undefined)
+    return [];
+  const labels = object(entity.labels),
+    aliases = object(entity.aliases);
+  const entityNames = ["en", "en-gb"]
+    .flatMap((language) => {
+      const languageAliases = aliases?.[language];
+      return [
+        object(labels?.[language])?.value,
+        ...(Array.isArray(languageAliases)
+          ? languageAliases
+              .slice(0, 64)
+              .map((alias: unknown) => object(alias)?.value)
+          : []),
+      ];
+    })
+    .filter(
+      (name): name is string => typeof name === "string" && name.length <= 200,
+    );
+  const names = [query.name, ...(query.aliases ?? []).slice(0, 12)]
+    .filter((name) => name.length <= 200)
+    .map(nameTokens)
+    .filter(Boolean);
+  if (!entityNames.some((name) => names.includes(nameTokens(name)))) return [];
+  const coordinates = statementValues(entity.claims, "P625");
+  if (
+    !coordinates.some((value) => {
+      const c = object(value);
+      return (
+        c?.globe === "http://www.wikidata.org/entity/Q2" &&
+        typeof c.latitude === "number" &&
+        Number.isFinite(c.latitude) &&
+        Math.abs(c.latitude) <= 90 &&
+        typeof c.longitude === "number" &&
+        Number.isFinite(c.longitude) &&
+        Math.abs(c.longitude) <= 180 &&
+        distanceKm(query, { lat: c.latitude, lng: c.longitude }) <= 0.25
+      );
+    })
+  )
+    return [];
+  return [
+    ...new Set(
+      statementValues(entity.claims, "P856").flatMap((value) => {
+        const url = candidate(value);
+        return url ? [url.href] : [];
+      }),
+    ),
+  ].slice(0, 3);
+}
+async function mappedWebsite(
+  query: WebsiteDiscoveryQuery,
+  options: { signal?: AbortSignal; timeoutMs: number },
+): Promise<WebsiteDiscoveryResult> {
+  if (
+    !query.name.trim() ||
+    query.name.length > 200 ||
+    !Number.isFinite(query.lat) ||
+    Math.abs(query.lat) > 90 ||
+    !Number.isFinite(query.lng) ||
+    Math.abs(query.lng) > 180
+  )
+    return { urls: [], status: "no-match" };
+  const key = JSON.stringify([
+    query.wikidata,
+    query.id?.slice(0, 200),
+    nameTokens(query.name),
+    query.lat,
+    query.lng,
+    (query.aliases ?? [])
+      .slice(0, 12)
+      .filter((name) => name.length <= 200)
+      .map(nameTokens),
+  ]);
+  const cached = mappedCache.get(key);
+  if (cached && cached.until > Date.now()) return cached.result;
+  let request = mappedPending.get(key);
+  if (!request) {
+    if (mappedPending.size >= 4) return { urls: [], status: "unavailable" };
+    const controller = new AbortController();
+    const signal = AbortSignal.any([
+      controller.signal,
+      AbortSignal.timeout(Math.max(1, Math.floor(options.timeoutMs))),
+    ]);
+    const task = (async (): Promise<WebsiteDiscoveryResult> => {
+      try {
+        const url = new URL("https://www.wikidata.org/w/api.php");
+        url.search = new URLSearchParams({
+          action: "wbgetentities",
+          ids: query.wikidata!,
+          props: "labels|aliases|claims",
+          languages: "en|en-gb",
+          format: "json",
+          formatversion: "2",
+        }).toString();
+        const response = await abortable(
+          fetch(url.href, {
+            headers: {
+              "User-Agent":
+                "SideQuest/1.0 (venue website metadata; https://sidequest-local-discovery.vercel.app)",
+              Accept: "application/json",
+            },
+            cache: "no-store",
+            redirect: "error",
+            signal,
+          }),
+          signal,
+        );
+        if (
+          !response.ok ||
+          Number(response.headers.get("content-length")) > 524288
+        ) {
+          void response.body?.cancel().catch(() => {});
+          throw Error("mapped-website-response");
+        }
+        const reader = response.body?.getReader();
+        if (!reader) throw Error("mapped-website-response");
+        let bytes = 0,
+          body = "";
+        const decoder = new TextDecoder();
+        try {
+          while (true) {
+            const part = await abortable(reader.read(), signal);
+            if (part.done) break;
+            bytes += part.value.byteLength;
+            if (bytes > 524288) throw Error("mapped-website-size");
+            body += decoder.decode(part.value, { stream: true });
+          }
+          body += decoder.decode();
+        } finally {
+          void reader.cancel().catch(() => {});
+        }
+        signal.throwIfAborted();
+        const urls = mappedCandidates(JSON.parse(body), query);
+        return { urls, status: urls.length ? "found" : "no-match" };
+      } catch {
+        return { urls: [], status: "unavailable" };
+      }
+    })()
+      .then((result) => {
+        if (!controller.signal.aborted) {
+          mappedCache.set(key, {
+            result,
+            until:
+              Date.now() +
+              (result.status === "found"
+                ? 7 * 86400000
+                : result.status === "no-match"
+                  ? 3600000
+                  : 60000),
+          });
+          if (mappedCache.size > 512)
+            mappedCache.delete(mappedCache.keys().next().value!);
+        }
+        return result;
+      })
+      .finally(() => mappedPending.delete(key));
+    request = { task, controller, consumers: 0 };
+    mappedPending.set(key, request);
+  }
+  request.consumers++;
+  const callerSignal = AbortSignal.any([
+    AbortSignal.timeout(Math.max(1, Math.floor(options.timeoutMs))),
+    ...(options.signal ? [options.signal] : []),
+  ]);
+  try {
+    return await abortable(request.task, callerSignal);
+  } catch {
+    return { urls: [], status: "unavailable" };
+  } finally {
+    request.consumers--;
+    if (!request.consumers) request.controller.abort();
+  }
 }
 
 const freeCache = new Map<

@@ -1,0 +1,359 @@
+.refinement {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 230px;
+  gap: 0 14px;
+  min-width: 0;
+}
+.refinement :global(.quick-controls) {
+  display: grid;
+  grid-template-columns: 1fr 0.8fr 1fr auto;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  gap: 7px;
+  min-width: 0;
+}
+.refinement :global(.quick-controls > label) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 44px;
+  width: auto;
+  padding: 0 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+.refinement :global(.quick-controls > label + label:before) {
+  display: none;
+}
+.refinement :global(.quick-controls > label > svg) {
+  color: var(--muted);
+  display: block;
+  width: 15px;
+  height: 15px;
+}
+.refinement :global(.quick-controls select) {
+  font-size: 12px;
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 0;
+}
+.refinement :global(.quick-controls > button) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  width: auto;
+  padding: 0 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  font-size: 12px;
+}
+.refinement :global(.quick-controls > button:hover),
+.refinement :global(.quick-controls > button.selected) {
+  background: #edf2fc;
+  border-color: #b7c7e8;
+  color: #2452a5;
+}
+.refinement :global(.activity-filter) {
+  margin: 0;
+  min-width: 0;
+}
+.refinement :global(.activity-filter > label:first-child) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0;
+  margin: 0;
+}
+.refinement :global(.activity-filter select) {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  padding: 0 10px;
+  font-size: 12px;
+  background: var(--surface);
+  color: var(--ink);
+}
+.refinement :global(.map-food-filter) {
+  min-height: 38px;
+  font-size: 12px;
+}
+.refinement select:focus-visible {
+  outline: 2px solid #245ad6;
+  outline-offset: 3px;
+}
+.refinement > :global(.family-ages),
+.refinement > :global(.preference-panel),
+.activeFilters {
+  grid-column: 1/-1;
+}
+.activeFilters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding-top: 13px;
+}
+.activeFilters button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 6px 9px;
+  border: 1px solid #d5dfef;
+  border-radius: 5px;
+  background: #f0f4fc;
+  color: #2d518c;
+  font-size: 11px;
+  text-transform: none;
+}
+.activeFilters button:hover {
+  background: #e5edfc;
+}
+.activeFilters .reset {
+  margin-left: auto;
+  border: 0;
+  color: var(--muted);
+  background: transparent;
+}
+.activeFilters .reset:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+.refinement :global(.family-ages) {
+  margin: 16px 0 0;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 13px 14px;
+}
+.refinement :global(.family-ages legend) {
+  font-size: 12px;
+  padding: 0 5px;
+  font-weight: 600;
+}
+.refinement :global(.family-ages p) {
+  font-size: 11px;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+.refinement :global(.child-age-row) {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.refinement :global(.child-age-row > label) {
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.refinement :global(.family-ages select) {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  min-height: 40px;
+  font-size: 12px;
+  padding: 8px;
+}
+.refinement :global(.child-age-row .button),
+.refinement :global(.family-age-actions .button) {
+  min-height: 40px;
+  font-size: 11px;
+  padding: 8px 12px;
+}
+.refinement :global(.preference-panel) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 28px;
+  padding: 22px 0 0;
+  margin-top: 18px;
+  border-top: 1px solid var(--line);
+  animation: none;
+}
+.refinement :global(.preference-panel fieldset) {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.refinement :global(.preference-panel legend) {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.refinement :global(.preference-panel fieldset p) {
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.refinement :global(.interest-choices > div) {
+  gap: 6px;
+}
+.refinement :global(.interest-choices button) {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  min-height: 39px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+}
+.refinement :global(.interest-choices button:hover) {
+  background: var(--paper);
+}
+.refinement :global(.interest-choices button[aria-pressed="true"]) {
+  background: #edf2fc;
+  border-color: #adbee0;
+  color: #2452a5;
+}
+.refinement :global(.advanced-controls) {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+}
+.refinement :global(.advanced-controls label) {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  font-size: 11px;
+  padding: 0;
+}
+.refinement :global(.advanced-controls label > svg) {
+  color: var(--muted);
+}
+.refinement :global(.advanced-controls select) {
+  margin-left: auto;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  min-height: 38px;
+  font-size: 12px;
+  padding: 6px 8px;
+}
+.refinement :global(.optional-choices > div),
+.refinement :global(.access-choices > div) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 10px;
+}
+.refinement :global(.optional-choices label),
+.refinement :global(.access-choices label) {
+  min-height: 38px;
+  font-size: 11px;
+  gap: 8px;
+}
+.refinement input[type="checkbox"] {
+  accent-color: #245ad6;
+}
+:global(.map-sidebar) .refinement {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 9px;
+}
+:global(.map-sidebar) .refinement :global(.quick-controls) {
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+:global(.map-sidebar) .refinement :global(.quick-controls > label) {
+  width: auto;
+}
+:global(.map-sidebar) .refinement :global(.activity-filter) {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+:global(.map-sidebar) .refinement :global(.activity-filter select) {
+  width: 100%;
+}
+:global(.map-sidebar) .refinement :global(.preference-panel) {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+@media (max-width: 1120px) {
+  .refinement {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 9px;
+  }
+  .refinement :global(.activity-filter) {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .refinement :global(.activity-filter > label:first-child) {
+    flex: 1;
+    font-size: 11px;
+  }
+  .refinement :global(.activity-filter select) {
+    width: auto;
+    flex: 1;
+  }
+}
+@media (max-width: 640px) {
+  .refinement :global(.quick-controls) {
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+  }
+  .refinement :global(.quick-controls > label) {
+    padding: 0 9px;
+    gap: 6px;
+    min-height: 43px;
+  }
+  .refinement :global(.quick-controls > label > svg) {
+    display: block;
+  }
+  .refinement :global(.quick-controls select) {
+    font-size: 11px;
+    padding: 0;
+  }
+  .refinement :global(.quick-controls > button) {
+    min-height: 43px;
+    padding: 0 8px;
+    font-size: 11px;
+  }
+  .refinement :global(.activity-filter) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 3px;
+  }
+  .refinement :global(.activity-filter > label:first-child) {
+    font-size: 0;
+  }
+  .refinement :global(.activity-filter select) {
+    width: 100%;
+    font-size: 12px;
+  }
+  .refinement :global(.preference-panel) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+    padding-top: 18px;
+    margin-top: 12px;
+  }
+  .activeFilters {
+    gap: 5px;
+    padding-top: 5px;
+  }
+  .activeFilters button {
+    font-size: 10px;
+  }
+  .refinement :global(.family-ages) {
+    margin-top: 9px;
+    padding: 10px;
+  }
+  .refinement :global(.child-age-row > label) {
+    flex-wrap: wrap;
+  }
+}

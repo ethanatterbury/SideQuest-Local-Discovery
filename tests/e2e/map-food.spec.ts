@@ -1,6 +1,8 @@
 import { test, expect, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import type { Place } from "../../src/domain/models";
+import { localMapFixture, gpuLaunchOptions } from "./fixtures/map";
+test.use({ launchOptions: gpuLaunchOptions });
 
 const icon = readFileSync("public/icons/icon-192.png");
 const base: Place = {
@@ -38,6 +40,7 @@ const costly: Place = {
   cost: 250,
 };
 async function fixtures(page: Page) {
+  await localMapFixture(page);
   // These journeys exercise live delivery; geographic delivery has its own fixture suite.
   await page.route("**/data/venues/manifest.json", (route) =>
     route.fulfill({ json: { cells: {} } }),
@@ -96,8 +99,9 @@ test("Map excludes food by default and adds coffee alongside the chosen outing",
   await expect(
     page.getByLabel("Type of outing").locator('option[value="food"]'),
   ).toHaveCount(0);
+  // Eligibility is independent of which suggestion currently centers the camera.
   await expect(
-    page.getByRole("button", { name: "Select Test Arts Centre", exact: true }),
+    page.locator(".map-result-row").filter({ hasText: "Test Arts Centre" }),
   ).toBeVisible();
   await page.getByLabel("Type of outing").selectOption("soft-play");
   await expect(page.locator(".map-result-row")).toContainText([

@@ -75,12 +75,16 @@ test("an inherited food preference can be cleared", async ({ page }) => {
   const museum = fixture(102);
   await source(page, [cafe, museum]);
   await page.goto("/?intent=food");
-  await expect(page.getByText("Active preference:")).toContainText("food");
+  const foodPreference = page.getByRole("button", {
+    name: "Remove food preference",
+    exact: true,
+  });
+  await expect(foodPreference).toBeVisible();
   await expect(
     page.getByRole("link", { name: cafe.name, exact: true }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Clear preference" }).click();
-  await expect(page.getByText("Active preference:")).toHaveCount(0);
+  await foodPreference.click();
+  await expect(foodPreference).toHaveCount(0);
   await expect(
     page.getByRole("link", { name: cafe.name, exact: true }),
   ).toHaveCount(0);
@@ -135,9 +139,9 @@ test("live discovery provides more pages of ideas and preserves saved live place
   await source(page, places);
   await page.goto("/explore");
   await expect(page.getByText(/Fresh OpenStreetMap discoveries/)).toBeVisible();
-  await expect(page.locator(".results-grid > article")).toHaveCount(12);
+  await expect(page.locator(".results-grid > article")).toHaveCount(6);
   await page.getByRole("button", { name: "Show more ideas" }).click();
-  await expect(page.locator(".results-grid > article")).toHaveCount(24);
+  await expect(page.locator(".results-grid > article")).toHaveCount(12);
   await page.getByRole("link", { name: "Test Museum 0", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Test Museum 0", exact: true }),
@@ -270,7 +274,7 @@ test("under-one selection removes bowling across discovery, reload, map and a ne
     .getByRole("button", { name: "Plan my day", exact: true })
     .first()
     .click();
-  await expect(page.getByRole("dialog").locator(".timeline")).toContainText(
+  await expect(page.getByRole("dialog").locator("ol")).toContainText(
     /Age Test (Baby Session|Museum)/,
   );
   await expect(page.getByRole("dialog")).not.toContainText(bowling.name);
@@ -296,7 +300,9 @@ test("a browser without WebGL keeps accessible geographic fallback and static we
     page.getByRole("link", { name: "Powered by Geoapify" }),
   ).toHaveCount(0);
   await expect(page.locator(".geographic-fallback")).toBeVisible();
-  await expect(page.locator("[data-map-status]")).toContainText("Map unavailable");
+  await expect(page.locator("[data-map-status]")).toContainText(
+    "Map unavailable",
+  );
   await expect(
     page.getByRole("button", { name: "Zoom in", exact: true }),
   ).toBeDisabled();
@@ -496,7 +502,7 @@ test("a photo update preserves the chosen map place and camera", async ({
   expect(after.scale).toBeCloseTo(camera.scale, 2);
 });
 
-test("home hero keeps the top recommendation when only a lower-ranked place has a photo", async ({
+test("discovery keeps the top recommendation when only a lower-ranked place has a photo", async ({
   page,
 }) => {
   await source(page, [
@@ -504,6 +510,7 @@ test("home hero keeps the top recommendation when only a lower-ranked place has 
       name: "Best venue without media",
       novelty: 1,
       quality: 1,
+      hours: [{ days: [0, 1, 2, 3, 4, 5, 6], open: 0, close: 1440 }],
       intents: ["walk", "scenic", "kids", "culture", "relax", "active"],
       image: undefined,
     }),

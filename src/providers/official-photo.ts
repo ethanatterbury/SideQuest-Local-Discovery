@@ -460,7 +460,12 @@ export function parseOfficialPhotoHtml(
   const metas: Record<string, string> = {};
   for (const match of html.matchAll(/<meta\b(?:"[^"]*"|'[^']*'|[^<>"'])*>/gi)) {
     const attr = attributes(match[0]);
-    const key = (attr.property ?? attr.name ?? "").toLowerCase();
+    const key = (
+      attr.property ??
+      attr.name ??
+      attr.itemprop ??
+      ""
+    ).toLowerCase();
     if (attr.content && !metas[key]) metas[key] = attr.content;
   }
   const primary = `${headings} ${metas["og:title"] ?? ""} ${metas["og:description"] ?? ""} ${metas.description ?? ""} ${metas["twitter:title"] ?? ""} ${decode(new URL(pageUrl).pathname)}`;
@@ -638,9 +643,11 @@ export function parseOfficialPhotoHtml(
   };
   for (const [key, kind] of [
     ["og:image", "open-graph"],
+    ["og:image:url", "open-graph"],
     ["og:image:secure_url", "open-graph"],
     ["twitter:image", "twitter"],
     ["twitter:image:src", "twitter"],
+    ["image", "venue-image"],
   ]) {
     if (metas[key])
       raw.push({
@@ -1459,13 +1466,36 @@ export async function resolveOfficialPhotos(
     },
   };
   try {
-    const page = await readOfficialWebsitePage(
-      query.website ?? "",
-      options,
-      signal,
-      lookup,
-      () => requestCount++,
-    );
+    let page: { html: string; pageUrl: string };
+    try {
+      page = await readOfficialWebsitePage(
+        query.website ?? "",
+        options,
+        signal,
+        lookup,
+        () => requestCount++,
+      );
+    } catch (error) {
+      // Mapped business links frequently outlive a site's old URL structure.
+      // Retry only a vanished page, on the same origin. All normal venue,
+      // location and individual-image checks still apply to the replacement.
+      if (
+        !(error instanceof OfficialPhotoError) ||
+        !["website-http-404", "website-http-410"].includes(error.reason)
+      )
+        throw error;
+      const original = new URL(
+        (query.website ?? "").replace(/^http:\/\//i, "https://"),
+      );
+      if (original.pathname === "/" && !original.search) throw error;
+      page = await readOfficialWebsitePage(
+        original.origin + "/",
+        options,
+        signal,
+        lookup,
+        () => requestCount++,
+      );
+    }
     pageUrl = page.pageUrl;
     const parsed = parseOfficialPhotoHtml(page.html, pageUrl, query, options);
     // Check public DNS for candidate CDNs too; no arbitrary private image URLs escape.
